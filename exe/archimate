@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "thor"
+require "archimate"
+
+class ArchimateCLI < Thor
+  desc "map ARCHIFILE", "Produce a map of diagram links to a diagram"
+  def map(archifile)
+    Archimate::Mapper.new.map(archifile)
+  end
+
+  desc "merge ARCHIFILE1 ARCHIFILE2", "Merge two archimate files"
+  def merge(archifile1, archifile2)
+    Archimate::Merger.new.merge_files(archifile1, archifile2)
+  end
+
+  desc "project ARCHIFILE PROJECTFILE", "Synchronize an Archi file and an MSProject XML file"
+  def project(archifile, projectfile)
+    Archimate::Projector.new.project(archifile, projectfile)
+  end
+
+  desc "svg ARCHIFILE", "Produce semantically meaningful SVG files from an Archi file"
+  def svg(archifile)
+    Archimate::Svger.new.make_svgs(archifile)
+  end
+
+  desc "dupe ARCHIFILE", "List all duplicate elements in Archi file"
+  def dupe(archifile)
+    Archimate::Duper.new.list_dupes(archifile)
+  end
+end
+
+ArchimateCLI.start(ARGV)
