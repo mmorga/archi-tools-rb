@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Mark Morga"]
   spec.email         = ["mmorga@rackspace.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
+  spec.summary       = "Archi Tools"
+  spec.description   = "A collection of tools for working with ArchiMate files from Archi"
   spec.homepage      = "TODO: Put your gem's website or public repo URL here."
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
