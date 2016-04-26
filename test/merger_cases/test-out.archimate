@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <archimate:model xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:archimate="http://www.archimatetool.com/archimate" name="merger-case-1" id="b51ba1e9" version="3.1.1">
   <folder name="Business" id="2d5248d5" type="business"><element type="archimate:BusinessActor" id="b2908253" name="Neo"/><element type="archimate:BusinessRole" id="3e87b4fa" name="The One"/></folder>
   <folder name="Application" id="6dbb97fa" type="application">

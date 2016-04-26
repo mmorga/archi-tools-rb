@@ -5,11 +5,11 @@ require "csv"
 # TODO: Move this
 class String
   def underscore
-    self.gsub(/::/, '/').
-    gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
-    gsub(/([a-z\d])([A-Z])/,'\1_\2').
-    tr("-", "_").
-    downcase
+    gsub(/::/, '/')
+      .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+      .gsub(/([a-z\d])([A-Z])/, '\1_\2')
+      .tr("-", "_")
+      .downcase
   end
 end
 
@@ -20,20 +20,18 @@ module Archimate
     end
 
     def verify_int(val)
-      begin
-        Integer(val)
-      rescue ArgumentError,TypeError
-        nil
-      end
+      Integer(val)
+    rescue ArgumentError, TypeError
+      nil
     end
 
     def verify_hex_id(val)
       return val if val.nil?
 
       # if val.kind_of?(String)
-        return nil if val.strip.size != 8
-        aid_val = val.strip.scanf("%08x")
-        return nil unless aid_val.size == 1
+      return nil if val.strip.size != 8
+      aid_val = val.strip.scanf("%08x")
+      return nil unless aid_val.size == 1
       # else
       #   aid_val = val
       # end
@@ -86,7 +84,7 @@ module Archimate
       end
 
       def to_s
-        "#{@uid}, #{@id}, #{@archimate_id}, #{name}, #{@duration}, #{@duration_format}, #{@start}, #{@finish}, #{@stop}, #{outline_level}, [#{predecessors.join(";")}]"
+        "#{@uid}, #{@id}, #{@archimate_id}, #{name}, #{@duration}, #{@duration_format}, #{@start}, #{@finish}, #{@stop}, #{outline_level}, [#{predecessors.join(';')}]"
       end
 
       def name
@@ -99,7 +97,8 @@ module Archimate
         @tasks = []
       end
 
-      ARCHIMATE_PROPERTIES = [:duration, :duration_format, :start, :finish, :stop, :outline_level, :uid, :id, :project_name]
+      ARCHIMATE_PROPERTIES = [:duration, :duration_format, :start, :finish,
+                              :stop, :outline_level, :uid, :id, :project_name].freeze
 
       def update_archimate_file(archimate_file)
         doc = Nokogiri::XML(File.open(archimate_file))
@@ -108,7 +107,7 @@ module Archimate
           next if task.archimate_id == "00000000"
           atask = doc.at_css("element[xsi|type=\"archimate:WorkPackage\"][id=\"#{task.archimate_id}\"]")
           ARCHIMATE_PROPERTIES.each do |p|
-            prop = atask.css("property[key=\"#{p.to_s}\"]")
+            prop = atask.css("property[key=\"#{p}\"]")
             if prop.empty?
               prop = Nokogiri::XML::Node.new "property", doc
               prop["key"] = p
@@ -125,7 +124,7 @@ module Archimate
         end
       end
 
-      def new_or_update_task(name, uid, archimate_id)
+      def new_or_update_task(name, _uid, archimate_id)
         find_task(name, name, archimate_id) || Task.new
       end
 
@@ -135,31 +134,31 @@ module Archimate
         task.archimate_name = wp.attr("name")
         wp.css("property").each do |prop|
           if ARCHIMATE_PROPERTIES.include?(prop.attr("key").to_sym)
-            task.send("#{prop.attr("key")}=".to_sym, prop.attr("value"))
+            task.send("#{prop.attr('key')}=".to_sym, prop.attr("value"))
           end
         end
         wp.document.css("element[xsi|type~=\"archimate:TriggeringRelationship\"][target=\"#{task.uid}\"],element[xsi|type~=\"archimate:FlowRelationship\"][target=\"#{task.uid}\"]").each do |rel|
-          # TODO - pull this from tasks db
+          # TODO: - pull this from tasks db
           task.predecessors << other_id(rel, task.uid)
         end
 
         wp.document.css("element[xsi|type~=\"archimate:AssignmentRelationship\"][source=\"#{task.uid}\"],element[xsi|type~=\"archimate:AssignmentRelationship\"][target=\"#{task.uid}\"]").each do |rel|
           to_id = other_id(rel, task.uid)
-          # TODO - trace business role assignments to actors
+          # TODO: - trace business role assignments to actors
           assigned_to = wp.document.at_css("##{to_id}").attr("name")
           task.resource_names << assigned_to
         end
         task
       end
 
-      def read_archimate_tasks(archimate_file)
+      def read_archimate_tasks(_archimate_file)
         Nokogiri::XML(File.open("ea.archimate"))
-            .css('element[xsi|type="archimate:WorkPackage"]').each do |work_package|
+                .css('element[xsi|type="archimate:WorkPackage"]').each do |work_package|
           add_or_update_task task_from_work_package(work_package)
         end
       end
 
-      MS_PROJECT_PROPERTIES = %w(UID ID OutlineLevel Duration DurationFormat Start Finish Stop)
+      MS_PROJECT_PROPERTIES = %w(UID ID OutlineLevel Duration DurationFormat Start Finish Stop).freeze
 
       def task_from_project_task(pt)
         task = new_or_update_task(pt.at_css("Name").text, pt.at_css("UID"), nil)
@@ -168,7 +167,7 @@ module Archimate
           el = pt.at_css(p)
           task.send("#{p.underscore}=".to_sym, el.text) if el
         end
-        # TODO add resources
+        # TODO: add resources
         pt.css("PredecessorLink").each do |pl|
           task.predecessors << verify_int(pl.at_css("PredecessorUID").text)
         end
@@ -177,12 +176,12 @@ module Archimate
 
       def read_project_tasks(ms_project_file)
         Nokogiri::XML(File.open(ms_project_file))
-            .css("Task").each do |pt|
+                .css("Task").each do |pt|
           add_or_update_task task_from_project_task(pt)
         end
       end
 
-      def add_or_update_task task
+      def add_or_update_task(task)
         @tasks << task unless @tasks.include? task
       end
 
@@ -191,26 +190,26 @@ module Archimate
       end
 
       def sorted
-        @tasks.sort do |a,b|
+        @tasks.sort do |a, b|
           a.uid.to_i <=> b.uid.to_i
         end
       end
 
       # Get the list of task names in sort order
       def task_names
-        sorted.map{|t| t.name}
+        sorted.map(&:name)
       end
 
       def task_by_id(task_id)
-        @tasks.select{|t| t.id == task_id}.first
+        @tasks.select { |t| t.id == task_id }.first
       end
 
       def find_task(name, uid, archimate_id)
-        task_ary = @tasks.select{|t|
+        task_ary = @tasks.select do |t|
           t.name == name ||
-          t.uid == verify_int(uid) ||
-          t.archimate_id == verify_hex_id(archimate_id)
-        }
+            t.uid == verify_int(uid) ||
+            t.archimate_id == verify_hex_id(archimate_id)
+        end
         task_ary.empty? ? nil : task_ary.first
       end
 
@@ -219,20 +218,20 @@ module Archimate
       end
 
       def preds(tasks, task)
-        task.predecessors.map{|p| index_of_task_id(tasks, p)}
+        task.predecessors.map { |p| index_of_task_id(tasks, p) }
       end
 
       def to_s
-        @tasks.map{|t| t.to_s}.join("\n")
+        @tasks.map(&:to_s).join("\n")
       end
 
       def merge
-        uid_counts = @tasks.reduce(Hash.new { |hash, key| hash[key] = []}) do |memo, obj|
+        uid_counts = @tasks.reduce(Hash.new { |hash, key| hash[key] = [] }) do |memo, obj|
           memo[obj.uid] << obj unless obj.uid == 0
           memo
         end
 
-        uid_counts.each do |key, val|
+        uid_counts.each do |_key, val|
           next if val.size == 1
           task1 = val.shift
           val.each do |task2|
@@ -285,4 +284,3 @@ module Archimate
     # 9. Allow inputs to color code work packages/deliverables as complete
   end
 end
-

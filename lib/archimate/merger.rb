@@ -7,7 +7,7 @@ module Archimate
     # TODO: handle merging by element type
 
     def hash_to_attr(h)
-      h.map {|k,v| "#{k}=\"#{v.to_s}\""}.join(" ")
+      h.map { |k, v| "#{k}=\"#{v}\"" }.join(" ")
     end
 
     def e_to_s(e)
@@ -25,12 +25,12 @@ module Archimate
         # if p =~ /\[\d+\]$/
         #   p = p.gsub(/\[\d+\]$/, "[@name=\"#{e.attr("name")}\"]")
         # end
-        # puts "Looking for #{p}"
+        # puts "Looking for #{p}"``
         # matches = doc1.xpath(p)
         css = ">#{e.name}"
         # puts css
-        css += "[name=\"#{e.attr("name")}\"]" if e.attributes.include?("name")
-        css += "[xsi|type=\"#{e.attr("xsi:type")}\"]" if e.attributes.include?("xsi:type")
+        css += "[name=\"#{e.attr('name')}\"]" if e.attributes.include?("name")
+        css += "[xsi|type=\"#{e.attr('xsi:type')}\"]" if e.attributes.include?("xsi:type")
         matches = doc1.css(css)
         if !matches.empty? # We have a potential match
           # puts "Match?"
@@ -68,12 +68,12 @@ module Archimate
       doc1 = Nokogiri::XML(File.open(file1))
       doc2 = Nokogiri::XML(File.open(file2))
 
-      cids = conflicting_ids(doc1, doc2)
+      # cids = conflicting_ids(doc1, doc2)
       outdoc = merge(doc1.root, doc2.root)
-      doc1
-      # File.open(outfile, "w") do |f|
-      #   f.write(outdoc)
-      # end
+      File.open(outfile, "w") do |f|
+        f.write(outdoc)
+      end
+      outdoc
     end
   end
 end

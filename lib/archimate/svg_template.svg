@@ -1,0 +1,285 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <style type="text/css" >
+      <![CDATA[
+
+        text {
+          font-size: 12px;
+          font-family: "Lucida Grande";
+          fill: black;
+          stroke: none;
+        }
+
+        /* Business Layer: Active Structure */
+
+        .BusinessActor,
+        .BusinessCollaboration,
+        .BusinessInterface,
+        .BusinessRole,
+        .Location {
+          fill: #e6ffff;
+          stroke: #B8CCCC;
+        }
+
+        /* Business Layer: Behavioral */
+
+        .BusinessEvent,
+        .BusinessFunction,
+        .BusinessInteraction,
+        .BusinessProcess,
+        .BusinessService {
+          fill: #ffffe6;
+          stroke: #b2b2a1;
+        }
+
+        /* Business Layer: Passive Structre */
+
+        .BusinessObject,
+        .Contract,
+        .Meaning,
+        .Product,
+        .Representation,
+        .Value: {
+          fill: #e6ffe6;
+          stroke: #B8CCB8;
+        }
+
+        /* Application Layer: Active Structure */
+
+        .ApplicationCollaboration,
+        .ApplicationComponent,
+        .ApplicationInterface {
+          fill: #afffff; /* #b0ffff */
+          stroke: #8CCCCC;
+        }
+
+        .ApplicationComponent > .topbox {
+          fill: #9de5e5;
+        }
+
+        /* Application Layer: Behavioral */
+
+        .ApplicationFunction,
+        .ApplicationInteraction,
+        .ApplicationService {
+          fill: #ffffaf;
+          stroke: #CCCC8C;
+        }
+
+        /* Application Layer: Passive Structure */
+
+        .DataObject {
+          fill: #afffaf;
+          stroke: #8CCC8C;
+        }
+        .DataObject > .topbox {
+          fill: #9de59d;
+        }
+
+        /* Technology Layer: Active Structure */
+
+        .CommunicationPath,
+        .Device,
+        .InfrastructureInterface,
+        .Network,
+        .Node,
+        .SystemSoftware {
+          fill: #7effff;
+          stroke: #57b2b2;
+        }
+
+        /* Technology Layer: Behavior */
+
+        .InfrastructureFunction,
+        .InfrastructureService {
+          fill: #ffff82;
+          stroke: #CCCC68;
+        }
+
+        /* Technology Layer: Passive Structure */
+
+        .Artifact {
+          fill: #91ff91;
+          stroke: #74CC74;
+        }
+
+        /* Motivation Extension */
+
+        .Stakeholder,
+        .Driver,
+        .Assessment {
+          fill: #ffccff;
+          stroke: #b28eb2;
+        }
+
+        .Goal,
+        .Constraint,
+        .Principal,
+        .Requirement {
+          fill: #ccccff;
+          stroke: #8e8eb2;
+        }
+
+        /* Implementation and Migration Extension */
+
+        .Gap,
+        .Plateau {
+          fill: #e1ffe0;
+          stroke: #9db29c;
+        }
+
+        .Plateau > .detail {
+          fill: #cae5c9;
+        }
+
+        .WorkPackage,
+        .Deliverable {
+          fill: #ffe0e0;
+          stroke: #b19c9c;
+        }
+
+        .Note {
+          fill: #ffffff;
+          stroke: #e2e2e2;
+        }
+
+        .Group {
+          fill: #d2d7d7;
+          stroke: #939696;
+        }
+
+        .Group > .detail {
+          fill: #bdc1c1;
+        }
+
+        /* Relationships */
+
+        path {
+          stroke-width: 1px;
+          stoke: black
+        }
+
+        .AssignmentRelationship {
+          marker-start: url(#dot-marker);
+          marker-end: url(#dot-marker);
+        }
+
+        .CompositionRelationship {
+          marker-start: url(#filled-diamond);
+        }
+
+        .UsedByRelationship {
+          marker-start: url(#open-arrow);
+        }
+
+        .AggregationRelationship {
+          marker-start: url(#open-diamond);
+        }
+
+        .AccessRelationship {
+          marker-end: url(#open-arrow);
+          stroke-dasharray: 2, 3;
+        }
+
+        .RealisationRelationship {
+          marker-end: url(#hollow-arrow);
+          stroke-dasharray: 5, 3;
+          stroke-width: 2px;
+        }
+
+        .SpecialisationRelationship {
+          marker-end: url(#hollow-arrow);
+          stroke-width: 2px;
+        }
+
+        .InfluenceRelationship {}
+
+        .AssociationRelationship {}
+
+        .TriggeringRelationship {
+          marker-end: url(#filled-arrow);
+        }
+        .FlowRelationship {
+          marker-end: url(#filled-arrow);
+          stroke-dasharray: 3, 3;
+        }
+      ]]>
+    </style>
+    <defs>
+      <symbol id="interface-badge" viewBox="0 0 20 15" preserveAspectRatio="xMaxYMin meet">
+        <circle fill="none" r="5" cx="14" cy="6" stroke="black"/>
+        <line fill="none" x1="0" x2="9" y1="5" y2="5" stroke="black"/>
+      </symbol>
+      <symbol id="interaction-badge" viewBox="0 0 20 15" preserveAspectRatio="xMaxYMin meet">
+        <path fill="none" d="M11 1 C8.2386 1 6 3.6863 6 7 C6 10.3137 8.2386 13 11 13 L11 0.5" fill-rule="evenodd" stroke="black"/>
+        <path fill="none" d="M14 13 C17.7614 13 19 10.3137 19 7 C19 3.6863 16.7614 1 14 1 L14 13.5" fill-rule="evenodd" stroke="black"/>
+      </symbol>
+      <symbol id="collaboration-badge" viewBox="0 0 20 15" preserveAspectRatio="xMaxYMin meet">
+        <circle fill="none" r="5" cx="10" cy="6" stroke="black"/>
+        <circle fill="none" r="5" cx="14" cy="6" stroke="black"/>
+      </symbol>
+      <symbol id="function-badge" viewBox="342 105 20 15" preserveAspectRatio="xMaxYMin meet">
+        <polygon fill="none" points=" 350 120 350 111 356 106 362 111 362 120 356 114" stroke="black"/>
+      </symbol>
+      <symbol id="component-knobs" viewbox="0 0 23 44" preserveAspectRatio="xMaxYMin meet">
+        <rect x="1" y="10" width="21" height="13" class="topbox"/>
+        <rect x="1" y="30" width="21" height="13" class="topbox"/>
+      </symbol>
+      <symbol id="actor-badge" viewbox="0 0 20 15" preserveAspectRatio="xMaxYMin meet">
+        <circle fill="none" r="3" cx="15" cy="4" stroke="black"/>
+        <line fill="none" x1="15" x2="15" y1="6" y2="12" stroke="black"/>
+        <line fill="none" x1="15" x2="11" y1="12" y2="17" stroke="black"/>
+        <line fill="none" x1="15" x2="19" y1="12" y2="17" stroke="black"/>
+        <line fill="none" x1="11" x2="19" y1="8" y2="8" stroke="black"/>
+      </symbol>
+      <symbol id="role-badge" viewbox="0 0 20 15" preserveAspectRatio="xMaxYMin meet">
+        <path fill="none" d="M278 18 C275.7909 18 274 19.567 274 21.5 C274 23.433 275.7909 25 278 25 L285 25 M277.5 18 L285 18" stroke="black"/>
+        <circle fill="none" r="3.5" cx="16.5" cy="4" stroke="black"/>
+      </symbol>
+      <marker id="dot-marker"
+        viewBox="0 0 10 10" refX="4" refY="4"
+        markerUnits="strokeWidth"
+        markerWidth="8" markerHeight="8">
+        <circle cx="4" cy="4" r="4" fill="black" stroke="black" />
+      </marker>
+      <marker id="open-arrow"
+        viewBox="0 0 10 10" refX="0" refY="5"
+        markerUnits="strokeWidth"
+        markerWidth="12" markerHeight="12"
+        orient="auto">
+        <path d="M 0 0 L 10 5 L 0 10" />
+      </marker>
+      <marker id="filled-arrow"
+        viewBox="0 0 10 10" refX="0" refY="5"
+        markerUnits="strokeWidth"
+        markerWidth="12" markerHeight="12"
+        orient="auto">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="black"/>
+      </marker>
+      <marker id="hollow-arrow"
+        viewBox="0 0 10 10" refX="0" refY="5"
+        markerUnits="strokeWidth"
+        markerWidth="12" markerHeight="12"
+        orient="auto">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="white" stroke="black"/>
+      </marker>
+      <marker id="filled-diamond"
+        viewBox="0 0 10 10" refX="5" refY="5"
+        markerUnits="strokeWidth"
+        markerWidth="12" markerHeight="12"
+        orient="auto">
+        <path d="M 5 0 L 10 5 L 5 10 L 0 5 z" fill="black"/>
+      </marker>
+      <marker id="hollow-diamond"
+        viewBox="0 0 10 10" refX="5" refY="5"
+        markerUnits="strokeWidth"
+        markerWidth="4" markerHeight="3"
+        orient="auto">
+        <path d="M 5 0 L 10 5 L 5 10 L 0 5 z" fill="white" stroke="black"/>
+      </marker>
+    </defs>
+</svg>

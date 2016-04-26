@@ -1,0 +1,116 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <style type="text/css" >
+      <![CDATA[
+
+        text {
+          font-size: 12px;
+          font-family: "Lucida Grande";
+          fill: black;
+          stroke: none;
+        }
+        # rect {
+        #    stroke: #000000;
+        #    fill:   #eeeeee;
+        # }
+        .BusinessActor rect,
+        .BusinessRole,
+        .BusinessCollaboration,
+        .BusinessInterface,
+        .Location,
+        .BusinessProcess,
+        .BusinessFunction,
+        .BusinessInteraction,
+        .BusinessEvent,
+        .BusinessService,
+        .BusinessObject,
+        .Representation,
+        .Meaning,
+        .Value,
+        .Product,
+        .Contract {
+          fill: rgb(255, 255, 181);
+          stroke: rgb(178, 178, 126);
+        }
+        .ApplicationCollaboration rect,
+        .ApplicationComponent rect,
+        .ApplicationFunction rect,
+        .ApplicationInteraction rect,
+        .ApplicationInterface rect,
+        .ApplicationService rect,
+        .DataObject rect {
+          fill: rgb(181, 255, 255);
+          stroke: rgb(126, 178, 178);
+        }
+        .Plateau {
+          fill: rgb(224,255,224);
+          stroke: rgb(170,194,170);
+        }
+        .DataObject rect.topbox,
+        .ApplicationComponent rect.topbox,
+        .topbox {
+          fill: rgb(162, 229, 229);
+        }
+        .Node,
+        .Device,
+        .SystemSoftware,
+        .InfrastructureInterface,
+        .Network,
+        .CommunicationPath,
+        .InfrastructureFunction,
+        .InfrastructureService,
+        .Artifact {
+          fill: #cae6b9;
+          stroke: #8ca081;
+        }
+        .technology-box-shade {
+          fill: #b5cea6;
+          stroke: #8ca081;
+        }
+        .technology-group {
+          fill: #e1fee1;
+          stroke: #9db29d;
+        }
+        .technology-group-shade {
+          fill: #cae4ca;
+          stroke: #9db29d;
+        }
+      ]]>
+    </style>
+    <defs>
+      <symbol id="interface-badge" viewBox="0 0 20 15" preserveAspectRatio="xMaxYMin meet">
+        <circle fill="none" r="5" cx="14" cy="6" stroke="black"/>
+        <line fill="none" x1="0" x2="9" y1="5" y2="5" stroke="black"/>
+      </symbol>
+      <symbol id="interaction-badge" viewBox="0 0 20 15" preserveAspectRatio="xMaxYMin meet">
+        <path fill="none" d="M11 1 C8.2386 1 6 3.6863 6 7 C6 10.3137 8.2386 13 11 13 L11 0.5" fill-rule="evenodd" stroke="black"/>
+        <path fill="none" d="M14 13 C17.7614 13 19 10.3137 19 7 C19 3.6863 16.7614 1 14 1 L14 13.5" fill-rule="evenodd" stroke="black"/>
+      </symbol>
+      <symbol id="collaboration-badge" viewBox="0 0 20 15" preserveAspectRatio="xMaxYMin meet">
+        <circle fill="none" r="5" cx="10" cy="6" stroke="black"/>
+        <circle fill="none" r="5" cx="14" cy="6" stroke="black"/>
+      </symbol>
+      <symbol id="function-badge" viewBox="342 105 20 15" preserveAspectRatio="xMaxYMin meet">
+        <polygon fill="none" points=" 350 120 350 111 356 106 362 111 362 120 356 114" stroke="black"/>
+      </symbol>
+      <symbol id="component-knobs" viewbox="0 0 23 44" preserveAspectRatio="xMaxYMin meet">
+        <rect x="1" y="10" width="21" height="13" class="topbox"/>
+        <rect x="1" y="30" width="21" height="13" class="topbox"/>
+      </symbol>
+      <symbol id="actor-badge" viewbox="0 0 20 15" preserveAspectRatio="xMaxYMin meet">
+        <circle fill="none" r="3" cx="15" cy="4" stroke="black"/>
+        <line fill="none" x1="15" x2="15" y1="6" y2="12" stroke="black"/>
+        <line fill="none" x1="15" x2="11" y1="12" y2="17" stroke="black"/>
+        <line fill="none" x1="15" x2="19" y1="12" y2="17" stroke="black"/>
+        <line fill="none" x1="11" x2="19" y1="8" y2="8" stroke="black"/>
+      </symbol>
+      <symbol id="role-badge" viewbox="0 0 20 15" preserveAspectRatio="xMaxYMin meet">
+        <path fill="none" d="M278 18 C275.7909 18 274 19.567 274 21.5 C274 23.433 275.7909 25 278 25 L285 25 M277.5 18 L285 18" stroke="black"/>
+        <circle fill="none" r="3.5" cx="16.5" cy="4" stroke="black"/>
+      </symbol>
+    </defs>
+</svg>

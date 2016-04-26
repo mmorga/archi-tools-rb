@@ -29,6 +29,11 @@ class ArchimateCLI < Thor
   def dupe(archifile)
     Archimate::Duper.new.list_dupes(archifile)
   end
+
+  desc "dedupe ARCHIFILE PRIMARY_ID SECONDARY_ID", "de-duplicate elements in Archi file"
+  def dedupe(archifile, id1, id2)
+    Archimate::Duper.new.merge(archifile, id1, id2)
+  end
 end
 
 ArchimateCLI.start(ARGV)
