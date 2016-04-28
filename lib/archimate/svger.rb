@@ -4,6 +4,11 @@ require 'RMagick'
 module Archimate
   class Svger
     XSI = "http://www.w3.org/2001/XMLSchema-instance".freeze
+    Struct.new("Bounds", :x, :y, :width, :height)
+
+    def initialize
+      reset_min_max
+    end
 
     def text_width(text)
       draw = Magick::Draw.new
@@ -110,8 +115,29 @@ module Archimate
       end
     end
 
+    def reset_min_max
+      @min_x = 0
+      @max_x = 100
+      @min_y = 0
+      @max_y = 100
+    end
+
+    def parse_bounds(bounds_node)
+      b = Hash.new { |h, k| h[k] = 0 }
+      bounds_node.attributes.select { |k, _v| %w(x y width height).include? k }.each_pair { |k, v| b[k] = v.value.to_i }
+      Struct::Bounds.new(b["x"], b["y"], b["width"], b["height"])
+    end
+
+    def compute_drawing_bounds(b)
+      @min_x = b.x if b.x < @min_x
+      @max_x = (b.x + b.width) if (b.x + b.width) > @max_x
+      @min_y = b.y if b.y < @min_y
+      @max_y = b.y + b.height if b.y + b.height > @max_y
+    end
+
     def draw_element(xml, obj, context = nil)
-      bounds = obj.at_css(">bounds")
+      bounds = parse_bounds(obj.at_css(">bounds"))
+      compute_drawing_bounds(bounds)
       element_id = obj.attr("archimateElement") || obj.attr("id")
       element = obj.document.at_css("##{element_id}")
       group_attrs = { id: element_id, class: element_type(element) }
@@ -120,7 +146,7 @@ module Archimate
         draw_element_rect(xml, element, bounds)
         tctx = element_text_bounds(element, bounds)
         y = tctx[:y].to_i
-        x = bounds[:x].to_i + (bounds[:width].to_i / 2)
+        x = bounds.x + (bounds.width / 2)
         content = element.attr("name") || element.at_css("content").text
         fit_text_to_width(content, tctx[:width].to_i).each do |line|
           y += 17
@@ -130,18 +156,52 @@ module Archimate
         end
         obj.css(">child").each { |child| draw_element(xml, child, bounds) }
       end
-      # <sourceConnection xsi:type="archimate:Connection" id="fcaf65b3"
-      # source="d3f3af37" target="f38c4ad9" relationship="e5ceb2c2"/>
-      obj.css(">sourceConnection").each do |src_conn|
-        puts src_conn
+    end
+
+    def pos_element(element)
+      offset = Struct::Bounds.new(0, 0, 0, 0)
+      el = element.parent
+      while raw_bounds = el.at_css(">bounds")
+        bounds = parse_bounds(raw_bounds)
+        offset.x += bounds.x
+        offset.y += bounds.y
+        el = el.parent
+      end
+      offset
+    end
+
+    def line_points_for_bounds(a, b)
+      # look at x & y separately
+      # if a.x_range overlaps b.x_range
+      #   result a&b.x = midpount of a.x_range intersection b.x_range
+      # else if a.x_range < b.x_range
+      #   result a.x = max_x(a.x_range), b.x = min_x(a.x_range)
+      # else inverse
+      # Same for y
+    end
+
+    def draw_connection(xml, obj, _context = nil)
+      obj.css("sourceConnection").each do |src_conn|
+        source = obj.document.at_css("##{src_conn.attr('source')}")
+        source_bounds = parse_bounds(source.at_css(">bounds"))
         target = obj.document.at_css("##{src_conn.attr('target')}")
+        target_bounds = parse_bounds(target.at_css(">bounds"))
+        src_offset = pos_element(source)
+        target_offset = pos_element(target)
+        next if source.ancestors.include?(target)
+        next if target.ancestors.include?(source)
         rel = src_conn.key?("relationship") ? element_type(obj.document.at_css("##{src_conn.attr('relationship')}")) : ""
-        startx = bounds[:x].to_i + (bounds[:width].to_i / 2)
-        starty = bounds[:y].to_i + (bounds[:height].to_i / 2)
-        target_bounds = target.at_css(">bounds")
-        endx = target_bounds[:x].to_i + (target_bounds[:width].to_i / 2)
-        endy = target_bounds[:y].to_i + (target_bounds[:height].to_i / 2)
-        xml.path(d: "M #{startx} #{starty} L #{endx} #{endy}", class: rel)
+        startx = src_offset.x + source_bounds.x + (source_bounds.width / 2)
+        starty = src_offset.y + source_bounds.y + (source_bounds.height / 2)
+        endx = target_offset.x + target_bounds.x + (target_bounds.width / 2)
+        endy = target_offset.y + target_bounds.y + (target_bounds.height / 2)
+        xml.path(d: "M #{startx} #{starty} L #{endx} #{endy}", class: rel) do |path|
+          path.title do |title|
+            source_element = source.key?("archimateElement") ? obj.document.at_css("##{source.attr('archimateElement')}").attr("name") : ""
+            target_element = target.key?("archimateElement") ? obj.document.at_css("##{target.attr('archimateElement')}").attr("name") : ""
+            title.text "#{rel}: #{source_element} to #{target_element}" unless source_element.empty? || target_element.empty?
+          end
+        end
       end
     end
 
@@ -149,8 +209,10 @@ module Archimate
       doc = Nokogiri::XML(File.open(archi_file))
 
       doc.css('element[xsi|type="archimate:ArchimateDiagramModel"]').each do |diagram|
+        reset_min_max
         svg_doc = Nokogiri::XML::Document.parse(File.read(File.join(File.dirname(__FILE__), "svg_template.svg")))
         svg = svg_doc.at_css("svg")
+
         name = diagram.attr("name")
         puts name
         diagram.css(">child").each do |child|
@@ -159,8 +221,24 @@ module Archimate
           end
         end
 
+        diagram.css(">child").each do |child|
+          Nokogiri::XML::Builder.with(svg) do |xml|
+            draw_connection(xml, child)
+          end
+        end
+
+        x = @min_x - 10
+        y = @min_y - 10
+        width = @max_x - @min_x + 10
+        height = @max_y - @min_y + 10
+        svg.set_attribute(:x, x)
+        svg.set_attribute(:y, y)
+        svg.set_attribute(:width, width)
+        svg.set_attribute(:height, height)
+        svg.set_attribute("viewBox", "#{x} #{y} #{width} #{height}")
+
         File.open("generated/#{name}.svg", "wb") do |f|
-          f.write(svg_doc.to_xml)
+          f.write(svg_doc.to_xml(encoding: 'UTF-8', indent: 2))
         end
       end
 
