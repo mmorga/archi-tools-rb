@@ -46,5 +46,10 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 
 * One of two docs is considered the parent - ids will default there
 * First checks for unique ids are made. Re-mapping will be done if necessary. More on remapping rules below.
-* 
-* 
+
+## Other tool ideas
+
+* Tool to convert from archi to archimate open-exchange and vice versa.
+* Tool to query for dependencies
+* Tool to assign/validate/enforce metadata
+
