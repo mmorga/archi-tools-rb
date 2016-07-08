@@ -1,3 +1,5 @@
+require "highline"
+
 module Archimate
   class Duper
     def get_dupe_list
@@ -32,15 +34,35 @@ module Archimate
       puts "Total Possible Duplicates: #{count}"
     end
 
-    # TODO: Ask what to do with dupes: Possibilities: Merge, Rename, Nothing.
-    def ask_to_merge(name)
-      true
+    def merge_duplicates(original_id, dupe_ids)
+      copies_ids = dupe_ids.reject{|id| id == original_id}
+      merge_copies(original_id, copies_ids)
+      remove_copies(copies_ids)
+      update_associations(original_id, copies_ids)
     end
 
+    def display_elements(ids)
+      ids.each_with_index do |id, idx|
+        puts "#{idx}. #{@doc.stringize(@doc.element_by_identifier(id))}\n"
+      end
+    end
     # 1. Determine which one is the *original*
-    def pick_original(element_type, name, ids)
-      # TODO: ask for which one based on folder, comparison, etc
-      ids.first
+    def handle_duplicate(element_type, name, ids)
+      display_elements(ids)
+      @cli.choose do |menu|
+        # TODO: set up a layout that permits showing a repr of the copies
+        # to permit making the choice of the original
+        menu.header = "There are #{ids.size} #{element_type}s with the name #{name}"
+        menu.prompt = "What to do with potential duplicates?"
+        menu.choice(:merge, help: "Merge elements into a single element", text: "Merge elements") {
+          original_id = ids.first # TODO: let the user choose this
+          merge_duplicates(original_id, ids)
+        }
+        # menu.choices(:rename, "Rename to eliminate duplicates", "Rename element(s)") { @cli.say("Not supported yet") }
+        menu.choice(:skip, help: "Don't change the elements", text: "Skip") { @cli.say("Skipping") }
+        menu.select_by = :index_or_name
+        menu.help("Help", "don't panic")
+      end
     end
 
     def merge_into(original, copy)
@@ -51,6 +73,7 @@ module Archimate
         end
       end
     end
+
     # 2. Copy any attributes/docs, etc. from each of the others into the original.
     #     1. Child `label`s with different `xml:lang` attribute values
     #     2. Child `documentation` (and different `xml:lang` attribute values)
@@ -90,6 +113,7 @@ module Archimate
     end
 
     def merge(archi_file)
+      @cli = HighLine.new
       @doc = Document.read(archi_file)
       dupes = get_dupe_list
       if dupes.empty?
@@ -100,12 +124,7 @@ module Archimate
       # TODO: sort keys by layer, then alphabetical, then connections
       dupes.keys.each do |element_type|
         dupes[element_type].keys.sort.each do |name|
-          next unless ask_to_merge(name)
-          original_id = pick_original(element_type, name, dupes[element_type][name])
-          copies_ids = dupes[element_type][name].reject{|id| id == original_id}
-          merge_copies(original_id, copies_ids)
-          remove_copies(copies_ids)
-          update_associations(original_id, copies_ids)
+          handle_duplicate(element_type, name, dupes[element_type][name])
         end
       end
 

@@ -1,9 +1,8 @@
-require "nokogiri"
-
 module Archimate
   class Document
     XPATHS = {
       archimate: {
+        elements: "/xmlns:model/xmlns:elements/xmlns:element",
         element_types: "/xmlns:model/xmlns:elements/xmlns:element/@xsi:type",
         elements_of_type: "/xmlns:model/xmlns:elements/xmlns:element[@xsi:type=\"%s\"]",
         child_labels: "./xmlns:label",
@@ -12,6 +11,7 @@ module Archimate
         identifier: "identifier"
       },
       archi: {
+        elements: "//element",
         element_types: "//element/@xsi:type",
         elements_of_type: "//element[@xsi:type=\"archimate:%s\"]",
         child_labels: "./@name",
@@ -57,6 +57,10 @@ module Archimate
       names
     end
 
+    def elements
+      @doc.xpath(xpath_for(:elements))
+    end
+
     def elements_with_type(element_type)
       @doc.xpath(format(xpath_for(:elements_of_type), element_type))
     end
@@ -79,6 +83,29 @@ module Archimate
         label_el.nil? ? "" : label_el.content.to_s
       elsif @file_type == :archi
         node.key?("name") ? node.attribute("name").value : ""
+      end
+    end
+
+    def element_type(node)
+      el_type = node.attribute("type").to_s
+      if (@file_type) == :archi
+        el_type = el_type.gsub("archimate:", "")
+      end
+      el_type
+    end
+
+    # TODO: Add things like containing Folder, description of children, etc.
+    def stringize(node)
+      "#{element_type(node)} #{element_identifier(node)} #{node.elements.size} children"
+    end
+
+    def layer(node)
+      return nil if node.nil? || node.document?
+      # TODO: test for Archi format and archimate open exchange format
+      if node.name == "folder" && !node["type"].nil?
+        node["type"]
+      else
+        layer(node.parent)
       end
     end
 

@@ -35,6 +35,11 @@ class ArchimateCLI < Thor
   def dedupe(archifile)
     Archimate::Duper.new.merge(archifile)
   end
+
+  desc "quads ARCHIFILE", "Produce a file of Quads to populate a graph database from this model"
+  def quads(archifile)
+    Archimate::Quads.new.from_file(archifile)
+  end
 end
 
 ArchimateCLI.start(ARGV)

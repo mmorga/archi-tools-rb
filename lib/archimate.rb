@@ -5,6 +5,7 @@ require "archimate/merger"
 require "archimate/projector"
 require "archimate/svger"
 require "archimate/duper"
+require "archimate/quads"
 
 module Archimate
   # Your code goes here...
