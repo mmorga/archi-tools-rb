@@ -28,7 +28,6 @@
 
 #   option 2:
 
-#   <0f6c2750> <assigned_from> <1c524402>
 #   <1c524402> <assigned_to> <0f6c2750>
 
 #   option 3: combine both so you get easier queries but retain the ability to
@@ -64,8 +63,6 @@ module Archimate
         [named(el),
           typed(el),
           in_layer(el),
-          targeted_by(el),
-          sourced_by(el),
           relationships(el)
         ]
       end
@@ -87,30 +84,13 @@ module Archimate
       Quad.new(el["id"], "in_layer", layer)
     end
 
-    def targeted_by(el)
-      return nil if el["target"].nil?
-
-      [
-        Quad.new(el["target"], "targeted_by", el["id"]),
-        Quad.new(el["id"], "targets", el["target"])
-      ]
-    end
-
-    def sourced_by(el)
-      return nil if el["source"].nil?
-
-      [
-        Quad.new(el["source"], "sourced_by", el["id"]),
-        Quad.new(el["id"], "sources", el["source"])
-      ]
-    end
-
     def relationships(el)
       return nil if el["source"].nil? || el["target"].nil?
 
       [
         Quad.new(el["source"], predicate(el["xsi:type"]), el["target"]),
-        Quad.new(el["target"], rpredicate(el["xsi:type"]), el["source"])
+        Quad.new(el["id"], "sources", el["source"]),
+        Quad.new(el["id"], "target", el["target"])
       ]
     end
 
@@ -135,14 +115,6 @@ module Archimate
         return ""
       end
       PREDICATES[t][0]
-    end
-
-    def rpredicate(t)
-      if !PREDICATES.include?(t)
-        puts "Unexpected relationship name: '#{t}'"
-        return ""
-      end
-      PREDICATES[t][1]
     end
   end
 end
