@@ -4,13 +4,16 @@ I also have included some Ruby code that plays with the `.archimate` file format
 
 The example scripts are (some are planned):
 
-script        | description
+command        | description
 ------------- | -----------
-`diagrammap`  | Outputs a text table mapping the id based file name of the HTML output from Archi to the diagram names and ArchiMate Viewpoints.
-`projectplan` | Reads in and merges an XML format MS Project Plan with an Archi project file using Work Units and Deliverables to map to the Project.
-`showme`      | Is an experiment to reproduce SVG versions of the diagrams in the ArchiMate file that are semantically meaningful and annotated such that better web user interfaces can be built around the SVG images.
-`zachman`     | Make a Zachman HTML page for the project using annotations on ArchiMate diagrams to indicate where in the Zachman matrix the diagram belongs.
-`merge`       | Merges two `.archimate` files looking for common names to associate common concepts.
+`archimate help [COMMAND]` | Describe available commands or one specific command
+`archimate dedupe ARCHIFILE` | de-duplicate elements in Archi file
+`archimate dupes ARCHIFILE`  | List all duplicate elements in Archi file
+`archimate map ARCHIFILE` | Produce a map of diagram links to a diagram
+`archimate merge ARCHIFILE1 ARCHIFILE2` | Merge two archimate files
+`archimate project ARCHIFILE PROJECTFILE` | Synchronize an Archi file and an MSProject XML file
+`archimate quads ARCHIFILE` | Produce a file of Quads to populate a graph database from this model
+`archimate svg ARCHIFILE` | Produce semantically meaningful SVG files from an Archi file
 
 ## Installation
 
