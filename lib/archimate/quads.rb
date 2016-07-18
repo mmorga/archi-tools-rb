@@ -44,15 +44,19 @@
 module Archimate
   Quad = Struct.new(:subject, :predicate, :object) do
     def fmt_obj
-      if object.include? " "
-        "\"#{object.gsub("\"", "\\\"")}\""
+      if object =~ /[\s\n\r]/
+        "\"#{object.gsub("\"", "\\\"").gsub(/[\n\r]/, "\\n")}\""
       else
         "<#{object}>"
       end
     end
 
+    def fmt_subject
+      "#{subject.gsub(/[\s\n\r]/, "_")}"
+    end
+
     def to_s
-      "<#{subject}> <#{predicate}> #{fmt_obj} ."
+      "<#{fmt_subject}> <#{predicate}> #{fmt_obj} ."
     end
   end
 
@@ -63,7 +67,8 @@ module Archimate
         [named(el),
           typed(el),
           in_layer(el),
-          relationships(el)
+          relationships(el),
+          documentation(el)
         ]
       end
 
@@ -71,26 +76,34 @@ module Archimate
     end
 
     def named(el)
-      el["name"].nil? ? nil : Quad.new(el["id"], "named", el["name"])
+      el["name"].nil? ? nil : make_quad(el["id"], "named", el["name"])
     end
 
     def typed(el)
-      Quad.new(el["id"], "typed", el["xsi:type"])
+      make_quad(el["id"], "typed", el["xsi:type"])
     end
 
     def in_layer(el)
       layer = @doc.layer(el)
       return nil if layer.nil?
-      Quad.new(el["id"], "in_layer", layer)
+      make_quad(el["id"], "in_layer", layer)
+    end
+
+    def documentation(el)
+      docs = []
+      el.css("documentation").each do |doc|
+        docs << make_quad(el["id"], "documentation", doc.text)
+      end
+      docs
     end
 
     def relationships(el)
       return nil if el["source"].nil? || el["target"].nil?
 
       [
-        Quad.new(el["source"], predicate(el["xsi:type"]), el["target"]),
-        Quad.new(el["id"], "sources", el["source"]),
-        Quad.new(el["id"], "target", el["target"])
+        make_quad(el["source"], predicate(el["xsi:type"]), el["target"]),
+        make_quad(el["id"], "sources", el["source"]),
+        make_quad(el["id"], "target", el["target"])
       ]
     end
 
@@ -111,10 +124,16 @@ module Archimate
 
     def predicate(t)
       if !PREDICATES.include?(t)
-        puts "Unexpected relationship name: '#{t}'"
-        return ""
+        raise "Unexpected relationship name: '#{t}'"
       end
       PREDICATES[t][0]
+    end
+
+    def make_quad(subject, predicate, object)
+      if subject.nil? || predicate.nil? || object.nil?
+        raise "Invalid: subject: #{subject.inspect}, predicate: #{predicate.inspect}, object: #{object.inspect}"
+      end
+      Quad.new(subject, predicate, object)
     end
   end
 end
