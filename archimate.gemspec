@@ -38,4 +38,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry", "~> 0.10"
   spec.add_development_dependency "guard", "~> 2.13"
   spec.add_development_dependency "guard-minitest", "~> 2.4"
+  spec.add_development_dependency "ruby-prof", "~> 0.15.9"
 end

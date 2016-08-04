@@ -2,7 +2,10 @@ require "scanf"
 require "nokogiri"
 require "csv"
 
-# TODO: Move this
+# TODO: I'm not sure I like the idea behind this anymore, but not going to remove
+#       it yet.
+
+# TODO: Move String to a utility module
 class String
   def underscore
     gsub(/::/, '/')

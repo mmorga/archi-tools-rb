@@ -100,6 +100,7 @@ module Archimate
     def relationships(el)
       return nil if el["source"].nil? || el["target"].nil?
 
+      # TODO: Add support for properties using a predicate of "has_property:#{propname}"
       [
         make_quad(el["source"], predicate(el["xsi:type"]), el["target"]),
         make_quad(el["id"], "sources", el["source"]),
