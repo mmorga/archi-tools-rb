@@ -1,5 +1,9 @@
 module Archimate
   class Document
+    include Archimate::ErrorHelper
+
+    attr_accessor :doc
+
     XPATHS = {
       archimate: {
         elements: "/xmlns:model/xmlns:elements/xmlns:element",
@@ -19,12 +23,12 @@ module Archimate
         attribute_with_value: "//*[@*=\"%s\"]",
         identifier: "id"
       }
-    }
+    }.freeze
 
     FILE_TYPES = {
       "http://www.archimatetool.com/archimate".freeze => :archi,
       "http://www.opengroup.org/xsd/archimate".freeze => :archimate
-    }
+    }.freeze
 
     def initialize(filename)
       @filename = filename
@@ -33,7 +37,7 @@ module Archimate
     end
 
     def self.read(filename)
-      document = self.new(filename)
+      document = new(filename)
       document.read
       document
     end
@@ -42,7 +46,7 @@ module Archimate
       XPATHS[@file_type][sym]
     end
 
-    def element_type_names()
+    def element_type_names
       names = @doc.xpath(xpath_for(:element_types)).map {|node| node.to_s.gsub("archimate:", "")}.uniq
       if @file_type == :archi
         names = names.reject {|name| %w(AccessRelationship AggregationRelationship
@@ -115,15 +119,37 @@ module Archimate
       end
     end
 
-    def read()
+    def read
       @doc = Nokogiri::XML(File.open(@filename))
       namespace = @doc.root.namespace.href
+      # $stderr.write "Unknown file type: #{namespace} in '#{@filename}'"
       raise "Unknown file type: #{namespace}" unless FILE_TYPES.include? namespace
+
       @file_type = FILE_TYPES[namespace]
       # TODO: disable this - this is for debugging only
-      outfile = "original.xml"
-      File.open(outfile, "w") do |f|
-        f.write(@doc)
+      # outfile = "original.xml"
+      # File.open(outfile, "w") do |f|
+      #   f.write(@doc)
+      # end
+    end
+
+    # opens an output file, passing the io to the given block
+    # if the file exists, and the overwrite answer is yes, then the file
+    # is overwritten and the block is called
+    # if the overwrite answer is no, then the method returns without calling
+    # the block
+    # $stdout is used if output is nil or empty
+    def self.output_io(options, &block)
+      output = options["output"]
+      if output.nil? || output.empty?
+        block.call($stdout)
+      else
+        if !options.key?("force") && File.exist?(output)
+          return unless HighLine.new.agree("File #{output} exists. Overwrite?")
+        end
+        File.open(output, "w") do |f|
+          block.call(f)
+        end
       end
     end
   end

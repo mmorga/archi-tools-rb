@@ -35,9 +35,25 @@ class ArchimateCLI < Thor
     Archimate::Duper.new.merge(archifile)
   end
 
-  desc "quads ARCHIFILE", "Produce a file of Quads to populate a graph database from this model"
-  def quads(archifile)
-    Archimate::Quads.new.from_file(archifile)
+  desc "convert ARCHIFILE", "Convert the incoming file to the desired type"
+  option :to,
+         aliases: :t,\
+         default: Archimate::Convert::SUPPORTED_FORMATS.first,
+         desc: "File type to convert to. Options are: " \
+               "'meff2.1' for Open Group Model Exchange File Format for ArchiMate 2.1 " \
+               "'archi' for Archi http://archimatetool.com/ file format " \
+               "'nquads' for RDF 1.1 N-Quads format https://www.w3.org/TR/n-quads/",
+         enum: Archimate::Convert::SUPPORTED_FORMATS
+  option :output,
+         aliases: :o,
+         desc: "Write output to FILE instead of stdout."
+  option :force,
+         aliases: :f,
+         desc: "Force overwriting of existing output file"
+  def convert(archifile)
+    Archimate::Document.output_io(options) do |output|
+      Archimate::Convert.new.convert(archifile, output, options)
+    end
   end
 end
 

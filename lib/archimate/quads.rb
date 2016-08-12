@@ -61,9 +61,9 @@ module Archimate
   end
 
   class Quads
-    def from_file(archi_file)
-      @doc = Document.read(archi_file)
-      quads = @doc.elements.map do |el|
+    def n_quads(doc)
+      @doc = doc
+      quads = doc.elements.map do |el|
         [named(el),
           typed(el),
           in_layer(el),
@@ -72,7 +72,7 @@ module Archimate
         ]
       end
 
-      puts quads.flatten.compact.uniq.join("\n")
+      quads.flatten.compact.uniq.join("\n")
     end
 
     def named(el)
