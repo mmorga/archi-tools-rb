@@ -7,13 +7,13 @@ The example scripts are (some are planned):
 command        | description
 ------------- | -----------
 `archimate help [COMMAND]` | Describe available commands or one specific command
+`archimate convert ARCHIFILE` | Convert the incoming file to the desired type
 `archimate dedupe ARCHIFILE` | de-duplicate elements in Archi file
 `archimate dupes ARCHIFILE`  | List all duplicate elements in Archi file
-`archimate map ARCHIFILE` | Produce a map of diagram links to a diagram
-`archimate merge ARCHIFILE1 ARCHIFILE2` | Merge two archimate files
-`archimate project ARCHIFILE PROJECTFILE` | Synchronize an Archi file and an MSProject XML file
-`archimate quads ARCHIFILE` | Produce a file of Quads to populate a graph database from this model
-`archimate svg ARCHIFILE` | Produce semantically meaningful SVG files from an Archi file
+`archimate map ARCHIFILE` | *EXPERIMENTAL:* Produce a map of diagram links to a diagram
+`archimate merge ARCHIFILE1 ARCHIFILE2` | *EXPERIMENTAL:*Merge two archimate files
+`archimate project ARCHIFILE PROJECTFILE` | *EXPERIMENTAL:*Synchronize an Archi file and an MSProject XML file
+`archimate svg ARCHIFILE` | *IN DEVELOPMENT:* Produce semantically meaningful SVG files from an Archi file
 
 ## Installation
 
