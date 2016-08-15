@@ -49,6 +49,7 @@ class ArchimateCLI < Thor
          desc: "Write output to FILE instead of stdout."
   option :force,
          aliases: :f,
+         type: :boolean,
          desc: "Force overwriting of existing output file"
   def convert(archifile)
     Archimate::Document.output_io(options) do |output|

@@ -1,19 +1,18 @@
-require 'ox'
+require 'objspace'
 
 module Archimate
   module Conversion
-    def self.meff_from_archi(archidoc, io)
+    def self.meff_from_archi(archidoc)
       model = archidoc.root
-      builder = Ox::Builder.io(io) do |xml|
-        xml.element(
-          "model",
+      builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
+        xml.model(
           "xmlns" => "http://www.opengroup.org/xsd/archimate",
           "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
           "identifier" => "id-#{model['id']}",
           "xsi:schemaLocation" => "http://www.opengroup.org/xsd/archimate " \
             "http://www.opengroup.org/xsd/archimate/archimate_v2p1.xsd"
         ) do
-          xml.element("name", "xml:lang" => "en") { xml.text model["name"] }
+          xml.name("xml:lang" => "en") { xml.text model["name"] }
           documentation(xml, model.at_xpath("purpose"))
           elements(
             xml,
@@ -22,43 +21,40 @@ module Archimate
           )
           relationships(xml, model.xpath("//element[@source]"))
           organization(xml, model.xpath("/*/folder"))
-          xml.element("propertydefs") do
+          xml.propertydefs do
             keys = property_keys(archidoc)
             keys << "JunctionType"
             keys.sort.each do |key|
-              xml.element(
-                "propertydef",
+              xml.propertydef(
                 "identifier" => key == "JunctionType" ? "propid-junctionType" : property_def_id(archidoc, key),
                 "name" => key,
                 "type" => "string"
-              ) {}
+              )
             end
           end
           views(xml, model)
         end
       end
-      builder
+      $stderr.write("Done with builder #{ObjectSpace.memsize_of_all}")
+      builder.doc
     end
 
     def self.documentation(xml, doc)
       unless doc.nil?
         if doc.content.strip.empty?
-          xml.element("documentation", "xml:lang" => "en") {}
+          xml.documentation("xml:lang" => "en")
         else
-          xml.element("documentation", "xml:lang" => "en") { xml.text text_proc(doc.content) }
+          xml.documentation("xml:lang" => "en") { xml.text text_proc(doc.content) }
         end
       end
     end
 
     def self.elements(xml, elements)
-      xml.element("elements") do
+      xml.elements do
         elements.each do |element|
           next if element.attr("xsi:type") == "archimate:SketchModel"
-          xml.element(
-            "element",
-            identifier: "id-#{element['id']}",
-            "xsi:type" => meff_type(element.attr("xsi:type"))
-          ) do
+          xml.element(identifier: "id-#{element['id']}",
+                      "xsi:type" => meff_type(element.attr("xsi:type"))) do
             elementbase(xml, element)
           end
         end
@@ -73,15 +69,14 @@ module Archimate
 
     def self.label(xml, str)
       unless str.nil? || str.strip.empty?
-        xml.element("label", "xml:lang" => "en") { xml.text text_proc(str) }
+        xml.label("xml:lang" => "en") { xml.text text_proc(str) }
       end
     end
 
     def self.relationships(xml, relationships)
-      xml.element("relationships") do
+      xml.relationships do
         relationships.each do |relationship|
-          xml.element(
-            "relationship",
+          xml.relationship(
             identifier: "id-#{relationship['id']}",
             source: "id-#{relationship['source']}",
             target: "id-#{relationship['target']}",
@@ -94,7 +89,7 @@ module Archimate
     end
 
     def self.organization(xml, folders)
-      xml.element("organization") do
+      xml.organization do
         folders(xml, folders)
       end
     end
@@ -106,12 +101,12 @@ module Archimate
       # -%>
       folders.each do |folder|
         next if folder.xpath(".//element").empty?
-        xml.element("item") do
+        xml.item do
           label(xml, folder["name"])
           documentation(xml, folder.at_xpath("documentation"))
           folders(xml, folder.xpath("folder"))
           folder.xpath("element").each do |el|
-            xml.element("item", identifierref: "id-#{el['id']}") {}
+            xml.item(identifierref: "id-#{el['id']}")
           end
         end
       end
@@ -133,24 +128,24 @@ module Archimate
       properties = element.xpath("property")
       if !properties.empty? ||
          %w(archimate:AndJunction archimate:OrJunction).include?(element.attr("xsi:type"))
-        xml.element("properties") do
+        xml.properties do
           properties.each do |property|
             next unless property.has_attribute?("key") && !property["key"].empty?
-            xml.element("property", identifierref: property_def_id(properties.document, property["key"])) do
+            xml.property(identifierref: property_def_id(properties.document, property["key"])) do
               if property["value"].nil? || property["value"].strip.empty?
-                xml.element("value", "xml:lang" => "en") {}
+                xml.value("xml:lang" => "en")
               else
-                xml.element("value", "xml:lang" => "en") { xml.text property["value"].strip }
+                xml.value("xml:lang" => "en") { xml.text property["value"].strip }
               end
             end
           end
           if element.attr("xsi:type") == "archimate:AndJunction"
-            xml.element("property", identifierref: "propid-junctionType") do
-              xml.element("value", "xml:lang" => "en") { xml.text "AND" }
+            xml.property(identifierref: "propid-junctionType") do
+              xml.value("xml:lang" => "en") { xml.text "AND" }
             end
           elsif element.attr("xsi:type") == "archimate:OrJunction"
-            xml.element("property", identifierref: "propid-junctionType") do
-              xml.element("value", "xml:lang" => "en") { xml.text "OR" }
+            xml.property(identifierref: "propid-junctionType") do
+              xml.value("xml:lang" => "en") { xml.text "OR" }
             end
           end
         end
@@ -160,7 +155,7 @@ module Archimate
     # Views is an element of xsi:type ArchimateDiagramModel
     # "//element[@xsi:type='archimate:ArchimateDiagramModel']"
     def self.views(xml, model)
-      xml.element("views") do
+      xml.views do
         model.xpath("//folder[@type='diagrams']").each do |folder|
           view_folder(xml, folder)
         end
@@ -171,7 +166,7 @@ module Archimate
       folder.xpath("element[@xsi:type='archimate:ArchimateDiagramModel']").each do |view|
         # view_elements = model.xpath("//element[@xsi:type='archimate:ArchimateDiagramModel']")
         # view_elements.each do |view|
-        xml.element("view", identifier: "id-#{view['id']}") do
+        xml.view(identifier: "id-#{view['id']}") do
           elementbase(xml, view)
           node(xml, view.xpath("child"))
           source_connection(xml, view.xpath("child"))
@@ -201,13 +196,13 @@ module Archimate
         else
           node_attrs["type"] = "group"
         end
-        xml.element("node", node_attrs) do
+        xml.node(node_attrs) do
           label(xml, node["name"]) if node_attrs["type"] == "group"
           if node.attributes.include?("fillColor")
-            xml.element("style") do
-              xml.element("fillColor", hex_to_rgb(node["fillColor"])) {}
+            xml.style do
+              xml.fillColor(hex_to_rgb(node["fillColor"]))
               # TODO: calculate  relative line color
-              xml.element("lineColor", b: "92", g: "92", r: "92") {}
+              xml.lineColor(b: "92", g: "92", r: "92")
             end
           else
             ref_element = node.at_xpath("//element[@id='#{node['archimateElement']}']/@xsi:type")
@@ -229,61 +224,61 @@ module Archimate
            'archimate:Contract', 'archimate:BusinessService',
            'archimate:Value', 'archimate:Meaning',
            'archimate:Representation', 'archimate:BusinessObject'
-        xml.element("style") do
-          xml.element("fillColor", b: "181", g: "255", r: "255")   {}
-          xml.element("lineColor", b: "92", g: "92", r: "92") {}
+        xml.style do
+          xml.fillColor(b: "181", g: "255", r: "255")
+          xml.lineColor(b: "92", g: "92", r: "92")
         end
       when 'archimate:ApplicationComponent', 'archimate:ApplicationCollaboration',
            'archimate:ApplicationInterface', 'archimate:ApplicationService',
            'archimate:ApplicationFunction', 'archimate:ApplicationInteraction',
            'archimate:DataObject'
-        xml.element("style") do
-          xml.element("fillColor", b: "255", g: "255", r: "181") {}
-          xml.element("lineColor", b: "92", g: "92", r: "92") {}
+        xml.style do
+          xml.fillColor(b: "255", g: "255", r: "181")
+          xml.lineColor(b: "92", g: "92", r: "92")
         end
       when 'archimate:Device', 'archimate:Node', 'archimate:SystemSoftware',
               'archimate:CommunicationPath', 'archimate:Artifact',
               'archimate:Network', 'archimate:InfrastructureInterface',
               'archimate:InfrastructureFunction', 'archimate:InfrastructureService'
-        xml.element("style") do
-          xml.element("fillColor", b: "183", g: "231", r: "201") {}
-          xml.element("lineColor", b: "92", g: "92", r: "92") {}
+        xml.style do
+          xml.fillColor(b: "183", g: "231", r: "201")
+          xml.lineColor(b: "92", g: "92", r: "92")
         end
       when 'archimate:Principle', 'archimate:Goal', 'archimate:Requirement',
           'archimate:Constraint'
-        xml.element("style") do
-          xml.element("fillColor", b: "255", g: "204", r: "204") {}
-          xml.element("lineColor", b: "92", g: "92", r: "92") {}
+        xml.style do
+          xml.fillColor(b: "255", g: "204", r: "204")
+          xml.lineColor(b: "92", g: "92", r: "92")
         end
       when 'archimate:Gap', 'archimate:Plateau'
-        xml.element("style") do
-          xml.element("fillColor", b: "224", g: "255", r: "224") {}
-          xml.element("lineColor", b: "92", g: "92", r: "92") {}
+        xml.style do
+          xml.fillColor(b: "224", g: "255", r: "224")
+          xml.lineColor(b: "92", g: "92", r: "92")
         end
       when 'archimate:Workpackage', 'archimate:Deliverable'
-        xml.element("style") do
-          xml.element("fillColor", b: "224", g: "224", r: "255") {}
-          xml.element("lineColor", b: "92", g: "92", r: "92") {}
+        xml.style do
+          xml.fillColor(b: "224", g: "224", r: "255")
+          xml.lineColor(b: "92", g: "92", r: "92")
         end
       when 'archimate:Stakeholder', 'archimate:Driver', 'archimate:Assessment'
-        xml.element("style") do
-          xml.element("fillColor", b: "255", g: "223", r: "191") {}
-          xml.element("lineColor", b: "92", g: "92", r: "92") {}
+        xml.style do
+          xml.fillColor(b: "255", g: "223", r: "191")
+          xml.lineColor(b: "92", g: "92", r: "92")
         end
       when 'archimate:AndJunction'
-        xml.element("style") do
-          xml.element("fillColor", b: "0", g: "0", r: "0") {}
-          xml.element("lineColor", b: "92", g: "92", r: "92") {}
+        xml.style do
+          xml.fillColor(b: "0", g: "0", r: "0")
+          xml.lineColor(b: "92", g: "92", r: "92")
         end
       when 'archimate:OrJunction'
-        xml.element("style") do
-          xml.element("fillColor", b: "255", g: "255", r: "255") {}
-          xml.element("lineColor", b: "92", g: "92", r: "92") {}
+        xml.style do
+          xml.fillColor(b: "255", g: "255", r: "255")
+          xml.lineColor(b: "92", g: "92", r: "92")
         end
       else
-        xml.element("style") do
-          xml.element("fillColor", b: "192", g: "192", r: "192") {}
-          xml.element("lineColor", b: "92", g: "92", r: "92") {}
+        xml.style do
+          xml.fillColor(b: "192", g: "192", r: "192")
+          xml.lineColor(b: "92", g: "92", r: "92")
         end
       end
     end
@@ -300,19 +295,18 @@ module Archimate
             x_offset += bounds.has_attribute?("x") ? bounds["x"].to_f : 0
             y_offset += bounds.has_attribute?("y") ? bounds["y"].to_f : 0
           end
-          xml.element(
-            "connection",
+          xml.connection(
             identifier: "id-#{sc['id']}",
             relationshipref: "id-#{sc['relationship']}",
             source: "id-#{sc['source']}",
             target: "id-#{sc['target']}"
           ) do
             bendpoint(xml, sc.xpath("bendpoint"), x_offset, y_offset)
-            xml.element("style") do
+            xml.style do
               if sc.has_attribute?("lineColor")
-                xml.element("lineColor", hex_to_rgb(sc["lineColor"])) {}
+                xml.lineColor(hex_to_rgb(sc["lineColor"]))
               else
-                xml.element("lineColor", b: "0", g: "0", r: "0") {}
+                xml.lineColor(b: "0", g: "0", r: "0")
               end
             end
           end
@@ -340,7 +334,7 @@ module Archimate
         x = to_int(bx + x_offset + (bw / 2) + bp["startX"].to_f)
         y = to_int(by + y_offset + (bh / 2) + bp["startY"].to_f)
 
-        xml.element("bendpoint", x: x.to_s, y: y.to_s) {}
+        xml.bendpoint(x: x.to_s, y: y.to_s)
       end
     end
 

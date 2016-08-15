@@ -1,4 +1,4 @@
-require "archimate/conversion/meff_from_archi"
+require "archimate/conversion/archi_to_meff"
 
 module Archimate
   module Conversion
