@@ -47,17 +47,19 @@ module Archimate
     end
 
     def element_type_names
-      names = @doc.xpath(xpath_for(:element_types)).map {|node| node.to_s.gsub("archimate:", "")}.uniq
+      names = @doc.xpath(xpath_for(:element_types)).map { |node| node.to_s.gsub("archimate:", "") }.uniq
       if @file_type == :archi
-        names = names.reject {|name| %w(AccessRelationship AggregationRelationship
-          AssignmentRelationship AssociationRelationship CompositionRelationship
-          FlowRelationship InfluenceRelationship RealisationRelationship
-          SpecialisationRelationship TriggeringRelationship UsedByRelationship
-          ArchimateDiagramModel SketchModel).include?(name)}
+        names = names.reject do |name|
+          %w(AccessRelationship AggregationRelationship
+             AssignmentRelationship AssociationRelationship CompositionRelationship
+             FlowRelationship InfluenceRelationship RealisationRelationship
+             SpecialisationRelationship TriggeringRelationship UsedByRelationship
+             ArchimateDiagramModel SketchModel).include?(name)
+        end
       end
 
       # TODO: Handle renaming Junctions
-      names = names.reject {|name| %w(Junction AndJunction OrJunction).include?(name)}
+      names = names.reject { |name| %w(Junction AndJunction OrJunction).include?(name) }
       names
     end
 
@@ -92,9 +94,7 @@ module Archimate
 
     def element_type(node)
       el_type = node.attribute("type").to_s
-      if (@file_type) == :archi
-        el_type = el_type.gsub("archimate:", "")
-      end
+      el_type = el_type.gsub("archimate:", "") if @file_type == :archi
       el_type
     end
 

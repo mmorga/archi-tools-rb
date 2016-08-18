@@ -56,8 +56,8 @@ module Archimate
       end
 
       def merge(other)
-        @id = other.id unless @id == 0
-        @uid = other.uid unless @uid == 0
+        @id = other.id unless @id.zero?
+        @uid = other.uid unless @uid.zero?
         @archimate_id = other.archimate_id if @archimate_id == "00000000"
         @project_name = other.project_name if @project_name.nil?
         @archimate_name = other.archimate_name if @archimate_name.nil?
@@ -229,8 +229,8 @@ module Archimate
       end
 
       def merge
-        uid_counts = @tasks.reduce(Hash.new { |hash, key| hash[key] = [] }) do |memo, obj|
-          memo[obj.uid] << obj unless obj.uid == 0
+        uid_counts = @tasks.each_with_object(Hash.new { |hash, key| hash[key] = [] }) do |obj, memo|
+          memo[obj.uid] << obj unless obj.uid.zero?
           memo
         end
 

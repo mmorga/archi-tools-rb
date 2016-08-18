@@ -45,14 +45,14 @@ module Archimate
   Quad = Struct.new(:subject, :predicate, :object) do
     def fmt_obj
       if object =~ /[\s\n\r]/
-        "\"#{object.gsub("\"", "\\\"").gsub(/[\n\r]/, "\\n")}\""
+        "\"#{object.gsub('"', '\\"').gsub(/[\n\r]/, '\\n')}\""
       else
         "<#{object}>"
       end
     end
 
     def fmt_subject
-      "#{subject.gsub(/[\s\n\r]/, "_")}"
+      subject.gsub(/[\s\n\r]/, '_').to_s
     end
 
     def to_s
@@ -65,11 +65,10 @@ module Archimate
       @doc = doc
       quads = doc.elements.map do |el|
         [named(el),
-          typed(el),
-          in_layer(el),
-          relationships(el),
-          documentation(el)
-        ]
+         typed(el),
+         in_layer(el),
+         relationships(el),
+         documentation(el)]
       end
 
       quads.flatten.compact.uniq.join("\n")
@@ -121,12 +120,10 @@ module Archimate
       "archimate:GroupingRelationship" => %w(groups grouped_by),
       "archimate:SpecialisationRelationship" => %w(specializes specialized_by),
       "archimate:InfluenceRelationship" => %w(influences influenced)
-    }
+    }.freeze
 
     def predicate(t)
-      if !PREDICATES.include?(t)
-        raise "Unexpected relationship name: '#{t}'"
-      end
+      raise "Unexpected relationship name: '#{t}'" unless PREDICATES.include?(t)
       PREDICATES[t][0]
     end
 

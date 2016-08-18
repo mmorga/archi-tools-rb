@@ -45,7 +45,7 @@ module Archimate
 
     def compute_column_widths(diagrams, headers)
       initial_widths = headers.map(&:size)
-      diagrams.reduce(initial_widths) do |memo, diagram|
+      diagrams.each_with_object(initial_widths) do |diagram, memo|
         diagram.slice(0, headers.size).each_with_index do |o, i|
           memo[i] = !o.nil? && o.uncolorize.size > memo[i] ? o.uncolorize.size : memo[i]
         end
@@ -77,7 +77,7 @@ module Archimate
       header_row(widths, HEADERS)
 
       # Display folders by path in alphabetical order
-      folder_paths = (doc.css('folder[name="Views"] folder') + doc.css('folder[name="Views"]')).inject({}) do |memo, folder|
+      folder_paths = (doc.css('folder[name="Views"] folder') + doc.css('folder[name="Views"]')).each_with_object({}) do |folder, memo|
         memo[full_folder_name(folder)] = folder
         memo
       end

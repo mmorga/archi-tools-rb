@@ -230,7 +230,7 @@ module Archimate
            'archimate:Value', 'archimate:Meaning',
            'archimate:Representation', 'archimate:BusinessObject'
         xml.element("style") do
-          xml.element("fillColor", b: "181", g: "255", r: "255")   {}
+          xml.element("fillColor", b: "181", g: "255", r: "255") {}
           xml.element("lineColor", b: "92", g: "92", r: "92") {}
         end
       when 'archimate:ApplicationComponent', 'archimate:ApplicationCollaboration',

@@ -36,10 +36,10 @@ def pre_process(nodes)
     if a.is_a?(Nokogiri::XML::Element) && b.is_a?(Nokogiri::XML::Element)
       comp_elements(a, b)
     elsif a.attr("id").nil?
-      puts "COMPARE: #{a.class.name} #{a.name} #{a.attributes.keys.sort.join(",")} w/ #{b.class.name} #{b.name} #{b.attributes.keys.sort.join(",")}"
+      puts "COMPARE: #{a.class.name} #{a.name} #{a.attributes.keys.sort.join(',')} w/ #{b.class.name} #{b.name} #{b.attributes.keys.sort.join(',')}"
       1
     elsif b.attr("id").nil?
-      puts "COMPARE: #{a.class.name} #{a.name} #{a.attributes.keys.sort.join(",")} w/ #{b.class.name} #{b.name} #{b.attributes.keys.sort.join(",")}"
+      puts "COMPARE: #{a.class.name} #{a.name} #{a.attributes.keys.sort.join(',')} w/ #{b.class.name} #{b.name} #{b.attributes.keys.sort.join(',')}"
       -1
     else
       a.attr("id") <=> b.attr("id")

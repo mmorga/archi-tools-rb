@@ -6,7 +6,6 @@ module Archimate
     class ArchiToMeff < ::Ox::Sax
       attr_accessor :element_names, :element_sigs, :id_map, :doc
 
-
       def initialize(output_io)
         @line = 0
         @pos = 0

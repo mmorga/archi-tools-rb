@@ -35,7 +35,7 @@ module Archimate
       tech_folder = @doc.at_css("archimate|model > folder[name=\"Technology\"][id=\"6e2ca6a8\"][type=\"technology\"]")
       cool_tech_folder = tech_folder.at_css(">folder[name=\"Cool Tech\"][id=\"64bb82ea\"]")
       refute_nil cool_tech_folder, "Cool Tech Folder expected"
-      assert_equal 3, cool_tech_folder.children.select{|e| e.name == "element"}.size
+      assert_equal 3, cool_tech_folder.children.select { |e| e.name == "element" }.size
       refute_nil cool_tech_folder.at_css(">element[id=\"5152f0ba\"][name=\"Lulz\"][xsi|type=\"archimate:Artifact\"]"), "Expected Lulz Artifact from doc1"
       refute_nil cool_tech_folder.at_css(">element[id=\"3045354e\"][name=\"Tesseract\"][xsi|type=\"archimate:Device\"]"), "Expected Tesseract Device"
       refute_nil cool_tech_folder.at_css(">element[id=\"51675910\"][name=\"The Fridge\"][xsi|type=\"archimate:Node\"]"), "Expected The Fridge Node"
@@ -60,4 +60,3 @@ module Archimate
     end
   end
 end
-

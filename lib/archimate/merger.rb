@@ -47,7 +47,7 @@ module Archimate
     end
 
     def id_hash_for(doc)
-      doc.css("[id]").reduce({}) do |memo, obj|
+      doc.css("[id]").each_with_object({}) do |obj, memo|
         memo[obj["id"]] = obj
         memo
       end

@@ -5,7 +5,7 @@ module Archidiff
       my_diff.diff(local, remote)
     end
 
-    def diff(local, remote)
+    def diff(_local, _remote)
       []
     end
   end

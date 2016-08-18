@@ -69,7 +69,7 @@ module Archimate
     end
 
     # 1. Determine which one is the *original*
-    def handle_duplicate(element_type, name, ids)
+    def handle_duplicate(_element_type, _name, ids)
       display_elements(ids)
       choice = choices
       @mergeall = true if choice == :mergeall
