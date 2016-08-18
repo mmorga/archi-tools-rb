@@ -7,11 +7,11 @@ Gem::Specification.new do |spec|
   spec.name          = "archimate"
   spec.version       = Archimate::VERSION
   spec.authors       = ["Mark Morga"]
-  spec.email         = ["mmorga@rackspace.com"]
+  spec.email         = ["markmorga@gmail.com", "mmorga@rackspace.com"]
 
   spec.summary       = "Archi Tools"
   spec.description   = "A collection of tools for working with ArchiMate files from Archi"
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.homepage      = "http://markmorga.com/archi-tools-rb"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
   # delete this section to allow pushing this gem to any host.
@@ -34,11 +34,15 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "ruby-progressbar", "~>1.8.1"
   spec.add_runtime_dependency "ox", "~> 2.4.3"
 
-  spec.add_development_dependency "bundler", "~> 1.11"
-  spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "bundler", "~> 1.12"
+  spec.add_development_dependency "rake", "~> 11.2.2"
   spec.add_development_dependency "minitest", "~> 5.0"
-  spec.add_development_dependency "pry", "~> 0.10"
-  spec.add_development_dependency "guard", "~> 2.13"
-  spec.add_development_dependency "guard-minitest", "~> 2.4"
+  spec.add_development_dependency "minitest-matchers", "~> 1.4.1"
+  spec.add_development_dependency "minitest-color"
+  spec.add_development_dependency "pry", "~> 0.10.4"
+  spec.add_development_dependency "guard", "~> 2.14.0"
+  spec.add_development_dependency "guard-minitest", "~> 2.4.6"
+  spec.add_development_dependency "guard-bundler", "~> 2.1.0"
+  spec.add_development_dependency "ruby_gntp"
   spec.add_development_dependency "ruby-prof", "~> 0.15.9"
 end

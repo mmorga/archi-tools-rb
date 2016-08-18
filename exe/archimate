@@ -31,8 +31,19 @@ class ArchimateCLI < Thor
   end
 
   desc "dedupe ARCHIFILE", "de-duplicate elements in Archi file"
+  option :mergeall,
+         aliases: :m,\
+         type: :boolean,
+         desc: "Merges all duplicates without asking"
+  option :output,
+         aliases: :o,
+         desc: "Write output to FILE instead of replacing ARCHIFILE."
+  option :force,
+         aliases: :f,
+         type: :boolean,
+         desc: "Force overwriting of existing output file"
   def dedupe(archifile)
-    Archimate::Duper.new.merge(archifile)
+    Archimate::Duper.new.merge({ archifile: archifile, output: archifile }.merge(options))
   end
 
   desc "convert ARCHIFILE", "Convert the incoming file to the desired type"

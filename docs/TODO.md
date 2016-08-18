@@ -7,3 +7,9 @@
   - [X] N-Quad
   - [ ] GraphML
 * [ ] Experiment with Ox, Oga, Sax-Machine for better performance on convert
+
+## Other tool ideas
+
+* Tool to query for dependencies
+* Tool to assign/validate/enforce metadata
+

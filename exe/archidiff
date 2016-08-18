@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby -w
+
+require "rubygems"
+require "archidiff"
+
+Archidiff::Diff.diff(ARGV[0], ARGV[1])
