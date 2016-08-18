@@ -69,7 +69,7 @@ module Archimate
       doc2 = Nokogiri::XML(File.open(file2))
 
       # cids = conflicting_ids(doc1, doc2)
-      outdoc = merge(doc1.root, doc2.root)
+      outdoc = merge(doc1.root, doc2.root).document
       File.open(outfile, "w") do |f|
         f.write(outdoc)
       end

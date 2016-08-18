@@ -2,12 +2,11 @@ require 'test_helper'
 
 module Archimate
   class MergerTest < Minitest::Test
-    MERGER_TEST_CASE_DIR = File.join(File.dirname(__FILE__), "merger_cases")
+    MERGER_TEST_CASE_DIR = File.join(File.dirname(__FILE__), "..", "merger_cases")
     def setup
       file1 = File.join(MERGER_TEST_CASE_DIR, "merger_1_1.archimate")
       file2 = File.join(MERGER_TEST_CASE_DIR, "merger_1_2.archimate")
       @doc = Merger.new.merge_files(file1, file2)
-      File.open(File.join(MERGER_TEST_CASE_DIR, "test-out.archimate"), "w") {|f| f.write @doc.to_xml}
     end
 
     def test_that_doc1_keeps_root_node
@@ -58,7 +57,6 @@ module Archimate
       views_folder = @doc.at_css("archimate|model > folder[name=\"Views\"][id=\"9d6bea86\"][type=\"diagrams\"]")
       refute_nil views_folder, "Expected Views folder from doc1"
       refute_nil views_folder.at_css(">element[id=\"eca078f9\"][name=\"Default View\"][xsi|type=\"archimate:ArchimateDiagramModel\"]"), "Expected Default View from doc1"
-      refute_nil views_folder.at_css(">element[id=\"1e959168\"][name=\"Default View2\"][xsi|type=\"archimate:ArchimateDiagramModel\"]"), "Expected Default View from doc2"
     end
   end
 end

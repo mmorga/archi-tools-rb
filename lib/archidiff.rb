@@ -1,4 +1,3 @@
-require "archidiff/version"
 require "archidiff/diff"
 require "archidiff/change"
 require "archidiff/model"
