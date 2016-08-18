@@ -12,6 +12,10 @@ module Archidiff
       true
     end
 
+    def size
+      @doc_list.size
+    end
+
     def diff(other)
       raise ArgumentError, "Expected DocumentationList" unless other.is_a?(DocumentationList)
       changes = doc_list.each_with_object([]) do |i, a|
