@@ -3,4 +3,4 @@
 require "rubygems"
 require "archimate"
 
-Archimate::Cli::Archimate.start(ARGV)
+Archimate::Cli::Archi.start(ARGV)

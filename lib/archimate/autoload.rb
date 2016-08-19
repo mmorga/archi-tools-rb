@@ -5,6 +5,7 @@ end
 
 module Archimate
   module Cli
+    autoload :Archi, __p('cli/archi')
     autoload :Cleanup, __p('cli/cleanup')
     autoload :Convert, __p('cli/convert')
     autoload :Diff, __p('cli/diff')
