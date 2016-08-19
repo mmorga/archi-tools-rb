@@ -9,6 +9,10 @@ require "archimate/duper"
 require "archimate/quads"
 require "archimate/conversion"
 require "archimate/convert"
+require "archimate/maybe_io"
 
 module Archimate
+  def self.new_xml_doc(xml_str)
+    Nokogiri::XML::Document.new(xml_str)
+  end
 end

@@ -1,0 +1,15 @@
+--charset          utf-8
+--readme           README.md
+--markup           markdown
+--markup-provider  kramdown
+--template-path    yard
+--default-return   ""
+--title            "ArchiTools Documentation"
+--query            'object.type != :classvariable'
+--query            'object.type != :constant || @api && @api.text == "public"'
+--hide-void-return
+--protected
+--no-private
+--no-highlight
+-
+LICENSE

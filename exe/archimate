@@ -30,6 +30,20 @@ class ArchimateCLI < Thor
     Archimate::Duper.new.list_dupes(archifile)
   end
 
+  desc "clean ARCHIFILE", "Clean up unreferenced elements and relations"
+  option :output,
+         aliases: :o,
+         desc: "Write output to FILE instead of replacing ARCHIFILE"
+  option :saveremoved,
+         aliases: :r,
+         desc: "Write removed elements into FILE"
+  def clean(archifile)
+    outfile = options.delete(:output) || archifile
+    Archimate::MaybeIO(options.delete(:saveremoved)) do |removed_element_io|
+      Archimate::Cleanup.new(archifile, outfile, removed_element_io)
+    end
+  end
+
   desc "dedupe ARCHIFILE", "de-duplicate elements in Archi file"
   option :mergeall,
          aliases: :m,\
@@ -37,7 +51,7 @@ class ArchimateCLI < Thor
          desc: "Merges all duplicates without asking"
   option :output,
          aliases: :o,
-         desc: "Write output to FILE instead of replacing ARCHIFILE."
+         desc: "Write output to FILE instead of replacing ARCHIFILE"
   option :force,
          aliases: :f,
          type: :boolean,

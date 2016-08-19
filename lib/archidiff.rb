@@ -1,9 +1,12 @@
-require "archidiff/diff"
 require "archidiff/change"
-require "archidiff/model"
+require "archidiff/diagram"
+require "archidiff/diff"
 require "archidiff/documentation_list"
 require "archidiff/element"
+require "archidiff/folder"
+require "archidiff/model"
 require "archidiff/property_list"
+require "archidiff/relation"
 
 require "nokogiri"
 

@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
+  spec.metadata["yard.run"] = "yri" # use "yard" to build full HTML docs.
 
   spec.add_runtime_dependency "nokogiri", "~> 1.6"
   spec.add_runtime_dependency "colorize", "~> 0.7"
@@ -45,4 +46,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "guard-bundler", "~> 2.1.0"
   spec.add_development_dependency "ruby_gntp"
   spec.add_development_dependency "ruby-prof", "~> 0.15.9"
+  spec.add_development_dependency "simplecov"
+  spec.add_development_dependency "kramdown"
+  spec.add_development_dependency "yard"
 end

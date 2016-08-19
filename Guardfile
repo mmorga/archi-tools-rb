@@ -1,9 +1,7 @@
-# A sample Guardfile
-# More info at https://github.com/guard/guard#readme
-
 ## Uncomment and set this to only include directories you want to watch
 # directories %w(app lib config test spec features) \
 #  .select{|d| Dir.exists?(d) ? d : UI.warning("Directory #{d} does not exist")}
+ENV['TEST_ENV'] = 'guard'
 
 guard :bundler do
   require 'guard/bundler'

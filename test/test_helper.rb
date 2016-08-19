@@ -1,4 +1,13 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
+
+if ENV['TEST_ENV'] != 'guard'
+  require 'simplecov'
+  SimpleCov.start do
+    add_filter "/test/"
+  end
+  puts "required simplecov"
+end
+
 require 'archimate'
 require 'archidiff'
 require 'nokogiri'
