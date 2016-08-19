@@ -1,4 +1,5 @@
 require "archimate/version"
+require "nokogiri"
 
 module Archimate
   # The root path for YARD source libraries

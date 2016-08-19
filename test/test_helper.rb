@@ -6,12 +6,12 @@ if ENV['TEST_ENV'] != 'guard'
   require 'simplecov'
   SimpleCov.start do
     add_filter "/test/"
+    coverage_dir "tmp/coverage"
   end
   puts "required simplecov"
 end
 
 require 'archimate'
-require 'nokogiri'
 
 require 'minitest/autorun'
 require 'minitest/color'
