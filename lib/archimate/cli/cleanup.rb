@@ -44,7 +44,7 @@ module Archimate
         @output = output
         @options = options
         @doc = nil
-        @trash = ArchiMate.new_xml_doc("<deleted></deleted>")
+        @trash = Archimate.new_xml_doc("<deleted></deleted>")
         @model_set = nil
       end
 

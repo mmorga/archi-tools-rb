@@ -37,3 +37,5 @@ module Archimate
   autoload :ErrorHelper, __p('error_helper')
   autoload :MaybeIO, __p('maybe_io')
 end
+
+undef __p

@@ -3,6 +3,15 @@ require "highline"
 module Archimate
   module Cli
     class Duper
+      def initialize(input_doc, output_io, mergeall = false, force = false)
+        @output = output_io
+        @cli = HighLine.new
+        @doc = input_doc
+        @skipall = false
+        @mergeall = mergeall
+        @force = force
+      end
+
       def get_dupe_list
         dupes = Hash.new { |hash, el_type_name| hash[el_type_name] = Hash.new { |hash2, name| hash2[name] = [] } }
         @doc.element_type_names.each do |el_type|
@@ -17,8 +26,7 @@ module Archimate
         dupes
       end
 
-      def list_dupes(archi_file)
-        @doc = Document.read(archi_file)
+      def list_dupes
         dupes = get_dupe_list
 
         count = dupes.reduce(0) do |memo, obj|
@@ -27,11 +35,11 @@ module Archimate
 
         dupes.keys.each do |element_type|
           dupes[element_type].keys.each do |name|
-            puts "The name '#{name}' is used more than once for the type '#{element_type}'. "\
+            @output.puts "The name '#{name}' is used more than once for the type '#{element_type}'. "\
               "Identifiers: #{dupes[element_type][name].inspect}"
           end
         end
-        puts "Total Possible Duplicates: #{count}"
+        @output.puts "Total Possible Duplicates: #{count}"
       end
 
       def merge_duplicates(original_id, dupe_ids)
@@ -47,7 +55,7 @@ module Archimate
         end
       end
 
-      def choices
+      def choices(element_type, name, ids)
         if @mergeall
           :mergeall
         elsif @skipall
@@ -70,9 +78,9 @@ module Archimate
       end
 
       # 1. Determine which one is the *original*
-      def handle_duplicate(_element_type, _name, ids)
+      def handle_duplicate(element_type, name, ids)
         display_elements(ids)
-        choice = choices
+        choice = choices(element_type, name, ids)
         @mergeall = true if choice == :mergeall
 
         case choice
@@ -131,14 +139,7 @@ module Archimate
         end
       end
 
-      def merge(options)
-        @cli = HighLine.new
-        @mergeall = options.fetch(:mergeall, false)
-        if !options.key?("force") && File.exist?(options[:output])
-          return unless HighLine.new.agree("File #{output} exists. Overwrite?")
-        end
-
-        @doc = Document.read(options[:archifile])
+      def merge
         dupes = get_dupe_list
         if dupes.empty?
           puts "No potential duplicates detected"
@@ -152,7 +153,7 @@ module Archimate
           end
         end
 
-        @doc.save_as(options[:output])
+        @output.write(@doc)
       end
     end
   end

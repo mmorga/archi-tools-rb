@@ -139,10 +139,11 @@ module Archimate
     # if the overwrite answer is no, then the method returns without calling
     # the block
     # $stdout is used if output is nil or empty
-    def self.output_io(options, &block)
+    def self.output_io(options, default_io = $stdout, &block)
       output = options["output"]
       if output.nil? || output.empty?
-        block.call($stdout)
+        default_io = File.open(default_io, "w") if default_io.is_a?(String)
+        block.call(default_io)
       else
         if !options.key?("force") && File.exist?(output)
           return unless HighLine.new.agree("File #{output} exists. Overwrite?")

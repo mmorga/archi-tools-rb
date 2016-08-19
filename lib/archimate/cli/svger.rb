@@ -148,7 +148,7 @@ module Archimate
           tctx = element_text_bounds(element, bounds)
           y = tctx[:y].to_i
           x = bounds.x + (bounds.width / 2)
-          content = element.attr("name") || element.at_css("content").text
+          content = element.attr("name") || element.at_css("content").nil? ? "" : element.at_css("content").text
           fit_text_to_width(content, tctx[:width].to_i).each do |line|
             y += 17
             xml.text_(x: x, y: y, "text-anchor" => :middle) do
@@ -238,7 +238,7 @@ module Archimate
           svg.set_attribute(:height, height)
           svg.set_attribute("viewBox", "#{x} #{y} #{width} #{height}")
 
-          File.open("generated/#{name}.svg", "wb") do |f|
+          File.open("tmp/generated/#{name}.svg", "wb") do |f|
             f.write(svg_doc.to_xml(encoding: 'UTF-8', indent: 2))
           end
         end

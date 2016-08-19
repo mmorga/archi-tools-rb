@@ -6,12 +6,10 @@
 /coverage/
 /db/
 /doc/
-/examples/
 /generated/
 /Gemfile.lock
 /pkg/
 /spec/reports/
 /tmp/
 /vendor/
-*.archimate
 .DS_Store

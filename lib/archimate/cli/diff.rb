@@ -50,9 +50,9 @@ module Archimate
           end
         end
 
-        # File.open("MERGED.archimate", "w") do |f|
-        #   f.write(remote)
-        # end
+        File.open("tmp/MERGED.archimate", "w") do |f|
+          f.write(remote)
+        end
         []
       end
     end

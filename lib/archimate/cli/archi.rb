@@ -25,7 +25,9 @@ module Archimate
 
       desc "dupes ARCHIFILE", "List all duplicate elements in Archi file"
       def dupes(archifile)
-        Archimate::Cli::Duper.new.list_dupes(archifile)
+        Archimate::Document.output_io(options) do |output|
+          Archimate::Cli::Duper.new(Document.read(archifile), output).list_dupes
+        end
       end
 
       desc "clean ARCHIFILE", "Clean up unreferenced elements and relations"
@@ -36,15 +38,15 @@ module Archimate
              aliases: :r,
              desc: "Write removed elements into FILE"
       def clean(archifile)
-        outfile = options.delete(:output) || archifile
-        Archimate::MaybeIO(options.delete(:saveremoved)) do |removed_element_io|
+        outfile = options.key?(:output) ? options[:output] : archifile
+        Archimate::MaybeIO.new(options.fetch(:saveremoved, nil)) do |removed_element_io|
           Archimate::Cli::Cleanup.new(archifile, outfile, removed_element_io)
         end
       end
 
       desc "dedupe ARCHIFILE", "de-duplicate elements in Archi file"
       option :mergeall,
-             aliases: :m,\
+             aliases: :m,
              type: :boolean,
              desc: "Merges all duplicates without asking"
       option :output,
@@ -55,12 +57,14 @@ module Archimate
              type: :boolean,
              desc: "Force overwriting of existing output file"
       def dedupe(archifile)
-        Archimate::Cli::Duper.new.merge({ archifile: archifile, output: archifile }.merge(options))
+        Archimate::Document.output_io(options, archifile) do |output|
+          Archimate::Cli::Duper.new(Document.read(archifile), output, options[:mergeall], options[:force]).merge
+        end
       end
 
       desc "convert ARCHIFILE", "Convert the incoming file to the desired type"
       option :to,
-             aliases: :t,\
+             aliases: :t,
              default: Archimate::Cli::Convert::SUPPORTED_FORMATS.first,
              desc: "File type to convert to. Options are: " \
                    "'meff2.1' for Open Group Model Exchange File Format for ArchiMate 2.1 " \
