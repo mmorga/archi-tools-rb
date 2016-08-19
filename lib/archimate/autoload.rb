@@ -15,6 +15,7 @@ module Archimate
     autoload :Merger, __p('cli/merger')
     autoload :Projector, __p('cli/projector')
     autoload :Svger, __p('cli/svger')
+    autoload :XmlTextconv, __p('cli/xml_textconv')
   end
 
   module Conversion

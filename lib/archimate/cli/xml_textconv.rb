@@ -8,15 +8,13 @@ module Archimate
                              implementation_migration connectors relations
                              derived diagrams).freeze
 
-      def initialize(input_file, _output_file = nil)
+      def initialize(input_file, output_file = nil)
         doc = Nokogiri::XML(File.read(input_file))
 
-        output = StringIO.new
-
-        output.puts('<?xml version="1.0" encoding="UTF-8"?>')
-        fmt_node(output, [], doc.root)
-
-        puts output.string
+        Archimate::Document.output_io("output" => output_file) do |output|
+          output.puts('<?xml version="1.0" encoding="UTF-8"?>')
+          fmt_node(output, [], doc.root)
+        end
       end
 
       def indent(depth)

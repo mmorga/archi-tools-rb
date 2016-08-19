@@ -78,12 +78,27 @@ module Archimate
         # TODO: make this actually test something
       end
 
-      def test_convert
+      def test_convert_meff
         Archi.start(
           [
             "convert",
             "-t",
             "meff2.1",
+            File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'),
+            "-o",
+            @test_file,
+            "-f"
+          ]
+        )
+        # TODO: make this actually test something
+      end
+
+      def test_convert_quads
+        Archi.start(
+          [
+            "convert",
+            "-t",
+            "nquads",
             File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'),
             "-o",
             @test_file,

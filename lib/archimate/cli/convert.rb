@@ -22,7 +22,7 @@ module Archimate
         when "nquads"
           doc = Document.read(infile)
           return if doc.nil?
-          output.write(Archimate::Quads.new.n_quads(doc))
+          output.write(Archimate::Conversion::Quads.new.n_quads(doc))
         else
           error "Conversion to '#{to_format}' is not supported yet."
         end
