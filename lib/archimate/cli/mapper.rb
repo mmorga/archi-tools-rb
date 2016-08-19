@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "nokogiri"
 require "colorize"
 
@@ -14,8 +15,8 @@ module Archimate
                     "Migration", "Implementation and Migration"].freeze
 
       HEADERS = %w(id name viewpoint).freeze
-      DIAGRAM_SELECTOR = '[xsi|type="archimate:ArchimateDiagramModel"],[xsi|type="archimate:SketchModel"],[xsi|type="canvas:CanvasModel"]'.freeze
-      COL_DIVIDER = " | ".freeze
+      DIAGRAM_SELECTOR = '[xsi|type="archimate:ArchimateDiagramModel"],[xsi|type="archimate:SketchModel"],[xsi|type="canvas:CanvasModel"]'
+      COL_DIVIDER = " | "
 
       def initialize(doc, output_io)
         @doc = doc

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "archimate/version"
 require "nokogiri"
 
@@ -5,14 +6,14 @@ module Archimate
   # The root path for YARD source libraries
   ROOT = File.expand_path(File.dirname(__FILE__))
 
-  application_folder_xpath = "/archimate:model/folder[@type='application']".freeze
-  business_folder_xpath = "/archimate:model/folder[@type='business']".freeze
-  technology_folder_xpath = "/archimate:model/folder[@type='technology']".freeze
-  motivation_folder_xpath = "/archimate:model/folder[@type='motivation']".freeze
-  implementation_migration_folder_xpath = "/archimate:model/folder[@type='implementation_migration']".freeze
-  connectors_folder_xpath = "/archimate:model/folder[@type='connectors']".freeze
-  relations_folder_xpath = "/archimate:model/folder[@type='relations']".freeze
-  diagrams_folder_xpath = "/archimate:model/folder[@type='diagrams']".freeze
+  application_folder_xpath = "/archimate:model/folder[@type='application']"
+  business_folder_xpath = "/archimate:model/folder[@type='business']"
+  technology_folder_xpath = "/archimate:model/folder[@type='technology']"
+  motivation_folder_xpath = "/archimate:model/folder[@type='motivation']"
+  implementation_migration_folder_xpath = "/archimate:model/folder[@type='implementation_migration']"
+  connectors_folder_xpath = "/archimate:model/folder[@type='connectors']"
+  relations_folder_xpath = "/archimate:model/folder[@type='relations']"
+  diagrams_folder_xpath = "/archimate:model/folder[@type='diagrams']"
 
   ELEMENT_TYPE_TO_PARENT_XPATH = {
     "archimate:BusinessActor" => business_folder_xpath,

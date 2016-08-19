@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # This module takes an ArchiMate model and builds a set of relationship quads
 # for use in RDF or graph databases.
 #

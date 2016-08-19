@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Archimate
   class Document
     include Archimate::ErrorHelper
@@ -26,8 +27,8 @@ module Archimate
     }.freeze
 
     FILE_TYPES = {
-      "http://www.archimatetool.com/archimate".freeze => :archi,
-      "http://www.opengroup.org/xsd/archimate".freeze => :archimate
+      "http://www.archimatetool.com/archimate" => :archi,
+      "http://www.opengroup.org/xsd/archimate" => :archimate
     }.freeze
 
     def initialize(filename)

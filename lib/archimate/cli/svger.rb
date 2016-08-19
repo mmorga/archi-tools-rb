@@ -1,10 +1,11 @@
+# frozen_string_literal: true
 require "nokogiri"
 require 'RMagick'
 
 module Archimate
   module Cli
     class Svger
-      XSI = "http://www.w3.org/2001/XMLSchema-instance".freeze
+      XSI = "http://www.w3.org/2001/XMLSchema-instance"
       Struct.new("Bounds", :x, :y, :width, :height)
 
       def initialize

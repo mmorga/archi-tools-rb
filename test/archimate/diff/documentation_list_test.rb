@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'test_helper'
 
 module Archimate
@@ -11,7 +12,6 @@ module Archimate
           </purpose>
         </archimate:model>
         XML
-                .freeze
 
       ALT_DOCS = <<-XML
         <?xml version="1.0" encoding="UTF-8"?>
@@ -24,7 +24,7 @@ module Archimate
           </purpose>
         </archimate:model>
       XML
-                 .freeze
+
       def test_it_handles_no_results
         doc = Archimate.new_xml_doc
         doc_list = DocumentationList.new(doc.css("documentation"))

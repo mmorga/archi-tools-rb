@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Archimate
   module Diff
     def self.parent_for_node_type(node, doc)
