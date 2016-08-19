@@ -1,6 +1,6 @@
 require 'test_helper'
 
-module Archidiff
+module Archimate::Diff
   class ChangeTest < Minitest::Test
     def test_new
       change = Change.new(:delete, "Something")

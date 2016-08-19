@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby -w
 
 require "rubygems"
-require "archidiff"
+require "archimate"
 
-Archidiff::Diff.diff(ARGV[0], ARGV[1])
+Archidiff::Cli::Diff.diff(ARGV[0], ARGV[1])
