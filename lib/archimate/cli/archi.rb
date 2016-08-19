@@ -4,11 +4,19 @@ module Archimate
 
     class Archi < Thor
       desc "map ARCHIFILE", "EXPERIMENTAL: Produce a map of diagram links to a diagram"
+      option :output,
+             aliases: :o,
+             desc: "Write output to FILE instead of stdout."
       def map(archifile)
-        Archimate::Cli::Mapper.new.map(archifile)
+        Archimate::Document.output_io(options) do |output|
+          Archimate::Cli::Mapper.new(Document.read(archifile).doc, output).map
+        end
       end
 
       desc "merge ARCHIFILE1 ARCHIFILE2", "EXPERIMENTAL: Merge two archimate files"
+      option :output,
+             aliases: :o,
+             desc: "Write output to FILE instead of stdout."
       def merge(archifile1, archifile2)
         Archimate::Cli::Merger.new.merge_files(archifile1, archifile2)
       end

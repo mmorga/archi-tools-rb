@@ -64,7 +64,7 @@ module Archimate
       end
 
       def merge_files(file1, file2)
-        outfile = "merged.archimate"
+        outfile = "tmp/merged.archimate"
 
         doc1 = Nokogiri::XML(File.open(file1))
         doc2 = Nokogiri::XML(File.open(file2))

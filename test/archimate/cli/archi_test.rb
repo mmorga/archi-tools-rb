@@ -6,10 +6,23 @@ module Archimate
     class ArchiTest < Minitest::Test
       def setup
         @archi = Archi.new
+        @test_file = File.join(TEST_OUTPUT_FOLDER, "test.archimate")
+        FileUtils.rm(@test_file) if File.exist?(@test_file)
+      end
+
+      def teardown
+        FileUtils.rm(@test_file) if File.exist?(@test_file)
       end
 
       def test_map
-        Archi.start(["map", File.join(TEST_EXAMPLES_FOLDER, 'base.archimate')])
+        Archi.start(
+          [
+            "map",
+            File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'),
+            "-o",
+            @test_file
+          ]
+        )
         # TODO: make this actually test something
       end
 
@@ -20,7 +33,7 @@ module Archimate
             File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'),
             File.join(TEST_EXAMPLES_FOLDER, 'merger_1_1.archimate'),
             "-o",
-            File.join(TEST_OUTPUT_FOLDER, "test_merge.archimate")
+            @test_file
           ]
         )
         # TODO: make this actually test something
@@ -42,7 +55,7 @@ module Archimate
             "clean",
             File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'),
             "-o",
-            File.join(TEST_OUTPUT_FOLDER, "test_dedupe.archimate"),
+            @test_file,
             "-r",
             File.join(TEST_OUTPUT_FOLDER, "test_clean_removed.xml")
           ]
@@ -56,8 +69,23 @@ module Archimate
             "dedupe",
             File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'),
             "-o",
-            File.join(TEST_OUTPUT_FOLDER, "test_clean.archimate"),
+            @test_file,
             "-m",
+            "-f"
+          ]
+        )
+        # TODO: make this actually test something
+      end
+
+      def test_convert
+        Archi.start(
+          [
+            "convert",
+            "-t",
+            "meff2.1",
+            File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'),
+            "-o",
+            @test_file,
             "-f"
           ]
         )

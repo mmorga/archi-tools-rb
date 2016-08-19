@@ -17,11 +17,16 @@ module Archimate
       DIAGRAM_SELECTOR = '[xsi|type="archimate:ArchimateDiagramModel"],[xsi|type="archimate:SketchModel"],[xsi|type="canvas:CanvasModel"]'.freeze
       COL_DIVIDER = " | ".freeze
 
+      def initialize(doc, output_io)
+        @doc = doc
+        @output = output_io
+      end
+
       def header_row(widths, headers)
         titles = []
         widths.each_with_index { |w, i| titles << "%-#{w}s" % headers[i] }
-        puts titles.map { |t| t.capitalize.colorize(mode: :bold, color: :blue) }.join(COL_DIVIDER.light_black)
-        puts widths.map { |w| "-" * w }.join("-+-").light_black
+        @output.puts titles.map { |t| t.capitalize.colorize(mode: :bold, color: :blue) }.join(COL_DIVIDER.light_black)
+        @output.puts widths.map { |w| "-" * w }.join("-+-").light_black
       end
 
       def process_diagrams(raw_diagrams)
@@ -58,7 +63,7 @@ module Archimate
         diagrams.sort { |a, b| a[1] <=> b[1] }.each do |m|
           row = []
           m.slice(0, widths.size).each_with_index { |c, i| row << "%-#{widths[i]}s" % c }
-          puts row.join(COL_DIVIDER.light_black)
+          @output.puts row.join(COL_DIVIDER.light_black)
         end
       end
 
@@ -66,29 +71,27 @@ module Archimate
         (folder.ancestors.map { |e| e.attr("name") }.compact.reverse << folder.attr("name")).join("/")
       end
 
-      def map(archi_file)
-        doc = Nokogiri::XML(File.open(archi_file))
-
+      def map
         # <element xsi:type="archimate:ArchimateDiagramModel" id="d615e713" name="Rapid Provisioning Integration" viewpoint="3">
 
-        diagrams = process_diagrams(doc.css(DIAGRAM_SELECTOR))
+        diagrams = process_diagrams(@doc.css(DIAGRAM_SELECTOR))
 
         widths = compute_column_widths(diagrams, HEADERS)
 
         header_row(widths, HEADERS)
 
         # Display folders by path in alphabetical order
-        folder_paths = (doc.css('folder[name="Views"] folder') + doc.css('folder[name="Views"]')).each_with_object({}) do |folder, memo|
+        folder_paths = (@doc.css('folder[name="Views"] folder') + @doc.css('folder[name="Views"]')).each_with_object({}) do |folder, memo|
           memo[full_folder_name(folder)] = folder
           memo
         end
 
         folder_paths.keys.sort.each do |folder_name|
-          puts ("%-#{widths.inject(COL_DIVIDER.size * (HEADERS.size - 1), &:+)}s" % folder_name).colorize(mode: :bold, color: :green, background: :light_black)
+          @output.puts ("%-#{widths.inject(COL_DIVIDER.size * (HEADERS.size - 1), &:+)}s" % folder_name).colorize(mode: :bold, color: :green, background: :light_black)
           output_diagrams(process_diagrams(folder_paths[folder_name].css(">" + DIAGRAM_SELECTOR)), widths)
         end
 
-        puts "\n#{diagrams.size} Diagrams"
+        @output.puts "\n#{diagrams.size} Diagrams"
       end
     end
   end
