@@ -3,31 +3,12 @@
 # The point of this script is to identify elements that aren't a part of any
 # relationship and not referenced on any diagrams.
 
-require "nokogiri"
 require "ruby-progressbar"
 require "set"
 
 module Archimate
   module Cli
     class Cleanup
-      FOLDER_XPATHS = [
-        "folder[type=\"business\"]",
-        "folder[type=\"application\"]",
-        "folder[type=\"technology\"]",
-        "folder[type=\"motivation\"]",
-        "folder[type=\"implementation_migration\"]",
-        "folder[type=\"connectors\"]"
-      ].freeze
-
-      RELATION_XPATHS = [
-        "folder[type=\"relations\"]",
-        "folder[type=\"derived\"]"
-      ].freeze
-
-      DIAGRAM_XPATHS = [
-        "folder[type=\"diagrams\"]"
-      ].freeze
-
       TEXT_SUBSTITUTIONS = [
         ['&#13;', '&#xD;'],
         ['"', '&quot;'],
@@ -48,62 +29,15 @@ module Archimate
         @model_set = nil
       end
 
+      # TODO: consider refactoring this so the document comes in to the ctor
       def doc
         @doc ||= Document.read(infile)
-      end
-
-      def elements
-        @elements ||= report_size("Evaluating %s elements", doc.css(FOLDER_XPATHS.join(",")).css('element[id]'))
-      end
-
-      def model_set
-        @model_set ||= report_size(
-          "Found %s model items",
-          Set.new(elements.each_with_object([]) { |i, a| a << i.attr("id") })
-        )
-      end
-
-      def diagrams_folder
-        @diagrams_folder ||= doc.css(DIAGRAM_XPATHS.join(","))
-      end
-
-      def relations_folders
-        @relations_folder ||= doc.css(RELATION_XPATHS.join(","))
-      end
-
-      def ref_set
-        @ref_set ||= report_size(
-          "Found references to %s items",
-          Set.new(
-            relations_folders.css("element[source],element[target]").each_with_object(
-              diagrams_folder.css("[archimateElement]").each_with_object([]) { |i, a| a << i.attr("archimateElement") }
-            ) { |i, a| a << i.attr("source") << i.attr("target") }
-          )
-        )
-      end
-
-      def relation_ids
-        @relation_ids ||= Set.new(relations_folders.css("element[id]").each_with_object([]) { |i, a| a << i.attr("id") })
-      end
-
-      def relation_ref_ids
-        @relation_ref_ids ||= Set.new(
-          diagrams_folder.css("[relationship]").each_with_object([]) { |i, a| a << i.attr("relationship") }
-        )
-      end
-
-      def unref_set
-        @unref_set ||= model_set - ref_set
-      end
-
-      def unrefed_ids
-        @unrefed_ids ||= unref_set + (relation_ids - relation_ref_ids)
       end
 
       def progressbar
         @progressbar ||= ProgressBar.create(
           title: "Elements",
-          total: unrefed_ids.size,
+          total: @doc.unrefed_ids.size,
           format: "%t %a %e %b\u{15E7}%i %p%%",
           progress_mark: ' ',
           remainder_mark: "\u{FF65}"
@@ -123,8 +57,8 @@ module Archimate
       end
 
       def remove_unreferenced_nodes
-        unrefed_ids.each do |id|
-          ns = doc.css("##{id}")
+        @doc.unrefed_ids.each do |id|
+          ns = @doc.element_by_identifier(id)
           puts "Found duplicate ids: #{ns}" if ns.size > 1
           trash.root.add_child ns[0].dup
           prev_sib = ns[0].previous_sibling
@@ -147,12 +81,6 @@ module Archimate
         output.write(process_text(doc.to_s))
         remove_unreferenced_nodes
         write_trash
-      end
-
-      def report_size(str, collection)
-        # TODO: convert to error_helper module
-        puts format(str, collection.size)
-        collection
       end
     end
   end

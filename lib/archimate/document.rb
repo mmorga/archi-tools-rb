@@ -31,6 +31,14 @@ module Archimate
       "http://www.opengroup.org/xsd/archimate" => :archimate
     }.freeze
 
+    def self.parent_for_node_type(node, doc)
+      doc.at_xpath(ELEMENT_TYPE_TO_PARENT_XPATH[node["xsi:type"]])
+    end
+
+    def self.add_node_to_doc(node, doc)
+      parent_for_node_type(node, doc) << node
+    end
+
     def initialize(filename)
       @filename = filename
       @doc = nil
@@ -41,6 +49,10 @@ module Archimate
       document = new(filename)
       document.read
       document
+    end
+
+    def identifier
+      @doc.root["id"]
     end
 
     def xpath_for(sym)
@@ -99,6 +111,58 @@ module Archimate
       el_type
     end
 
+    def model_elements
+      @model_elements ||= Archimate.report_size("Evaluating %s elements", @doc.css(Archimate::Conversion::ArchiFileFormat::FOLDER_XPATHS.join(",")).css('element[id]'))
+    end
+
+    def model_set
+      @model_set ||= report_size(
+        "Found %s model items",
+        Set.new(model_elements.each_with_object([]) { |i, a| a << i.attr("id") })
+      )
+    end
+
+    def diagrams_folder
+      @diagrams_folder ||= doc.css(DIAGRAM_XPATHS.join(","))
+    end
+
+    def relation_ref_ids
+      @relation_ref_ids ||= Set.new(
+        diagrams_folder.css("[relationship]").each_with_object([]) { |i, a| a << i.attr("relationship") }
+      )
+    end
+
+    def relations_folders
+      @relations_folder ||= doc.css(Conversion::ArchiFileFormat::RELATION_XPATHS.join(","))
+    end
+
+    def relation_ids
+      @relation_ids ||= Set.new(relations_folders.css("element[id]").each_with_object([]) { |i, a| a << i.attr("id") })
+    end
+
+    def relationships
+      relations_folders.css("element")
+    end
+
+    def ref_set
+      @ref_set ||= report_size(
+        "Found references to %s items",
+        Set.new(
+          relations_folders.css("element[source],element[target]").each_with_object(
+            diagrams_folder.css("[archimateElement]").each_with_object([]) { |i, a| a << i.attr("archimateElement") }
+          ) { |i, a| a << i.attr("source") << i.attr("target") }
+        )
+      )
+    end
+
+    def unref_set
+      @unref_set ||= model_set - ref_set
+    end
+
+    def unrefed_ids
+      @unrefed_ids ||= unref_set + (relation_ids - relation_ref_ids)
+    end
+
     # TODO: Add things like containing Folder, description of children, etc.
     def stringize(node)
       "#{element_type(node)} #{element_identifier(node)} #{node.elements.size} children"
@@ -112,6 +176,10 @@ module Archimate
       else
         layer(node.parent)
       end
+    end
+
+    def model
+      @model ||= Model::Model.new(doc.root)
     end
 
     def save_as(filename)

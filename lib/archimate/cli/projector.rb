@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 require "scanf"
-require "nokogiri"
 require "csv"
 
 # TODO: I'm not sure I like the idea behind this anymore, but not going to remove

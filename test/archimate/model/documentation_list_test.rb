@@ -2,7 +2,7 @@
 require 'test_helper'
 
 module Archimate
-  module Diff
+  module Model
     class DocumentationListTest < Minitest::Test
       PURPOSE = <<-XML
         <?xml version="1.0" encoding="UTF-8"?>
@@ -60,9 +60,9 @@ module Archimate
         doc_list2 = DocumentationList.new(Archimate.parse_xml(ALT_DOCS).css("purpose"))
 
         changes = doc_list1.diff(doc_list2)
-        assert_equal Change.new(:delete, "I have no real purpose"), changes[0]
-        assert_equal Change.new(:insert, "I have a small purpose"), changes[1]
-        assert_equal Change.new(:insert, "I have a different purpose"), changes[2]
+        assert_equal Archimate::Diff::Change.new(:delete, "I have no real purpose"), changes[0]
+        assert_equal Archimate::Diff::Change.new(:insert, "I have a small purpose"), changes[1]
+        assert_equal Archimate::Diff::Change.new(:insert, "I have a different purpose"), changes[2]
         assert_equal 3, changes.size
       end
     end

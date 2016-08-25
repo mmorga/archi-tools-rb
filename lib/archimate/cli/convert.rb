@@ -4,7 +4,7 @@ module Archimate
     class Convert
       include Archimate::ErrorHelper
 
-      SUPPORTED_FORMATS = %w(meff2.1 archi nquads).freeze
+      SUPPORTED_FORMATS = %w(meff2.1 archi nquads graphml).freeze
 
       def convert(infile, output, options)
         return unless output
@@ -23,6 +23,10 @@ module Archimate
           doc = Document.read(infile)
           return if doc.nil?
           output.write(Archimate::Conversion::Quads.new.n_quads(doc))
+        when "graphml"
+          model = Archimate::ArchiFileReader.read(infile)
+          return if model.nil?
+          output.write(Archimate::Conversion::GraphML.new.graph_ml(model))
         else
           error "Conversion to '#{to_format}' is not supported yet."
         end

@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require "nokogiri"
 require 'RMagick'
 
 module Archimate

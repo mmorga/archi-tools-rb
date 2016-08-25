@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 module Archimate
-  module Diff
+  module Model
     class DocumentationList
       attr_reader :doc_list
 
@@ -21,10 +21,10 @@ module Archimate
       def diff(other)
         raise ArgumentError, "Expected DocumentationList" unless other.is_a?(DocumentationList)
         changes = doc_list.each_with_object([]) do |i, a|
-          a << Change.new(:delete, i) unless other.doc_list.include?(i)
+          a << Archimate::Diff::Change.new(:delete, i) unless other.doc_list.include?(i)
         end
         other.doc_list.each_with_object(changes) do |i, a|
-          a << Change.new(:insert, i) unless doc_list.include?(i)
+          a << Archimate::Diff::Change.new(:insert, i) unless doc_list.include?(i)
         end
       end
     end

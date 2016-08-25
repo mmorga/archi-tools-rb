@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 module Archimate
-  module Diff
+  module Model
     class PropertyList
       attr_reader :properties
 

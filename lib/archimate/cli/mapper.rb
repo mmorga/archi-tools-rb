@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require "nokogiri"
 require "colorize"
 
 module Archimate
@@ -82,6 +81,7 @@ module Archimate
         header_row(widths, HEADERS)
 
         # Display folders by path in alphabetical order
+        # TODO: same css query in here twice - What was intention?
         folder_paths = (@doc.css('folder[name="Views"] folder') + @doc.css('folder[name="Views"]')).each_with_object({}) do |folder, memo|
           memo[full_folder_name(folder)] = folder
           memo

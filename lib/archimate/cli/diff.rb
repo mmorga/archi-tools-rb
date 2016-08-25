@@ -2,9 +2,19 @@
 module Archimate
   module Cli
     class Diff
-      def self.diff(local, remote)
-        my_diff = Diff.new
-        my_diff.diff(local, remote)
+      attr_reader :local, :remote
+
+      def self.diff(local_file, remote_file)
+        local = Document.read(local_file)
+        remote = Document.read(remote_file)
+
+        my_diff = Diff.new(local, remote)
+        my_diff.diff
+      end
+
+      def initialize(local, remote)
+        @local = local
+        @remote = remote
       end
 
       # Going to treat remote as gospel and add in diffs from local
@@ -33,24 +43,22 @@ module Archimate
       #   - @name
       #   - documentation
       #   - property
-      def diff(local_file, remote_file)
-        remote = Nokogiri::XML(File.open(remote_file))
-        local = Nokogiri::XML(File.open(local_file))
-
-        local.xpath("//element").each do |local_node|
-          remote_node = remote.at_css("[id='#{local_node['id']}']")
+      def diff
+        local.model_elements.each do |local_node|
+          remote_node = remote.element_by_identifier(local_node['id'])
           # puts "#{local_node} not in remote" if remote_node.nil?
           if remote_node.nil?
             add_node_to_doc(local_node, remote)
           else
-            local_el = Archimate::Diff::Element.new(local_node)
-            remote_el = Archimate::Diff::Element.new(remote_node)
+            local_el = Archimate::Model::Element.new(local_node)
+            remote_el = Archimate::Model::Element.new(remote_node)
             if local_el != remote_el
               puts "Elements differ:\nlocal: #{local_node}\nremote: #{remote_node}\n\n"
             end
           end
         end
 
+        # TODO: remove this - it's for debug purposes only
         File.open("tmp/MERGED.archimate", "w") do |f|
           f.write(remote)
         end
