@@ -24,3 +24,8 @@ guard :minitest do
 end
 
 notification :gntp
+
+guard 'ctags-bundler', src_path: %w(lib test), stdlib: true do
+  watch(%r{^(lib|test)/.*\.rb$})
+  watch('Gemfile.lock')
+end

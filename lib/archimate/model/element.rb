@@ -15,8 +15,8 @@ module Archimate
       end
 
       def ==(other)
-        @id == other.id &&
-          @name == other.name &&
+        @identifier == other.identifier &&
+          @label == other.label &&
           @type == other.type &&
           @documentation == other.documentation &&
           @properties == other.properties

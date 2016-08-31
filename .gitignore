@@ -13,3 +13,7 @@
 /tmp/
 /vendor/
 .DS_Store
+*.tags
+tags
+.srclib-cache/
+*.sublime-*

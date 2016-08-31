@@ -44,14 +44,15 @@ module Archimate
       #   - documentation
       #   - property
       def diff
+        archi_file_reader = Archimate::ArchiFileReader.new
         local.model_elements.each do |local_node|
           remote_node = remote.element_by_identifier(local_node['id'])
           # puts "#{local_node} not in remote" if remote_node.nil?
           if remote_node.nil?
             add_node_to_doc(local_node, remote)
           else
-            local_el = Archimate::Model::Element.new(local_node)
-            remote_el = Archimate::Model::Element.new(remote_node)
+            local_el = archi_file_reader.parse_element(local_node)
+            remote_el = archi_file_reader.parse_element(remote_node)
             if local_el != remote_el
               puts "Elements differ:\nlocal: #{local_node}\nremote: #{remote_node}\n\n"
             end

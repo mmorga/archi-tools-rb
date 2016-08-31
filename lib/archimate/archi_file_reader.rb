@@ -33,14 +33,18 @@ module Archimate
 
     def parse_elements(model)
       model.css(Conversion::ArchiFileFormat::FOLDER_XPATHS.join(",")).css('element[id]').each_with_object({}) do |i, a|
-        a[i["id"]] = Model::Element.new(
-          i["id"],
-          i["name"],
-          i["xsi:type"].sub("archimate:", ""),
-          parse_documentation(i),
-          parse_properties(i)
-        )
+        a[i["id"]] = parse_element(i)
       end
+    end
+
+    def parse_element(node)
+      Model::Element.new(
+        node["id"],
+        node["name"],
+        node["xsi:type"].sub("archimate:", ""),
+        parse_documentation(node),
+        parse_properties(node)
+      )
     end
 
     # TODO: implement me
