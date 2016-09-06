@@ -6,6 +6,12 @@ module Archimate
 
       SUPPORTED_FORMATS = %w(meff2.1 archi nquads graphml).freeze
 
+      def initialize(options = {})
+        opts = { verbose: false, output_io: $stdout }.merge(options)
+        @verbose = opts[:verbose]
+        @msgDe = opts[:output_io]
+      end
+
       def convert(infile, output, options)
         return unless output
 
@@ -14,7 +20,7 @@ module Archimate
           File.open(infile) do |f|
             parser = Archimate::Conversion::ArchiToMeff.new(output)
             Ox.sax_parse(parser, f)
-            puts "Done parsing: elements with id count: #{parser.id_map.keys.size}"
+            @msg_output.puts "Done parsing: elements with id count: #{parser.id_map.keys.size}" if @verbose
             # output.write Ox.dump(parser.doc)
             parser.doc.close
           end

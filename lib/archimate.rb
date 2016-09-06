@@ -18,10 +18,4 @@ module Archimate
   def self.parse_xml(xml_str)
     Nokogiri::XML(xml_str)
   end
-
-  def self.report_size(str, collection)
-    # TODO: convert to error_helper module
-    puts format(str, collection.size)
-    collection
-  end
 end

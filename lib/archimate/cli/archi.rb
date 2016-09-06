@@ -33,6 +33,13 @@ module Archimate
       end
 
       desc "dupes ARCHIFILE", "List all duplicate elements in Archi file"
+      option :output,
+             aliases: :o,
+             desc: "Write output to FILE instead of STDOUT"
+      option :force,
+             aliases: :f,
+             type: :boolean,
+             desc: "Force overwriting of existing output file"
       def dupes(archifile)
         Archimate::Document.output_io(options) do |output|
           Archimate::Cli::Duper.new(Document.read(archifile), output).list_dupes

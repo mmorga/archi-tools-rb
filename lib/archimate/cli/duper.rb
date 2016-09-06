@@ -143,7 +143,7 @@ module Archimate
       def merge
         dupes = get_dupe_list
         if dupes.empty?
-          puts "No potential duplicates detected"
+          @output.puts "No potential duplicates detected"
           return
         end
 

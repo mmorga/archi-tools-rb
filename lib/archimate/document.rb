@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require "highline"
+
 module Archimate
   class Document
     include Archimate::ErrorHelper
@@ -39,10 +41,14 @@ module Archimate
       parent_for_node_type(node, doc) << node
     end
 
-    def initialize(filename)
+    def initialize(filename, options = {})
+      opts = { verbose: false, output_io: $stdout }.merge(options)
       @filename = filename
       @doc = nil
       @file_type = nil
+
+      @output = opts[:output_io]
+      @verbose = opts[:verbose]
     end
 
     def self.read(filename)
@@ -112,7 +118,7 @@ module Archimate
     end
 
     def model_elements
-      @model_elements ||= Archimate.report_size("Evaluating %s elements", @doc.css(Archimate::Conversion::ArchiFileFormat::FOLDER_XPATHS.join(",")).css('element[id]'))
+      @model_elements ||= report_size("Evaluating %s elements", @doc.css(Archimate::Conversion::ArchiFileFormat::FOLDER_XPATHS.join(",")).css('element[id]'))
     end
 
     def model_set
@@ -221,6 +227,12 @@ module Archimate
           block.call(f)
         end
       end
+    end
+
+    def report_size(str, collection)
+      # TODO: convert to error_helper module
+      @output.puts format(str, collection.size) if @verbose
+      collection
     end
   end
 end

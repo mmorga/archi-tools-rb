@@ -215,7 +215,7 @@ module Archimate
           svg = svg_doc.at_css("svg")
 
           name = diagram.attr("name")
-          puts name
+          # TODO: use output message helper puts name
           diagram.css(">child").each do |child|
             Nokogiri::XML::Builder.with(svg) do |xml|
               draw_element(xml, child)
@@ -243,7 +243,7 @@ module Archimate
           end
         end
 
-        puts "\n\n"
+        # puts "\n\n"
         $todos.keys.sort.each { |el| puts "#{el}: #{$todos[el]}" }
       end
     end

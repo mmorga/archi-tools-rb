@@ -46,7 +46,7 @@ module Archimate
       end
 
       def test_dupes
-        Archi.start(["dupes", File.join(TEST_EXAMPLES_FOLDER, 'base.archimate')])
+        Archi.start(["dupes", "--output", "/dev/null", "--force", File.join(TEST_EXAMPLES_FOLDER, 'base.archimate')])
         # TODO: make this actually test something
       end
 

@@ -46,7 +46,7 @@ module Archimate
   module Conversion
     Quad = Struct.new(:subject, :predicate, :object) do
       def fmt_obj
-        if object =~ /[\s\n\r]/
+        if object =~ /\s/
           "\"#{object.gsub('"', '\\"').gsub(/[\n\r]/, '\\n')}\""
         else
           "<#{object}>"
@@ -54,7 +54,7 @@ module Archimate
       end
 
       def fmt_subject
-        subject.gsub(/[\s\n\r]/, '_').to_s
+        subject.gsub(/\s/, '_').to_s
       end
 
       def to_s
