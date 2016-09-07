@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-require "highline"
-
 module Archimate
   class Document
     include Archimate::ErrorHelper
@@ -206,27 +204,6 @@ module Archimate
       # File.open(outfile, "w") do |f|
       #   f.write(@doc)
       # end
-    end
-
-    # opens an output file, passing the io to the given block
-    # if the file exists, and the overwrite answer is yes, then the file
-    # is overwritten and the block is called
-    # if the overwrite answer is no, then the method returns without calling
-    # the block
-    # $stdout is used if output is nil or empty
-    def self.output_io(options, default_io = $stdout, &block)
-      output = options["output"]
-      if output.nil? || output.empty?
-        default_io = File.open(default_io, "w") if default_io.is_a?(String)
-        block.call(default_io)
-      else
-        if !options.key?("force") && File.exist?(output)
-          return unless HighLine.new.agree("File #{output} exists. Overwrite?")
-        end
-        File.open(output, "w") do |f|
-          block.call(f)
-        end
-      end
     end
 
     def report_size(str, collection)

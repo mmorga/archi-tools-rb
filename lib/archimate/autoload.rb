@@ -45,6 +45,7 @@ module Archimate
   autoload :Document, __p('document')
   autoload :ErrorHelper, __p('error_helper')
   autoload :MaybeIO, __p('maybe_io')
+  autoload :OutputIO, __p('output_io')
 end
 
 undef __p

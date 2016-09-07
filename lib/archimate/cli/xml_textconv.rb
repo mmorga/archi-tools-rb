@@ -11,7 +11,7 @@ module Archimate
       def initialize(input_file, output_file = nil)
         doc = Nokogiri::XML(File.read(input_file))
 
-        Archimate::Document.output_io("output" => output_file) do |output|
+        Archimate::OutputIO.new("output" => output_file) do |output|
           output.puts('<?xml version="1.0" encoding="UTF-8"?>')
           fmt_node(output, [], doc.root)
         end

@@ -9,7 +9,7 @@ module Archimate
              aliases: :o,
              desc: "Write output to FILE instead of stdout."
       def map(archifile)
-        Archimate::Document.output_io(options) do |output|
+        Archimate::OutputIO.new(options) do |output|
           Archimate::Cli::Mapper.new(Document.read(archifile).doc, output).map
         end
       end
@@ -41,7 +41,7 @@ module Archimate
              type: :boolean,
              desc: "Force overwriting of existing output file"
       def dupes(archifile)
-        Archimate::Document.output_io(options) do |output|
+        Archimate::OutputIO.new(options) do |output|
           Archimate::Cli::Duper.new(Document.read(archifile), output).list_dupes
         end
       end
@@ -73,7 +73,7 @@ module Archimate
              type: :boolean,
              desc: "Force overwriting of existing output file"
       def dedupe(archifile)
-        Archimate::Document.output_io(options, archifile) do |output|
+        Archimate::OutputIO.new(options, archifile) do |output|
           Archimate::Cli::Duper.new(Document.read(archifile), output, options[:mergeall], options[:force]).merge
         end
       end
@@ -95,7 +95,7 @@ module Archimate
              type: :boolean,
              desc: "Force overwriting of existing output file"
       def convert(archifile)
-        Archimate::Document.output_io(options) do |output|
+        Archimate::OutputIO.new(options) do |output|
           Archimate::Cli::Convert.new.convert(archifile, output, options)
         end
       end

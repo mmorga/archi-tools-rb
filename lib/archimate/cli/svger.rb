@@ -4,11 +4,23 @@ require 'RMagick'
 module Archimate
   module Cli
     class Svger
-      XSI = "http://www.w3.org/2001/XMLSchema-instance"
+      attr_reader :todos
+
+      XSI = "http://www.w3.org/2001/XMLSchema-instance".freeze
+
+      BADGES = {
+        "ApplicationInterface" => "#interface-badge",
+        "ApplicationInteraction" => "#interaction-badge",
+        "ApplicationCollaboration" => "#collaboration-badge",
+        "ApplicationFunction" => "#function-badge",
+        "BusinessActor" => "#actor-badge"
+      }.freeze
+
       Struct.new("Bounds", :x, :y, :width, :height)
 
       def initialize
         reset_min_max
+        @todos = Hash.new(0)
       end
 
       def text_width(text)
@@ -41,16 +53,6 @@ module Archimate
       def element_type(el)
         el.attribute_with_ns("type", XSI).value[10..-1]
       end
-
-      $todos = Hash.new(0)
-
-      BADGES = {
-        "ApplicationInterface" => "#interface-badge",
-        "ApplicationInteraction" => "#interaction-badge",
-        "ApplicationCollaboration" => "#collaboration-badge",
-        "ApplicationFunction" => "#function-badge",
-        "BusinessActor" => "#actor-badge"
-      }.freeze
 
       def draw_element_rect(xml, element, ctx)
         x = ctx["x"].to_i + ctx["width"].to_i - 25
@@ -244,7 +246,7 @@ module Archimate
         end
 
         # puts "\n\n"
-        $todos.keys.sort.each { |el| puts "#{el}: #{$todos[el]}" }
+        todos.keys.sort.each { |el| puts "#{el}: #{todos[el]}" }
       end
     end
   end
