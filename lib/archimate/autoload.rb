@@ -27,7 +27,9 @@ module Archimate
   end
 
   module Diff
-    autoload :Change, __p('diff/change')
+    autoload :Difference, __p('diff/difference')
+    autoload :ModelDiff, __p('diff/model_diff')
+    autoload :StringDiff, __p('diff/string_diff')
   end
 
   module Model

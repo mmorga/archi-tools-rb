@@ -47,7 +47,6 @@ module Archimate
         archi_file_reader = Archimate::ArchiFileReader.new
         local.model_elements.each do |local_node|
           remote_node = remote.element_by_identifier(local_node['id'])
-          # puts "#{local_node} not in remote" if remote_node.nil?
           if remote_node.nil?
             add_node_to_doc(local_node, remote)
           else
@@ -57,11 +56,6 @@ module Archimate
               puts "Elements differ:\nlocal: #{local_node}\nremote: #{remote_node}\n\n"
             end
           end
-        end
-
-        # TODO: remove this - it's for debug purposes only
-        File.open("tmp/MERGED.archimate", "w") do |f|
-          f.write(remote)
         end
         []
       end

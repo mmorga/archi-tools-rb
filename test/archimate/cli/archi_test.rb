@@ -15,6 +15,7 @@ module Archimate
         FileUtils.rm(@test_file) if File.exist?(@test_file)
       end
 
+      # TODO: make this actually test something
       def test_map
         Archi.start(
           [
@@ -24,9 +25,9 @@ module Archimate
             @test_file
           ]
         )
-        # TODO: make this actually test something
       end
 
+      # TODO: make this actually test something
       def test_merge
         Archi.start(
           [
@@ -37,19 +38,19 @@ module Archimate
             @test_file
           ]
         )
-        # TODO: make this actually test something
       end
 
+      # TODO: make this actually test something
       def test_svg
         Archi.start(["svg", File.join(TEST_EXAMPLES_FOLDER, 'base.archimate')])
-        # TODO: make this actually test something
       end
 
+      # TODO: make this actually test something
       def test_dupes
-        Archi.start(["dupes", "--output", "/dev/null", "--force", File.join(TEST_EXAMPLES_FOLDER, 'base.archimate')])
-        # TODO: make this actually test something
+        Archi.start(%w(dupes --output /dev/null --force) << File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'))
       end
 
+      # TODO: make this actually test something
       def test_clean
         Archi.start(
           [
@@ -61,9 +62,9 @@ module Archimate
             File.join(TEST_OUTPUT_FOLDER, "test_clean_removed.xml")
           ]
         )
-        # TODO: make this actually test something
       end
 
+      # TODO: make this actually test something
       def test_dedupe
         Archi.start(
           [
@@ -75,9 +76,9 @@ module Archimate
             "-f"
           ]
         )
-        # TODO: make this actually test something
       end
 
+      # TODO: make this actually test something
       def test_convert_meff
         Archi.start(
           [
@@ -90,9 +91,9 @@ module Archimate
             "-f"
           ]
         )
-        # TODO: make this actually test something
       end
 
+      # TODO: make this actually test something
       def test_convert_quads
         Archi.start(
           [
@@ -105,7 +106,6 @@ module Archimate
             "-f"
           ]
         )
-        # TODO: make this actually test something
       end
     end
   end
