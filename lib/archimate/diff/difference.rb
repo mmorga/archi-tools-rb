@@ -23,19 +23,23 @@ module Archimate
       end
 
       def self.delete(from, entity = nil, parent = nil, index = nil)
-        new(:delete, entity) do |d|
+        del = new(:delete, entity) do |d|
           d.parent = parent
           d.from = from
           d.index = index
         end
+        yield del if block_given?
+        del
       end
 
       def self.insert(to, entity = nil, parent = nil, index = nil)
-        new(:insert, entity) do |d|
+        ins = new(:insert, entity) do |d|
           d.parent = parent
           d.to = to
           d.index = index
         end
+        yield ins if block_given?
+        ins
       end
 
       def initialize(kind, entity, parent = nil, from = nil, to = nil, index = nil)

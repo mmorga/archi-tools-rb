@@ -51,4 +51,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "kramdown"
   spec.add_development_dependency "yard"
   spec.add_development_dependency "guard-ctags-bundler"
+  spec.add_development_dependency "factory_girl", "~> 4.7.0"
+  spec.add_development_dependency "faker", "~> 1.6.6"
 end

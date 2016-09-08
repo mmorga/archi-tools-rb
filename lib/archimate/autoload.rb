@@ -30,6 +30,7 @@ module Archimate
     autoload :Difference, __p('diff/difference')
     autoload :ModelDiff, __p('diff/model_diff')
     autoload :StringDiff, __p('diff/string_diff')
+    autoload :UnorderedListDiff, __p('diff/unordered_list_diff')
   end
 
   module Model

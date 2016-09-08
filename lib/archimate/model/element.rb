@@ -2,16 +2,17 @@
 module Archimate
   module Model
     class Element
-      attr_reader :identifier, :type, :label, :documentation, :properties
+      attr_accessor :identifier, :type, :label, :documentation, :properties
 
       alias name label
 
-      def initialize(identifier, label, type, documentation = [], properties = [])
+      def initialize(identifier = "", label = "", type = "", documentation = [], properties = [])
         @identifier = identifier
         @label = label
         @type = type
         @documentation = documentation
         @properties = properties
+        yield self if block_given?
       end
 
       def ==(other)

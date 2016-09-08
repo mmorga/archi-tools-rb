@@ -10,6 +10,18 @@ module Archimate
         assert_equal "Something", change.from
       end
 
+      def test_delete
+        d = Difference.delete("from_val", :model)
+        assert_equal :model, d.entity
+        assert_equal "from_val", d.from
+      end
+
+      def test_insert
+        d = Difference.insert("to_val", :model)
+        assert_equal :model, d.entity
+        assert_equal "to_val", d.to
+      end
+
       def test_context
         d = Difference.context(:model, "123")
         assert_equal :model, d.entity
