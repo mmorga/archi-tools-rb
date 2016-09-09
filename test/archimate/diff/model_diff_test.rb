@@ -10,21 +10,22 @@ module Archimate
       def test_equivalent
         model1 = Archimate::ArchiFileReader.read(BASE)
         model2 = Archimate::ArchiFileReader.read(BASE)
-        model_diffs = ModelDiff.new(model1, model2).diffs
+        ctx = Context.new(model1, model2)
+        model_diffs = ModelDiff.new.diffs(ctx)
         assert_empty model_diffs
       end
 
       def test_diff_model_name
         model1 = Archimate::Model::Model.new("123", "base")
         model2 = Archimate::Model::Model.new("123", "change")
-        model_diffs = ModelDiff.new(model1, model2).diffs
+        model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal [Difference.change("Model<123>/name", "base", "change")], model_diffs
       end
 
       def test_diff_model_id
         model1 = Archimate::Model::Model.new("123", "base")
         model2 = Archimate::Model::Model.new("321", "base")
-        model_diffs = ModelDiff.new(model1, model2).diffs
+        model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal [Difference.change("Model<123>/id", "123", "321")], model_diffs
       end
 
@@ -35,11 +36,11 @@ module Archimate
         model2 = Archimate::Model::Model.new("123", "base") do |m|
           m.documentation = %w(documentation2)
         end
-        model_diffs = ModelDiff.new(model1, model2).diffs
+        model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal(
           [
-            Difference.delete(0, "documentation1") { |d| d.entity = "Model<123>/documentation/0" },
-            Difference.insert(1, "documentation2") { |d| d.entity = "Model<123>/documentation/0" }
+            Difference.delete("Model<123>/documentation/[0]", "documentation1"),
+            Difference.insert("Model<123>/documentation/[0]", "documentation2")
           ], model_diffs
         )
       end
@@ -53,7 +54,7 @@ module Archimate
         model2 = Archimate::Model::Model.new("123", "base") do |m|
           m.elements = element_hash
         end
-        model_diffs = ModelDiff.new(model1, model2).diffs
+        model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_empty(model_diffs)
       end
 
@@ -68,7 +69,7 @@ module Archimate
         model2 = Archimate::Model::Model.new("123", "base") do |m|
           m.elements = element_hash
         end
-        model_diffs = ModelDiff.new(model1, model2).diffs
+        model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal(
           [
             Difference.insert("Model<123>/elements/#{ins_el.identifier}", ins_el)

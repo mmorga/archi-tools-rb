@@ -2,13 +2,15 @@
 module Archimate
   module Diff
     class UnorderedListDiff
-      def diffs(l1, l2)
+      def diffs(ctx)
+        l1 = ctx.model1
+        l2 = ctx.model2
         diff_list = []
         l1.each_with_index do |item, idx|
-          diff_list << Archimate::Diff::Difference.delete(idx, item) unless l2.include?(item)
+          diff_list << Difference.delete(idx, item) unless l2.include?(item)
         end
         l2.each_with_index do |item, idx|
-          diff_list << Archimate::Diff::Difference.insert(idx, item) { |d| d.entity = idx } unless l1.include?(item)
+          diff_list << Difference.insert(idx, item) { |d| d.entity = idx } unless l1.include?(item)
         end
         diff_list
       end

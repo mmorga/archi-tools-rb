@@ -9,19 +9,23 @@ module Archimate
       end
 
       def test_equivalent
-        assert_empty @string_diff.diffs("hello", "hello")
+        ctx = Context.new("hello", "hello")
+        assert_empty @string_diff.diffs(ctx)
       end
 
       def test_insert
-        assert_equal [Difference.insert(nil, "hello")], @string_diff.diffs(nil, "hello")
+        ctx = Context.new(nil, "hello")
+        assert_equal [Difference.insert("", "hello")], @string_diff.diffs(ctx)
       end
 
       def test_delete
-        assert_equal [Difference.delete(nil, "hello")], @string_diff.diffs("hello", nil)
+        ctx = Context.new("hello", nil)
+        assert_equal [Difference.delete("", "hello")], @string_diff.diffs(ctx)
       end
 
       def test_change
-        assert_equal [Difference.change(nil, "base", "change")], @string_diff.diffs("base", "change")
+        ctx = Context.new("base", "change", "test")
+        assert_equal [Difference.change("test", "base", "change")], @string_diff.diffs(ctx)
       end
     end
   end
