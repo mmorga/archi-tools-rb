@@ -23,12 +23,16 @@ module Archimate
           @properties == other.properties
       end
 
-      def to_s
+      def description
         "#{type}<#{identifier}> #{label} docs[#{documentation.size}] props[#{properties.size}]"
       end
 
       def short_desc
         "#{type}<#{identifier}> #{label}"
+      end
+
+      def to_s
+        "#{type}<#{identifier}>"
       end
 
       def layer

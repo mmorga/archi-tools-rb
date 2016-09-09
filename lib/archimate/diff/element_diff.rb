@@ -2,24 +2,18 @@
 module Archimate
   module Diff
     class ElementDiff
-      attr_reader :element1, :element2
-
-      def initialize(element1, element2)
-        @element1 = element1
-        @element2 = element2
-      end
-
-      # :identifier, :type, :label, :documentation, :properties
-      def diffs
+      def diffs(element1, element2)
+        @string_diff ||= StringDiff.new
+        @ul_diff ||= UnorderedListDiff.new
         diffs = []
-        diffs << Difference.context(:identifier, :element).apply(StringDiff.new(element1.identifier, element2.identifier).diffs)
-        diffs << Difference.context(:type, :element).apply(StringDiff.new(element1.type, element2.type).diffs)
-        diffs << Difference.context(:label, :element).apply(StringDiff.new(element1.label, element2.label).diffs)
-        diffs << Difference.context(:documentation, :element).apply(
-          UnorderedListDiff.new(element1.documentation, element2.documentation).diffs
+        diffs << Difference.context(:identifier).apply(@string_diff.diffs(element1.identifier, element2.identifier))
+        diffs << Difference.context(:type).apply(@string_diff.diffs(element1.type, element2.type))
+        diffs << Difference.context(:label).apply(@string_diff.diffs(element1.label, element2.label))
+        diffs << Difference.context(:documentation).apply(
+          @ul_diff.diffs(element1.documentation, element2.documentation)
         )
-        diffs << Difference.context(:properties, :element).apply(
-          UnorderedListDiff.new(element1.properties, element2.properties).diffs
+        diffs << Difference.context(:properties).apply(
+          @ul_diff.diffs(element1.properties, element2.properties)
         )
         diffs.flatten
       end

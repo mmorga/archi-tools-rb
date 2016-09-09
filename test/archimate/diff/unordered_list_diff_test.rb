@@ -4,31 +4,33 @@ require 'test_helper'
 module Archimate
   module Diff
     class UnorderedListDiffTest < Minitest::Test
+      def setup
+        @ul_diff = UnorderedListDiff.new
+      end
+
       def test_empty
-        assert_empty UnorderedListDiff.new([], []).diffs
+        assert_empty @ul_diff.diffs([], [])
       end
 
       def test_addition
-        diffs = UnorderedListDiff.new([], ["hello"]).diffs
-        assert_equal 1, diffs.size
-        assert_equal Difference.insert("hello", nil, nil, 0), diffs.first
+        assert_equal [Difference.insert(0, "hello")], @ul_diff.diffs([], ["hello"])
       end
 
       def test_deletion
-        diffs = UnorderedListDiff.new(["hello"], []).diffs
+        diffs = @ul_diff.diffs(["hello"], [])
         assert_equal 1, diffs.size
-        assert_equal Difference.delete("hello", nil, nil, 0), diffs.first
+        assert_equal Difference.delete(0, "hello"), diffs.first
       end
 
       def test_complex
-        diffs = UnorderedListDiff.new(%w(hello and goodbye), %w(goodbye for now)).diffs
+        diffs = @ul_diff.diffs(%w(hello and goodbye), %w(goodbye for now))
         assert_equal 4, diffs.size
         assert_equal(
           [
-            Difference.delete("hello", nil, nil, 0),
-            Difference.delete("and", nil, nil, 1),
-            Difference.insert("for", nil, nil, 1),
-            Difference.insert("now", nil, nil, 2)
+            Difference.delete(0, "hello"),
+            Difference.delete(1, "and"),
+            Difference.insert(1, "for"),
+            Difference.insert(2, "now")
           ], diffs
         )
       end

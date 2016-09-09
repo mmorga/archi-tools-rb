@@ -9,7 +9,22 @@ module Archimate
         @model2 = model2
       end
 
+      def context
+        @context ||= Context.new(@model1, @model2)
+      end
+
       def diffs
+        context.diffs do |c|
+          c.in(StringDiff.new, :id)
+          c.in(StringDiff.new, :name)
+          c.in(UnorderedListDiff.new, :documentation)
+          c.in(UnorderedListDiff.new, :properties)
+          c.in(IdHashDiff.new(ElementDiff), :elements)
+          c.in(IdHashDiff.new(RelationshipDiff), :relationships)
+        end
+      end
+
+      def original_diffs
         diffs = []
         diffs << Difference.context(:id, :model).apply(StringDiff.new(model1.id, model2.id).diffs)
         diffs << Difference.context(:name, :model).apply(StringDiff.new(model1.name, model2.name).diffs)

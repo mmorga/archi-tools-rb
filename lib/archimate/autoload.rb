@@ -27,6 +27,7 @@ module Archimate
   end
 
   module Diff
+    autoload :Context, __p('diff/context')
     autoload :Difference, __p('diff/difference')
     autoload :ElementDiff, __p('diff/element_diff')
     autoload :IdHashDiff, __p('diff/id_hash_diff')
@@ -38,7 +39,6 @@ module Archimate
 
   module Model
     autoload :Diagram, __p('model/diagram')
-    autoload :DocumentationList, __p('model/documentation_list')
     autoload :Element, __p('model/element')
     autoload :Folder, __p('model/folder')
     autoload :Model, __p('model/model')

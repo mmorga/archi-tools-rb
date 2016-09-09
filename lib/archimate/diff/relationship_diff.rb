@@ -2,15 +2,7 @@
 module Archimate
   module Diff
     class RelationshipDiff
-      attr_reader :relationship1, :relationship2
-
-      def initialize(relationship1, relationship2)
-        @relationship1 = relationship1
-        @relationship2 = relationship2
-      end
-
-      # :id, :name, :type, :parent_xpath, :documentation, :properties, :source, :target
-      def diffs
+      def diffs(relationship1, relationship2)
         diffs = []
         diffs << Difference.context(:id, :relationship).apply(StringDiff.new(relationship1.id, relationship2.id).diffs)
         diffs << Difference.context(:type, :relationship).apply(StringDiff.new(relationship1.type, relationship2.type).diffs)

@@ -4,7 +4,7 @@ module Archimate
     class Model
       attr_accessor :id, :name, :documentation, :properties, :elements, :organization, :relationships
 
-      def initialize(id, name, documentation = [], properties = [], elements = {}, organization = [], relationships = [])
+      def initialize(id = nil, name = nil, documentation = [], properties = [], elements = {}, organization = [], relationships = [])
         @id = id
         @name = name
         @documentation = documentation
