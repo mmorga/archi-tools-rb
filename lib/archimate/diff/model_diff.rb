@@ -19,6 +19,9 @@ module Archimate
         diffs << Difference.context(:elements, :model).apply(
           IdHashDiff.new(model1.elements, model2.elements).diffs
         )
+        diffs << Difference.context(:relationships, :model).apply(
+          IdHashDiff.new(model1.relationships, model2.relationships).diffs
+        )
         diffs.flatten
       end
     end
