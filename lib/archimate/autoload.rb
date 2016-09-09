@@ -28,6 +28,7 @@ module Archimate
 
   module Diff
     autoload :Difference, __p('diff/difference')
+    autoload :IdHashDiff, __p('diff/id_hash_diff')
     autoload :ModelDiff, __p('diff/model_diff')
     autoload :StringDiff, __p('diff/string_diff')
     autoload :UnorderedListDiff, __p('diff/unordered_list_diff')

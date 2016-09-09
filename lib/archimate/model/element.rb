@@ -23,6 +23,10 @@ module Archimate
           @properties == other.properties
       end
 
+      def to_s
+        "Element<#{identifier}> #{type}: #{label} docs[#{documentation.size}] props[#{properties.size}]"
+      end
+
       def layer
         case @type
         when "archimate:BusinessActor", "archimate:BusinessCollaboration",

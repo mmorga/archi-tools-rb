@@ -6,7 +6,7 @@ module Archimate
     class Svger
       attr_reader :todos
 
-      XSI = "http://www.w3.org/2001/XMLSchema-instance".freeze
+      XSI = "http://www.w3.org/2001/XMLSchema-instance"
 
       BADGES = {
         "ApplicationInterface" => "#interface-badge",

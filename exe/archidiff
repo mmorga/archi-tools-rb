@@ -4,4 +4,4 @@
 require "rubygems"
 require "archimate"
 
-Archidiff::Cli::Diff.diff(ARGV[0], ARGV[1])
+Archimate::Cli::Diff.diff(ARGV[0], ARGV[1])

@@ -5,8 +5,8 @@ module Archimate
       attr_reader :local, :remote
 
       def self.diff(local_file, remote_file)
-        local = Document.read(local_file)
-        remote = Document.read(remote_file)
+        local = Archimate::ArchiFileReader.read(local_file)
+        remote = Archimate::ArchiFileReader.read(remote_file)
 
         my_diff = Diff.new(local, remote)
         my_diff.diff
@@ -43,7 +43,8 @@ module Archimate
       #   - @name
       #   - documentation
       #   - property
-      def diff
+      # TODO: migrate this to ModelDiff
+      def diff_obsolete
         archi_file_reader = Archimate::ArchiFileReader.new
         local.model_elements.each do |local_node|
           remote_node = remote.element_by_identifier(local_node['id'])
@@ -58,6 +59,14 @@ module Archimate
           end
         end
         []
+      end
+
+      def diff
+        diffs = Archimate::Diff::ModelDiff.new(local, remote).diffs
+
+        diffs.each { |d| puts d }
+
+        puts "\n\n#{diffs.size} Differences"
       end
     end
   end

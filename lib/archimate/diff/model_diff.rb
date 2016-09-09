@@ -17,7 +17,7 @@ module Archimate
           UnorderedListDiff.new(model1.documentation, model2.documentation).diffs
         )
         diffs << Difference.context(:elements, :model).apply(
-          UnorderedListDiff.new(model1.elements.values, model2.elements.values).diffs
+          IdHashDiff.new(model1.elements, model2.elements).diffs
         )
         diffs.flatten
       end

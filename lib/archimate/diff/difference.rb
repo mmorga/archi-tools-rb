@@ -42,6 +42,17 @@ module Archimate
         ins
       end
 
+      def self.change(from, to, entity = nil, parent = nil, index = nil)
+        diff = new(:change, entity) do |d|
+          d.parent = parent
+          d.from = from
+          d.to = to
+          d.index = index
+        end
+        yield diff if block_given?
+        diff
+      end
+
       def initialize(kind, entity, parent = nil, from = nil, to = nil, index = nil)
         @kind = kind
         @entity = entity
@@ -69,6 +80,38 @@ module Archimate
           @from == other.from &&
           @to == other.to &&
           @index == other.index
+      end
+
+      def to_s
+        "#{fmt_kind}: #{parent} > #{entity_str}: #{diff_description}"
+      end
+
+      def fmt_kind
+        case kind
+        when :delete
+          HighLine.color("DELETE", :red)
+        when :insert
+          HighLine.color("INSERT", :green)
+        else
+          HighLine.color("CHANGE", :yellow)
+        end
+      end
+
+      def entity_str
+        s = entity.to_s
+        s += "[#{index}]" unless index.nil?
+        s
+      end
+
+      def diff_description
+        case kind
+        when :delete
+          from
+        when :insert
+          to
+        else
+          "#{from} -> #{to}"
+        end
       end
     end
   end
