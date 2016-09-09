@@ -24,7 +24,11 @@ module Archimate
       end
 
       def to_s
-        "Element<#{identifier}> #{type}: #{label} docs[#{documentation.size}] props[#{properties.size}]"
+        "#{type}<#{identifier}> #{label} docs[#{documentation.size}] props[#{properties.size}]"
+      end
+
+      def short_desc
+        "#{type}<#{identifier}> #{label}"
       end
 
       def layer

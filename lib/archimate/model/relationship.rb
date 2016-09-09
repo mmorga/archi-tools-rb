@@ -15,6 +15,10 @@ module Archimate
         @parent_xpath = Archimate::Conversion::ArchiFileFormat::ELEMENT_TYPE_TO_PARENT_XPATH[@type]
       end
 
+      def to_s
+        "#{type}<#{id}> #{name} #{source}->#{target} docs[#{documentation.size}] props[#{properties.size}]"
+      end
+
       def ==(other)
         @id == other.id &&
           @name == other.name &&
