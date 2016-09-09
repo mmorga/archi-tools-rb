@@ -68,7 +68,7 @@ module Archimate
       end
 
       def to_s
-        "#{fmt_kind}#{entity}#{diff_description}"
+        "#{fmt_kind}#{entity}: #{diff_description}"
       end
 
       def fmt_kind
@@ -85,9 +85,9 @@ module Archimate
       def diff_description
         case kind
         when :delete
-          ""
+          from.to_s
         when :insert
-          ""
+          to.to_s
         else
           ": #{from} -> #{to}"
         end

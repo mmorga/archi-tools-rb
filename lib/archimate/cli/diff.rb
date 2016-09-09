@@ -43,24 +43,6 @@ module Archimate
       #   - @name
       #   - documentation
       #   - property
-      # TODO: migrate this to ModelDiff
-      def diff_obsolete
-        archi_file_reader = Archimate::ArchiFileReader.new
-        local.model_elements.each do |local_node|
-          remote_node = remote.element_by_identifier(local_node['id'])
-          if remote_node.nil?
-            add_node_to_doc(local_node, remote)
-          else
-            local_el = archi_file_reader.parse_element(local_node)
-            remote_el = archi_file_reader.parse_element(remote_node)
-            if local_el != remote_el
-              puts "Elements differ:\nlocal: #{local_node}\nremote: #{remote_node}\n\n"
-            end
-          end
-        end
-        []
-      end
-
       def diff
         diffs = Archimate::Diff::ModelDiff.new(local, remote).diffs
 

@@ -23,7 +23,7 @@ module Archimate
           @properties == other.properties
       end
 
-      def description
+      def to_s
         "#{type}<#{identifier}> #{label} docs[#{documentation.size}] props[#{properties.size}]"
       end
 
@@ -31,7 +31,7 @@ module Archimate
         "#{type}<#{identifier}> #{label}"
       end
 
-      def to_s
+      def to_id_string
         "#{type}<#{identifier}>"
       end
 
