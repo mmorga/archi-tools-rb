@@ -83,17 +83,26 @@ module Archimate
       end
 
       def to_s
-        "#{fmt_kind}: #{parent} > #{entity_str}: #{diff_description}"
+        "#{fmt_kind}#{maybe_parent_to_s}#{maybe_index_to_s}#{entity_str}#{diff_description}"
+      end
+
+      def maybe_parent_to_s
+        parent.nil? ? "" : "#{parent} > "
+      end
+
+      def maybe_index_to_s
+        ""
+        # index.nil? ? "" : " [#{index}] "
       end
 
       def fmt_kind
         case kind
         when :delete
-          HighLine.color("DELETE", :red)
+          HighLine.color("DELETE: ", :red)
         when :insert
-          HighLine.color("INSERT", :green)
+          HighLine.color("INSERT: ", :green)
         else
-          HighLine.color("CHANGE", :yellow)
+          HighLine.color("CHANGE: ", :yellow)
         end
       end
 
@@ -106,11 +115,11 @@ module Archimate
       def diff_description
         case kind
         when :delete
-          from
+          ""
         when :insert
-          to
+          ""
         else
-          "#{from} -> #{to}"
+          ": #{from} -> #{to}"
         end
       end
     end

@@ -74,7 +74,7 @@ module Archimate
         assert_equal(
           Difference.context(:elements, :model).apply(
             [
-              Difference.insert(ins_el) { |d| d.index = 3 }
+              Difference.insert(ins_el) { |d| d.index = ins_el.identifier }
             ]
           ), model_diffs
         )

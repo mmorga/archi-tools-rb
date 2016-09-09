@@ -16,7 +16,7 @@ module Archimate
       end
 
       def to_s
-        "#{type}<#{id}> #{name} #{source}->#{target} docs[#{documentation.size}] props[#{properties.size}]"
+        "#{type}<#{id}> #{name} #{source} -> #{target} docs[#{documentation.size}] props[#{properties.size}]"
       end
 
       def ==(other)

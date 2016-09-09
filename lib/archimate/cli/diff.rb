@@ -67,6 +67,8 @@ module Archimate
         diffs.each { |d| puts d }
 
         puts "\n\n#{diffs.size} Differences"
+
+        diffs
       end
     end
   end

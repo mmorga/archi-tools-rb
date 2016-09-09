@@ -16,11 +16,14 @@ module Archimate
         diffs << Difference.context(:documentation, :model).apply(
           UnorderedListDiff.new(model1.documentation, model2.documentation).diffs
         )
+        diffs << Difference.context(:properties, :model).apply(
+          UnorderedListDiff.new(model1.properties, model2.properties).diffs
+        )
         diffs << Difference.context(:elements, :model).apply(
-          IdHashDiff.new(model1.elements, model2.elements).diffs
+          IdHashDiff.new(ElementDiff, model1.elements, model2.elements).diffs
         )
         diffs << Difference.context(:relationships, :model).apply(
-          IdHashDiff.new(model1.relationships, model2.relationships).diffs
+          IdHashDiff.new(RelationshipDiff, model1.relationships, model2.relationships).diffs
         )
         diffs.flatten
       end
