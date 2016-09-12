@@ -5,8 +5,12 @@ FactoryGirl.define do
     name { Faker::Company.name }
     documentation { [] }
     properties { [] }
-    elements {}
-    organization {}
-    relationships {}
+    elements { Hash.new }
+    organization { Hash.new }
+    relationships { Hash.new }
+
+    trait :with_elements do
+      elements { Archimate.array_to_id_hash(build_list(:element, 3)) }
+    end
   end
 end

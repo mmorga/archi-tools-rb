@@ -4,9 +4,9 @@ module Archimate
     class Property
       attr_reader :key, :value
 
-      def initialize(node)
-        @key = node["key"]
-        @value = node["value"]
+      def initialize(key, value)
+        @key = key
+        @value = value
       end
 
       def ==(other)

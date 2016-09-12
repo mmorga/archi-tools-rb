@@ -12,6 +12,32 @@ module Archimate
         assert_equal "my model", model.name
         assert_equal %w(documentation1 documentation2), model.documentation
       end
+
+      def test_add_element
+        model = build(:model, :with_elements)
+        el_count = model.elements.size
+        expected = build(:element)
+        model.add_element(expected)
+        assert_equal el_count + 1, model.elements.size
+        assert_equal expected, model.elements[expected.id]
+      end
+
+      def test_equality_operator
+        m1 = build(:model, :with_elements)
+        m2 = m1.dup
+        assert_equal m1, m2
+      end
+
+      def test_equality_operator_false
+        m1 = build(:model, :with_elements)
+        m2 = m1.dup
+        m2.name = "felix"
+        refute_equal m1, m2
+      end
+
+      def xtest_apply_diff_insert
+        fail "noprah!"
+      end
     end
   end
 end

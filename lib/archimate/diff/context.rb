@@ -26,8 +26,7 @@ module Archimate
 
       def diff(differ, sym)
         @path_stack.push sym
-        ctx = Context.new(model1.send(sym), model2.send(sym))
-        @diffs << apply_context(differ.diffs(ctx))
+        @diffs << apply_context(differ.diffs(Context.new(model1.send(sym), model2.send(sym))))
         @path_stack.pop
         @diffs.flatten
       end
@@ -39,7 +38,7 @@ module Archimate
       def apply_context(diffs)
         diffs.map do |d|
           path = @path_stack.dup
-          if !d.entity.nil?
+          unless d.entity.nil?
             if d.entity.is_a?(Fixnum)
               path << "[#{d.entity}]"
             else

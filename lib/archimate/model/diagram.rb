@@ -2,13 +2,18 @@
 module Archimate
   module Model
     class Diagram
-      attr_reader :id, :name, :documentation, :properties
+      attr_reader :id
+      attr_accessor :name, :documentation, :properties, :children, :viewpoint, :element_references
 
-      def initialize(node)
-        @id = node["id"]
-        @name = node["name"]
-        @documentation = Documentation.new(node.css(">purpose"))
-        @properties = Properties.new(node.css(">property"))
+      def initialize(id, name, viewpoint = nil)
+        @id = id
+        @name = name
+        @viewpoint = viewpoint
+        @documentation = []
+        @properties = []
+        @children = {}
+        @element_references = []
+        yield self if block_given?
       end
     end
   end

@@ -44,7 +44,7 @@ module Archimate
       #   - documentation
       #   - property
       def diff
-        diffs = Archimate::Diff::Context.new(local, remote).diffs(Archimate::Diff::ModelDiff.new)
+        diffs = Archimate.diff(local, remote)
 
         diffs.each { |d| puts d }
 

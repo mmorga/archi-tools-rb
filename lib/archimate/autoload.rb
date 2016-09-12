@@ -31,6 +31,7 @@ module Archimate
     autoload :Difference, __p('diff/difference')
     autoload :ElementDiff, __p('diff/element_diff')
     autoload :IdHashDiff, __p('diff/id_hash_diff')
+    autoload :Merge, __p('diff/merge')
     autoload :ModelDiff, __p('diff/model_diff')
     autoload :RelationshipDiff, __p('diff/relationship_diff')
     autoload :StringDiff, __p('diff/string_diff')
@@ -38,6 +39,8 @@ module Archimate
   end
 
   module Model
+    autoload :Bounds, __p('model/bounds')
+    autoload :Child, __p('model/child')
     autoload :Diagram, __p('model/diagram')
     autoload :Element, __p('model/element')
     autoload :Folder, __p('model/folder')
@@ -48,6 +51,7 @@ module Archimate
   end
 
   autoload :ArchiFileReader, __p('archi_file_reader')
+  autoload :Diff, __p('diff')
   autoload :Document, __p('document')
   autoload :ErrorHelper, __p('error_helper')
   autoload :MaybeIO, __p('maybe_io')

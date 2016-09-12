@@ -19,4 +19,12 @@ module Archimate
   def self.parse_xml(xml_str)
     Nokogiri::XML(xml_str)
   end
+
+  def self.array_to_id_hash(ary)
+    ary.each_with_object({}) { |i, a| a[i.id] = i }
+  end
+
+  def self.diff(local, remote)
+    Diff::Context.new(local, remote).diffs(Diff::ModelDiff.new)
+  end
 end

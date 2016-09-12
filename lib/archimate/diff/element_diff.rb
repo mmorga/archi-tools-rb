@@ -3,7 +3,7 @@ module Archimate
   module Diff
     class ElementDiff
       def diffs(context)
-        context.diff(StringDiff.new, :identifier)
+        context.diff(StringDiff.new, :id)
         context.diff(StringDiff.new, :type)
         context.diff(StringDiff.new, :label)
         context.diff(UnorderedListDiff.new, :documentation)

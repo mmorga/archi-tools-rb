@@ -2,12 +2,12 @@
 module Archimate
   module Model
     class Element
-      attr_accessor :identifier, :type, :label, :documentation, :properties
+      attr_accessor :id, :type, :label, :documentation, :properties
 
       alias name label
 
-      def initialize(identifier = "", label = "", type = "", documentation = [], properties = [])
-        @identifier = identifier
+      def initialize(id = "", label = "", type = "", documentation = [], properties = [])
+        @id = id
         @label = label
         @type = type
         @documentation = documentation
@@ -16,7 +16,7 @@ module Archimate
       end
 
       def ==(other)
-        @identifier == other.identifier &&
+        @id == other.id &&
           @label == other.label &&
           @type == other.type &&
           @documentation == other.documentation &&
@@ -24,15 +24,15 @@ module Archimate
       end
 
       def to_s
-        "#{type}<#{identifier}> #{label} docs[#{documentation.size}] props[#{properties.size}]"
+        "#{type}<#{id}> #{label} docs[#{documentation.size}] props[#{properties.size}]"
       end
 
       def short_desc
-        "#{type}<#{identifier}> #{label}"
+        "#{type}<#{id}> #{label}"
       end
 
       def to_id_string
-        "#{type}<#{identifier}>"
+        "#{type}<#{id}>"
       end
 
       def layer

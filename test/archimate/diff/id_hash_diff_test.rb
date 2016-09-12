@@ -44,13 +44,13 @@ module Archimate
         el2b = el2.dup
         el2b.label += "-changed"
 
-        h1 = [el1, el2, el3].each_with_object({}) { |i, a| a[i.identifier] = i }
-        h2 = [el1, el2b, el4].each_with_object({}) { |i, a| a[i.identifier] = i }
+        h1 = Archimate.array_to_id_hash([el1, el2, el3])
+        h2 = Archimate.array_to_id_hash([el1, el2b, el4])
         diffs = Context.new(h1, h2).diffs(IdHashDiff.new(ElementDiff))
         expected = [
           Difference.change("Hash/label", el2.label, el2b.label),
-          Difference.delete(el3.identifier, el3),
-          Difference.insert(el4.identifier, el4)
+          Difference.delete(el3.id, el3),
+          Difference.insert(el4.id, el4)
         ]
         assert_equal(expected, diffs)
       end

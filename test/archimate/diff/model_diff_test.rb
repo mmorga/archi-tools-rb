@@ -47,7 +47,7 @@ module Archimate
 
       def test_diff_model_elements_same
         element_list = build_list(:element, 3)
-        element_hash = element_list.each_with_object({}) { |i, a| a[i.identifier] = i }
+        element_hash = Archimate.array_to_id_hash(element_list)
         model1 = Archimate::Model::Model.new("123", "base") do |m|
           m.elements = element_hash
         end
@@ -60,19 +60,19 @@ module Archimate
 
       def test_diff_model_elements_insert
         element_list = build_list(:element, 3)
-        element_hash = element_list.each_with_object({}) { |i, a| a[i.identifier] = i }
+        element_hash = Archimate.array_to_id_hash(element_list)
         model1 = Archimate::Model::Model.new("123", "base") do |m|
           m.elements = element_hash.dup
         end
         ins_el = build(:element)
-        element_hash[ins_el.identifier] = ins_el
+        element_hash[ins_el.id] = ins_el
         model2 = Archimate::Model::Model.new("123", "base") do |m|
           m.elements = element_hash
         end
         model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal(
           [
-            Difference.insert("Model<123>/elements/#{ins_el.identifier}", ins_el)
+            Difference.insert("Model<123>/elements/#{ins_el.id}", ins_el)
           ], model_diffs
         )
       end
