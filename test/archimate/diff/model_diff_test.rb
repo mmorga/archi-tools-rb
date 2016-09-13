@@ -46,33 +46,36 @@ module Archimate
       end
 
       def test_diff_model_elements_same
-        element_list = build_list(:element, 3)
-        element_hash = Archimate.array_to_id_hash(element_list)
-        model1 = Archimate::Model::Model.new("123", "base") do |m|
-          m.elements = element_hash
-        end
-        model2 = Archimate::Model::Model.new("123", "base") do |m|
-          m.elements = element_hash
-        end
+        model1 = build(:model)
+        model2 = model1.dup
         model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_empty(model_diffs)
       end
 
       def test_diff_model_elements_insert
-        element_list = build_list(:element, 3)
-        element_hash = Archimate.array_to_id_hash(element_list)
-        model1 = Archimate::Model::Model.new("123", "base") do |m|
-          m.elements = element_hash.dup
-        end
+        model1 = build(:model, :with_elements)
+        model2 = model1.dup
         ins_el = build(:element)
-        element_hash[ins_el.id] = ins_el
-        model2 = Archimate::Model::Model.new("123", "base") do |m|
-          m.elements = element_hash
-        end
+        model2.add_element(ins_el)
         model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal(
           [
-            Difference.insert("Model<123>/elements/#{ins_el.id}", ins_el)
+            Difference.insert("Model<#{model1.id}>/elements/#{ins_el.id}", ins_el)
+          ], model_diffs
+        )
+      end
+
+      def test_diff_model_element_changes
+        element = build(:element)
+        model1 = build(:model, elements: Archimate.array_to_id_hash([element.dup]))
+        from_label = element.label
+        element.label += "-modified"
+        model2 = model1.dup
+        model2.elements = Archimate.array_to_id_hash([element])
+        model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
+        assert_equal(
+          [
+            Difference.change("Model<#{model1.id}>/elements/#{element.id}/label", from_label, element.label)
           ], model_diffs
         )
       end

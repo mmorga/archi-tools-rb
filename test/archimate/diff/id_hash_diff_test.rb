@@ -48,7 +48,7 @@ module Archimate
         h2 = Archimate.array_to_id_hash([el1, el2b, el4])
         diffs = Context.new(h1, h2).diffs(IdHashDiff.new(ElementDiff))
         expected = [
-          Difference.change("Hash/label", el2.label, el2b.label),
+          Difference.change("#{el2.id}/label", el2.label, el2b.label),
           Difference.delete(el3.id, el3),
           Difference.insert(el4.id, el4)
         ]
