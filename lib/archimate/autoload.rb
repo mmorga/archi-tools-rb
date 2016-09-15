@@ -51,6 +51,7 @@ module Archimate
   end
 
   autoload :ArchiFileReader, __p('archi_file_reader')
+  autoload :Constants, __p('constants')
   autoload :Diff, __p('diff')
   autoload :Document, __p('document')
   autoload :ErrorHelper, __p('error_helper')

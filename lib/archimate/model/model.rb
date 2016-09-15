@@ -4,7 +4,8 @@ require "set"
 module Archimate
   module Model
     class Model
-      attr_accessor :id, :name, :documentation, :properties, :elements, :organization, :relationships, :diagrams
+      attr_reader :id
+      attr_accessor :name, :documentation, :properties, :elements, :organization, :relationships, :diagrams
 
       def initialize(id = nil, name = nil)
         @id = id

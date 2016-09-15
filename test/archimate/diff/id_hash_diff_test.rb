@@ -37,10 +37,10 @@ module Archimate
       end
 
       def test_complex
-        el1 = build(:element)
-        el2 = build(:element)
-        el3 = build(:element)
-        el4 = build(:element)
+        el1 = build_element
+        el2 = build_element
+        el3 = build_element
+        el4 = build_element
         el2b = el2.dup
         el2b.label += "-changed"
 

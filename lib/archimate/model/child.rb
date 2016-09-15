@@ -1,9 +1,10 @@
 module Archimate
   module Model
     class Child
-      attr_accessor :id, :type, :text_alignment, :fill_color, :model, :name,
-        :target_connections, :archimate_element, :font, :line_color, :font_color
-      attr_accessor :bounds, :children, :source_connection
+      attr_reader :id
+      attr_accessor :type, :text_alignment, :fill_color, :model, :name
+      attr_accessor :target_connections, :archimate_element, :font, :line_color
+      attr_accessor :font_color, :bounds, :children, :source_connection
 
       def initialize(id)
         @id = id

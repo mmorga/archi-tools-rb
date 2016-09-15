@@ -46,16 +46,16 @@ module Archimate
       end
 
       def test_diff_model_elements_same
-        model1 = build(:model)
+        model1 = build_model
         model2 = model1.dup
         model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_empty(model_diffs)
       end
 
       def test_diff_model_elements_insert
-        model1 = build(:model, :with_elements)
+        model1 = build_model(with_elements: 3)
         model2 = model1.dup
-        ins_el = build(:element)
+        ins_el = build_element
         model2.add_element(ins_el)
         model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal(
@@ -66,8 +66,8 @@ module Archimate
       end
 
       def test_diff_model_element_changes
-        element = build(:element)
-        model1 = build(:model, elements: Archimate.array_to_id_hash([element.dup]))
+        element = build_element
+        model1 = build_model(elements: Archimate.array_to_id_hash([element.dup]))
         from_label = element.label
         element.label += "-modified"
         model2 = model1.dup

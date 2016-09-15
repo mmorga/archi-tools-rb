@@ -2,7 +2,7 @@
 module Archimate
   module Model
     class Relationship
-      attr_reader :id, :name, :type, :parent_xpath, :source, :target
+      attr_reader :id, :name, :type, :source, :target
       attr_accessor :documentation, :properties
 
       def initialize(id, type, source, target, name)
@@ -13,7 +13,6 @@ module Archimate
         @name = name
         @documentation = []
         @properties = []
-        @parent_xpath = Archimate::Conversion::ArchiFileFormat::ELEMENT_TYPE_TO_PARENT_XPATH[@type]
         yield self if block_given?
       end
 
@@ -25,6 +24,8 @@ module Archimate
         @id == other.id &&
           @name == other.name &&
           @type == other.type &&
+          @source == other.source &&
+          @target == other.target &&
           @documentation == other.documentation &&
           @properties == other.properties
       end

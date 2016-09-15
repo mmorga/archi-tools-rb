@@ -15,10 +15,10 @@ module Archimate
     class MergeTest < Minitest::Test
       # insertion in one model
       def test_insert_in_remote
-        base = build(:model, :with_elements)
+        base = build_model(with_elements: 3)
         local = base.dup
         remote = base.dup
-        iel = build(:element)
+        iel = build_element
         remote.add_element(iel)
         merge = Merge.new
         actual = merge.three_way(base, local, remote)
@@ -26,10 +26,10 @@ module Archimate
       end
 
       def test_insert_in_local
-        base = build(:model, :with_elements)
+        base = build_model(with_elements: 3)
         local = base.dup
         remote = base.dup
-        iel = build(:element)
+        iel = build_element
         local.add_element(iel)
         merge = Merge.new
         actual = merge.three_way(base, local, remote)

@@ -14,22 +14,22 @@ module Archimate
       end
 
       def test_add_element
-        model = build(:model, :with_elements)
+        model = build_model(with_elements: 3)
         el_count = model.elements.size
-        expected = build(:element)
+        expected = build_element
         model.add_element(expected)
         assert_equal el_count + 1, model.elements.size
         assert_equal expected, model.elements[expected.id]
       end
 
       def test_equality_operator
-        m1 = build(:model, :with_elements)
+        m1 = build_model(with_elements: 3)
         m2 = m1.dup
         assert_equal m1, m2
       end
 
       def test_equality_operator_false
-        m1 = build(:model, :with_elements)
+        m1 = build_model(with_elements: 3)
         m2 = m1.dup
         m2.name = "felix"
         refute_equal m1, m2
