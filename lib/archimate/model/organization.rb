@@ -1,10 +1,10 @@
 module Archimate
   module Model
     class Organization
-      attr_reader :items
+      attr_reader :folders
 
-      def initialize(items)
-        @items = items
+      def initialize(folders)
+        @folders = folders
       end
     end
   end

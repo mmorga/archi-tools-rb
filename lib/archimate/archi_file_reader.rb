@@ -66,7 +66,7 @@ module Archimate
     end
 
     def child_element_ids(node)
-      []
+      node.css(">element[id]").each_with_object([]) { |i, a| a << i.attr("id") }
     end
 
     def parse_relationships(model)
