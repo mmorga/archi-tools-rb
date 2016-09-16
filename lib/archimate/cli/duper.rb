@@ -154,7 +154,7 @@ module Archimate
           end
         end
 
-        @output.write(@doc.to_xml)
+        @output.write(@doc.doc)
       end
     end
   end
