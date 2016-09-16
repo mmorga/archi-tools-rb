@@ -5,31 +5,34 @@ module Archimate
   module Model
     class FolderTest < Minitest::Test
       def setup
-        @b1 = Folder.new(0, 10, 500, 700)
-        @b2 = Folder.new(0, 10, 500, 700)
+        @f1 = Folder.new("123", "Sales", "Business")
+        @f2 = Folder.new("123", "Sales", "Business")
       end
 
-      def xtest_new
-        assert_equal 0, @b1.x
-        assert_equal 10, @b1.y
-        assert_equal 500, @b1.width
-        assert_equal 700, @b1.height
+      def test_new
+        assert_equal "123", @f1.id
+        assert_equal "Sales", @f1.name
+        assert_equal "Business", @f1.type
+        assert_empty @f1.folders
+        assert_empty @f1.items
+        assert_empty @f1.documentation
+        assert_empty @f1.properties
       end
 
-      def xtest_hash
-        assert_equal @b1.hash, @b2.hash
+      def test_hash
+        assert_equal @f1.hash, @f2.hash
       end
 
-      def xtest_hash_diff
-        refute_equal @b1.hash, build_bounds.hash
+      def test_hash_diff
+        refute_equal @f1.hash, build_bounds.hash
       end
 
-      def xtest_operator_eqleql_true
-        assert @b1 == @b2
+      def test_operator_eqleql_true
+        assert @f1 == @f2
       end
 
-      def xtest_operator_eqleql_false
-        refute @b1 == build_bounds
+      def test_operator_eqleql_false
+        refute @f1 == Folder.new("234", "Sales", "Business")
       end
     end
   end

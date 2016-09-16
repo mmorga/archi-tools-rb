@@ -19,6 +19,27 @@ module Archimate
         @folders = []
         yield self if block_given?
       end
+
+      def ==(other)
+        @id == other.id &&
+          @name == other.name &&
+          @type == other.type &&
+          @documentation == other.documentation &&
+          @properties == other.properties &&
+          @items == other.items &&
+          @folders == other.folders
+      end
+
+      def hash
+        self.class.hash ^
+          @id.hash ^
+          @name.hash ^
+          @type.hash ^
+          @documentation.hash ^
+          @properties.hash ^
+          @items.hash ^
+          @folders.hash
+      end
     end
   end
 end
