@@ -5,6 +5,18 @@ module Archimate
       attr_reader :id, :name, :type, :source, :target
       attr_accessor :documentation, :properties
 
+      def self.copy(relationship, id: nil, name: nil, type: nil, source: nil, target: nil, documentation: nil, properties: nil)
+        rel = relationship.dup
+        rel.instance_variable_set(:@id, id) unless id.nil?
+        rel.instance_variable_set(:@name, name) unless name.nil?
+        rel.instance_variable_set(:@type, type) unless type.nil?
+        rel.instance_variable_set(:@source, source) unless source.nil?
+        rel.instance_variable_set(:@target, target) unless target.nil?
+        rel.instance_variable_set(:@documentation, documentation) unless documentation.nil?
+        rel.instance_variable_set(:@properties, properties) unless properties.nil?
+        rel
+      end
+
       def initialize(id, type, source, target, name)
         @id = id
         @type = type

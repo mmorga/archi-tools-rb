@@ -39,15 +39,18 @@ module Archimate
   end
 
   module Model
+    autoload :Bendpoint, __p('model/bendpoint')
     autoload :Bounds, __p('model/bounds')
     autoload :Child, __p('model/child')
     autoload :Diagram, __p('model/diagram')
     autoload :Element, __p('model/element')
     autoload :Folder, __p('model/folder')
     autoload :Model, __p('model/model')
+    autoload :Organization, __p('model/organization')
     autoload :Property, __p('model/property')
     autoload :PropertyList, __p('model/property_list')
     autoload :Relationship, __p('model/relationship')
+    autoload :SourceConnection, __p('model/source_connection')
   end
 
   autoload :ArchiFileReader, __p('archi_file_reader')
