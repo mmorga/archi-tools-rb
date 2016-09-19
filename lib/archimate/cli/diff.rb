@@ -4,17 +4,18 @@ module Archimate
     class Diff
       attr_reader :local, :remote
 
-      def self.diff(local_file, remote_file)
+      def self.diff(local_file, remote_file, message_io = STDERR)
         local = Archimate::ArchiFileReader.read(local_file)
         remote = Archimate::ArchiFileReader.read(remote_file)
 
-        my_diff = Diff.new(local, remote)
+        my_diff = Diff.new(local, remote, message_io)
         my_diff.diff
       end
 
-      def initialize(local, remote)
+      def initialize(local, remote, message_io = STDERR)
         @local = local
         @remote = remote
+        @message_io = message_io
       end
 
       # Going to treat remote as gospel and add in diffs from local
@@ -46,9 +47,9 @@ module Archimate
       def diff
         diffs = Archimate.diff(local, remote)
 
-        diffs.each { |d| puts d }
+        diffs.each { |d| @message_io.puts d }
 
-        puts "\n\n#{diffs.size} Differences"
+        @message_io.puts "\n\n#{diffs.size} Differences"
 
         diffs
       end
