@@ -79,6 +79,13 @@ module Archimate
           ], model_diffs
         )
       end
+
+      # Diagram Test Cases
+      # 1. Added Diagram
+      # 2. Deleted Diagram
+      # 3. Changed Diagram
+      def xtest_diagram_added
+      end
     end
   end
 end

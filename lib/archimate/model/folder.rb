@@ -40,6 +40,15 @@ module Archimate
           @items.hash ^
           @folders.hash
       end
+
+      def dup(id: nil, name: nil, type: nil)
+        Folder.new(id || @id, name || @name, type || @type) do |copy|
+          copy.items = Array.new(items)
+          copy.folders = Array.new(folders)
+          copy.documentation = Array.new(documentation)
+          copy.properties = Array.new(properties)
+        end
+      end
     end
   end
 end

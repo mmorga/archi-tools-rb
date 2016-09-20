@@ -34,6 +34,19 @@ module Archimate
       def test_operator_eqleql_false
         refute @f1 == Folder.new("234", "Sales", "Business")
       end
+
+      def test_dup
+        f_dup = @f1.dup
+        [:items, :folders, :documentation, :properties].each do |sym|
+          refute_equal @f1.send(sym).object_id, f_dup.send(sym).object_id, "Expected instances of #{sym} to be different"
+        end
+      end
+
+      def test_build_folders_empty
+        result = build_folders(0)
+        assert result.is_a?(Hash)
+        assert_empty(result)
+      end
     end
   end
 end
