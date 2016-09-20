@@ -21,23 +21,34 @@ module Archimate
         assert_equal [Difference.change("Folder<#{f1.id}>/name", f1.name, f2.name)], folder_diffs
       end
 
-      def xtest_folder_added
-        fail "Write me!"
+      def test_folder_added
+        f1 = build_folder
+        f2 = f1.dup
+        added_folder = build_folder
+        f2.add_folder(added_folder)
+        folder_diffs = Context.new(f1, f2).diffs(FolderDiff.new)
+        assert_equal [Difference.insert("Folder<#{f1.id}>/folders/#{added_folder.id}", added_folder)], folder_diffs
       end
 
-      def xtest_insert
-        ctx = Context.new(nil, "hello")
-        assert_equal [Difference.insert("", "hello")], @folder_diff.diffs(ctx)
+      def test_folder_deleted
+        f1 = build_folder
+        f2 = f1.dup
+        added_folder = build_folder
+        f1.add_folder(added_folder)
+        folder_diffs = Context.new(f1, f2).diffs(FolderDiff.new)
+        assert_equal [Difference.delete("Folder<#{f1.id}>/folders/#{added_folder.id}", added_folder)], folder_diffs
       end
 
-      def xtest_delete
-        ctx = Context.new("hello", nil)
-        assert_equal [Difference.delete("", "hello")], @folder_diff.diffs(ctx)
-      end
-
-      def xtest_change
-        ctx = Context.new("base", "change", "test")
-        assert_equal [Difference.change("test", "base", "change")], @folder_diff.diffs(ctx)
+      def test_folder_changed
+        f1 = build_folder
+        f1_1 = build_folder
+        f1.add_folder(f1_1)
+        f2 = f1.dup
+        f2.folders[f1_1.id] = f1_1.dup(name: f1_1.name + "changed")
+        folder_diffs = Context.new(f1, f2).diffs(FolderDiff.new)
+        assert_equal [
+          Difference.change("Folder<#{f1.id}>/folders/#{f1_1.id}/name", f1_1.name, f2.folders[f1_1.id].name)
+        ], folder_diffs
       end
     end
   end

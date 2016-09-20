@@ -81,7 +81,7 @@ module Minitest
       documentation = options.fetch(:documentation, [])
       properties = options.fetch(:properties, [])
       items = options.fetch(:items, [])
-      folders = options.fetch(:folders, [])
+      folders = options.fetch(:folders, {})
       Archimate::Model::Folder.new(id, name, type) do |folder|
         folder.documentation = documentation
         folder.properties = properties

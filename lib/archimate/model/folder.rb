@@ -16,7 +16,7 @@ module Archimate
         @documentation = []
         @properties = []
         @items = []
-        @folders = []
+        @folders = {}
         yield self if block_given?
       end
 
@@ -44,10 +44,14 @@ module Archimate
       def dup(id: nil, name: nil, type: nil)
         Folder.new(id || @id, name || @name, type || @type) do |copy|
           copy.items = Array.new(items)
-          copy.folders = Array.new(folders)
+          copy.folders = folders.dup
           copy.documentation = Array.new(documentation)
           copy.properties = Array.new(properties)
         end
+      end
+
+      def add_folder(f)
+        @folders[f.id] = f
       end
     end
   end

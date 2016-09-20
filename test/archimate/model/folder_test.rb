@@ -19,6 +19,27 @@ module Archimate
         assert_empty @f1.properties
       end
 
+      def test_build_folders_empty
+        result = build_folders(0)
+        assert result.is_a?(Hash)
+        assert_empty(result)
+      end
+
+      def test_build_folder
+        f = build_folder
+        [:id, :name, :type].each do |sym|
+          assert_instance_of String, f.send(sym)
+          refute_empty f.send(sym)
+        end
+        [:documentation, :properties, :items].each do |sym|
+          assert_instance_of Array, f.send(sym)
+          assert_empty f.send(sym)
+        end
+
+        assert_instance_of Hash, f.folders
+        assert_empty f.folders
+      end
+
       def test_hash
         assert_equal @f1.hash, @f2.hash
       end
@@ -42,10 +63,12 @@ module Archimate
         end
       end
 
-      def test_build_folders_empty
-        result = build_folders(0)
-        assert result.is_a?(Hash)
-        assert_empty(result)
+      def test_add_folder
+        f = build_folder
+        expected = build_folder
+        f.add_folder(expected)
+        assert_equal 1, f.folders.size
+        assert_equal expected, f.folders[expected.id]
       end
     end
   end

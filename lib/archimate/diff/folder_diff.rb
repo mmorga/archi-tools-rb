@@ -7,7 +7,7 @@ module Archimate
         context.diff(StringDiff.new, :name)
         context.diff(StringDiff.new, :type)
         context.diff(UnorderedListDiff.new, :items)
-        context.diff(UnorderedListDiff.new, :folders)
+        context.diff(IdHashDiff.new(FolderDiff), :folders)
         context.diff(UnorderedListDiff.new, :documentation)
         context.diff(UnorderedListDiff.new, :properties)
       end
