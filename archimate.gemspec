@@ -28,6 +28,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.metadata["yard.run"] = "yri" # use "yard" to build full HTML docs.
 
+  spec.add_runtime_dependency "hamster", "~> 3.0.0"
+  spec.add_runtime_dependency "anima", "~> 0.3.0"
   spec.add_runtime_dependency "nokogiri", "~> 1.6"
   spec.add_runtime_dependency "colorize", "~> 0.7"
   spec.add_runtime_dependency "rmagick", "~> 2.15"

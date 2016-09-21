@@ -26,7 +26,7 @@ module Minitest
       y = options.fetch(:y, Faker::Number.positive)
       width = options.fetch(:width, Faker::Number.positive)
       height = options.fetch(:height, Faker::Number.positive)
-      Archimate::Model::Bounds.new(x, y, width, height)
+      Archimate::Model::Bounds.new(x: x, y: y, width: width, height: height)
     end
 
     def build_element(options = {})
@@ -82,12 +82,15 @@ module Minitest
       properties = options.fetch(:properties, [])
       items = options.fetch(:items, [])
       folders = options.fetch(:folders, {})
-      Archimate::Model::Folder.new(id, name, type) do |folder|
-        folder.documentation = documentation
-        folder.properties = properties
-        folder.items = items
-        folder.folders = folders
-      end
+      Archimate::Model::Folder.new(
+        id: id,
+        name: name,
+        type: type,
+        documentation: documentation,
+        properties: properties,
+        items: items,
+        folders: folders
+      )
     end
 
     def build_folders(count, min_items: 1, max_items: 10)
@@ -103,6 +106,15 @@ module Minitest
     def build_organization(options = {})
       folders = options.fetch(:folders, build_folders(options.fetch(:with_folders, 0)))
       Archimate::Model::Organization.new(folders)
+    end
+
+    def build_bendpoint(options = {})
+      Archimate::Model::Bendpoint.new(
+        start_x: options.fetch(:start_x, random(0, 1000)),
+        start_y: options.fetch(:start_y, random(0, 1000)),
+        end_x: options.fetch(:end_x, random(0, 1000)),
+        end_y: options.fetch(:end_y, random(0, 1000))
+      )
     end
 
     def random_relationship_type

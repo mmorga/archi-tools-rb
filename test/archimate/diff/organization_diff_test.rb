@@ -14,32 +14,42 @@ module Archimate
         assert_empty @organization_diff.diffs(ctx)
       end
 
+      def test_org_folder_added
+        org1 = build_organization(with_folders: 3)
+        org2 = org1.dup
+        added_folder = build_folder
+        org2.add_folder(added_folder)
+        org_diffs = Context.new(org1, org2).diffs(OrganizationDiff.new)
+        assert_equal [Difference.insert("Organization/folders/#{added_folder.id}", added_folder)], org_diffs
+      end
+
+      def test_org_folder_deleted
+        org1 = build_organization(with_folders: 3)
+        org2 = org1.dup
+        added_folder = build_folder
+        org1.add_folder(added_folder)
+        org_diffs = Context.new(org1, org2).diffs(OrganizationDiff.new)
+        assert_equal [Difference.delete("Organization/folders/#{added_folder.id}", added_folder)], org_diffs
+      end
+
+      def test_org_folder_changed
+        org1 = build_organization(with_folders: 1)
+        org2 = org1.dup
+        f1 = build_folder
+        org1.add_folder(f1)
+        f2 = f1.dup
+        org2.folders[f1.id] = f1.with(name: f1.name + "changed")
+        org_diffs = Context.new(org1, org2).diffs(OrganizationDiff.new)
+        assert_equal [
+          Difference.change("Organization/folders/#{f1.id}/name", f1.name, org2.folders[f1.id].name)
+        ], org_diffs
+      end
+
       # Organization Test cases
-      # 1. Added Folder
-      # 2. Removed Folder
-      # 3. Renamed Folder
       # 4. Moved Folder
       # 5. Added child
       # 6. Removed child
       # 7. Moved child
-      def xtest_organization_folder_added
-        fail "Write me!"
-      end
-
-      def xtest_insert
-        ctx = Context.new(nil, "hello")
-        assert_equal [Difference.insert("", "hello")], @organization_diff.diffs(ctx)
-      end
-
-      def xtest_delete
-        ctx = Context.new("hello", nil)
-        assert_equal [Difference.delete("", "hello")], @organization_diff.diffs(ctx)
-      end
-
-      def xtest_change
-        ctx = Context.new("base", "change", "test")
-        assert_equal [Difference.change("test", "base", "change")], @organization_diff.diffs(ctx)
-      end
     end
   end
 end

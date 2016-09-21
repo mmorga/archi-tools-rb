@@ -19,11 +19,12 @@ module Archimate
       org = model.organization
       assert_instance_of Model::Organization, org
       assert_equal 8, org.folders.size
-      assert org.folders.all? { |e| e.is_a? Model::Folder }
-      assert_equal 5, org.folders[0].folders.size
-      assert_equal 30, org.folders[0].folders[0].items.size
-      assert org.folders[0].folders[0].items.all? { |e| e.is_a? String }
-      assert_equal "1544", org.folders[0].folders[0].items[0]
+      assert org.folders.values.all? { |e| e.is_a? Model::Folder }
+      puts org.folders['8c90fdfa'].folders.keys
+      assert_equal 5, org.folders['8c90fdfa'].folders.size
+      assert_equal 30, org.folders['8c90fdfa'].folders['fa63373b'].items.size
+      assert org.folders['8c90fdfa'].folders['fa63373b'].items.all? { |e| e.is_a? String }
+      assert_equal "1544", org.folders['8c90fdfa'].folders['fa63373b'].items[0]
     end
   end
 end

@@ -34,10 +34,6 @@ module Archimate
         m2.name = "felix"
         refute_equal m1, m2
       end
-
-      def xtest_apply_diff_insert
-        fail "noprah!"
-      end
     end
   end
 end

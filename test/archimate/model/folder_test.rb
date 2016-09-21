@@ -5,8 +5,8 @@ module Archimate
   module Model
     class FolderTest < Minitest::Test
       def setup
-        @f1 = Folder.new("123", "Sales", "Business")
-        @f2 = Folder.new("123", "Sales", "Business")
+        @f1 = Folder.create(id: "123", name: "Sales", type: "Business")
+        @f2 = Folder.create(id: "123", name: "Sales", type: "Business")
       end
 
       def test_new
@@ -53,14 +53,7 @@ module Archimate
       end
 
       def test_operator_eqleql_false
-        refute @f1 == Folder.new("234", "Sales", "Business")
-      end
-
-      def test_dup
-        f_dup = @f1.dup
-        [:items, :folders, :documentation, :properties].each do |sym|
-          refute_equal @f1.send(sym).object_id, f_dup.send(sym).object_id, "Expected instances of #{sym} to be different"
-        end
+        refute @f1 == Folder.create(id: "234", name: "Sales", type: "Business")
       end
 
       def test_add_folder

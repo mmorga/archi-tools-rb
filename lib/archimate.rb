@@ -2,6 +2,8 @@
 require "archimate/version"
 require "nokogiri"
 require "highline"
+require "anima"
+require "hamster"
 
 module Archimate
   # The root path for YARD source libraries

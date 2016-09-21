@@ -53,16 +53,21 @@ module Archimate
     end
 
     def parse_folders(node)
-      node.css("> folder").each_with_object([]) { |i, a| a << parse_folder(i) }
+      Archimate.array_to_id_hash(
+        node.css("> folder").each_with_object([]) { |i, a| a << parse_folder(i) }
+      )
     end
 
     def parse_folder(node)
-      Model::Folder.new(node.attr("id"), node.attr("name"), node.attr("type")) do |folder|
-        folder.documentation = parse_documentation(node)
-        folder.properties = parse_properties(node)
-        folder.items = child_element_ids(node)
-        folder.folders = parse_folders(node)
-      end
+      Model::Folder.new(
+        id: node.attr("id"),
+        name: node.attr("name"),
+        type: node.attr("type"),
+        documentation: parse_documentation(node),
+        properties: parse_properties(node),
+        items: child_element_ids(node),
+        folders: Hamster::Hash.new(parse_folders(node).each_pair)
+      )
     end
 
     def child_element_ids(node)
@@ -131,7 +136,11 @@ module Archimate
     end
 
     def parse_bounds(node)
-      Model::Bounds.new(node.attr("x"), node.attr("y"), node.attr("width"), node.attr("height"))
+      Model::Bounds.new(
+        x: node.attr("x"),
+        y: node.attr("y"),
+        width: node.attr("width"),
+        height: node.attr("height"))
     end
 
     def parse_source_connections(nodes)
@@ -153,7 +162,10 @@ module Archimate
 
     def parse_bendpoints(nodes)
       nodes.each_with_object([]) do |i, a|
-        a << Model::Bendpoint.new(i.attr("startX"), i.attr("startY"), i.attr("endX"), i.attr("endY"))
+        a << Model::Bendpoint.new(
+          start_x: i.attr("startX"), start_y: i.attr("startY"),
+          end_x: i.attr("endX"), end_y: i.attr("endY")
+        )
       end
     end
   end
