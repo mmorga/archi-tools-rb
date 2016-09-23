@@ -41,8 +41,7 @@ module Archimate
         el2 = build_element
         el3 = build_element
         el4 = build_element
-        el2b = el2.dup
-        el2b.label += "-changed"
+        el2b = el2.with(label: el2.label + "-changed")
 
         h1 = Archimate.array_to_id_hash([el1, el2, el3])
         h2 = Archimate.array_to_id_hash([el1, el2b, el4])

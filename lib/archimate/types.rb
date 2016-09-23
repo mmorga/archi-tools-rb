@@ -1,6 +1,5 @@
 module Archimate
   module Types
-    Dry::Types.load_extensions(:maybe)
     include Dry::Types.module
 
     Dry::Types.register_class(Archimate::Model::Folder)

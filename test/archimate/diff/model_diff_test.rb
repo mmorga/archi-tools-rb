@@ -66,16 +66,16 @@ module Archimate
       end
 
       def test_diff_model_element_changes
-        element = build_element
-        model1 = build_model(elements: Archimate.array_to_id_hash([element.dup]))
-        from_label = element.label
-        element.label += "-modified"
+        element1 = build_element
+        model1 = build_model(elements: Archimate.array_to_id_hash([element1]))
+        from_label = element1.label
+        element2 = element1.with(label: from_label + "-modified")
         model2 = model1.dup
-        model2.elements = Archimate.array_to_id_hash([element])
+        model2.elements = Archimate.array_to_id_hash([element2])
         model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal(
           [
-            Difference.change("Model<#{model1.id}>/elements/#{element.id}/label", from_label, element.label)
+            Difference.change("Model<#{model1.id}>/elements/#{element1.id}/label", from_label, element2.label)
           ], model_diffs
         )
       end

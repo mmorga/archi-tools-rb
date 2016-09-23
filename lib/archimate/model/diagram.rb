@@ -1,37 +1,25 @@
 # frozen_string_literal: true
 module Archimate
   module Model
-    class Diagram
-      ATTRS = [:id, :name, :documentation, :properties, :children, :viewpoint, :element_references].freeze
+    class Diagram < Dry::Struct::Value
+      attribute :id, Archimate::Types::Strict::String
+      attribute :name, Archimate::Types::Coercible::String
+      attribute :documentation, Archimate::Types::Coercible::Array
+      attribute :properties, Archimate::Types::Coercible::Array
+      attribute :children, Archimate::Types::Coercible::Hash
+      attribute :viewpoint, Archimate::Types::Coercible::String
+      attribute :element_references, Archimate::Types::Coercible::Array
 
-      attr_reader :id
-      attr_accessor :name, :documentation, :properties, :children, :viewpoint, :element_references
-
-      def initialize(id, name, viewpoint = nil)
-        @id = id
-        @name = name
-        @viewpoint = viewpoint
-        @documentation = []
-        @properties = []
-        @children = {}
-        @element_references = []
-        yield self if block_given?
-      end
-
-      def ==(other)
-        ATTRS.all? { |sym| send(sym) == other.send(sym) }
-      end
-
-      def hash
-        ATTRS.each_with_object(self.class.hash) { |i, a| a ^ send(i).send(:hash) }
-      end
-
-      def dup(id: nil, name: nil, viewpoint: nil)
-        Diagram.new(id || @id, name || @name, viewpoint || @viewpoint) do |d|
-          ATTRS.reject { |a| [:id, :name, :viewpoint].include?(a) }.each do |sym|
-            d.send("#{s}=".to_sym, send(sym).dup)
-          end
-        end
+      def self.create(options = {})
+        new_opts = {
+          name: nil,
+          documentation: [],
+          properties: [],
+          children: {},
+          viewpoint: nil,
+          element_references: []
+        }.merge(options)
+        Diagram.new(new_opts)
       end
     end
   end

@@ -1,26 +1,27 @@
 # frozen_string_literal: true
 module Archimate
   module Model
-    class Element
-      attr_accessor :id, :type, :label, :documentation, :properties
+    class Element < Dry::Struct::Value
+      attribute :id, Archimate::Types::Strict::String
+      attribute :type, Archimate::Types::Coercible::String
+      attribute :label, Archimate::Types::Coercible::String
+      attribute :documentation, Archimate::Types::Coercible::Array
+      attribute :properties, Archimate::Types::Coercible::Array
 
       alias name label
 
-      def initialize(id = "", label = "", type = "", documentation = [], properties = [])
-        @id = id
-        @label = label
-        @type = type
-        @documentation = documentation
-        @properties = properties
-        yield self if block_given?
+      def self.create(options = {})
+        new_opts = {
+          type: nil,
+          label: nil,
+          documentation: [],
+          properties: []
+        }.merge(options)
+        Element.new(new_opts)
       end
 
-      def ==(other)
-        @id == other.id &&
-          @label == other.label &&
-          @type == other.type &&
-          @documentation == other.documentation &&
-          @properties == other.properties
+      def with(options = {})
+        Element.new(to_h.merge(options))
       end
 
       def to_s

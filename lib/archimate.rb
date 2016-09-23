@@ -4,7 +4,6 @@ require "nokogiri"
 require "highline"
 require "dry-types"
 require "dry-struct"
-require "dry-initializer"
 require "hamster"
 
 module Archimate

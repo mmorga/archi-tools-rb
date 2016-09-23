@@ -10,10 +10,10 @@ module Archimate
       end
 
       def test_new
-        assert_equal 0, @b1.start_x.value
-        assert_equal 10, @b1.start_y.value
-        assert_equal 500, @b1.end_x.value
-        assert_equal 700, @b1.end_y.value
+        assert_equal 0, @b1.start_x
+        assert_equal 10, @b1.start_y
+        assert_equal 500, @b1.end_x
+        assert_equal 700, @b1.end_y
       end
 
       def test_hash

@@ -40,11 +40,11 @@ module Archimate
 
     def parse_element(node)
       Model::Element.new(
-        node["id"],
-        node["name"],
-        node["xsi:type"].sub("archimate:", ""),
-        parse_documentation(node),
-        parse_properties(node)
+        id: node["id"],
+        label: node["name"],
+        type: node["xsi:type"].sub("archimate:", ""),
+        documentation: parse_documentation(node),
+        properties: parse_properties(node)
       )
     end
 
@@ -93,22 +93,27 @@ module Archimate
       model.css(Conversion::ArchiFileFormat::DIAGRAM_XPATHS.join(",")).css(
         'element[xsi|type="archimate:ArchimateDiagramModel"]'
       ).each_with_object({}) do |i, a|
-        a[i["id"]] = Model::Diagram.new(i["id"], i["name"]) do |dia|
-          dia.documentation = parse_documentation(i)
-          dia.properties = parse_properties(i)
-          dia.children = parse_children(i)
+        a[i["id"]] = Model::Diagram.new(
+          id: i["id"],
+          name: i["name"],
+          viewpoint: i["viewpoint"],
+          documentation: parse_documentation(i),
+          properties: parse_properties(i),
+          children: parse_children(i),
           # TODO: This is a quick fix to permit diff/merge
-          dia.element_references = model.css(
-            "folder[type=\"diagrams\"] [archimateElement]"
-          ).each_with_object([]) { |i2, a2| a2 << i2.attr("archimateElement") }
-        end
+          element_references: i.css("[archimateElement]").each_with_object([]) do |i2, a2|
+            a2 << i2["archimateElement"]
+          end
+        )
       end
     end
 
     def parse_children(node)
-      node.css("> child").each_with_object([]) do |i, a|
-        a << parse_child(i)
-      end
+      Archimate.array_to_id_hash(
+        node.css("> child").each_with_object([]) do |i, a|
+          a << parse_child(i)
+        end
+      )
     end
 
     def parse_child(child_node)

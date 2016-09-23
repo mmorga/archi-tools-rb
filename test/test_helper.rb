@@ -35,7 +35,7 @@ module Minitest
       label = options.fetch(:label, Faker::Company.buzzword)
       documentation = options.fetch(:documentation, [])
       properties = options.fetch(:properties, [])
-      Archimate::Model::Element.new(id, label, type, documentation, properties)
+      Archimate::Model::Element.new(id: id, label: label, type: type, documentation: documentation, properties: properties)
     end
 
     def build_element_list(count)

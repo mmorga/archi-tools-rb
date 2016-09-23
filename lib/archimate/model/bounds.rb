@@ -1,10 +1,10 @@
 module Archimate
   module Model
     class Bounds < Dry::Struct::Value
-      attribute :x, Archimate::Types::Maybe::Coercible::Float
-      attribute :y, Archimate::Types::Maybe::Coercible::Float
-      attribute :width, Archimate::Types::Maybe::Coercible::Float
-      attribute :height, Archimate::Types::Maybe::Coercible::Float
+      attribute :x, Archimate::Types::Coercible::Float.optional
+      attribute :y, Archimate::Types::Coercible::Float.optional
+      attribute :width, Archimate::Types::Coercible::Float.optional
+      attribute :height, Archimate::Types::Coercible::Float.optional
     end
   end
 end
