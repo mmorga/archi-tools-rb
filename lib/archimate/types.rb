@@ -14,5 +14,11 @@ module Archimate
 
     Dry::Types.register_class(Archimate::Model::Child)
     Child = Dry::Types['archimate.model.child']
+
+    Dry::Types.register_class(Archimate::Model::Organization)
+    Organization = Dry::Types['archimate.model.organization']
+
+    Dry::Types.register_class(Archimate::Model::Property)
+    Property = Dry::Types['archimate.model.property']
   end
 end

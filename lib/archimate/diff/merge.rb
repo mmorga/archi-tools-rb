@@ -7,19 +7,15 @@ module Archimate
     # new side and comparing the results.
     class Merge
       def three_way(base, local, remote)
-        base_local_diffs = Archimate.diff(base, local)
-        base_remote_diffs = Archimate.diff(base, remote)
+        apply_diffs(Archimate.diff(base, remote),
+          apply_diffs(Archimate.diff(base, local), base.with)
+        )
+      end
 
-        result = base.dup
-        base_local_diffs.each do |diff|
-          result.apply_diff(diff) if diff.kind == :insert
+      def apply_diffs(diffs, model)
+        diffs.select(&:insert?).inject(model) do |m, diff|
+          m.apply_diff(diff)
         end
-
-        base_remote_diffs.each do |diff|
-          result.apply_diff(diff) if diff.kind == :insert
-        end
-
-        result
       end
     end
   end

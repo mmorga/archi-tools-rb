@@ -6,14 +6,8 @@ module Archimate
     class OrganizationTest < Minitest::Test
       def test_new
         folders = build_folders(3, min_items: 1, max_items: 5)
-        org = Organization.new(folders)
+        org = Organization.new(folders: folders)
         assert_equal folders, org.folders
-      end
-
-      def test_dup
-        org1 = build_organization(with_folders: 3)
-        org2 = org1.dup
-        refute_equal org1.folders.object_id, org2.folders.object_id
       end
 
       def test_hash
@@ -46,18 +40,18 @@ module Archimate
 
       def test_equality_operator_false
         m1 = build_organization(with_folders: 3)
-        m2 = m1.dup
-        m2.add_folder build_folder
+        m2 = m1.with(folders: Archimate.array_to_id_hash(build_folder))
         refute_equal m1, m2
       end
 
       def test_add_folder
         org = build_organization(with_folders: 3)
-        folder_count = org.folders.size
+        folders = org.folders.dup
         expected = build_folder
-        org.add_folder(expected)
-        assert_equal folder_count + 1, org.folders.size
-        assert_equal expected, org.folders[expected.id]
+        folders[expected.id] = expected
+        org2 = org.with(folders: folders)
+        assert_equal org.folders.size + 1, org2.folders.size
+        assert_equal expected, org2.folders[expected.id]
       end
     end
   end

@@ -12,16 +12,15 @@ module Archimate
 
     def parse(doc)
       Model::Model.new(
-        doc.root["id"],
-        doc.root["name"]
-      ) do |model|
-        model.documentation = parse_documentation(doc.root, "purpose")
-        model.properties = parse_properties(doc.root)
-        model.elements = parse_elements(doc.root)
-        model.organization = parse_organization(doc.root)
-        model.relationships = parse_relationships(doc.root)
-        model.diagrams = parse_diagrams(doc.root)
-      end
+        id: doc.root["id"],
+        name: doc.root["name"],
+        documentation: parse_documentation(doc.root, "purpose"),
+        properties: parse_properties(doc.root),
+        elements: parse_elements(doc.root),
+        organization: parse_organization(doc.root),
+        relationships: parse_relationships(doc.root),
+        diagrams: parse_diagrams(doc.root)
+      )
     end
 
     def parse_documentation(node, element_name = "documentation")
@@ -29,7 +28,7 @@ module Archimate
     end
 
     def parse_properties(node)
-      node.css(">property").each_with_object([]) { |i, a| a << Model::Property.new(i["key"], i["value"]) }
+      node.css(">property").each_with_object([]) { |i, a| a << Model::Property.new(key: i["key"], value: i["value"]) }
     end
 
     def parse_elements(model)
@@ -49,7 +48,7 @@ module Archimate
     end
 
     def parse_organization(model)
-      Model::Organization.new(parse_folders(model))
+      Model::Organization.new(folders: parse_folders(model))
     end
 
     def parse_folders(node)

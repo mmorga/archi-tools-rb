@@ -25,7 +25,7 @@ module Archimate
   end
 
   def self.array_to_id_hash(ary)
-    ary.each_with_object({}) { |i, a| a[i.id] = i }
+    Array(ary).each_with_object({}) { |i, a| a[i.id] = i }
   end
 
   def self.diff(local, remote)

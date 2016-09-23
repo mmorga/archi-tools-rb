@@ -16,31 +16,33 @@ module Archimate
 
       def test_org_folder_added
         org1 = build_organization(with_folders: 3)
-        org2 = org1.dup
         added_folder = build_folder
-        org2.add_folder(added_folder)
+        folders = org1.folders.dup
+        folders[added_folder.id] = added_folder
+        org2 = org1.with(folders: folders)
         org_diffs = Context.new(org1, org2).diffs(OrganizationDiff.new)
         assert_equal [Difference.insert("Organization/folders/#{added_folder.id}", added_folder)], org_diffs
       end
 
       def test_org_folder_deleted
         org1 = build_organization(with_folders: 3)
-        org2 = org1.dup
-        added_folder = build_folder
-        org1.add_folder(added_folder)
+        deleted_folder = org1.folders[org1.folders.keys.first]
+        folders2 = org1.folders.reject { |k,v| k == deleted_folder.id }
+        org2 = org1.with(folders: folders2)
         org_diffs = Context.new(org1, org2).diffs(OrganizationDiff.new)
-        assert_equal [Difference.delete("Organization/folders/#{added_folder.id}", added_folder)], org_diffs
+        assert_equal [Difference.delete("Organization/folders/#{deleted_folder.id}", deleted_folder)], org_diffs
       end
 
       def test_org_folder_changed
-        org1 = build_organization(with_folders: 1)
-        f1 = build_folder
-        org1.add_folder(f1)
-        org2 = org1.dup
-        org2.folders[f1.id] = f1.with(name: f1.name + "changed")
+        org1 = build_organization(with_folders: 2)
+        original_folder = org1.folders[org1.folders.keys.last]
+        folders2 = org1.folders.reject { |k,v| k == original_folder.id }
+        changed_folder = original_folder.with(name: original_folder.name + "changed")
+        folders2[changed_folder.id] = changed_folder
+        org2 = org1.with(folders: folders2)
         org_diffs = Context.new(org1, org2).diffs(OrganizationDiff.new)
         assert_equal [
-          Difference.change("Organization/folders/#{f1.id}/name", f1.name, org2.folders[f1.id].name)
+          Difference.change("Organization/folders/#{original_folder.id}/name", original_folder.name, changed_folder.name)
         ], org_diffs
       end
 

@@ -67,6 +67,18 @@ module Archimate
           @to == other.to
       end
 
+      def insert?
+        kind == :insert
+      end
+
+      def delete?
+        kind == :delete
+      end
+
+      def change?
+        kind == :change
+      end
+
       def to_s
         "#{fmt_kind}#{entity}: #{diff_description}"
       end

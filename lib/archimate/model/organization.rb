@@ -1,27 +1,17 @@
 module Archimate
   module Model
-    class Organization
-      attr_reader :folders
+    class Organization < Dry::Struct::Value
+      attribute :folders, Archimate::Types::Strict::Hash
 
-      def initialize(folders)
-        @folders = folders
+      def self.create(options = {})
+        new_opts = {
+          folders: {}
+        }.merge(options)
+        Organization.new(new_opts)
       end
 
-      def dup
-        Organization.new(@folders.dup)
-      end
-
-      def ==(other)
-        @folders == other.folders
-      end
-
-      def hash
-        self.class.hash ^
-          @folders.hash
-      end
-
-      def add_folder(folder)
-        @folders[folder.id] = folder
+      def with(options = {})
+        Organization.new(to_h.merge(options))
       end
     end
   end

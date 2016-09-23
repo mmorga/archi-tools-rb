@@ -47,17 +47,21 @@ module Minitest
       name = options.fetch(:name, Faker::Company.name)
       documentation = options.fetch(:documentation, [])
       properties = options.fetch(:properties, [])
-      organization = options.fetch(:organization, {})
+      organization = options.fetch(:organization, Archimate::Model::Organization.create)
       relationships = options.fetch(:relationships, {})
       elements = build_element_list(options.fetch(:with_elements, 0))
       elements = options.fetch(:elements, elements)
-      Archimate::Model::Model.new(id, name) do |model|
-        model.documentation = documentation
-        model.properties = properties
-        model.elements = elements
-        model.organization = organization
-        model.relationships = relationships
-      end
+      diagrams = options.fetch(:diagrams, {})
+      Archimate::Model::Model.new(
+        id: id,
+        name: name,
+        documentation: documentation,
+        properties: properties,
+        elements: elements,
+        organization: organization,
+        relationships: relationships,
+        diagrams: diagrams
+      )
     end
 
     def build_relationship(options = {})
@@ -105,7 +109,7 @@ module Minitest
 
     def build_organization(options = {})
       folders = options.fetch(:folders, build_folders(options.fetch(:with_folders, 0)))
-      Archimate::Model::Organization.new(folders)
+      Archimate::Model::Organization.new(folders: folders)
     end
 
     def build_bendpoint(options = {})

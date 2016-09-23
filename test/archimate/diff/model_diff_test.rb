@@ -16,26 +16,22 @@ module Archimate
       end
 
       def test_diff_model_name
-        model1 = Archimate::Model::Model.new("123", "base")
-        model2 = Archimate::Model::Model.new("123", "change")
+        model1 = Archimate::Model::Model.create(id: "123", name: "base")
+        model2 = Archimate::Model::Model.create(id: "123", name: "change")
         model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal [Difference.change("Model<123>/name", "base", "change")], model_diffs
       end
 
       def test_diff_model_id
-        model1 = Archimate::Model::Model.new("123", "base")
-        model2 = Archimate::Model::Model.new("321", "base")
+        model1 = Archimate::Model::Model.create(id: "123", name: "base")
+        model2 = Archimate::Model::Model.create(id: "321", name: "base")
         model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal [Difference.change("Model<123>/id", "123", "321")], model_diffs
       end
 
       def test_diff_model_documentation
-        model1 = Archimate::Model::Model.new("123", "base") do |m|
-          m.documentation = %w(documentation1)
-        end
-        model2 = Archimate::Model::Model.new("123", "base") do |m|
-          m.documentation = %w(documentation2)
-        end
+        model1 = Archimate::Model::Model.create(id: "123", name: "base", documentation: %w(documentation1))
+        model2 = Archimate::Model::Model.create(id: "123", name: "base", documentation: %w(documentation2))
         model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal(
           [
@@ -54,9 +50,10 @@ module Archimate
 
       def test_diff_model_elements_insert
         model1 = build_model(with_elements: 3)
-        model2 = model1.dup
+        elements = model1.elements.dup
         ins_el = build_element
-        model2.add_element(ins_el)
+        elements[ins_el.id] = ins_el
+        model2 = model1.with(elements: elements)
         model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal(
           [
@@ -70,8 +67,7 @@ module Archimate
         model1 = build_model(elements: Archimate.array_to_id_hash([element1]))
         from_label = element1.label
         element2 = element1.with(label: from_label + "-modified")
-        model2 = model1.dup
-        model2.elements = Archimate.array_to_id_hash([element2])
+        model2 = model1.with(elements: Archimate.array_to_id_hash([element2]))
         model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal(
           [
