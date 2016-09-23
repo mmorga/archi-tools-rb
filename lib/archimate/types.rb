@@ -20,5 +20,9 @@ module Archimate
 
     Dry::Types.register_class(Archimate::Model::Property)
     Property = Dry::Types['archimate.model.property']
+
+    DocumentationList = Archimate::Types::Strict::Array.member(Archimate::Types::Strict::String)
+
+    PropertiesList = Archimate::Types::Strict::Array.member(Archimate::Types::Property)
   end
 end

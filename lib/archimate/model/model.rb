@@ -6,8 +6,8 @@ module Archimate
     class Model < Dry::Struct::Value
       attribute :id, Archimate::Types::Strict::String
       attribute :name, Archimate::Types::Strict::String
-      attribute :documentation, Archimate::Types::Strict::Array.member(Archimate::Types::Strict::String)
-      attribute :properties, Archimate::Types::Strict::Array.member(Archimate::Types::Property)
+      attribute :documentation, Archimate::Types::DocumentationList
+      attribute :properties, Archimate::Types::PropertiesList
       attribute :elements, Archimate::Types::Strict::Hash
       attribute :organization, Archimate::Types::Organization
       attribute :relationships, Archimate::Types::Strict::Hash

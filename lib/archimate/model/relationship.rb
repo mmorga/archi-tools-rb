@@ -1,45 +1,33 @@
 # frozen_string_literal: true
 module Archimate
   module Model
-    class Relationship
-      attr_reader :id, :name, :type, :source, :target
-      attr_accessor :documentation, :properties
+    class Relationship < Dry::Struct::Value
+      attribute :id, Archimate::Types::Strict::String
+      attribute :name, Archimate::Types::Strict::String.optional
+      attribute :type, Archimate::Types::Strict::String
+      attribute :source, Archimate::Types::Strict::String
+      attribute :target, Archimate::Types::Strict::String
+      attribute :documentation, Archimate::Types::DocumentationList
+      attribute :properties, Archimate::Types::PropertiesList
 
-      def self.copy(relationship, id: nil, name: nil, type: nil, source: nil, target: nil, documentation: nil, properties: nil)
-        rel = relationship.dup
-        rel.instance_variable_set(:@id, id) unless id.nil?
-        rel.instance_variable_set(:@name, name) unless name.nil?
-        rel.instance_variable_set(:@type, type) unless type.nil?
-        rel.instance_variable_set(:@source, source) unless source.nil?
-        rel.instance_variable_set(:@target, target) unless target.nil?
-        rel.instance_variable_set(:@documentation, documentation) unless documentation.nil?
-        rel.instance_variable_set(:@properties, properties) unless properties.nil?
-        rel
+      def self.create(options = {})
+        new_opts = {
+          name: nil,
+          type: nil,
+          source: nil,
+          target: nil,
+          documentation: [],
+          properties: []
+        }.merge(options)
+        Relationship.new(new_opts)
       end
 
-      def initialize(id, type, source, target, name)
-        @id = id
-        @type = type
-        @source = source
-        @target = target
-        @name = name
-        @documentation = []
-        @properties = []
-        yield self if block_given?
+      def with(options = {})
+        Relationship.new(to_h.merge(options))
       end
 
       def to_s
         "#{type}<#{id}> #{name} #{source} -> #{target} docs[#{documentation.size}] props[#{properties.size}]"
-      end
-
-      def ==(other)
-        @id == other.id &&
-          @name == other.name &&
-          @type == other.type &&
-          @source == other.source &&
-          @target == other.target &&
-          @documentation == other.documentation &&
-          @properties == other.properties
       end
 
       def element_reference

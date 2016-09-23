@@ -50,7 +50,6 @@ module Archimate
     autoload :Model, __p('model/model')
     autoload :Organization, __p('model/organization')
     autoload :Property, __p('model/property')
-    autoload :PropertyList, __p('model/property_list')
     autoload :Relationship, __p('model/relationship')
     autoload :SourceConnection, __p('model/source_connection')
   end

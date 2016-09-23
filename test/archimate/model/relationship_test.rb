@@ -16,14 +16,14 @@ module Archimate
 
       def test_new_duplicate_passed
         r1 = build_relationship
-        r2 = Relationship.copy(r1)
+        r2 = r1.with
         assert_equal r1, r2
         refute_same r1, r2
       end
 
       def test_new_duplicate_with_args
         r1 = build_relationship
-        r2 = Relationship.copy(r1, name: "pablo")
+        r2 = r1.with(name: "pablo")
         refute_equal r1, r2
         assert_equal "pablo", r2.name
       end
@@ -43,7 +43,7 @@ module Archimate
 
       def test_equality_operator_false
         m1 = build_relationship
-        m2 = Relationship.copy(m1, name: "felix")
+        m2 = m1.with(name: "felix")
         refute_equal m1, m2
       end
     end

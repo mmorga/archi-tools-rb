@@ -76,15 +76,14 @@ module Archimate
     def parse_relationships(model)
       model.css(Conversion::ArchiFileFormat::RELATION_XPATHS.join(",")).css("element").each_with_object({}) do |i, a|
         a[i["id"]] = Model::Relationship.new(
-          i["id"],
-          i.attr("xsi:type").sub("archimate:", ""),
-          i.attr("source"),
-          i.attr("target"),
-          i["name"]
-        ) do |rel|
-          rel.documentation = parse_documentation(i)
-          rel.properties = parse_properties(i)
-        end
+          id: i["id"],
+          type: i.attr("xsi:type").sub("archimate:", ""),
+          source: i.attr("source"),
+          target: i.attr("target"),
+          name: i["name"],
+          documentation: parse_documentation(i),
+          properties: parse_properties(i)
+        )
       end
     end
 
