@@ -1,7 +1,10 @@
 module Archimate
   module Model
-    class Bounds
-      include Anima.new(:x, :y, :width, :height)
+    class Bounds < Dry::Struct::Value
+      attribute :x, Archimate::Types::Maybe::Coercible::Float
+      attribute :y, Archimate::Types::Maybe::Coercible::Float
+      attribute :width, Archimate::Types::Maybe::Coercible::Float
+      attribute :height, Archimate::Types::Maybe::Coercible::Float
     end
   end
 end

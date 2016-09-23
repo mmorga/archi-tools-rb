@@ -66,7 +66,7 @@ module Archimate
         documentation: parse_documentation(node),
         properties: parse_properties(node),
         items: child_element_ids(node),
-        folders: Hamster::Hash.new(parse_folders(node).each_pair)
+        folders: parse_folders(node)
       )
     end
 
@@ -112,27 +112,25 @@ module Archimate
     end
 
     def parse_child(child_node)
-      Model::Child.new(child_node["id"]) do |child|
-        [
-          [:type=, "xsi:type"],
-          [:text_alignment=, "textAlignment"],
-          [:fill_color=, "fillColor"],
-          [:model=, "model"],
-          [:name=, "name"],
-          [:target_connections=, "targetConnections"],
-          [:archimate_element=, "archimateElement"],
-          [:font=, "font"],
-          [:line_color=, "lineColor"],
-          [:font_color=, "fontColor"]
-        ].each do |attr_setter, attr_name|
-          child.send(attr_setter, child_node.attr(attr_name)) if child_node.attributes.include?(attr_name)
-        end
-
-        child.bounds = parse_bounds(child_node.at_css("> bounds"))
-        child.children = parse_children(child_node)
-        child.source_connection = parse_source_connections(child_node.css("> sourceConnection"))
-        child
+      child_hash = {
+        id: "id",
+        type: "type",
+        text_alignment: "textAlignment",
+        fill_color: "fillColor",
+        model: "model",
+        name: "name",
+        target_connections: "targetConnections",
+        archimate_element: "archimateElement",
+        font: "font",
+        line_color: "lineColor",
+        font_color: "fontColor"
+      }.each_with_object({}) do |(hash_attr, node_attr), a|
+        a[hash_attr] = child_node.attr(node_attr) # if child_node.attributes.include?(node_attr)
       end
+      child_hash[:bounds] = parse_bounds(child_node.at_css("> bounds"))
+      child_hash[:children] = parse_children(child_node)
+      child_hash[:source_connections] = parse_source_connections(child_node.css("> sourceConnection"))
+      Model::Child.new(child_hash)
     end
 
     def parse_bounds(node)

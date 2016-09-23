@@ -20,7 +20,6 @@ module Archimate
       assert_instance_of Model::Organization, org
       assert_equal 8, org.folders.size
       assert org.folders.values.all? { |e| e.is_a? Model::Folder }
-      puts org.folders['8c90fdfa'].folders.keys
       assert_equal 5, org.folders['8c90fdfa'].folders.size
       assert_equal 30, org.folders['8c90fdfa'].folders['fa63373b'].items.size
       assert org.folders['8c90fdfa'].folders['fa63373b'].items.all? { |e| e.is_a? String }

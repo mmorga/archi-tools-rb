@@ -1,0 +1,13 @@
+
+StringLiterals:
+  Enabled: false
+  # EnforcedStyle: double_quotes
+
+LineLength:
+  Max: 120
+
+Style/Documentation:
+  Enabled: false
+
+AllCops:
+  TargetRubyVersion: 2.1.0

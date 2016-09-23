@@ -5,8 +5,8 @@ module Archimate
   module Model
     class FolderTest < Minitest::Test
       def setup
-        @f1 = Folder.create(id: "123", name: "Sales", type: "Business")
-        @f2 = Folder.create(id: "123", name: "Sales", type: "Business")
+        @f1 = Folder.new(id: "123", name: "Sales", type: "Business", items: [], documentation: [], properties: [], folders: {})
+        @f2 = Folder.new(id: "123", name: "Sales", type: "Business", items: [], documentation: [], properties: [], folders: {})
       end
 
       def test_new
@@ -54,14 +54,6 @@ module Archimate
 
       def test_operator_eqleql_false
         refute @f1 == Folder.create(id: "234", name: "Sales", type: "Business")
-      end
-
-      def test_add_folder
-        f = build_folder
-        expected = build_folder
-        f.add_folder(expected)
-        assert_equal 1, f.folders.size
-        assert_equal expected, f.folders[expected.id]
       end
     end
   end

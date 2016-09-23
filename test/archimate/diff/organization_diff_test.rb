@@ -34,10 +34,9 @@ module Archimate
 
       def test_org_folder_changed
         org1 = build_organization(with_folders: 1)
-        org2 = org1.dup
         f1 = build_folder
         org1.add_folder(f1)
-        f2 = f1.dup
+        org2 = org1.dup
         org2.folders[f1.id] = f1.with(name: f1.name + "changed")
         org_diffs = Context.new(org1, org2).diffs(OrganizationDiff.new)
         assert_equal [

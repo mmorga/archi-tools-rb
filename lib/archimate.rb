@@ -2,7 +2,9 @@
 require "archimate/version"
 require "nokogiri"
 require "highline"
-require "anima"
+require "dry-types"
+require "dry-struct"
+require "dry-initializer"
 require "hamster"
 
 module Archimate
@@ -10,6 +12,7 @@ module Archimate
   ROOT = File.expand_path(File.dirname(__FILE__))
 
   require File.join(Archimate::ROOT, 'archimate', 'autoload')
+  require File.join(Archimate::ROOT, 'archimate', 'types')
 
   # Creates a new generic xml document given an optional string source
   #
