@@ -4,7 +4,6 @@ require "nokogiri"
 require "highline"
 require "dry-types"
 require "dry-struct"
-require "hamster"
 
 module Archimate
   # The root path for YARD source libraries

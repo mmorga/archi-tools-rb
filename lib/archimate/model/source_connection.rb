@@ -1,31 +1,26 @@
 module Archimate
   module Model
-    class SourceConnection
-      attr_reader :id
-      attr_accessor :type, :source, :target, :relationship, :bendpoints
+    class SourceConnection < Dry::Struct::Value
+      attribute :id, Archimate::Types::Strict::String
+      attribute :type, Archimate::Types::Strict::String
+      attribute :source, Archimate::Types::Strict::String
+      attribute :target, Archimate::Types::Strict::String
+      attribute :relationship, Archimate::Types::Strict::String
+      attribute :bendpoints, Archimate::Types::BendpointList
 
-      def initialize(id)
-        @id = id
-        yield self if block_given?
+      def self.create(options = {})
+        new_opts = {
+          type: nil,
+          source: nil,
+          target: nil,
+          relationship: nil,
+          bendpoints: []
+        }.merge(options)
+        SourceConnection.new(new_opts)
       end
 
-      def ==(other)
-        @id == other.id &&
-          @type == other.type &&
-          @source == other.source &&
-          @target == other.target &&
-          @relationship == other.relationship &&
-          @bendpoints == other.bendpoints
-      end
-
-      def hash
-        self.class.hash ^
-          @id.hash ^
-          @type.hash ^
-          @source.hash ^
-          @target.hash ^
-          @relationship.hash ^
-          @bendpoints.hash
+      def with(options = {})
+        SourceConnection.new(to_h.merge(options))
       end
     end
   end

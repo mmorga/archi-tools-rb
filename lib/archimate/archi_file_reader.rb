@@ -146,18 +146,14 @@ module Archimate
 
     def parse_source_connections(nodes)
       nodes.each_with_object([]) do |i, a|
-        a << Model::SourceConnection.new(i["id"]) do |sc|
-          [
-            [:type=, "xsi:type"],
-            [:source=, "source"],
-            [:target=, "target"],
-            [:relationship=, "relationship"]
-          ].each do |attr_setter, attr_name|
-            sc.send(attr_setter, i.attr(attr_name)) if i.attributes.include?(attr_name)
-          end
-
-          sc.bendpoints = parse_bendpoints(i.css("bendpoint"))
-        end
+        a << Model::SourceConnection.new(
+          id: i["id"],
+          type: i.attr("xsi:type"),
+          source: i["source"],
+          target: i["target"],
+          relationship: i["relationship"],
+          bendpoints: parse_bendpoints(i.css("bendpoint"))
+        )
       end
     end
 
