@@ -6,13 +6,13 @@ module Archimate
     # this is representated as items. In the Archi file format, this is
     # represented as folders.
     class Folder < Dry::Struct::Value
-      attribute :id, Archimate::Types::Strict::String
-      attribute :name, Archimate::Types::Strict::String
-      attribute :type, Archimate::Types::Strict::String.optional
-      attribute :items, Archimate::Types::ElementIdList
-      attribute :documentation, Archimate::Types::DocumentationList
-      attribute :properties, Archimate::Types::PropertiesList
-      attribute :folders, Archimate::Types::FolderHash
+      attribute :id, Archimate::Model::Strict::String
+      attribute :name, Archimate::Model::Strict::String
+      attribute :type, Archimate::Model::Strict::String.optional
+      attribute :items, Archimate::Model::ElementIdList
+      attribute :documentation, Archimate::Model::DocumentationList
+      attribute :properties, Archimate::Model::PropertiesList
+      attribute :folders, Archimate::Model::FolderHash
 
       def self.create(options = {})
         new_opts = {

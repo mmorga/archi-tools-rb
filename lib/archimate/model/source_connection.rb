@@ -1,12 +1,12 @@
 module Archimate
   module Model
     class SourceConnection < Dry::Struct::Value
-      attribute :id, Archimate::Types::Strict::String
-      attribute :type, Archimate::Types::Strict::String
-      attribute :source, Archimate::Types::Strict::String
-      attribute :target, Archimate::Types::Strict::String
-      attribute :relationship, Archimate::Types::Strict::String
-      attribute :bendpoints, Archimate::Types::BendpointList
+      attribute :id, Archimate::Model::Strict::String
+      attribute :type, Archimate::Model::Strict::String
+      attribute :source, Archimate::Model::Strict::String
+      attribute :target, Archimate::Model::Strict::String
+      attribute :relationship, Archimate::Model::Strict::String
+      attribute :bendpoints, Archimate::Model::BendpointList
 
       def self.create(options = {})
         new_opts = {

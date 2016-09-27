@@ -1,20 +1,20 @@
 module Archimate
   module Model
     class Child < Dry::Struct::Value
-      attribute :id, Archimate::Types::Strict::String
-      attribute :type, Archimate::Types::Strict::String.optional
-      attribute :text_alignment, Archimate::Types::Strict::String.optional
-      attribute :fill_color, Archimate::Types::Strict::String.optional
-      attribute :model, Archimate::Types::Strict::String.optional
-      attribute :name, Archimate::Types::Strict::String.optional
-      attribute :target_connections, Archimate::Types::Strict::String.optional
-      attribute :archimate_element, Archimate::Types::Strict::String.optional
-      attribute :font, Archimate::Types::Strict::String.optional
-      attribute :line_color, Archimate::Types::Strict::String.optional
-      attribute :font_color, Archimate::Types::Strict::String.optional
-      attribute :bounds, Archimate::Types::OptionalBounds
-      attribute :children, Archimate::Types::Strict::Hash
-      attribute :source_connections, Archimate::Types::SourceConnectionList
+      attribute :id, Archimate::Model::Strict::String
+      attribute :type, Archimate::Model::Strict::String.optional
+      attribute :text_alignment, Archimate::Model::Strict::String.optional
+      attribute :fill_color, Archimate::Model::Strict::String.optional
+      attribute :model, Archimate::Model::Strict::String.optional
+      attribute :name, Archimate::Model::Strict::String.optional
+      attribute :target_connections, Archimate::Model::Strict::String.optional
+      attribute :archimate_element, Archimate::Model::Strict::String.optional
+      attribute :font, Archimate::Model::Strict::String.optional
+      attribute :line_color, Archimate::Model::Strict::String.optional
+      attribute :font_color, Archimate::Model::Strict::String.optional
+      attribute :bounds, Archimate::Model::OptionalBounds
+      attribute :children, Archimate::Model::Strict::Hash
+      attribute :source_connections, Archimate::Model::SourceConnectionList
 
       def self.create(options = {})
         new_opts = {

@@ -4,14 +4,14 @@ require "set"
 module Archimate
   module Model
     class Model < Dry::Struct::Value
-      attribute :id, Archimate::Types::Strict::String
-      attribute :name, Archimate::Types::Strict::String
-      attribute :documentation, Archimate::Types::DocumentationList
-      attribute :properties, Archimate::Types::PropertiesList
-      attribute :elements, Archimate::Types::ElementHash
-      attribute :organization, Archimate::Types::Organization
-      attribute :relationships, Archimate::Types::RelationshipHash
-      attribute :diagrams, Archimate::Types::DiagramHash
+      attribute :id, Archimate::Model::Strict::String
+      attribute :name, Archimate::Model::Strict::String
+      attribute :documentation, Archimate::Model::DocumentationList
+      attribute :properties, Archimate::Model::PropertiesList
+      attribute :elements, Archimate::Model::ElementHash
+      attribute :organization, Archimate::Model::Organization
+      attribute :relationships, Archimate::Model::RelationshipHash
+      attribute :diagrams, Archimate::Model::DiagramHash
 
       def self.create(options = {})
         new_opts = {
