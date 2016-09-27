@@ -3,19 +3,16 @@ module Archimate
   module Model
     class Relationship < Dry::Struct::Value
       attribute :id, Archimate::Types::Strict::String
-      attribute :name, Archimate::Types::Strict::String.optional
       attribute :type, Archimate::Types::Strict::String
       attribute :source, Archimate::Types::Strict::String
       attribute :target, Archimate::Types::Strict::String
+      attribute :name, Archimate::Types::Strict::String.optional
       attribute :documentation, Archimate::Types::DocumentationList
       attribute :properties, Archimate::Types::PropertiesList
 
       def self.create(options = {})
         new_opts = {
           name: nil,
-          type: nil,
-          source: nil,
-          target: nil,
           documentation: [],
           properties: []
         }.merge(options)

@@ -2,19 +2,19 @@ module Archimate
   module Model
     class Child < Dry::Struct::Value
       attribute :id, Archimate::Types::Strict::String
-      attribute :type, Archimate::Types::Coercible::String
-      attribute :text_alignment, Archimate::Types::Coercible::String
-      attribute :fill_color, Archimate::Types::Coercible::String
-      attribute :model, Archimate::Types::Coercible::String
-      attribute :name, Archimate::Types::Coercible::String
-      attribute :target_connections, Archimate::Types::Coercible::String
-      attribute :archimate_element, Archimate::Types::Coercible::String
-      attribute :font, Archimate::Types::Coercible::String
-      attribute :line_color, Archimate::Types::Coercible::String
-      attribute :font_color, Archimate::Types::Coercible::String
+      attribute :type, Archimate::Types::Strict::String.optional
+      attribute :text_alignment, Archimate::Types::Strict::String.optional
+      attribute :fill_color, Archimate::Types::Strict::String.optional
+      attribute :model, Archimate::Types::Strict::String.optional
+      attribute :name, Archimate::Types::Strict::String.optional
+      attribute :target_connections, Archimate::Types::Strict::String.optional
+      attribute :archimate_element, Archimate::Types::Strict::String.optional
+      attribute :font, Archimate::Types::Strict::String.optional
+      attribute :line_color, Archimate::Types::Strict::String.optional
+      attribute :font_color, Archimate::Types::Strict::String.optional
       attribute :bounds, Archimate::Types::OptionalBounds
-      attribute :children, Archimate::Types::Coercible::Array
-      attribute :source_connections, Archimate::Types::Coercible::Array
+      attribute :children, Archimate::Types::Strict::Hash
+      attribute :source_connections, Archimate::Types::SourceConnectionList
 
       def self.create(options = {})
         new_opts = {

@@ -31,6 +31,19 @@ module Archimate
       def test_operator_eqleql_false
         refute @b1 == build_bounds
       end
+
+      def test_optional_x_y
+        b = Bounds.new(x: nil, y: nil, width: 500, height: 700)
+        pass
+      end
+
+      def test_width_required
+        assert_raises { Bounds.new(x: 0, y: 10, width: nil, height: 700) }
+      end
+
+      def test_height_required
+        assert_raises { Bounds.new(x: 0, y: 10, width: 500, height: nil) }
+      end
     end
   end
 end

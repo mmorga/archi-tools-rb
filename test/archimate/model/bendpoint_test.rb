@@ -31,6 +31,12 @@ module Archimate
       def test_operator_eqleql_false
         refute @b1 == build_bounds
       end
+
+      def test_at_least_two_attributes_must_be_present
+        skip
+        assert_raises { Bendpoint.new(start_x: 0, start_y: nil, end_x: nil, end_y: nil) }
+        assert_raises { Bendpoint.new(start_x: nil, start_y: nil, end_x: nil, end_y: nil) }
+      end
     end
   end
 end

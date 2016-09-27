@@ -1,4 +1,6 @@
 module Archimate
+  # The Constants module contains constants for ArchiMate standards
+  # TODO: This should be namespaced for the ArchiMate version in effect
   module Constants
     ELEMENTS = %w(BuinessActor BusinessCollaboration BusinessEvent BusinessFunction
                   BusinessInteraction BusinessInterface BusinessObject BusinessProcess
@@ -16,6 +18,7 @@ module Archimate
                        CompositionRelationship FlowRelationship TriggeringRelationship
                        GroupingRelationship SpecialisationRelationship InfluenceRelationship).freeze
 
+    # TODO: the archimate: portion of element names is from the Archi file format - shouldn't be here
     LAYER_ELEMENTS = {
       "Business" =>
         [ "archimate:BusinessActor", "archimate:BusinessCollaboration",

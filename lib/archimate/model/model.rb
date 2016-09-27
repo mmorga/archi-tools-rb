@@ -8,10 +8,10 @@ module Archimate
       attribute :name, Archimate::Types::Strict::String
       attribute :documentation, Archimate::Types::DocumentationList
       attribute :properties, Archimate::Types::PropertiesList
-      attribute :elements, Archimate::Types::Strict::Hash
+      attribute :elements, Archimate::Types::ElementHash
       attribute :organization, Archimate::Types::Organization
-      attribute :relationships, Archimate::Types::Strict::Hash
-      attribute :diagrams, Archimate::Types::Strict::Hash
+      attribute :relationships, Archimate::Types::RelationshipHash
+      attribute :diagrams, Archimate::Types::DiagramHash
 
       def self.create(options = {})
         new_opts = {

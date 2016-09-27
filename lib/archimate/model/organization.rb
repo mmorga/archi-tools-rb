@@ -1,7 +1,7 @@
 module Archimate
   module Model
     class Organization < Dry::Struct::Value
-      attribute :folders, Archimate::Types::Strict::Hash
+      attribute :folders, Archimate::Types::FolderHash
 
       def self.create(options = {})
         new_opts = {

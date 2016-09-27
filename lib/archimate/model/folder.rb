@@ -8,22 +8,21 @@ module Archimate
     class Folder < Dry::Struct::Value
       attribute :id, Archimate::Types::Strict::String
       attribute :name, Archimate::Types::Strict::String
-      attribute :type, Archimate::Types::String
-      attribute :items, Archimate::Types::Strict::Array.member(Archimate::Types::Strict::String)
-      attribute :documentation, Archimate::Types::Strict::Array.member(Archimate::Types::Strict::String)
-      attribute :properties, Archimate::Types::Strict::Array.member(Archimate::Types::Strict::String)
-      attribute :folders, Archimate::Types::Coercible::Hash
+      attribute :type, Archimate::Types::Strict::String.optional
+      attribute :items, Archimate::Types::ElementIdList
+      attribute :documentation, Archimate::Types::DocumentationList
+      attribute :properties, Archimate::Types::PropertiesList
+      attribute :folders, Archimate::Types::FolderHash
 
-      def self.create(id:, name:, type: nil)
-        Folder.new(
-          id: id,
-          name: name,
-          type: type,
+      def self.create(options = {})
+        new_opts = {
+          type: nil,
           items: [],
           documentation: [],
           properties: [],
           folders: {}
-        )
+        }.merge(options)
+        Folder.new(new_opts)
       end
 
       def with(options = {})

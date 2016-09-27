@@ -3,16 +3,15 @@ module Archimate
   module Model
     class Diagram < Dry::Struct::Value
       attribute :id, Archimate::Types::Strict::String
-      attribute :name, Archimate::Types::Coercible::String
-      attribute :documentation, Archimate::Types::Coercible::Array
-      attribute :properties, Archimate::Types::Coercible::Array
-      attribute :children, Archimate::Types::Coercible::Hash
-      attribute :viewpoint, Archimate::Types::Coercible::String
-      attribute :element_references, Archimate::Types::Coercible::Array
+      attribute :name, Archimate::Types::Strict::String
+      attribute :viewpoint, Archimate::Types::Strict::String.optional
+      attribute :documentation, Archimate::Types::DocumentationList
+      attribute :properties, Archimate::Types::PropertiesList
+      attribute :children, Archimate::Types::ChildHash
+      attribute :element_references, Archimate::Types::ElementIdList
 
       def self.create(options = {})
         new_opts = {
-          name: nil,
           documentation: [],
           properties: [],
           children: {},

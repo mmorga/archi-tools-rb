@@ -5,8 +5,8 @@ module Archimate
       attribute :id, Archimate::Types::Strict::String
       attribute :type, Archimate::Types::Strict::String.optional
       attribute :label, Archimate::Types::Strict::String.optional
-      attribute :documentation, Archimate::Types::Coercible::Array
-      attribute :properties, Archimate::Types::Coercible::Array
+      attribute :documentation, Archimate::Types::DocumentationList
+      attribute :properties, Archimate::Types::PropertiesList
 
       alias name label
 
@@ -38,38 +38,6 @@ module Archimate
 
       def layer
         Archimate::Constants::ELEMENT_LAYER.fetch(@type, "None")
-        # case @type
-        # when "archimate:BusinessActor", "archimate:BusinessCollaboration",
-        #      "archimate:BusinessEvent", "archimate:BusinessFunction",
-        #      "archimate:BusinessInteraction", "archimate:BusinessInterface",
-        #      "archimate:BusinessObject", "archimate:BusinessProcess",
-        #      "archimate:BusinessRole", "archimate:BusinessService",
-        #      "archimate:Contract", "archimate:Location",
-        #      "archimate:Meaning", "archimate:Value",
-        #      "archimate:Product", "archimate:Representation"
-        #   then "Business"
-        # when "archimate:ApplicationCollaboration", "archimate:ApplicationComponent",
-        #      "archimate:ApplicationFunction", "archimate:ApplicationInteraction",
-        #      "archimate:ApplicationInterface", "archimate:ApplicationService",
-        #      "archimate:DataObject"
-        #   then "Application"
-        # when "archimate:Artifact", "archimate:CommunicationPath",
-        #      "archimate:Device", "archimate:InfrastructureFunction",
-        #      "archimate:InfrastructureInterface", "archimate:InfrastructureService",
-        #      "archimate:Network", "archimate:Node", "archimate:SystemSoftware"
-        #   then "Technology"
-        # when "archimate:Assessment", "archimate:Constraint", "archimate:Driver",
-        #      "archimate:Goal", "archimate:Principle", "archimate:Requirement",
-        #      "archimate:Stakeholder"
-        #   then "Motivation"
-        # when "archimate:Deliverable", "archimate:Gap", "archimate:Plateau",
-        #      "archimate:WorkPackage"
-        #   then "Implementation and Migration"
-        # when "archimate:AndJunction", "archimate:Junction", "archimate:OrJunction"
-        #   then "Connectors"
-        # else
-        #   "None"
-        # end
       end
     end
   end
