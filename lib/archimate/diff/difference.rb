@@ -101,7 +101,7 @@ module Archimate
         when :insert
           to.to_s
         else
-          ": #{from} -> #{to}"
+          "#{from} -> #{to}"
         end
       end
     end

@@ -5,6 +5,15 @@ require "highline"
 require "dry-types"
 require "dry-struct"
 
+HighLine.color_scheme = HighLine::ColorScheme.new do |cs|
+  cs[:headline]        = [ :bold, :yellow, :on_black ]
+  cs[:horizontal_line] = [ :bold, :white ]
+  cs[:even_row]        = [ :green ]
+  cs[:odd_row]         = [ :magenta ]
+  cs[:error]           = [ :bold, :red ]
+  cs[:warning]         = [ :bold, :yellow ]
+end
+
 module Archimate
   # The root path for YARD source libraries
   ROOT = File.expand_path(File.dirname(__FILE__))

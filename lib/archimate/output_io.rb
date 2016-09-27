@@ -6,7 +6,7 @@ require "highline"
 
 module Archimate
   class OutputIO
-    attr_reader :output_io, :force, :default_io
+    attr_reader :output_io, :force
     # opens an output file, passing the io to the given block
     # if the file exists, and the overwrite answer is yes, then the file
     # is overwritten and the block is called

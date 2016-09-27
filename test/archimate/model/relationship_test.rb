@@ -11,7 +11,17 @@ module Archimate
         assert_equal %w(documentation1 documentation2), rel.documentation
       end
 
-      def test_standard_new
+      def test_create
+        rel = Relationship.create(
+          id: "abc123",
+          type: "complicated",
+          source: "src",
+          target: "tar"
+        )
+        assert_equal "abc123", rel.id
+        assert_equal "complicated", rel.type
+        assert_equal "src", rel.source
+        assert_equal "tar", rel.target
       end
 
       def test_new_duplicate_passed
@@ -45,6 +55,26 @@ module Archimate
         m1 = build_relationship
         m2 = m1.with(name: "felix")
         refute_equal m1, m2
+      end
+
+      def test_to_s
+        rel = Relationship.create(
+          id: "abc123",
+          type: "complicated",
+          source: "src",
+          target: "tar"
+        )
+        assert_equal "complicated<abc123>  src -> tar docs[0] props[0]", rel.to_s
+      end
+
+      def test_element_reference
+        rel = Relationship.create(
+          id: "abc123",
+          type: "complicated",
+          source: "src",
+          target: "tar"
+        )
+        assert_equal ["src", "tar"], rel.element_reference
       end
     end
   end

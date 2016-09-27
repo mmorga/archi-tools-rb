@@ -1,16 +1,18 @@
 # frozen_string_literal: true
+require "highline"
+
 module Archimate
   module ErrorHelper
     def error(msg)
-      Highline.say("#{colors('Error:', :error)} #{msg}")
+      HighLine.new.say("#{HighLine.color('Error:', :error)} #{msg}")
     end
 
     def warning(msg)
-      Highline.say("#{colors('Warning:', :warning)} #{msg}")
+      HighLine.new.say("#{HighLine.color('Warning:', :warning)} #{msg}")
     end
 
     def info(msg)
-      Highline.say(msg)
+      HighLine.new.say(msg)
     end
   end
 end

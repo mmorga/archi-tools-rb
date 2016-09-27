@@ -32,6 +32,56 @@ module Archimate
           assert_equal :model, d.entity
         end
       end
+
+      def test_insert?
+        diff = Difference.insert("Added", "test")
+        assert diff.insert?
+        refute diff.delete?
+        refute diff.change?
+      end
+
+      def test_delete?
+        diff = Difference.delete("Deleted", "test")
+        assert diff.delete?
+        refute diff.insert?
+        refute diff.change?
+      end
+
+      def test_change?
+        diff = Difference.change("Change", "old and busted", "new hotness")
+        assert diff.change?
+        refute diff.insert?
+        refute diff.delete?
+      end
+
+      def test_to_s
+        diff = Difference.change("Change", "old and busted", "new hotness")
+        assert_equal "CHANGE: Change: old and busted -> new hotness", HighLine.uncolor(diff.to_s)
+      end
+
+      def test_fmt_kind
+        diff = Difference.change("Change", "old and busted", "new hotness")
+        assert_equal "CHANGE: ", HighLine.uncolor(diff.fmt_kind)
+        diff = Difference.insert(:model, "to_val")
+        assert_equal "INSERT: ", HighLine.uncolor(diff.fmt_kind)
+        diff = Difference.delete(:model, "deleted")
+        assert_equal "DELETE: ", HighLine.uncolor(diff.fmt_kind)
+      end
+
+      def diff_description_change
+        diff = Difference.change("Change", "old and busted", "new hotness")
+        assert_equal "old and busted -> new hotness", diff.diff_description
+      end
+
+      def diff_description_insert
+        diff = Difference.insert(:model, "to_val")
+        assert_equal "to_val", diff.diff_description
+      end
+
+      def diff_description_delete
+        diff = Difference.delete(:model, "deleted")
+        assert_equal "deleted", diff.diff_description
+      end
     end
   end
 end
