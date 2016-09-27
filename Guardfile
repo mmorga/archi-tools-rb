@@ -21,7 +21,7 @@ guard :minitest, all_after_pass: true do
   watch(%r{^test/(.*)\/?(.*)_test\.rb$})
   watch(%r{^lib/(.*/)?([^/]+)\.rb$})     { |m| "test/#{m[1]}#{m[2]}_test.rb" }
   watch(%r{^test/test_helper\.rb$})      { 'test' }
-  watch(%r{^lib/archimate/autoload.rb$}) { 'test' }
+  watch(%r{^lib/archimate/model/types.rb$}) { 'test' }
   watch(%r{^lib/archimate.rb$}) { 'test' }
 end
 

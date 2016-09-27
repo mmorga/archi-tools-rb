@@ -2,11 +2,11 @@
 module Archimate
   module Model
     class Element < Dry::Struct::Value
-      attribute :id, Archimate::Model::Strict::String
-      attribute :type, Archimate::Model::Strict::String.optional
-      attribute :label, Archimate::Model::Strict::String.optional
-      attribute :documentation, Archimate::Model::DocumentationList
-      attribute :properties, Archimate::Model::PropertiesList
+      attribute :id, Types::Strict::String
+      attribute :type, Types::Strict::String.optional
+      attribute :label, Types::Strict::String.optional
+      attribute :documentation, Types::DocumentationList
+      attribute :properties, Types::PropertiesList
 
       alias name label
 

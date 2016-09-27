@@ -2,13 +2,13 @@
 module Archimate
   module Model
     class Relationship < Dry::Struct::Value
-      attribute :id, Strict::String
-      attribute :type, Archimate::Model::Strict::String
-      attribute :source, Archimate::Model::Strict::String
-      attribute :target, Archimate::Model::Strict::String
-      attribute :name, Archimate::Model::Strict::String.optional
-      attribute :documentation, Archimate::Model::DocumentationList
-      attribute :properties, Archimate::Model::PropertiesList
+      attribute :id, Types::Strict::String
+      attribute :type, Types::Strict::String
+      attribute :source, Types::Strict::String
+      attribute :target, Types::Strict::String
+      attribute :name, Types::Strict::String.optional
+      attribute :documentation, Types::DocumentationList
+      attribute :properties, Types::PropertiesList
 
       def self.create(options = {})
         new_opts = {

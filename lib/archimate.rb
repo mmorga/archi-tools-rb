@@ -80,7 +80,7 @@ module Archimate
   autoload :MaybeIO, __p('maybe_io')
   autoload :OutputIO, __p('output_io')
 
-  require File.join(Archimate::ROOT, 'archimate', 'model')
+  require File.join(Archimate::ROOT, 'archimate', 'model', 'types')
 
   # Creates a new generic xml document given an optional string source
   #
