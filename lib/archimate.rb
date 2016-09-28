@@ -5,15 +5,6 @@ require "highline"
 require "dry-types"
 require "dry-struct"
 
-HighLine.color_scheme = HighLine::ColorScheme.new do |cs|
-  cs[:headline]        = [ :bold, :yellow, :on_black ]
-  cs[:horizontal_line] = [ :bold, :white ]
-  cs[:even_row]        = [ :green ]
-  cs[:odd_row]         = [ :magenta ]
-  cs[:error]           = [ :bold, :red ]
-  cs[:warning]         = [ :bold, :yellow ]
-end
-
 # @private
 def __p(path)
   File.join(Archimate::ROOT, 'archimate', *path.split('/'))
@@ -72,11 +63,11 @@ module Archimate
     autoload :SourceConnection, __p('model/source_connection')
   end
 
+  autoload :AIO, __p('aio')
   autoload :ArchiFileReader, __p('archi_file_reader')
   autoload :Constants, __p('constants')
   autoload :Diff, __p('diff')
   autoload :Document, __p('document')
-  autoload :ErrorHelper, __p('error_helper')
   autoload :MaybeIO, __p('maybe_io')
   autoload :OutputIO, __p('output_io')
 

@@ -2,14 +2,10 @@
 module Archimate
   module Cli
     class Convert
-      include Archimate::ErrorHelper
-
       SUPPORTED_FORMATS = %w(meff2.1 archi nquads graphml).freeze
 
-      def initialize(options = {})
-        opts = { verbose: false, output_io: $stdout }.merge(options)
-        @verbose = opts[:verbose]
-        @msgDe = opts[:output_io]
+      def initialize(io = AIO.new)
+        @io = io
       end
 
       def convert(infile, output, options)
@@ -20,7 +16,7 @@ module Archimate
           File.open(infile) do |f|
             parser = Archimate::Conversion::ArchiToMeff.new(output)
             Ox.sax_parse(parser, f)
-            @msg_output.puts "Done parsing: elements with id count: #{parser.id_map.keys.size}" if @verbose
+            @io.debug "Done parsing: elements with id count: #{parser.id_map.keys.size}"
             # output.write Ox.dump(parser.doc)
             parser.doc.close
           end
@@ -34,7 +30,7 @@ module Archimate
           return if model.nil?
           output.write(Archimate::Conversion::GraphML.new.graph_ml(model))
         else
-          error "Conversion to '#{to_format}' is not supported yet."
+          @io.error "Conversion to '#{to_format}' is not supported yet."
         end
       end
     end

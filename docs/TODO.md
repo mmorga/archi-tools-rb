@@ -31,3 +31,22 @@
     "archimate:SketchModel" => diagrams_folder_xpath,
     "archimate:ArchimateDiagramModel" => diagrams_folder_xpath
 ```
+
+## Eliminate use of Document in favor of Model
+
+[ ] cli/archi.rb
+[ ] cli/cleanup.rb
+[ ] cli/convert.rb
+[ ] cli/svger.rb
+
+## Standardize the io for cli classes
+
+Should have:
+
+* Input (How to deal with CLIs that require multiple inputs?)
+* Output - for results (Multiple Outputs - like Cleanup?)
+* Error Messages
+* Interactive (IO for messages and questions)
+* Support for progress bars
+
+and should encapsulate things like `force`, `verbose`, etc.

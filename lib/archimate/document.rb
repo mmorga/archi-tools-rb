@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 module Archimate
   class Document
-    include Archimate::ErrorHelper
-
     attr_accessor :doc
 
     XPATHS = {
