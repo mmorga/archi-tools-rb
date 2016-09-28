@@ -1,7 +1,7 @@
 module Archimate
-  module Model
+  module DataModel
     class Organization < Dry::Struct::Value
-      attribute :folders, Types::FolderHash
+      attribute :folders, Strict::Hash
 
       def self.create(options = {})
         new_opts = {
@@ -14,5 +14,6 @@ module Archimate
         Organization.new(to_h.merge(options))
       end
     end
+    Dry::Types.register_class(Organization)
   end
 end

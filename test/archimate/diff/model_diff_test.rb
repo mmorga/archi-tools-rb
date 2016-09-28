@@ -16,22 +16,22 @@ module Archimate
       end
 
       def test_diff_model_name
-        model1 = Archimate::Model::Model.create(id: "123", name: "base")
-        model2 = Archimate::Model::Model.create(id: "123", name: "change")
+        model1 = Archimate::DataModel::Model.create(id: "123", name: "base")
+        model2 = Archimate::DataModel::Model.create(id: "123", name: "change")
         model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal [Difference.change("Model<123>/name", "base", "change")], model_diffs
       end
 
       def test_diff_model_id
-        model1 = Archimate::Model::Model.create(id: "123", name: "base")
-        model2 = Archimate::Model::Model.create(id: "321", name: "base")
+        model1 = Archimate::DataModel::Model.create(id: "123", name: "base")
+        model2 = Archimate::DataModel::Model.create(id: "321", name: "base")
         model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal [Difference.change("Model<123>/id", "123", "321")], model_diffs
       end
 
       def test_diff_model_documentation
-        model1 = Archimate::Model::Model.create(id: "123", name: "base", documentation: %w(documentation1))
-        model2 = Archimate::Model::Model.create(id: "123", name: "base", documentation: %w(documentation2))
+        model1 = Archimate::DataModel::Model.create(id: "123", name: "base", documentation: %w(documentation1))
+        model2 = Archimate::DataModel::Model.create(id: "123", name: "base", documentation: %w(documentation2))
         model_diffs = Context.new(model1, model2).diffs(ModelDiff.new)
         assert_equal(
           [

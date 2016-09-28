@@ -2,7 +2,7 @@
 require 'test_helper'
 
 module Archimate
-  module Model
+  module DataModel
     class BoundsTest < Minitest::Test
       def setup
         @b1 = Bounds.new(x: 0, y: 10, width: 500, height: 700)

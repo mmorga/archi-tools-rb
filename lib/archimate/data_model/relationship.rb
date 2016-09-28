@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 module Archimate
-  module Model
+  module DataModel
     class Relationship < Dry::Struct::Value
-      attribute :id, Types::Strict::String
-      attribute :type, Types::Strict::String
-      attribute :source, Types::Strict::String
-      attribute :target, Types::Strict::String
-      attribute :name, Types::Strict::String.optional
-      attribute :documentation, Types::DocumentationList
-      attribute :properties, Types::PropertiesList
+      attribute :id, Strict::String
+      attribute :type, Strict::String
+      attribute :source, Strict::String
+      attribute :target, Strict::String
+      attribute :name, Strict::String.optional
+      attribute :documentation, DocumentationList
+      attribute :properties, PropertiesList
 
       def self.create(options = {})
         new_opts = {
@@ -30,6 +30,7 @@ module Archimate
       def element_reference
         [@source, @target]
       end
+      Dry::Types.register_class(Relationship)
     end
   end
 end

@@ -2,7 +2,7 @@
 require 'test_helper'
 
 module Archimate
-  module Model
+  module DataModel
     class ChildTest < Minitest::Test
       def test_create
         child = Child.create(id: "abc123", type: "Sagitarius")

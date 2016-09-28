@@ -29,13 +29,13 @@ Gem::Specification.new do |spec|
   spec.metadata["yard.run"] = "yri" # use "yard" to build full HTML docs.
   spec.required_ruby_version = '>= 2.1.0'
 
-  spec.add_runtime_dependency "adamantium", "~> 0.2.0"
-  spec.add_runtime_dependency "ice_nine", "~> 0.11.2"
-  spec.add_runtime_dependency "memoizable", "~> 0.4.2"
-  spec.add_runtime_dependency "dry-equalizer", "~> 0.2.0"
-  spec.add_runtime_dependency "dry-types", "~> 0.9.0"
+  # spec.add_runtime_dependency "adamantium", "~> 0.2.0"
+  # spec.add_runtime_dependency "ice_nine", "~> 0.11.2"
+  # spec.add_runtime_dependency "memoizable", "~> 0.4.2"
+  # spec.add_runtime_dependency "dry-equalizer", "~> 0.2.0"
+  # spec.add_runtime_dependency "dry-types", "~> 0.9.0"
   spec.add_runtime_dependency "dry-struct", "~> 0.1.0"
-  spec.add_runtime_dependency "dry-monads", "~> 0.2.0"
+  # spec.add_runtime_dependency "dry-monads", "~> 0.2.0"
   spec.add_runtime_dependency "nokogiri", "~> 1.6"
   spec.add_runtime_dependency "colorize", "~> 0.7"
   spec.add_runtime_dependency "rmagick", "~> 2.15"

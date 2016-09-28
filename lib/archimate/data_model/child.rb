@@ -1,20 +1,20 @@
 module Archimate
-  module Model
+  module DataModel
     class Child < Dry::Struct::Value
-      attribute :id, Types::Strict::String
-      attribute :type, Types::Strict::String.optional
-      attribute :text_alignment, Types::Strict::String.optional
-      attribute :fill_color, Types::Strict::String.optional
-      attribute :model, Types::Strict::String.optional
-      attribute :name, Types::Strict::String.optional
-      attribute :target_connections, Types::Strict::String.optional
-      attribute :archimate_element, Types::Strict::String.optional
-      attribute :font, Types::Strict::String.optional
-      attribute :line_color, Types::Strict::String.optional
-      attribute :font_color, Types::Strict::String.optional
-      attribute :bounds, Types::OptionalBounds
-      attribute :children, Types::Strict::Hash
-      attribute :source_connections, Types::SourceConnectionList
+      attribute :id, Strict::String
+      attribute :type, Strict::String.optional
+      attribute :text_alignment, Strict::String.optional
+      attribute :fill_color, Strict::String.optional
+      attribute :model, Strict::String.optional
+      attribute :name, Strict::String.optional
+      attribute :target_connections, Strict::String.optional
+      attribute :archimate_element, Strict::String.optional
+      attribute :font, Strict::String.optional
+      attribute :line_color, Strict::String.optional
+      attribute :font_color, Strict::String.optional
+      attribute :bounds, OptionalBounds
+      attribute :children, Strict::Hash
+      attribute :source_connections, SourceConnectionList
 
       def self.create(options = {})
         new_opts = {
@@ -35,6 +35,8 @@ module Archimate
         Child.new(new_opts)
       end
     end
+    Dry::Types.register_class(Child)
+    ChildHash = Strict::Hash
   end
 end
 

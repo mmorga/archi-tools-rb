@@ -2,7 +2,7 @@
 require 'test_helper'
 
 module Archimate
-  module Model
+  module DataModel
     class DiagramTest < Minitest::Test
       def test_new
         diagram = Diagram.create(id: "123", name: "my diagram", documentation: %w(documentation1 documentation2))

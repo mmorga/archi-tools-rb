@@ -2,7 +2,7 @@
 require 'test_helper'
 
 module Archimate
-  module Model
+  module DataModel
     class OrganizationTest < Minitest::Test
       def test_new
         folders = build_folders(3, min_items: 1, max_items: 5)

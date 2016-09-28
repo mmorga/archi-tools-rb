@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 module Archimate
-  module Model
+  module DataModel
     class Property < Dry::Struct::Value
-      attribute :key, Types::Strict::String
-      attribute :value, Types::Strict::String.optional
+      attribute :key, 'strict.string' # Strict::String
+      attribute :value, Dry::Types['strict.string'].optional # Strict::String.optional
 
       def self.create(options = {})
         new_opts = {
@@ -16,5 +16,8 @@ module Archimate
         Property.new(to_h.merge(options))
       end
     end
+
+    Dry::Types.register_class(Property)
+    PropertiesList = Strict::Array.member(Property)
   end
 end

@@ -2,7 +2,7 @@
 require 'test_helper'
 
 module Archimate
-  module Model
+  module DataModel
     class BendpointTest < Minitest::Test
       def setup
         @b1 = Bendpoint.new(start_x: 0, start_y: 10, end_x: 500, end_y: 700)

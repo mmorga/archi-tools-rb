@@ -2,7 +2,7 @@
 require 'test_helper'
 
 module Archimate
-  module Model
+  module DataModel
     class ElementTest < Minitest::Test
       def test_create
         el = Element.create(id: "abc123", label: "Me")

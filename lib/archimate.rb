@@ -49,20 +49,6 @@ module Archimate
     autoload :UnorderedListDiff, __p('diff/unordered_list_diff')
   end
 
-  module Model
-    autoload :Bendpoint, __p('model/bendpoint')
-    autoload :Bounds, __p('model/bounds')
-    autoload :Child, __p('model/child')
-    autoload :Diagram, __p('model/diagram')
-    autoload :Element, __p('model/element')
-    autoload :Folder, __p('model/folder')
-    autoload :Model, __p('model/model')
-    autoload :Organization, __p('model/organization')
-    autoload :Property, __p('model/property')
-    autoload :Relationship, __p('model/relationship')
-    autoload :SourceConnection, __p('model/source_connection')
-  end
-
   autoload :AIO, __p('aio')
   autoload :ArchiFileReader, __p('archi_file_reader')
   autoload :Constants, __p('constants')
@@ -71,7 +57,7 @@ module Archimate
   autoload :MaybeIO, __p('maybe_io')
   autoload :OutputIO, __p('output_io')
 
-  require File.join(Archimate::ROOT, 'archimate', 'model', 'types')
+  require File.join(Archimate::ROOT, 'archimate', 'data_model')
 
   # Creates a new generic xml document given an optional string source
   #

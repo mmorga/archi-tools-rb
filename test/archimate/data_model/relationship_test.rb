@@ -2,7 +2,7 @@
 require 'test_helper'
 
 module Archimate
-  module Model
+  module DataModel
     class RelationshipTest < Minitest::Test
       def test_build_test_helper
         rel = build_relationship(id: "123", name: "my rel", documentation: %w(documentation1 documentation2))

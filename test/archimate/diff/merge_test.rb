@@ -46,8 +46,8 @@ module Archimate
 
       def test_no_changes
         base = build_model(with_elements: 3)
-        local = Archimate::Model::Model.new(base.to_h)
-        remote = Archimate::Model::Model.new(base.to_h)
+        local = Archimate::DataModel::Model.new(base.to_h)
+        remote = Archimate::DataModel::Model.new(base.to_h)
 
         merged = Merge.new.three_way(base, local, remote)
 

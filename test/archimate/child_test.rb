@@ -2,7 +2,7 @@
 require 'test_helper'
 
 module Archimate
-  module Model
+  module DataModel
     class ChildTest < Minitest::Test
       def test_new
         c = Child.create(id: "123", type: "archimate:DiagramObject")

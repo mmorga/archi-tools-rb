@@ -1,6 +1,6 @@
 module Archimate
   module Conversion
-    module ModelExchangeFileFormat
+    module DataModelExchangeFileFormat
     end
   end
 end

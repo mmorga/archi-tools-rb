@@ -2,7 +2,7 @@
 require 'test_helper'
 
 module Archimate
-  module Model
+  module DataModel
     class ModelTest < Minitest::Test
       def test_create
         model = Model.create(id: "123", name: "my model", documentation: %w(documentation1 documentation2))

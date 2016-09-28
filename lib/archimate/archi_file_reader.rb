@@ -11,7 +11,7 @@ module Archimate
     end
 
     def parse(doc)
-      Model::Model.new(
+      DataModel::Model.new(
         id: doc.root["id"],
         name: doc.root["name"],
         documentation: parse_documentation(doc.root, "purpose"),
@@ -28,7 +28,7 @@ module Archimate
     end
 
     def parse_properties(node)
-      node.css(">property").each_with_object([]) { |i, a| a << Model::Property.new(key: i["key"], value: i["value"]) }
+      node.css(">property").each_with_object([]) { |i, a| a << DataModel::Property.new(key: i["key"], value: i["value"]) }
     end
 
     def parse_elements(model)
@@ -38,7 +38,7 @@ module Archimate
     end
 
     def parse_element(node)
-      Model::Element.new(
+      DataModel::Element.new(
         id: node["id"],
         label: node["name"],
         type: node["xsi:type"].sub("archimate:", ""),
@@ -48,7 +48,7 @@ module Archimate
     end
 
     def parse_organization(model)
-      Model::Organization.new(folders: parse_folders(model))
+      DataModel::Organization.new(folders: parse_folders(model))
     end
 
     def parse_folders(node)
@@ -58,7 +58,7 @@ module Archimate
     end
 
     def parse_folder(node)
-      Model::Folder.new(
+      DataModel::Folder.new(
         id: node.attr("id"),
         name: node.attr("name"),
         type: node.attr("type"),
@@ -75,7 +75,7 @@ module Archimate
 
     def parse_relationships(model)
       model.css(Conversion::ArchiFileFormat::RELATION_XPATHS.join(",")).css("element").each_with_object({}) do |i, a|
-        a[i["id"]] = Model::Relationship.new(
+        a[i["id"]] = DataModel::Relationship.new(
           id: i["id"],
           type: i.attr("xsi:type").sub("archimate:", ""),
           source: i.attr("source"),
@@ -91,7 +91,7 @@ module Archimate
       model.css(Conversion::ArchiFileFormat::DIAGRAM_XPATHS.join(",")).css(
         'element[xsi|type="archimate:ArchimateDiagramModel"]'
       ).each_with_object({}) do |i, a|
-        a[i["id"]] = Model::Diagram.new(
+        a[i["id"]] = DataModel::Diagram.new(
           id: i["id"],
           name: i["name"],
           viewpoint: i["viewpoint"],
@@ -133,11 +133,11 @@ module Archimate
       child_hash[:bounds] = parse_bounds(child_node.at_css("> bounds"))
       child_hash[:children] = parse_children(child_node)
       child_hash[:source_connections] = parse_source_connections(child_node.css("> sourceConnection"))
-      Model::Child.new(child_hash)
+      DataModel::Child.new(child_hash)
     end
 
     def parse_bounds(node)
-      Model::Bounds.new(
+      DataModel::Bounds.new(
         x: node.attr("x"),
         y: node.attr("y"),
         width: node.attr("width"),
@@ -146,7 +146,7 @@ module Archimate
 
     def parse_source_connections(nodes)
       nodes.each_with_object([]) do |i, a|
-        a << Model::SourceConnection.new(
+        a << DataModel::SourceConnection.new(
           id: i["id"],
           type: i.attr("xsi:type"),
           source: i["source"],
@@ -159,7 +159,7 @@ module Archimate
 
     def parse_bendpoints(nodes)
       nodes.each_with_object([]) do |i, a|
-        a << Model::Bendpoint.new(
+        a << DataModel::Bendpoint.new(
           start_x: i.attr("startX"), start_y: i.attr("startY"),
           end_x: i.attr("endX"), end_y: i.attr("endY")
         )

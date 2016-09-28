@@ -1,12 +1,12 @@
 module Archimate
-  module Model
+  module DataModel
     class SourceConnection < Dry::Struct::Value
-      attribute :id, Types::Strict::String
-      attribute :type, Types::Strict::String
-      attribute :source, Types::Strict::String
-      attribute :target, Types::Strict::String
-      attribute :relationship, Types::Strict::String
-      attribute :bendpoints, Types::BendpointList
+      attribute :id, Strict::String
+      attribute :type, Strict::String
+      attribute :source, Strict::String
+      attribute :target, Strict::String
+      attribute :relationship, Strict::String
+      attribute :bendpoints, BendpointList
 
       def self.create(options = {})
         new_opts = {
@@ -23,5 +23,7 @@ module Archimate
         SourceConnection.new(to_h.merge(options))
       end
     end
+    Dry::Types.register_class(SourceConnection)
+    SourceConnectionList = Strict::Array.member("archimate.data_model.source_connection")
   end
 end

@@ -2,7 +2,7 @@
 require 'test_helper'
 
 module Archimate
-  module Model
+  module DataModel
     class SourceConnectionTest < Minitest::Test
       attr_reader :src_conn
 

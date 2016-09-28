@@ -2,7 +2,7 @@
 require 'test_helper'
 
 module Archimate
-  module Model
+  module DataModel
     class PropertyTest < Minitest::Test
       def test_create
         prop = Property.create(key: "keymaster", value: "gatekeeper")

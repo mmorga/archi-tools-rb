@@ -2,16 +2,16 @@
 require "set"
 
 module Archimate
-  module Model
+  module DataModel
     class Model < Dry::Struct::Value
-      attribute :id, Types::Strict::String
-      attribute :name, Types::Strict::String
-      attribute :documentation, Types::DocumentationList
-      attribute :properties, Types::PropertiesList
-      attribute :elements, Types::ElementHash
-      attribute :organization, Types::Organization
-      attribute :relationships, Types::RelationshipHash
-      attribute :diagrams, Types::DiagramHash
+      attribute :id, Strict::String
+      attribute :name, Strict::String
+      attribute :documentation, DocumentationList
+      attribute :properties, PropertiesList
+      attribute :elements, Strict::Hash
+      attribute :organization, Organization
+      attribute :relationships, Strict::Hash
+      attribute :diagrams, Strict::Hash
 
       def self.create(options = {})
         new_opts = {

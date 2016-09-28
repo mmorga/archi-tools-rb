@@ -2,7 +2,7 @@
 require 'test_helper'
 
 module Archimate
-  module Model
+  module DataModel
     class FolderTest < Minitest::Test
       def setup
         @f1 = Folder.new(id: "123", name: "Sales", type: "Business", items: [], documentation: [], properties: [], folders: {})

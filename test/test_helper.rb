@@ -22,7 +22,7 @@ require 'archimate'
 module Minitest
   class Test
     def build_bounds(options = {})
-      Archimate::Model::Bounds.new(
+      Archimate::DataModel::Bounds.new(
         x: options.fetch(:x, Faker::Number.positive),
         y: options.fetch(:y, Faker::Number.positive),
         width: options.fetch(:width, Faker::Number.positive),
@@ -31,7 +31,7 @@ module Minitest
     end
 
     def build_element(options = {})
-      Archimate::Model::Element.new(
+      Archimate::DataModel::Element.new(
         id: options.fetch(:id, Faker::Number.hexadecimal(8)),
         label: options.fetch(:label, Faker::Company.buzzword),
         type: options.fetch(:type, random_element_type),
@@ -45,20 +45,20 @@ module Minitest
     end
 
     def build_model(options = {})
-      Archimate::Model::Model.new(
+      Archimate::DataModel::Model.new(
         id: options.fetch(:id, Faker::Number.hexadecimal(8)),
         name: options.fetch(:name, Faker::Company.name),
         documentation: options.fetch(:documentation, []),
         properties: options.fetch(:properties, []),
         elements: options.fetch(:elements, build_element_list(options.fetch(:with_elements, 0))),
-        organization: options.fetch(:organization, Archimate::Model::Organization.create),
+        organization: options.fetch(:organization, Archimate::DataModel::Organization.create),
         relationships: options.fetch(:relationships, {}),
         diagrams: options.fetch(:diagrams, {})
       )
     end
 
     def build_relationship(options = {})
-      Archimate::Model::Relationship.new(
+      Archimate::DataModel::Relationship.new(
         id: options.fetch(:id, Faker::Number.hexadecimal(8)),
         type: options.fetch(:type, random_relationship_type),
         source: options.fetch(:source, Faker::Number.hexadecimal(8)),
@@ -70,7 +70,7 @@ module Minitest
     end
 
     def build_folder(options = {})
-      Archimate::Model::Folder.new(
+      Archimate::DataModel::Folder.new(
         id: options.fetch(:id, Faker::Number.hexadecimal(8)),
         name: options.fetch(:name, Faker::Commerce.department),
         type: options.fetch(:type, random_relationship_type),
@@ -92,13 +92,13 @@ module Minitest
     end
 
     def build_organization(options = {})
-      Archimate::Model::Organization.new(
+      Archimate::DataModel::Organization.new(
         folders: options.fetch(:folders, build_folders(options.fetch(:with_folders, 0)))
       )
     end
 
     def build_bendpoint(options = {})
-      Archimate::Model::Bendpoint.new(
+      Archimate::DataModel::Bendpoint.new(
         start_x: options.fetch(:start_x, random(0, 1000)),
         start_y: options.fetch(:start_y, random(0, 1000)),
         end_x: options.fetch(:end_x, random(0, 1000)),

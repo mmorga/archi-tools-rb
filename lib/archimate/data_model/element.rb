@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 module Archimate
-  module Model
+  module DataModel
     class Element < Dry::Struct::Value
-      attribute :id, Types::Strict::String
-      attribute :type, Types::Strict::String.optional
-      attribute :label, Types::Strict::String.optional
-      attribute :documentation, Types::DocumentationList
-      attribute :properties, Types::PropertiesList
+      attribute :id, Strict::String
+      attribute :type, Strict::String.optional
+      attribute :label, Strict::String.optional
+      attribute :documentation, DocumentationList
+      attribute :properties, PropertiesList
 
       alias name label
 

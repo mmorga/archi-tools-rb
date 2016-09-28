@@ -17,9 +17,9 @@ module Archimate
 
     def test_organization
       org = model.organization
-      assert_instance_of Model::Organization, org
+      assert_instance_of DataModel::Organization, org
       assert_equal 8, org.folders.size
-      assert org.folders.values.all? { |e| e.is_a? Model::Folder }
+      assert org.folders.values.all? { |e| e.is_a? DataModel::Folder }
       assert_equal 5, org.folders['8c90fdfa'].folders.size
       assert_equal 30, org.folders['8c90fdfa'].folders['fa63373b'].items.size
       assert org.folders['8c90fdfa'].folders['fa63373b'].items.all? { |e| e.is_a? String }
