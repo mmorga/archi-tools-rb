@@ -1,63 +1,57 @@
 # frozen_string_literal: true
-require "archimate/version"
 require "nokogiri"
 require "highline"
 require "dry-types"
 require "dry-struct"
-
-# @private
-def __p(path)
-  File.join(Archimate::ROOT, 'archimate', *path.split('/'))
-end
+require "archimate/version"
+require 'archimate/data_model'
 
 module Archimate
   # The root path for YARD source libraries
   ROOT = File.expand_path(File.dirname(__FILE__))
 
   module Cli
-    autoload :Archi, __p('cli/archi')
-    autoload :Cleanup, __p('cli/cleanup')
-    autoload :Convert, __p('cli/convert')
-    autoload :Diff, __p('cli/diff')
-    autoload :Duper, __p('cli/duper')
-    autoload :Mapper, __p('cli/mapper')
-    autoload :Merger, __p('cli/merger')
-    autoload :Projector, __p('cli/projector')
-    autoload :Svger, __p('cli/svger')
-    autoload :XmlTextconv, __p('cli/xml_textconv')
+    autoload :Archi, 'archimate/cli/archi'
+    autoload :Cleanup, 'archimate/cli/cleanup'
+    autoload :Convert, 'archimate/cli/convert'
+    autoload :Diff, 'archimate/cli/diff'
+    autoload :Duper, 'archimate/cli/duper'
+    autoload :Mapper, 'archimate/cli/mapper'
+    autoload :Merger, 'archimate/cli/merger'
+    autoload :Projector, 'archimate/cli/projector'
+    autoload :Svger, 'archimate/cli/svger'
+    autoload :XmlTextconv, 'archimate/cli/xml_textconv'
   end
 
   module Conversion
-    autoload :ArchiFileFormat, __p('conversion/archi_file_format')
-    autoload :ModelExchangeFileFormat, __p('conversion/model_exchange_file_format')
-    autoload :ArchiToMeff, __p('conversion/archi_to_meff')
-    autoload :Quads, __p('conversion/quads')
-    autoload :GraphML, __p('conversion/graph_ml')
+    autoload :ArchiFileFormat, 'archimate/conversion/archi_file_format'
+    autoload :ModelExchangeFileFormat, 'archimate/conversion/model_exchange_file_format'
+    autoload :ArchiToMeff, 'archimate/conversion/archi_to_meff'
+    autoload :Quads, 'archimate/conversion/quads'
+    autoload :GraphML, 'archimate/conversion/graph_ml'
   end
 
   module Diff
-    autoload :Context, __p('diff/context')
-    autoload :Difference, __p('diff/difference')
-    autoload :ElementDiff, __p('diff/element_diff')
-    autoload :FolderDiff, __p('diff/folder_diff')
-    autoload :IdHashDiff, __p('diff/id_hash_diff')
-    autoload :Merge, __p('diff/merge')
-    autoload :ModelDiff, __p('diff/model_diff')
-    autoload :OrganizationDiff, __p('diff/organization_diff')
-    autoload :RelationshipDiff, __p('diff/relationship_diff')
-    autoload :StringDiff, __p('diff/string_diff')
-    autoload :UnorderedListDiff, __p('diff/unordered_list_diff')
+    autoload :Context, 'archimate/diff/context'
+    autoload :Difference, 'archimate/diff/difference'
+    autoload :ElementDiff, 'archimate/diff/element_diff'
+    autoload :FolderDiff, 'archimate/diff/folder_diff'
+    autoload :IdHashDiff, 'archimate/diff/id_hash_diff'
+    autoload :Merge, 'archimate/diff/merge'
+    autoload :ModelDiff, 'archimate/diff/model_diff'
+    autoload :OrganizationDiff, 'archimate/diff/organization_diff'
+    autoload :RelationshipDiff, 'archimate/diff/relationship_diff'
+    autoload :StringDiff, 'archimate/diff/string_diff'
+    autoload :UnorderedListDiff, 'archimate/diff/unordered_list_diff'
   end
 
-  autoload :AIO, __p('aio')
-  autoload :ArchiFileReader, __p('archi_file_reader')
-  autoload :Constants, __p('constants')
-  autoload :Diff, __p('diff')
-  autoload :Document, __p('document')
-  autoload :MaybeIO, __p('maybe_io')
-  autoload :OutputIO, __p('output_io')
-
-  require File.join(Archimate::ROOT, 'archimate', 'data_model')
+  autoload :AIO, 'archimate/aio'
+  autoload :ArchiFileReader, 'archimate/archi_file_reader'
+  autoload :Constants, 'archimate/constants'
+  autoload :Diff, 'archimate/diff'
+  autoload :Document, 'archimate/document'
+  autoload :MaybeIO, 'archimate/maybe_io'
+  autoload :OutputIO, 'archimate/output_io'
 
   # Creates a new generic xml document given an optional string source
   #
@@ -78,5 +72,3 @@ module Archimate
     Diff::Context.new(local, remote).diffs(Diff::ModelDiff.new)
   end
 end
-
-undef __p

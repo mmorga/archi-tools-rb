@@ -2,8 +2,8 @@
 module Archimate
   module DataModel
     class Property < Dry::Struct::Value
-      attribute :key, 'strict.string' # Strict::String
-      attribute :value, Dry::Types['strict.string'].optional # Strict::String.optional
+      attribute :key, Strict::String
+      attribute :value, Strict::String.optional
 
       def self.create(options = {})
         new_opts = {

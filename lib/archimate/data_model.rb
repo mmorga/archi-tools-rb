@@ -5,7 +5,7 @@ module Archimate
     Coercible = Archimate::DataModel::Coercible
     Strict = Archimate::DataModel::Strict
 
-    DocumentationList = Strict::Array.member('strict.string') # Strict::String)
+    DocumentationList = Strict::Array.member(Strict::String)
 
     require 'archimate/data_model/property'
     require 'archimate/data_model/bendpoint'
