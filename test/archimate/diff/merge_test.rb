@@ -51,6 +51,20 @@ module Archimate
         refute_equal base, actual
       end
 
+      def test_independent_changes_element_documentation
+        local_el = base_el1.with(documentation: build_documentation)
+        remote_el = base_el2.with(documentation: build_documentation)
+        local = base.insert_element(local_el)
+        remote = base.insert_element(remote_el)
+
+        actual = merge.three_way(base, local, remote)
+
+        assert_empty merge.conflicts
+        assert_includes actual.elements.values, local_el
+        assert_includes actual.elements.values, remote_el
+        refute_equal base, actual
+      end
+
       def test_independent_changes_relationship
         local_rel = base_rel1.with(name: "#{base_rel1.name}-local")
         remote_rel = base_rel2.with(name: "#{base_rel2.name}-remote")
@@ -99,7 +113,6 @@ module Archimate
         refute_equal base, local
         refute_equal local, remote
       end
-
 
       def test_apply_diff_insert_element
         m1 = build_model(with_elements: 3)

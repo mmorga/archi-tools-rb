@@ -21,6 +21,10 @@ require 'archimate'
 
 module Minitest
   class Test
+    def build_documentation(options = {})
+      options.fetch(:text, [Faker::ChuckNorris.fact])
+    end
+
     def build_bounds(options = {})
       Archimate::DataModel::Bounds.new(
         x: options.fetch(:x, Faker::Number.positive),

@@ -52,12 +52,28 @@ module Archimate
             if diff.delete?
               node.with(attr_name => child_collection.reject { |_k, v| v == diff.from })
             else
-              node.with(attr_name => child_collection.merge(id => diff.to))
+              case child_collection
+              when Hash
+                node.with(attr_name => child_collection.merge(id => diff.to))
+              when Array
+                nu_collection = child_collection.dup
+                nu_collection[id.to_i] = diff.to
+                node.with(attr_name => nu_collection)
+              else
+                raise "Type Error #{child_collection.class} unexpected for collection type"
+              end
             end
           else
             child = child_collection[id]
             raise "Child #{id} not found in collection" if child.nil?
-            node.with(attr_name => child_collection.merge(id => apply_diff(child, diff.with(entity: path.join("/")))))
+            case child_collection
+            when Hash
+              node.with(attr_name => child_collection.merge(id => apply_diff(child, diff.with(entity: path.join("/")))))
+            when Array
+              node.with(attr_name => child_collection[id.to_i] = apply_diff(child, diff.with(entity: path.join("/"))))
+            else
+              raise "Type Error #{child_collection.class} unexpected for collection type"
+            end
           end
         end
       end
