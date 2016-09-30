@@ -39,7 +39,7 @@ module Archimate
         diffs.map do |d|
           path = @path_stack.dup
           unless d.entity.nil?
-            if d.entity.is_a?(Fixnum)
+            if d.entity.is_a?(Integer)
               path << "[#{d.entity}]"
             else
               path << d.entity.to_s unless d.entity.to_s.empty?

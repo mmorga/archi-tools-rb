@@ -1,5 +1,8 @@
+# frozen_string_literal: true
 module Archimate
   module DataModel
+    # TODO: this really serves no purpose in the datamodel. remove this and
+    # bump up its folders attribute into Model.
     class Organization < Dry::Struct::Value
       attribute :folders, Strict::Hash
 

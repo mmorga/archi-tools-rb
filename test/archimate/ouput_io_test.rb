@@ -17,7 +17,7 @@ module Archimate
       filename = "test_maybe_io_file.xml"
       OutputIO.new("output" => filename) do |io|
         called = true
-        assert io.is_a?(::IO)
+        assert io.is_a?(IO)
       end
       assert called
       assert File.exist?(filename)

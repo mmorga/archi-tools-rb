@@ -40,19 +40,40 @@ module Minitest
       )
     end
 
-    def build_element_list(count)
-      Archimate.array_to_id_hash((0..count).map { build_element })
+    def build_element_list(count, other_els)
+      other_els = other_els.values if other_els.is_a? Hash
+      bel = (1..count).map { build_element } + other_els
+      Archimate.array_to_id_hash(bel)
+    end
+
+    def build_relationship_list(count, other_rels, el_ids)
+      Archimate.array_to_id_hash(
+        (1..count).map do
+          src_id, target_id = el_ids.shift
+          build_relationship(source: src_id, target: target_id)
+        end + other_rels
+      )
     end
 
     def build_model(options = {})
+      given_elements = options.fetch(:elements, [])
+      given_element_count = given_elements.size
+      el_count = [options.fetch(:with_relationships, 0) * 2, options.fetch(:with_elements, 0) + given_element_count].max
+      els = build_element_list(el_count - given_element_count, given_elements)
+
+      el_ids = els.values.map(&:id).each_slice(2).each_with_object([]) { |i, a| a << i }
+      given_relationships = options.fetch(:relationships, [])
+      rels = build_relationship_list(options.fetch(:with_relationships, 0), given_relationships, el_ids)
+
+      els = build_element_list(options.fetch(:with_elements, 0), options.fetch(:elements, els))
       Archimate::DataModel::Model.new(
         id: options.fetch(:id, Faker::Number.hexadecimal(8)),
         name: options.fetch(:name, Faker::Company.name),
         documentation: options.fetch(:documentation, []),
         properties: options.fetch(:properties, []),
-        elements: options.fetch(:elements, build_element_list(options.fetch(:with_elements, 0))),
+        elements: els,
         organization: options.fetch(:organization, Archimate::DataModel::Organization.create),
-        relationships: options.fetch(:relationships, {}),
+        relationships: rels,
         diagrams: options.fetch(:diagrams, {})
       )
     end

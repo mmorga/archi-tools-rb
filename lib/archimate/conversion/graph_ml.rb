@@ -20,7 +20,7 @@ module Archimate
           xml.graphml(
             "xmlns" => "http://graphml.graphdrawing.org/xmlns",
             "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
-            "xsi:schemaLocation" => "http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd",
+            "xsi:schemaLocation" => "http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"
           ) do
             xml.key(id: "element-type", for: "node", "attr.name" => "type", "attr.type" => "string")
             xml.key(id: "relationship-type", for: "edge", "attr.name" => "type", "attr.type" => "string")

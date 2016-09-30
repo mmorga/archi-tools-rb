@@ -171,7 +171,7 @@ module Archimate
     end
 
     def layer(node)
-      return nil if node.nil? || node.document?
+      return nil if node&.document?
       # TODO: test for Archi format and archimate open exchange format
       if node.name == "folder" && !node["type"].nil?
         node["type"]

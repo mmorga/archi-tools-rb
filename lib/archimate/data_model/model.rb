@@ -29,19 +29,25 @@ module Archimate
         Model.new(to_h.merge(options))
       end
 
-      def apply_diff(diff)
-        model = with
-        if diff.kind == :insert
-          if diff.to.is_a?(Element)
-            el = diff.to
-            new_elements = {}.merge(model.elements)
-            new_elements[el.id] = el
-            model = model.with(elements: new_elements)
-          end
-        end
-        model
+      # returns a copy of self with element added
+      # (or replaced with) the given element
+      def insert_element(element)
+        with(
+          elements:
+            elements.merge(element.id => element)
+        )
       end
 
+      # returns a copy of self with relationship added
+      # (or replaced with) the given relationship
+      def insert_relationship(relationship)
+        with(
+          relationships:
+            relationships.merge(relationship.id => relationship)
+        )
+      end
+
+      # TODO: consider refactoring all of the ref/unref methods to another class
       def ref_set
         Set.new(relationship_element_references + diagram_element_references)
       end

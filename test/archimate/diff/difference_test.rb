@@ -68,19 +68,28 @@ module Archimate
         assert_equal "DELETE: ", HighLine.uncolor(diff.fmt_kind)
       end
 
-      def diff_description_change
+      def test_diff_description_change
         diff = Difference.change("Change", "old and busted", "new hotness")
         assert_equal "old and busted -> new hotness", diff.diff_description
       end
 
-      def diff_description_insert
+      def test_diff_description_insert
         diff = Difference.insert(:model, "to_val")
         assert_equal "to_val", diff.diff_description
       end
 
-      def diff_description_delete
+      def test_diff_description_delete
         diff = Difference.delete(:model, "deleted")
         assert_equal "deleted", diff.diff_description
+      end
+
+      def test_with
+        diff = Difference.change("Model<abcd1234>/elements/1234abcd/label", "Old Label", "New Label")
+        actual = diff.with(entity: "elements/1234abcd/label")
+        assert_equal "elements/1234abcd/label", actual.entity
+        refute_equal diff.entity, actual.entity
+        assert_equal "Old Label", actual.from
+        assert_equal "New Label", actual.to
       end
     end
   end

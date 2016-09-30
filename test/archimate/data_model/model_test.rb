@@ -22,19 +22,6 @@ module Archimate
         m2 = m1.with(name: "felix")
         refute_equal m1, m2
       end
-
-      def test_apply_diff
-        m1 = build_model(with_elements: 3)
-        added_el = build_element
-        elements = m1.elements.dup
-        elements[added_el.id] = added_el
-        m2 = m1.with(elements: elements)
-        model_diffs = Archimate.diff(m1, m2)
-        m3 = m1.apply_diff(model_diffs[0])
-        assert_equal m2, m3
-        refute_equal m1, m2
-        refute_equal m1, m3
-      end
     end
   end
 end

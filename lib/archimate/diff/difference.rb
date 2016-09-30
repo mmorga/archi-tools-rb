@@ -1,16 +1,23 @@
 # frozen_string_literal: true
 module Archimate
   module Diff
+    # Big plans for the Difference class
+    # Consider converting to a Value object under DataModel
+    # - To do so will require making the to and from attributes type safe
+    # - So they'd need to be different Values by types
+    # - Also consider different types for the KIND enum
+
     # Difference defines a change between two entities within a model
     # * change kind (delete, insert, change)
     # * entity (reference to the entity or attribute)
     # * from (invalid for insert)
     # * to (invalid for delete)
     class Difference
+      # TODO:consider adding a "conflict difference kind"
       KIND = [:delete, :insert, :change].freeze
 
       attr_reader :kind
-      attr_accessor :entity
+      attr_accessor :entity # TODO: entity is accessed as a stack, consider changing from string to stack
       attr_accessor :from
       attr_accessor :to
 
@@ -56,6 +63,16 @@ module Archimate
           diff = d.dup
           diff.entity = entity
           diff
+        end
+      end
+
+      def with(options = {})
+        Difference.new(
+          options.fetch(:kind, kind),
+          options.fetch(:entity, entity)
+        ) do |diff|
+          diff.from = options.fetch(:from, from)
+          diff.to = options.fetch(:to, to)
         end
       end
 

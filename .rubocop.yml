@@ -10,4 +10,4 @@ Style/Documentation:
   Enabled: false
 
 AllCops:
-  TargetRubyVersion: 2.1.0
+  TargetRubyVersion: 2.3

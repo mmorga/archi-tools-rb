@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Archimate
   module DataModel
     class SourceConnection < Dry::Struct::Value

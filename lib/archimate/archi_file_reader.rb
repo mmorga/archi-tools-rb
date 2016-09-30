@@ -141,7 +141,8 @@ module Archimate
         x: node.attr("x"),
         y: node.attr("y"),
         width: node.attr("width"),
-        height: node.attr("height"))
+        height: node.attr("height")
+      )
     end
 
     def parse_source_connections(nodes)

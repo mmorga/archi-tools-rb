@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Archimate
   # The Constants module contains constants for ArchiMate standards
   # TODO: This should be namespaced for the ArchiMate version in effect
@@ -21,39 +22,34 @@ module Archimate
     # TODO: the archimate: portion of element names is from the Archi file format - shouldn't be here
     LAYER_ELEMENTS = {
       "Business" =>
-        [ "archimate:BusinessActor", "archimate:BusinessCollaboration",
-          "archimate:BusinessEvent", "archimate:BusinessFunction",
-          "archimate:BusinessInteraction", "archimate:BusinessInterface",
-          "archimate:BusinessObject", "archimate:BusinessProcess",
-          "archimate:BusinessRole", "archimate:BusinessService",
-          "archimate:Contract", "archimate:Location",
-          "archimate:Meaning", "archimate:Value",
-          "archimate:Product", "archimate:Representation"
-        ],
+        ["archimate:BusinessActor", "archimate:BusinessCollaboration",
+         "archimate:BusinessEvent", "archimate:BusinessFunction",
+         "archimate:BusinessInteraction", "archimate:BusinessInterface",
+         "archimate:BusinessObject", "archimate:BusinessProcess",
+         "archimate:BusinessRole", "archimate:BusinessService",
+         "archimate:Contract", "archimate:Location",
+         "archimate:Meaning", "archimate:Value",
+         "archimate:Product", "archimate:Representation"],
       "Application" =>
-        [ "archimate:ApplicationCollaboration", "archimate:ApplicationComponent",
-          "archimate:ApplicationFunction", "archimate:ApplicationInteraction",
-          "archimate:ApplicationInterface", "archimate:ApplicationService",
-          "archimate:DataObject"
-        ],
+        ["archimate:ApplicationCollaboration", "archimate:ApplicationComponent",
+         "archimate:ApplicationFunction", "archimate:ApplicationInteraction",
+         "archimate:ApplicationInterface", "archimate:ApplicationService",
+         "archimate:DataObject"],
       "Technology" =>
-        [ "archimate:Artifact", "archimate:CommunicationPath",
-          "archimate:Device", "archimate:InfrastructureFunction",
-          "archimate:InfrastructureInterface", "archimate:InfrastructureService",
-          "archimate:Network", "archimate:Node", "archimate:SystemSoftware"
-        ],
+        ["archimate:Artifact", "archimate:CommunicationPath",
+         "archimate:Device", "archimate:InfrastructureFunction",
+         "archimate:InfrastructureInterface", "archimate:InfrastructureService",
+         "archimate:Network", "archimate:Node", "archimate:SystemSoftware"],
       "Motivation" =>
-        [ "archimate:Assessment", "archimate:Constraint", "archimate:Driver",
-          "archimate:Goal", "archimate:Principle", "archimate:Requirement",
-          "archimate:Stakeholder"
-        ],
+        ["archimate:Assessment", "archimate:Constraint", "archimate:Driver",
+         "archimate:Goal", "archimate:Principle", "archimate:Requirement",
+         "archimate:Stakeholder"],
       "Implementation and Migration" =>
-        [ "archimate:Deliverable", "archimate:Gap", "archimate:Plateau",
-          "archimate:WorkPackage"
-        ],
+        ["archimate:Deliverable", "archimate:Gap", "archimate:Plateau",
+         "archimate:WorkPackage"],
       "Connectors" =>
-        [ "archimate:AndJunction", "archimate:Junction", "archimate:OrJunction"]
-    }
+        ["archimate:AndJunction", "archimate:Junction", "archimate:OrJunction"]
+    }.freeze
 
     ELEMENT_LAYER = LAYER_ELEMENTS.each_with_object({}) do |(layer, elements), el_layer_hash|
       elements.each_with_object(el_layer_hash) { |element, a| a[element] = layer }
