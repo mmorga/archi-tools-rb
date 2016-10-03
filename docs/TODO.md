@@ -7,6 +7,7 @@
   - [X] N-Quad
   - [X] GraphML
 * [ ] Experiment with Ox, Oga, Sax-Machine for better performance on convert
+* Map conversion between archi and archimate diagram formats
 
 ## Other tool ideas
 
@@ -50,3 +51,4 @@ Should have:
 * Support for progress bars
 
 and should encapsulate things like `force`, `verbose`, etc.
+

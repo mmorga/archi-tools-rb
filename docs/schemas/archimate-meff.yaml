@@ -1,0 +1,94 @@
+
+# Viewpoints Enum (ordered in archimate meff schema)
+
+viewpointsEnum:
+    - Introductory
+    - Organization
+    - Actor Co-operation
+    - Business Function
+    - Business Process
+    - Business Process Co-operation
+    - Product
+    - Application Behavior
+    - Application Co-operation
+    - Application Structure
+    - Application Usage
+    - Infrastructure
+    - Infrastructure Usage
+    - Implementation and Deployment
+    - Information Structure
+    - Service Realization
+    - Layered
+    - Landscape Map
+    - Stakeholder
+    - Goal Realization
+    - Goal Contribution
+    - Principles
+    - Requirements Realization
+    - Motivation
+    - Project
+    - Migration
+    - Implementation and Migration
+
+views: [viewType]+
+
+viewType:
+    - identifier: identifierref        # id of view
+    - viewpoint(?): viewpointsEnum     # viewpoint
+    - label(*): langStringType         # interesting - can be many labels
+    - documentation(*): langStringType
+    - properties(?): propertiesType
+    - node(*): nodeType                # nodes can have children
+    - connection(*): connectionType    # connections are listed separately
+
+nodeType:
+    - identifier: ID
+    - elementref(?): IDREF
+    - x: int
+    - y: int
+    - w: int
+    - h: int
+    - type(?): string (group)
+    - label(*): langStringType
+    - documentation(*): langStringType
+    - properties(?): propertiesType
+    - style(?): styleType
+    - node(*): nodeType
+
+connectionType:
+    - identifier: ID
+    - relationshipref(?): IDREF
+    - source: IDREF
+    - target: IDREF
+    - label(*): langStringType
+    - documentation(*): langStringType
+    - properties(?): propertiesType
+    - bendpoint(*): bendpointType
+    - style(?): styleType
+
+bendpointType:
+    - x: int
+    - y: int
+
+styleType:
+    - fillColor(?): rgbColorType
+    - lineColor(?): rgbColorType
+    - font(?): fontType
+    - lineWidth(?): int
+    - *
+
+rgbColorType:
+    - r: 0-255
+    - g: 0-255
+    - b: 0-255
+    - a(?): 0-100
+
+fontType:
+    - color(?): rgbColorType
+    - name(?): string
+    - size(?): decimal
+    - style(?): string
+
+propertiesType:
+    - value(+): langStringType
+    - identifierref: IDREF

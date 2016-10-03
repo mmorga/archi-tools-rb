@@ -8,7 +8,7 @@ module Archimate
       attribute :fill_color, Strict::String.optional
       attribute :model, Strict::String.optional
       attribute :name, Strict::String.optional
-      attribute :target_connections, Strict::String.optional
+      attribute :target_connections, Strict::String.optional # TODO: this is a list encoded in a string
       attribute :archimate_element, Strict::String.optional
       attribute :font, Strict::String.optional
       attribute :line_color, Strict::String.optional
@@ -16,6 +16,9 @@ module Archimate
       attribute :bounds, OptionalBounds
       attribute :children, Strict::Hash
       attribute :source_connections, SourceConnectionList
+      attribute :documentation, DocumentationList
+      attribute :properties, PropertiesList
+      attribute :style, OptionalStyle
 
       def self.create(options = {})
         new_opts = {
@@ -31,7 +34,10 @@ module Archimate
           font_color: nil,
           bounds: nil,
           children: {},
-          source_connections: []
+          source_connections: [],
+          documentation: [],
+          properties: [],
+          style: nil
         }.merge(options)
         Child.new(new_opts)
       end

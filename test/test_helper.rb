@@ -21,6 +21,10 @@ require 'archimate'
 
 module Minitest
   class Test
+    def build_id
+      Faker::Number.hexadecimal(8)
+    end
+
     def build_documentation(options = {})
       options.fetch(:text, [Faker::ChuckNorris.fact])
     end
@@ -36,7 +40,7 @@ module Minitest
 
     def build_element(options = {})
       Archimate::DataModel::Element.new(
-        id: options.fetch(:id, Faker::Number.hexadecimal(8)),
+        id: options.fetch(:id, build_id),
         label: options.fetch(:label, Faker::Company.buzzword),
         type: options.fetch(:type, random_element_type),
         documentation: options.fetch(:documentation, []),
@@ -71,7 +75,7 @@ module Minitest
 
       els = build_element_list(options.fetch(:with_elements, 0), options.fetch(:elements, els))
       Archimate::DataModel::Model.new(
-        id: options.fetch(:id, Faker::Number.hexadecimal(8)),
+        id: options.fetch(:id, build_id),
         name: options.fetch(:name, Faker::Company.name),
         documentation: options.fetch(:documentation, []),
         properties: options.fetch(:properties, []),
@@ -82,12 +86,56 @@ module Minitest
       )
     end
 
+    def build_diagram(options = {})
+      Archimate::DataModel::Diagram.new(
+        id: options.fetch(:id, build_id),
+        name: options.fetch(:name, Faker::Commerce.product_name),
+        viewpoint: options.fetch(:viewpoint, nil),
+        documentation: options.fetch(:documentation, build_documentation),
+        properties: options.fetch(:properties, []),
+        children: options.fetch(:children, build_children),
+        connection_router_type: nil,
+        type: nil,
+        element_references: [] # TODO: this needs to be populated with the content referenced in build_children
+      )
+    end
+
+    def build_children(options = {})
+      count = options.fetch(:count, 3)
+      (1..count).each_with_object({}) do |_i, a|
+        child = build_child
+        a[child.id] = child
+      end
+    end
+
+    def build_child(options = {})
+      for_element = options.fetch(:for_element, build_element)
+      to_element = options.fetch(:to_element, build_element)
+      Archimate::DataModel::Child.create(
+        id: options.fetch(:id, build_id),
+        type: "archimate:DiagramObject",
+        archimate_element: for_element.id,
+        bounds: build_bounds,
+        source_connections: [build_source_connections(source: for_element.id, target: to_element.id)]
+      )
+    end
+
+    def build_source_connections(options = {})
+      Archimate::DataModel::SourceConnection.create(
+        id: options.fetch(:id, build_id),
+        type: "archimate:Connection",
+        source: options.fetch(:source, build_id),
+        target: options.fetch(:target, build_id),
+        relationship: options.fetch(:relationship, build_id)
+      )
+    end
+
     def build_relationship(options = {})
       Archimate::DataModel::Relationship.new(
-        id: options.fetch(:id, Faker::Number.hexadecimal(8)),
+        id: options.fetch(:id, build_id),
         type: options.fetch(:type, random_relationship_type),
-        source: options.fetch(:source, Faker::Number.hexadecimal(8)),
-        target: options.fetch(:source, Faker::Number.hexadecimal(8)),
+        source: options.fetch(:source, build_id),
+        target: options.fetch(:source, build_id),
         name: options.fetch(:name, Faker::Company.catch_phrase),
         documentation: options.fetch(:documentation, []),
         properties: options.fetch(:properties, [])
@@ -96,7 +144,7 @@ module Minitest
 
     def build_folder(options = {})
       Archimate::DataModel::Folder.new(
-        id: options.fetch(:id, Faker::Number.hexadecimal(8)),
+        id: options.fetch(:id, build_id),
         name: options.fetch(:name, Faker::Commerce.department),
         type: options.fetch(:type, random_relationship_type),
         documentation: options.fetch(:documentation, []),
@@ -107,10 +155,9 @@ module Minitest
     end
 
     def build_folders(count, min_items: 1, max_items: 10)
-      # return {} if count.zero?
-      (0..count - 1).each_with_object({}) do |_i, a|
+      (1..count).each_with_object({}) do |_i, a|
         folder = build_folder(
-          items: (0..random(min_items, max_items)).each_with_object([]) { |_i2, a2| a2 << Faker::Number.hexadecimal(8) }
+          items: (0..random(min_items, max_items)).each_with_object([]) { |_i2, a2| a2 << build_id }
         )
         a[folder.id] = folder
       end

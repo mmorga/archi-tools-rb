@@ -8,6 +8,9 @@ module Archimate
 
     DocumentationList = Strict::Array.member(Strict::String)
 
+    require 'archimate/data_model/color'
+    require 'archimate/data_model/font'
+    require 'archimate/data_model/style'
     require 'archimate/data_model/property'
     require 'archimate/data_model/bendpoint'
     require 'archimate/data_model/bounds'

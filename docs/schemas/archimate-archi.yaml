@@ -1,0 +1,70 @@
+# Archi: Diagrams schema Archimate folder[type="diagrams"]
+elements: elementType+
+
+elementType: # viewType in meff, diagram in data_model
+  Attributes:
+    - id: string (viewType.identifier)
+    - name: string (viewType.label)
+    - type: string "archimate:ArchimateDiagramModel" (N/A)
+    - connectionRouterType?: string (int "1") (N/A)
+    - viewpoint?: string (of int value) (viewType.viewpoint)
+  Children:
+    - child*: childType (viewType.node*)
+    - documentation*: string (viewType.documentation*)
+    - property*: propertyType (viewType.properties?)
+
+childType:
+  Attributes:
+    - id: string (nodeType.identifier)
+    - type: string (nodeType.type ~sort of~) (enum of "archimate:DiagramModelReference", "archimate:Group", "archimate:DiagramObject")
+    - archimateElement?: string (id) (nodeType.elementref)
+    - fillColor?: string (html hex color) (nodeType.style.fillColor)
+    - font?: string (|separated values) (nodeType.style.font)
+    - fontColor?: string (html hex color) (nodeType.style.font.color)
+    - lineColor?: string (html hex color) (nodeType.style.lineColor)
+    - model?: string (id ref to another ArchimateDiagramModel) (TODO)
+    - name?: string (nodeType.label)
+    - targetConnections?: string (space separated ids) (TODO)
+    - textAlignment?: string (int value) (TODO)
+  Children:
+    - bounds: boundsType (nodeType.[x, y, w, h])
+    - child*: childType (nodeType.node*)
+    - content?: string (this is text shown in the note only for notes, I think) (TODO)
+    - documentation?: string (nodeType.documentation)
+    - property*: propertyType (nodeType.properties)
+    - sourceConnection*: sourceConnectionType (viewType.connection*)
+
+sourceConnectionType:
+  Attributes:
+    - id: string (id) (connectionType.identifier)
+    - source: string (id ref) (connectionType.source)
+    - target: string (id ref) (connectionType.target)
+    - font?: string (|separated values) (connectionType.style.font)
+    - fontColor?: string (html hex color) (connectionType.style.font.color)
+    - lineColor?: string (html hex color) (connectionType.style.lineColor)
+    - lineWidth?: string (int) (connectionType.style.lineWidth)
+    - name?: string (connectionType.label)
+    - relationship?: string (id ref) (connectionType.relationshipref)
+    - textPosition?: string (int) (TODO)
+    - type?: string ("archimate:Connection" - may no longer be required)
+  Children:
+    - bendpoint*: bendpointType (connectionType.bendpoint*)
+
+Bendpoint:
+  Attributes:
+    - startX?: int (bendpointType.x)
+    - startY?: int (bendpointType.y)
+    - endX?: int (N/A)
+    - endY?: int (N/A)
+
+Bounds:
+  Attributes:
+    - height: int (nodeType.h)
+    - width: int (nodeType.w)
+    - x?: int (nodeType.x)
+    - y?: int (nodeType.y)
+
+propertyType:
+  Attributes:
+    - key?: string (TODO)
+    - value?: string (propertiesType.value)

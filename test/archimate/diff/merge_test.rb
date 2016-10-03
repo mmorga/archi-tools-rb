@@ -65,6 +65,23 @@ module Archimate
         refute_equal base, actual
       end
 
+      def test_both_insert_element_documentation
+        skip("Re-enable after a better conflict detector is written")
+        doc1 = build_documentation
+        doc2 = build_documentation
+        local_el = base_el1.with(documentation: doc1)
+        remote_el = base_el1.with(documentation: doc2)
+        local = base.insert_element(local_el)
+        remote = base.insert_element(remote_el)
+
+        actual = merge.three_way(base, local, remote)
+
+        assert_empty merge.conflicts
+        assert_includes actual.elements[base_el1.id].documentation, doc1[0]
+        assert_includes actual.elements[base_el1.id].documentation, doc2[0]
+        refute_equal base, actual
+      end
+
       def test_independent_changes_relationship
         local_rel = base_rel1.with(name: "#{base_rel1.name}-local")
         remote_rel = base_rel2.with(name: "#{base_rel2.name}-remote")
@@ -140,6 +157,10 @@ module Archimate
         assert_equal base, merged
         assert_equal local, merged
         assert_equal remote, merged
+      end
+
+      def test_find_diagram_delete_update_conflicts
+        diagram = build_diagram
       end
     end
   end

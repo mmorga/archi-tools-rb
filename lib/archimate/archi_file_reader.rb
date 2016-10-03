@@ -98,6 +98,8 @@ module Archimate
           documentation: parse_documentation(i),
           properties: parse_properties(i),
           children: parse_children(i),
+          connection_router_type: i["connectionRouterType"],
+          type: i.attr("type"),
           # TODO: This is a quick fix to permit diff/merge
           element_references: i.css("[archimateElement]").each_with_object([]) do |i2, a2|
             a2 << i2["archimateElement"]
@@ -133,6 +135,9 @@ module Archimate
       child_hash[:bounds] = parse_bounds(child_node.at_css("> bounds"))
       child_hash[:children] = parse_children(child_node)
       child_hash[:source_connections] = parse_source_connections(child_node.css("> sourceConnection"))
+      child_hash[:documentation] = parse_documentation(child_node)
+      child_hash[:properties] = parse_properties(child_node)
+      child_hash[:style] = nil # TODO: Style Refactor
       DataModel::Child.new(child_hash)
     end
 
@@ -153,7 +158,11 @@ module Archimate
           source: i["source"],
           target: i["target"],
           relationship: i["relationship"],
-          bendpoints: parse_bendpoints(i.css("bendpoint"))
+          name: i["name"],
+          style: nil, # TODO: Style Refactor
+          bendpoints: parse_bendpoints(i.css("bendpoint")),
+          documentation: parse_documentation(i),
+          properties: parse_properties(i)
         )
       end
     end

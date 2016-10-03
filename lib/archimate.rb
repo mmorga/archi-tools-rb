@@ -32,16 +32,25 @@ module Archimate
   end
 
   module Diff
+    autoload :BendpointDiff, 'archimate/diff/bendpoint_diff'
+    autoload :BoundsDiff, 'archimate/diff/bounds_diff'
+    autoload :ChildDiff, 'archimate/diff/child_diff'
+    autoload :ColorDiff, 'archimate/diff/color'
     autoload :Context, 'archimate/diff/context'
+    autoload :DiagramDiff, 'archimate/diff/diagram_diff'
     autoload :Difference, 'archimate/diff/difference'
     autoload :ElementDiff, 'archimate/diff/element_diff'
+    autoload :FloatDiff, 'archimate/diff/float_diff'
+    autoload :FontDiff, 'archimate/diff/font_diff'
     autoload :FolderDiff, 'archimate/diff/folder_diff'
     autoload :IdHashDiff, 'archimate/diff/id_hash_diff'
     autoload :Merge, 'archimate/diff/merge'
     autoload :ModelDiff, 'archimate/diff/model_diff'
     autoload :OrganizationDiff, 'archimate/diff/organization_diff'
     autoload :RelationshipDiff, 'archimate/diff/relationship_diff'
+    autoload :SourceConnectionDiff, 'archimate/diff/source_connection_diff'
     autoload :StringDiff, 'archimate/diff/string_diff'
+    autoload :StyleDiff, 'archimate/diff/style_diff'
     autoload :UnorderedListDiff, 'archimate/diff/unordered_list_diff'
   end
 
