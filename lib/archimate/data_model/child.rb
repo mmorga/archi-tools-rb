@@ -4,15 +4,10 @@ module Archimate
     class Child < Dry::Struct::Value
       attribute :id, Strict::String
       attribute :type, Strict::String.optional
-      attribute :text_alignment, Strict::String.optional
-      attribute :fill_color, Strict::String.optional
       attribute :model, Strict::String.optional
       attribute :name, Strict::String.optional
       attribute :target_connections, Strict::String.optional # TODO: this is a list encoded in a string
       attribute :archimate_element, Strict::String.optional
-      attribute :font, Strict::String.optional
-      attribute :line_color, Strict::String.optional
-      attribute :font_color, Strict::String.optional
       attribute :bounds, OptionalBounds
       attribute :children, Strict::Hash
       attribute :source_connections, SourceConnectionList
@@ -23,15 +18,10 @@ module Archimate
       def self.create(options = {})
         new_opts = {
           type: nil,
-          text_alignment: nil,
-          fill_color: nil,
           model: nil,
           name: nil,
           target_connections: nil,
           archimate_element: nil,
-          font: nil,
-          line_color: nil,
-          font_color: nil,
           bounds: nil,
           children: {},
           source_connections: [],

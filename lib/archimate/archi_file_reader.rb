@@ -120,15 +120,10 @@ module Archimate
       child_hash = {
         id: "id",
         type: "type",
-        text_alignment: "textAlignment",
-        fill_color: "fillColor",
         model: "model",
         name: "name",
         target_connections: "targetConnections",
-        archimate_element: "archimateElement",
-        font: "font",
-        line_color: "lineColor",
-        font_color: "fontColor"
+        archimate_element: "archimateElement"
       }.each_with_object({}) do |(hash_attr, node_attr), a|
         a[hash_attr] = child_node.attr(node_attr) # if child_node.attributes.include?(node_attr)
       end
@@ -137,8 +132,30 @@ module Archimate
       child_hash[:source_connections] = parse_source_connections(child_node.css("> sourceConnection"))
       child_hash[:documentation] = parse_documentation(child_node)
       child_hash[:properties] = parse_properties(child_node)
-      child_hash[:style] = nil # TODO: Style Refactor
+      child_hash[:style] = parse_style(child_node)
       DataModel::Child.new(child_hash)
+    end
+
+    def parse_style(node)
+      DataModel::Style.new(
+        text_alignment: nil, # node["textAlignment"],
+        fill_color: nil, # node["fillColor"],
+        line_color: nil, # node["lineColor"],
+        font_color: nil, # node["fontColor"],
+        font: nil, # parse_font(node["font"])
+        line_width: nil
+      )
+    end
+
+    def parse_color(str)
+      # TODO: implement me
+      # DataModel::Color.from_css(str)
+      nil
+    end
+
+    def parse_font(str)
+      # TODO: implement me
+      nil
     end
 
     def parse_bounds(node)
@@ -159,7 +176,7 @@ module Archimate
           target: i["target"],
           relationship: i["relationship"],
           name: i["name"],
-          style: nil, # TODO: Style Refactor
+          style: parse_style(i),
           bendpoints: parse_bendpoints(i.css("bendpoint")),
           documentation: parse_documentation(i),
           properties: parse_properties(i)

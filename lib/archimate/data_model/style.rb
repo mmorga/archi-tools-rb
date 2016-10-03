@@ -2,6 +2,7 @@
 module Archimate
   module DataModel
     class Style < Dry::Struct::Value
+      attribute :text_alignment, Coercible::Int.optional
       attribute :fill_color, OptionalColor
       attribute :line_color, OptionalColor
       attribute :font_color, OptionalColor
