@@ -2,6 +2,8 @@
 module Archimate
   module DataModel
     class Relationship < Dry::Struct::Value
+      include DataModel::With
+
       attribute :id, Strict::String
       attribute :type, Strict::String
       attribute :source, Strict::String
@@ -17,10 +19,6 @@ module Archimate
           properties: []
         }.merge(options)
         Relationship.new(new_opts)
-      end
-
-      def with(options = {})
-        Relationship.new(to_h.merge(options))
       end
 
       def to_s

@@ -2,6 +2,8 @@
 module Archimate
   module DataModel
     class SourceConnection < Dry::Struct::Value
+      include DataModel::With
+
       attribute :id, Strict::String
       attribute :source, Strict::String
       attribute :target, Strict::String
@@ -25,10 +27,6 @@ module Archimate
 
         }.merge(options)
         SourceConnection.new(new_opts)
-      end
-
-      def with(options = {})
-        SourceConnection.new(to_h.merge(options))
       end
     end
     Dry::Types.register_class(SourceConnection)

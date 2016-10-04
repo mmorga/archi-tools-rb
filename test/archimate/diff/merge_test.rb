@@ -21,13 +21,6 @@ module Archimate
       attr_reader :base_rel1
       attr_reader :base_rel2
 
-      def mutate_model_element(model, element, label_suffix)
-        DataModel.model_insert_element(
-          model,
-          element.with(label: element.label + label_suffix)
-        )
-      end
-
       def setup
         @merge = Merge.new
         @base = build_model(with_relationships: 2)
@@ -159,8 +152,27 @@ module Archimate
         assert_equal remote, merged
       end
 
-      def test_find_diagram_delete_update_conflicts
-        diagram = build_diagram
+      # Given a local where a diagram has been updated and
+      # a remote where the same diagram has been deleted
+      # expect that the conflicts set includes the two differences
+      def xtest_find_diagram_delete_update_conflicts
+        assert_equal 1, base.diagrams.size
+        diagram = base.diagrams.values.first
+        assert_equal 4, diagram.children.size
+        remote = base.with(diagrams: {})
+
+        child = diagram.children.values.first
+        updated_child = child.with(name: child.name.to_s + "-modified")
+        local = base.with(
+          diagrams: Archimate.array_to_id_hash(
+            diagram.with(children: Archimate.array_to_id_hash(updated_child))
+          )
+        )
+
+        merged = merge.three_way(base, local, remote)
+
+        assert_equal base, merged
+        refute_empty merge.conflicts
       end
     end
   end

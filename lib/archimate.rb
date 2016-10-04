@@ -7,9 +7,6 @@ require "archimate/version"
 require 'archimate/data_model'
 
 module Archimate
-  # The root path for YARD source libraries
-  ROOT = File.expand_path(File.dirname(__FILE__))
-
   module Cli
     autoload :Archi, 'archimate/cli/archi'
     autoload :Cleanup, 'archimate/cli/cleanup'
@@ -35,12 +32,12 @@ module Archimate
     autoload :BendpointDiff, 'archimate/diff/bendpoint_diff'
     autoload :BoundsDiff, 'archimate/diff/bounds_diff'
     autoload :ChildDiff, 'archimate/diff/child_diff'
-    autoload :ColorDiff, 'archimate/diff/color'
+    autoload :ColorDiff, 'archimate/diff/color_diff'
     autoload :Context, 'archimate/diff/context'
     autoload :DiagramDiff, 'archimate/diff/diagram_diff'
     autoload :Difference, 'archimate/diff/difference'
     autoload :ElementDiff, 'archimate/diff/element_diff'
-    autoload :FloatDiff, 'archimate/diff/float_diff'
+    autoload :PrimitiveDiff, 'archimate/diff/primitive_diff'
     autoload :FontDiff, 'archimate/diff/font_diff'
     autoload :FolderDiff, 'archimate/diff/folder_diff'
     autoload :IdHashDiff, 'archimate/diff/id_hash_diff'
@@ -78,6 +75,6 @@ module Archimate
   end
 
   def self.diff(local, remote)
-    Diff::Context.new(local, remote).diffs(Diff::ModelDiff.new)
+    Diff::Context.new(local, remote).diffs
   end
 end

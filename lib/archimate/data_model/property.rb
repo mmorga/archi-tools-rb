@@ -2,6 +2,8 @@
 module Archimate
   module DataModel
     class Property < Dry::Struct::Value
+      include DataModel::With
+
       attribute :key, Strict::String
       attribute :value, Strict::String.optional
 
@@ -10,10 +12,6 @@ module Archimate
           value: nil
         }.merge(options)
         Property.new(new_opts)
-      end
-
-      def with(options = {})
-        Property.new(to_h.merge(options))
       end
     end
 

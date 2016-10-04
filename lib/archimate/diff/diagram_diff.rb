@@ -10,7 +10,7 @@ module Archimate
         context.diff(UnorderedListDiff.new, :properties)
         context.diff(IdHashDiff.new(ChildDiff), :children)
         context.diff(IdHashDiff.new(StringDiff), :element_references)
-        context.diff(IntDiff.new, :connection_router_type)
+        context.diff(PrimitiveDiff.new, :connection_router_type)
         context.diff(StringDiff.new, :type)
       end
     end

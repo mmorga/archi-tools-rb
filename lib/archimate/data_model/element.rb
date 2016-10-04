@@ -2,6 +2,8 @@
 module Archimate
   module DataModel
     class Element < Dry::Struct::Value
+      include DataModel::With
+
       attribute :id, Strict::String
       attribute :type, Strict::String.optional
       attribute :label, Strict::String.optional
@@ -18,10 +20,6 @@ module Archimate
           properties: []
         }.merge(options)
         Element.new(new_opts)
-      end
-
-      def with(options = {})
-        Element.new(to_h.merge(options))
       end
 
       def to_s

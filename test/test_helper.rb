@@ -62,37 +62,55 @@ module Minitest
       )
     end
 
-    def build_model(options = {})
+    def requested_elements(options)
       given_elements = options.fetch(:elements, [])
       given_element_count = given_elements.size
       el_count = [options.fetch(:with_relationships, 0) * 2, options.fetch(:with_elements, 0) + given_element_count].max
-      els = build_element_list(el_count - given_element_count, given_elements)
+      build_element_list(el_count - given_element_count, given_elements)
+    end
 
-      el_ids = els.values.map(&:id).each_slice(2).each_with_object([]) { |i, a| a << i }
-      given_relationships = options.fetch(:relationships, [])
-      rels = build_relationship_list(options.fetch(:with_relationships, 0), given_relationships, el_ids)
+    def requested_relationships(options, elements)
+      build_relationship_list(
+        options.fetch(:with_relationships, 0),
+        options.fetch(:relationships, []),
+        elements.values.map(&:id).each_slice(2).each_with_object([]) { |i, a| a << i }
+      )
+    end
 
-      els = build_element_list(options.fetch(:with_elements, 0), options.fetch(:elements, els))
+    def build_model(options = {})
+      elements = requested_elements(options)
+      relationships = requested_relationships(options, elements)
+      diagrams = requested_diagrams(options, elements, relationships)
       Archimate::DataModel::Model.new(
         id: options.fetch(:id, build_id),
         name: options.fetch(:name, Faker::Company.name),
         documentation: options.fetch(:documentation, []),
         properties: options.fetch(:properties, []),
-        elements: els,
+        elements: elements,
         organization: options.fetch(:organization, Archimate::DataModel::Organization.create),
-        relationships: rels,
-        diagrams: options.fetch(:diagrams, {})
+        relationships: relationships,
+        diagrams: diagrams
       )
     end
 
+    def requested_diagrams(options, elements, relationships)
+      options.fetch(:diagrams, {})
+      child_list = relationships.map do |id, rel|
+        [build_child(element: elements[rel.source], relationships: { id => rel }),
+         build_child(element: elements[rel.target], relationships: {})]
+      end.flatten
+      Archimate.array_to_id_hash(build_diagram(children: Archimate.array_to_id_hash(child_list)))
+    end
+
     def build_diagram(options = {})
+      children = options.fetch(:children, build_children)
       Archimate::DataModel::Diagram.new(
         id: options.fetch(:id, build_id),
         name: options.fetch(:name, Faker::Commerce.product_name),
         viewpoint: options.fetch(:viewpoint, nil),
         documentation: options.fetch(:documentation, build_documentation),
         properties: options.fetch(:properties, []),
-        children: options.fetch(:children, build_children),
+        children: children,
         connection_router_type: nil,
         type: nil,
         element_references: [] # TODO: this needs to be populated with the content referenced in build_children
@@ -108,24 +126,30 @@ module Minitest
     end
 
     def build_child(options = {})
-      for_element = options.fetch(:for_element, build_element)
-      to_element = options.fetch(:to_element, build_element)
+      node_element = options.fetch(:element, build_element)
+      relationships = options.fetch(:relationships, {})
       Archimate::DataModel::Child.create(
         id: options.fetch(:id, build_id),
         type: "archimate:DiagramObject",
-        archimate_element: for_element.id,
+        name: options[:name],
+        archimate_element: node_element.id,
         bounds: build_bounds,
-        source_connections: [build_source_connections(source: for_element.id, target: to_element.id)]
+        source_connections: relationships.values.map do |rel|
+          build_source_connection(for_relationship: rel)
+        end,
+        style: build_style
       )
     end
 
-    def build_source_connections(options = {})
+    def build_source_connection(options = {})
+      relationship = options.fetch(:for_relationship, nil)
+
       Archimate::DataModel::SourceConnection.create(
         id: options.fetch(:id, build_id),
         type: "archimate:Connection",
-        source: options.fetch(:source, build_id),
-        target: options.fetch(:target, build_id),
-        relationship: options.fetch(:relationship, build_id)
+        source: options.fetch(:source, relationship&.source || build_id),
+        target: options.fetch(:target, relationship&.target || build_id),
+        relationship: options.fetch(:relationship, relationship&.id || build_id)
       )
     end
 
@@ -174,6 +198,34 @@ module Minitest
         start_y: options.fetch(:start_y, random(0, 1000)),
         end_x: options.fetch(:end_x, random(0, 1000)),
         end_y: options.fetch(:end_y, random(0, 1000))
+      )
+    end
+
+    def build_color(options = {})
+      Archimate::DataModel::Color.new(
+        r: random(0, 255),
+        g: random(0, 255),
+        b: random(0, 255),
+        a: random(0, 100)
+      )
+    end
+
+    def build_font(options = {})
+      Archimate::DataModel::Font.new(
+        name: Faker::Name.name,
+        size: random(6, 20),
+        style: Faker::Name.name
+      )
+    end
+
+    def build_style(options = {})
+      Archimate::DataModel::Style.new(
+        text_alignment: random(0, 2),
+        fill_color: build_color,
+        line_color: build_color,
+        font_color: build_color,
+        line_width: random(1, 10),
+        font: build_font
       )
     end
 

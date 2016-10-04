@@ -4,6 +4,8 @@ require "set"
 module Archimate
   module DataModel
     class Model < Dry::Struct::Value
+      include DataModel::With
+
       attribute :id, Strict::String
       attribute :name, Strict::String
       attribute :documentation, DocumentationList
@@ -23,10 +25,6 @@ module Archimate
           diagrams: {}
         }.merge(options)
         Model.new(new_opts)
-      end
-
-      def with(options = {})
-        Model.new(to_h.merge(options))
       end
 
       # returns a copy of self with element added

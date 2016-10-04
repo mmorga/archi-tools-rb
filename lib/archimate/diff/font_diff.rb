@@ -4,8 +4,8 @@ module Archimate
     class FontDiff
       def diffs(context)
         context.diff(StringDiff.new, :name)
-        context.diff(IntDiff.new, :size)
-        context.diff(IntDiff.new, :style)
+        context.diff(PrimitiveDiff.new, :size)
+        context.diff(PrimitiveDiff.new, :style)
       end
     end
   end

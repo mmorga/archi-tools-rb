@@ -95,13 +95,15 @@ module Archimate
       # TODO: if we're looking at an Array, a conflict can be resolved by inserting both.
       def find_conflicts
         @conflicts = find_diff_entity_conflicts
-        # @conflicts.concat(find_diagram_delete_update_conflicts)
+        @conflicts.concat(find_diagram_delete_update_conflicts)
       end
 
       def find_diagram_delete_update_conflicts
         local_diagram_updates = base_local_diffs.each_with_object([]) do |i, a|
           a << i.entity if i.entity.match(%r{/diagram/})
         end
+        # puts local_diagram_updates.pretty_inspect
+        []
       end
 
       def find_diff_entity_conflicts

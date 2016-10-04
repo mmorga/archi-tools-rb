@@ -2,10 +2,10 @@
 module Archimate
   module DataModel
     class Color < Dry::Struct::Value
-      attribute :r, Coercible::Int.optional # TODO: make 0-255 constraint
-      attribute :g, Coercible::Int.optional # TODO: make 0-255 constraint
-      attribute :b, Coercible::Int.optional # TODO: make 0-255 constraint
-      attribute :a, Coercible::Int.optional # TODO: make 0-100 constraint
+      attribute :r, Coercible::Int.constrained(lt: 256, gt: -1)
+      attribute :g, Coercible::Int.constrained(lt: 256, gt: -1)
+      attribute :b, Coercible::Int.constrained(lt: 256, gt: -1)
+      attribute :a, Coercible::Int.constrained(lt: 101, gt: -1)
     end
 
     Dry::Types.register_class(Color)

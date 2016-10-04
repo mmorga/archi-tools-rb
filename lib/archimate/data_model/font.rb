@@ -3,7 +3,7 @@ module Archimate
   module DataModel
     class Font < Dry::Struct::Value
       attribute :name, Strict::String
-      attribute :size, Coercible::Int
+      attribute :size, Coercible::Int.constrained(gt: 0)
       attribute :style, Strict::String.optional
     end
 

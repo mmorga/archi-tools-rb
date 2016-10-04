@@ -2,6 +2,8 @@
 module Archimate
   module DataModel
     class Child < Dry::Struct::Value
+      include DataModel::With
+
       attribute :id, Strict::String
       attribute :type, Strict::String.optional
       attribute :model, Strict::String.optional
@@ -32,6 +34,7 @@ module Archimate
         Child.new(new_opts)
       end
     end
+
     Dry::Types.register_class(Child)
     ChildHash = Strict::Hash
   end

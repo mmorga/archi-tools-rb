@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module Diff
-    class FloatDiff
+    class PrimitiveDiff
       def diffs(ctx)
         return [] if ctx.model1 == ctx.model2
         return [Difference.insert(ctx.path_str, ctx.model2)] if ctx.model1.nil?

@@ -6,6 +6,8 @@ module Archimate
     # this is representated as items. In the Archi file format, this is
     # represented as folders.
     class Folder < Dry::Struct::Value
+      include DataModel::With
+
       attribute :id, Strict::String
       attribute :name, Strict::String
       attribute :type, Strict::String.optional
@@ -23,10 +25,6 @@ module Archimate
           folders: {}
         }.merge(options)
         Folder.new(new_opts)
-      end
-
-      def with(options = {})
-        Folder.new(to_h.merge(options))
       end
     end
     Dry::Types.register_class(Folder)

@@ -2,6 +2,8 @@
 module Archimate
   module DataModel
     class Diagram < Dry::Struct::Value
+      include DataModel::With
+
       attribute :id, Strict::String
       attribute :name, Strict::String
       attribute :viewpoint, Strict::String.optional
