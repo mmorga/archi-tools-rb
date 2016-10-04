@@ -64,17 +64,11 @@ module Archimate
       end
 
       def merge_files(file1, file2)
-        outfile = "tmp/merged.archimate"
-
         doc1 = Nokogiri::XML(File.open(file1))
         doc2 = Nokogiri::XML(File.open(file2))
 
         # cids = conflicting_ids(doc1, doc2)
-        outdoc = merge(doc1.root, doc2.root).document
-        File.open(outfile, "w") do |f|
-          f.write(outdoc)
-        end
-        outdoc
+        merge(doc1.root, doc2.root).document
       end
     end
   end
