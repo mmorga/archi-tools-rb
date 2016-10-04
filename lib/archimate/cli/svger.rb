@@ -208,7 +208,7 @@ module Archimate
         end
       end
 
-      def make_svgs(archi_file)
+      def make_svgs(archi_file, output_dir)
         doc = Nokogiri::XML(File.open(archi_file))
 
         doc.css('element[xsi|type="archimate:ArchimateDiagramModel"]').each do |diagram|
@@ -240,7 +240,7 @@ module Archimate
           svg.set_attribute(:height, height)
           svg.set_attribute("viewBox", "#{x} #{y} #{width} #{height}")
 
-          File.open("tmp/generated/#{name}.svg", "wb") do |f|
+          File.open(File.join(output_dir, "#{name}.svg"), "wb") do |f|
             f.write(svg_doc.to_xml(encoding: 'UTF-8', indent: 2))
           end
         end

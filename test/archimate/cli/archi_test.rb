@@ -42,7 +42,9 @@ module Archimate
 
       # TODO: make this actually test something
       def test_svg
-        Archi.start(["svg", File.join(TEST_EXAMPLES_FOLDER, 'base.archimate')])
+        Dir.mktmpdir do |dir|
+          Archi.start(["svg", "-o", dir, File.join(TEST_EXAMPLES_FOLDER, 'base.archimate')])
+        end
       end
 
       # TODO: make this actually test something

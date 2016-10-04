@@ -27,9 +27,13 @@ module Archimate
         Archimate::Cli::Projector.new.project(archifile, projectfile)
       end
 
-      desc "svg ARCHIFILE", "IN DEVELOPMENT: Produce semantically meaningful SVG files from an Archi file"
+      desc "svg -o OUTPUTDIR ARCHIFILE", "IN DEVELOPMENT: Produce semantically meaningful SVG files from an Archi file"
+      option :output,
+             aliases: :o,
+             required: true,
+             desc: "Write output to OUTPUTDIR"
       def svg(archifile)
-        Archimate::Cli::Svger.new.make_svgs(archifile)
+        Archimate::Cli::Svger.new.make_svgs(archifile, options[:output])
       end
 
       desc "dupes ARCHIFILE", "List all duplicate elements in Archi file"
