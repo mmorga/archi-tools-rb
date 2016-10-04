@@ -6,6 +6,7 @@ module Archimate
     class ProjectorTest < Minitest::Test
       def test_me
         projector = Projector.new
+        refute_nil projector
       end
     end
   end

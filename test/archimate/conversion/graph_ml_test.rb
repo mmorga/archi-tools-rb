@@ -6,6 +6,7 @@ module Archimate
     class GraphMLTest < Minitest::Test
       def test_me
         graph_ml = GraphML.new
+        refute_nil graph_ml
       end
     end
   end

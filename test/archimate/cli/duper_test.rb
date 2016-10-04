@@ -5,9 +5,10 @@ module Archimate
   module Cli
     class DuperTest < Minitest::Test
       def test_new
-        input_doc = Archimate::new_xml_doc
+        input_doc = Archimate.new_xml_doc
         output_io = StringIO.new
         duper = Duper.new(input_doc, output_io)
+        refute_nil duper
       end
     end
   end

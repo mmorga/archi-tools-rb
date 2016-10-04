@@ -7,7 +7,7 @@ module Archimate
 
     def test_new
       output_io = StringIO.new
-      doc = Document.new(BASE, output_io: output_io)
+      refute_nil Document.new(BASE, output_io: output_io)
     end
   end
 end

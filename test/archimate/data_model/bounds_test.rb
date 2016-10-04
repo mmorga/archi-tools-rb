@@ -33,8 +33,7 @@ module Archimate
       end
 
       def test_optional_x_y
-        b = Bounds.new(x: nil, y: nil, width: 500, height: 700)
-        pass
+        assert_kind_of Bounds, Bounds.new(x: nil, y: nil, width: 500, height: 700)
       end
 
       def test_width_required

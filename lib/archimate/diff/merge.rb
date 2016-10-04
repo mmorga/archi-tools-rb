@@ -30,16 +30,6 @@ module Archimate
                     apply_diffs(base_local_diffs, base.with))
       end
 
-      def two_way(base, local)
-        @base = base
-        @local = local
-        @remote = nil
-        @conflicts = []
-        @base_local_diffs = Archimate.diff(base, local)
-        @base_remote_diffs = []
-        apply_diffs(base_local_diffs, base.with)
-      end
-
       # Applies the set of diffs to the model returning a
       # new model with the diffs applied.
       def apply_diffs(diffs, model)
@@ -99,7 +89,7 @@ module Archimate
       end
 
       def find_diagram_delete_update_conflicts
-        local_diagram_updates = base_local_diffs.each_with_object([]) do |i, a|
+        _local_diagram_updates = base_local_diffs.each_with_object([]) do |i, a|
           a << i.entity if i.entity.match(%r{/diagram/})
         end
         # puts local_diagram_updates.pretty_inspect

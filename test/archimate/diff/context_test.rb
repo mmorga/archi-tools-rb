@@ -11,8 +11,8 @@ module Archimate
         model1 = build_model
         model2 = build_model
         ctx = Context.new(model1, model2)
-        assert_equal model1, ctx.model1
-        assert_equal model2, ctx.model2
+        assert_equal model1, ctx.base
+        assert_equal model2, ctx.local
       end
 
       def test_diffs
@@ -44,7 +44,7 @@ module Archimate
         assert_equal(expected, diffs)
       end
 
-      def test_equivalent
+      def test_folders_equivalent
         folder = build_folder
         folder_diffs = Context.new(folder, folder.dup).diffs
         assert_empty folder_diffs
@@ -137,7 +137,7 @@ module Archimate
         assert_equal(expected, diffs)
       end
 
-      def test_equivalent
+      def test_models_equivalent
         model1 = Archimate::ArchiFileReader.read(BASE)
         model2 = Archimate::ArchiFileReader.read(BASE)
         ctx = Context.new(model1, model2)

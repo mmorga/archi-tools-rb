@@ -6,6 +6,7 @@ module Archimate
     class SvgerTest < Minitest::Test
       def test_me
         svger = Svger.new
+        refute_nil svger
       end
     end
   end
