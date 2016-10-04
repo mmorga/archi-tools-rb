@@ -28,7 +28,7 @@ module Archimate
 
     def initialize(options = {}, default_io = $stdout)
       output = options.fetch("output", nil)
-      output = default_io if output.nil? || output.empty?
+      output = default_io if output.nil?
 
       if output.is_a?(String)
         if !options.key?("force") && File.exist?(output)

@@ -1,17 +1,18 @@
 # frozen_string_literal: true
 require 'test_helper'
+require 'tempfile'
 
 module Archimate
   module Cli
     class ArchiTest < Minitest::Test
       def setup
         @archi = Archi.new
-        @test_file = File.join(TEST_OUTPUT_FOLDER, "test.archimate")
-        FileUtils.rm(@test_file) if File.exist?(@test_file)
+        @test_file = Tempfile.new("test.archimate")
       end
 
       def teardown
-        FileUtils.rm(@test_file) if File.exist?(@test_file)
+        @test_file.close
+        @test_file.unlink
       end
 
       # TODO: make this actually test something
@@ -51,6 +52,7 @@ module Archimate
 
       # TODO: make this actually test something
       def test_clean
+        removed_items = Tempfile.new("test_clean_removed.xml")
         Archi.start(
           [
             "clean",
@@ -58,9 +60,12 @@ module Archimate
             "-o",
             @test_file,
             "-r",
-            File.join(TEST_OUTPUT_FOLDER, "test_clean_removed.xml")
+            removed_items
           ]
         )
+      ensure
+        removed_items.close
+        removed_items.unlink
       end
 
       # TODO: make this actually test something
