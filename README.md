@@ -1,5 +1,7 @@
 # Archimate
 
+[![Build Status](https://travis-ci.org/mmorga/archi-tools-rb.svg?branch=master)](https://travis-ci.org/mmorga/archi-tools-rb)
+
 I also have included some Ruby code that plays with the `.archimate` file format produces by [Archi](http://archimatetool.com/) to produce useful output.
 
 ## Installation
