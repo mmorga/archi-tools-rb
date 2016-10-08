@@ -29,6 +29,7 @@ module Archimate
   end
 
   module Diff
+    autoload :Conflict, 'archimate/diff/conflict'
     autoload :Context, 'archimate/diff/context'
     autoload :Difference, 'archimate/diff/difference'
     autoload :Merge, 'archimate/diff/merge'
@@ -59,5 +60,10 @@ module Archimate
 
   def self.diff(local, remote)
     Diff::Context.new(local, remote).diffs
+  end
+
+  def self.debug_puts(msg, diffs)
+    puts "\n#{msg}"
+    puts "\t" + diffs.map(&:to_s).join("\n\t")
   end
 end

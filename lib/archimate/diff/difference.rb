@@ -50,6 +50,19 @@ module Archimate
         diff
       end
 
+      # Returns the list of diffs for diagrams referenced in the given diff set
+      def self.diagram_differences(diffs)
+        diffs.select(&:in_diagram?)
+      end
+
+      def self.diagram_deleted_diffs(diffs)
+        diffs.select { |i| i.delete? && i.diagram? }
+      end
+
+      def self.diagram_updated_diffs(diffs)
+        diffs.select(&:in_diagram?)
+      end
+
       def initialize(kind, entity)
         @kind = kind
         @entity = entity
@@ -94,6 +107,20 @@ module Archimate
 
       def change?
         kind == :change
+      end
+
+      # Returns true if this diff is for a diagram (not a part within a diagram)
+      def diagram?
+        entity =~ %r{/diagrams/([^/]+)$} ? true : false
+      end
+
+      def diagram_id
+        m = entity.match(%r{/diagrams/([^/]+)/?})
+        m[1] if m
+      end
+
+      def in_diagram?
+        entity =~ %r{/diagrams/([^/]+)/}
       end
 
       def to_s
