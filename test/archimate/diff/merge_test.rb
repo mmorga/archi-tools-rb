@@ -10,9 +10,9 @@ module Archimate
     # 2. [x] change on the same path == conflict to be resolved
     # 3. [x] change on diff paths == ok
     # 4. [x] delete: diagram (ok) unless other changed that diagram - then conflict
-    # 5. delete: relationship (ok - if source & target also deleted & not referenced by remaining diagrams)
-    # 6. delete: element (ok - if not referenced by remaining diagrams)
-    # 7. merged: duplicate elements where merged into one
+    # 5. [ ] delete: relationship (ok - if source & target also deleted & not referenced by remaining diagrams)
+    # 6. [x] delete: element (ok - if not referenced by remaining diagram updated by other)
+    # 7. [ ] merged: duplicate elements where merged into one
     class MergeTest < Minitest::Test
       attr_reader :base
       attr_reader :base_el1
@@ -150,13 +150,35 @@ module Archimate
       def test_find_diagram_delete_update_conflicts
         diagram = base.diagrams.values.first
         remote = base.with(diagrams: {})
-        assert_empty remote.diagrams
         child = diagram.children.values.first
         updated_child = child.with(name: child.name.to_s + "-modified")
         local = base.with(
           diagrams: Archimate.array_to_id_hash(
             diagram.with(children: Archimate.array_to_id_hash(updated_child))
           )
+        )
+
+        merge = Merge.three_way(base, local, remote)
+        refute_empty merge.conflicts
+        assert_equal base, merge.merged
+      end
+
+      # delete: element (ok - if not referenced by other diagrams that was updated)
+      # TODO: this sort of implies that the diagram changes are already applied
+      def test_delete_element_when_still_referenced_in_remaining_diagrams
+        diagram = base.diagrams.values.first
+        child = diagram.children.values.first
+
+        # update diagram that references child
+        remote = base.with(
+          diagrams: base.diagrams.each_with_object({}) do |(id, dia), a|
+            a[id] = diagram.id == id ? dia.with(name: "I wuz renamed") : a[id] = dia
+          end
+        )
+
+        # delete element from local
+        local = base.with(
+          elements: base.elements.reject { |k, _v| k == child.archimate_element }
         )
 
         merge = Merge.three_way(base, local, remote)

@@ -33,6 +33,10 @@ module Archimate
         }.merge(options)
         Child.new(new_opts)
       end
+
+      def element_references
+        [archimate_element].concat(children.each_with_object([]) { |(_id, child), a| a.concat(child.element_references) })
+      end
     end
 
     Dry::Types.register_class(Child)

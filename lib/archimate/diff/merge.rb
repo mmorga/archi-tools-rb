@@ -137,6 +137,7 @@ module Archimate
       def find_conflicts
         conflicts << find_diff_entity_conflicts
         conflicts << find_diagram_delete_update_conflicts
+        conflicts << find_deleted_elements_referenced_in_diagrams
       end
 
       # Returns the set of conflicts caused by one diff set deleting a diagram
@@ -148,7 +149,7 @@ module Archimate
         [base_local_diffs, base_remote_diffs].permutation(2).each_with_object([]) do |(diffs1, diffs2), a|
           a.concat(
             diagram_diffs_in_conflict(
-              Difference.diagram_deleted_diffs(diffs1),
+              diagram_deleted_diffs(diffs1),
               Difference.diagram_updated_diffs(diffs2)
             )
           )
@@ -174,6 +175,33 @@ module Archimate
             conflicting_remote_diffs,
             "Conflicting changes"
           ) unless conflicting_remote_diffs.empty?
+        end
+      end
+
+      def diagram_deleted_diffs(diffs)
+        diffs.select { |i| i.delete? && i.diagram? }
+      end
+
+      # What are we looking for?
+      # set1: extract element id of elements changed
+      # set2: extract element ids of child archimateElements in diagrams
+      # conflicts are the diffs with element id ref'd in deleted diagram
+      ModelDiffs = Struct.new(:model, :diffs)
+
+      def find_deleted_elements_referenced_in_diagrams
+        [ModelDiffs.new(local, base_local_diffs),
+         ModelDiffs.new(remote, base_remote_diffs)].permutation(2).each_with_object([]) do |(md1, md2), a|
+          md2_diagram_diffs = md2.diffs.select(&:in_diagram?)
+          a.concat(
+            md1.diffs.select { |d| d.element? && d.delete? }.each_with_object([]) do |md1_diff, conflicts|
+              conflicting_md2_diffs = md2_diagram_diffs.select do |md2_diff|
+                md2.model.diagrams[md2_diff.diagram_id].element_references.include? md1_diff.element_id
+              end
+              conflicts << Conflict.new(md1_diff,
+                                        conflicting_md2_diffs,
+                                        "Elements referenced in deleted diagram") unless conflicting_md2_diffs.empty?
+            end
+          )
         end
       end
     end

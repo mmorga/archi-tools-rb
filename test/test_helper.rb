@@ -113,7 +113,7 @@ module Minitest
         children: children,
         connection_router_type: nil,
         type: nil,
-        element_references: [] # TODO: this needs to be populated with the content referenced in build_children
+        element_references: children.each_with_object([]) { |(_id, child), a| a.concat(child.element_references) }
       )
     end
 

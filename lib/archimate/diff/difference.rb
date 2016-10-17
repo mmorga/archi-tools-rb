@@ -18,6 +18,7 @@ module Archimate
 
       attr_reader :kind
       attr_accessor :entity # TODO: entity is accessed as a stack, consider changing from string to stack
+      # TODO: would be nice if reference to the object is here too.
       attr_accessor :from
       attr_accessor :to
 
@@ -121,6 +122,15 @@ module Archimate
 
       def in_diagram?
         entity =~ %r{/diagrams/([^/]+)/}
+      end
+
+      def element?
+        entity =~  %r{/elements/([^/]+)$} ? true : false
+      end
+
+      def element_id
+        m = entity.match(%r{/elements/([^/]+)/?})
+        m[1] if m
       end
 
       def to_s
