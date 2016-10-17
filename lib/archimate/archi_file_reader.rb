@@ -28,7 +28,9 @@ module Archimate
     end
 
     def parse_properties(node)
-      node.css(">property").each_with_object([]) { |i, a| a << DataModel::Property.new(key: i["key"], value: i["value"]) }
+      node.css(">property").each_with_object([]) do |i, a|
+        a << DataModel::Property.new(key: i["key"], value: i["value"]) unless i["key"].nil?
+      end
     end
 
     def parse_elements(model)
