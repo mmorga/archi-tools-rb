@@ -11,7 +11,7 @@ module Archimate
       attribute :properties, PropertiesList
       attribute :children, ChildHash
       attribute :element_references, Strict::Array.member(Strict::String)
-      attribute :connection_router_type, Strict::Int.optional # TODO: fill this in, should be an enum
+      attribute :connection_router_type, Coercible::Int.optional # TODO: fill this in, should be an enum
       attribute :type, Strict::String.optional
 
       def self.create(options = {})
