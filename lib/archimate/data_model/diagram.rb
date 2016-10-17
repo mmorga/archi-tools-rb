@@ -26,6 +26,13 @@ module Archimate
         }.merge(options)
         Diagram.new(new_opts)
       end
+
+      # Return the relationship id for all source_connections in this diagram
+      def relationships
+        children.each_with_object([]) do |(_id, child), a|
+          a.concat(child.relationships)
+        end
+      end
     end
   end
 end

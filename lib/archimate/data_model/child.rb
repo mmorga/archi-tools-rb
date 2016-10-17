@@ -35,7 +35,13 @@ module Archimate
       end
 
       def element_references
-        [archimate_element].concat(children.each_with_object([]) { |(_id, child), a| a.concat(child.element_references) })
+        children.each_with_object([archimate_element]) { |(_id, child), a| a.concat(child.element_references) }
+      end
+
+      def relationships
+        children.each_with_object(source_connections.map(&:relationship).compact) do |(_id, child), a|
+          a.concat(child.relationships)
+        end
       end
     end
 

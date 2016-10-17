@@ -128,8 +128,21 @@ module Archimate
         entity =~  %r{/elements/([^/]+)$} ? true : false
       end
 
+      def in_element?
+        entity =~  %r{/elements/([^/]+)/} ? true : false
+      end
+
       def element_id
         m = entity.match(%r{/elements/([^/]+)/?})
+        m[1] if m
+      end
+
+      def relationship?
+        entity =~  %r{/relationships/([^/]+)$} ? true : false
+      end
+
+      def relationship_id
+        m = entity.match(%r{/relationships/([^/]+)/?})
         m[1] if m
       end
 

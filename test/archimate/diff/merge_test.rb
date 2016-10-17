@@ -10,9 +10,12 @@ module Archimate
     # 2. [x] change on the same path == conflict to be resolved
     # 3. [x] change on diff paths == ok
     # 4. [x] delete: diagram (ok) unless other changed that diagram - then conflict
-    # 5. [ ] delete: relationship (ok - if source & target also deleted & not referenced by remaining diagrams)
+    # 5. [x] delete: relationship (ok - if source & target also deleted & not referenced by remaining diagrams)
     # 6. [x] delete: element (ok - if not referenced by remaining diagram updated by other)
     # 7. [ ] merged: duplicate elements where merged into one
+    #
+    # Need to also consider - want to guarantee that final merge is in good state.
+    # What if local or remote (or base for that matter) isn't?
     class MergeTest < Minitest::Test
       attr_reader :base
       attr_reader :base_el1
@@ -182,6 +185,51 @@ module Archimate
         )
 
         merge = Merge.three_way(base, local, remote)
+        refute_empty merge.conflicts
+        assert_equal base, merge.merged
+      end
+
+      # delete: relationship (ok - if source & target also deleted & not referenced by remaining diagrams)
+      def test_delete_relationship_when_still_referenced_in_remaining_diagrams
+        diagram = base.diagrams.values.first
+        relationship_id = diagram.relationships.first
+
+        # update diagram that references child
+        remote = base.with(
+          diagrams: base.diagrams.each_with_object({}) do |(id, dia), a|
+            a[id] = diagram.id == id ? dia.with(name: "I wuz renamed") : a[id] = dia
+          end
+        )
+
+        # delete element from local
+        local = base.with(
+          relationships: base.relationships.reject { |k, _v| k == relationship_id }
+        )
+
+        merge = Merge.three_way(base, local, remote)
+
+        refute_empty merge.conflicts
+        assert_equal base, merge.merged
+      end
+
+      # delete: relationship (ok - if source & target also deleted & not referenced by remaining diagrams)
+      def test_delete_relationship_when_other_touches_source_or_target
+        target_relationship = base.relationships.values.first
+        element_id = target_relationship.source
+        element_referenced = base.elements[element_id]
+        relationship_id = target_relationship.id
+
+        # update diagram that references child
+        remote = base.with(
+          elements: base.elements.each_with_object({}) { |(k, v), a| a[k] = k == element_id ? element_referenced.with(label: "changed name") : v }
+        )
+
+        local = base.with(
+          relationships: base.relationships.reject { |k, _v| k == relationship_id }
+        )
+
+        merge = Merge.three_way(base, local, remote)
+
         refute_empty merge.conflicts
         assert_equal base, merge.merged
       end
