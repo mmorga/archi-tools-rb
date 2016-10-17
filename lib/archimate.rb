@@ -14,6 +14,7 @@ module Archimate
     autoload :Diff, 'archimate/cli/diff'
     autoload :Duper, 'archimate/cli/duper'
     autoload :Mapper, 'archimate/cli/mapper'
+    autoload :Merge, 'archimate/cli/merge'
     autoload :Merger, 'archimate/cli/merger'
     autoload :Projector, 'archimate/cli/projector'
     autoload :Svger, 'archimate/cli/svger'
