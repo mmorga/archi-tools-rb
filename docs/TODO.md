@@ -52,3 +52,11 @@ Should have:
 
 and should encapsulate things like `force`, `verbose`, etc.
 
+## Performance
+
+Reading file 11-12 secs
+Diff computation is fast
+
+deleted relationships referenced in diagrams is slow
+
+apply diffs is too slow - problem is likely in the ice_nine deep freeze

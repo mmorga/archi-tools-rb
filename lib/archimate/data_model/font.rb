@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Font < Dry::Struct::Value
+    class Font < Dry::Struct
       attribute :name, Strict::String
       attribute :size, Coercible::Int.constrained(gt: 0)
       attribute :style, Strict::String.optional

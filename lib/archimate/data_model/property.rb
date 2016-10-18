@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Property < Dry::Struct::Value
+    class Property < Dry::Struct
       include DataModel::With
 
       attribute :key, Strict::String

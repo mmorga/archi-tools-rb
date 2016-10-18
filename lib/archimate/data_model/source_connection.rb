@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class SourceConnection < Dry::Struct::Value
+    class SourceConnection < Dry::Struct
       include DataModel::With
 
       attribute :id, Strict::String

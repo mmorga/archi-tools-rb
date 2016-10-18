@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Relationship < Dry::Struct::Value
+    class Relationship < Dry::Struct
       include DataModel::With
 
       attribute :id, Strict::String

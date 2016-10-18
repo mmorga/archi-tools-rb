@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Style < Dry::Struct::Value
+    class Style < Dry::Struct
       attribute :text_alignment, Coercible::Int.optional
       attribute :fill_color, OptionalColor
       attribute :line_color, OptionalColor

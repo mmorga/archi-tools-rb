@@ -81,6 +81,8 @@ module Archimate
       end
 
       def with(options = {})
+        puts "Difference with #{options.fetch(:entity, entity)}"
+        raise "Bad entity" if options.fetch(:entity, entity) =~ /Bounds/
         Difference.new(
           options.fetch(:kind, kind),
           options.fetch(:entity, entity)

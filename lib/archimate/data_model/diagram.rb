@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Diagram < Dry::Struct::Value
+    class Diagram < Dry::Struct
       include DataModel::With
 
       attribute :id, Strict::String

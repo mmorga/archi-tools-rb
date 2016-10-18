@@ -1,45 +1,9 @@
 # frozen_string_literal: true
+require "deep_clone"
+require "hashdiff"
+
 module Archimate
   module Diff
-    require 'forwardable'
-
-    class Conflicts
-      extend Forwardable
-      attr_reader :conflicts
-
-      def_delegator :@conflicts, :empty?
-      def_delegator :@conflicts, :size
-      def_delegator :@conflicts, :first
-
-      def initialize
-        @conflicts = []
-        @cwhere = {}
-      end
-
-      def <<(conflict)
-        conflict_ary = Array(conflict)
-        # TODO: remove this - it's for testing/debug only
-        raise TypeError, "Must be a Conflict was a '#{conflict.class}'" unless conflict_ary.all? { |i| i.is_a?(Archimate::Diff::Conflict) }
-        # TODO: remove this block - it's for debug only
-        conflict_ary.each { |c| raise ArgumentError, "Trying to add a duplicate conflict #{c} into #{self}" if conflicts.include?(c) }
-        conflicts.concat(conflict_ary)
-        self
-      end
-
-      def diffs
-        conflicts.map(&:diffs).flatten
-      end
-
-      def filter_diffs(diff_list)
-        conflict_diffs = diffs
-        diff_list.reject { |diff| conflict_diffs.include?(diff) }
-      end
-
-      def to_s
-        "Conflicts\n\t#{conflicts.map(&:to_s).join("\n\t")}\n"
-      end
-    end
-
     # So it could be that if an item is deleted from 1 side
     # then it's actually the result of a de-duplication pass.
     # If so, then we could get good results by de-duping the
@@ -52,33 +16,51 @@ module Archimate
       attr_reader :local
       attr_reader :remote
       attr_reader :merged
+      attr_reader :message_io
 
-      def initialize(base, local, remote)
-        @base = base
-        @local = local
-        @remote = remote
-        @merged = base
+      def initialize(base, local, remote, message_io = STDERR)
+        @merged = DeepClone.clone base
+        @base = IceNine.deep_freeze!(base)
+        @local = IceNine.deep_freeze!(local)
+        @remote = IceNine.deep_freeze!(remote)
         @conflicts = Conflicts.new
         @base_local_diffs = []
         @base_remote_diffs = []
+        @message_io = message_io
       end
 
-      def self.three_way(base, local, remote)
-        merge = Merge.new(base, local, remote)
+      def self.three_way(base, local, remote, message_io = STDERR)
+        merge = Merge.new(base, local, remote, message_io)
         merge.three_way
         merge
       end
 
       def three_way
+        message_io.puts "#{DateTime.now}: Computing base:local diffs"
         @base_local_diffs = Archimate.diff(base, local)
+
+        bl_diffs = HashDiff.diff(Hashify.hashify(base), Hashify.hashify(local))
+        message_io.puts "Local Diffs: #{bl_diffs.pretty_inspect}"
+        br_diffs = HashDiff.diff(Hashify.hashify(base), Hashify.hashify(remote))
+        message_io.puts "Remote Diffs: #{br_diffs.pretty_inspect}"
+
+        message_io.puts "#{DateTime.now}: Computing base:remote diffs"
         @base_remote_diffs = Archimate.diff(base, remote)
+        puts "three_way diffs found"
+        puts (@base_remote_diffs + @base_local_diffs).map(&:entity).sort.uniq.join("\n")
+        message_io.puts "#{DateTime.now}: Finding Conflicts"
         find_conflicts
+        message_io.puts "#{DateTime.now}: Applying Diffs"
         @merged = apply_diffs(
           base_remote_diffs,
-          apply_diffs(base_local_diffs, base.with)
+          apply_diffs(
+            base_local_diffs,
+            @merged
+          )
         )
       end
 
+      # TODO: All of the apply diff stuff belongs elsewhere?
       # Applies the set of diffs to the model returning a
       # new model with the diffs applied.
       def apply_diffs(diffs, model)
@@ -91,26 +73,30 @@ module Archimate
       def apply_diff(node, diff)
         path = diff.entity.split("/")
         attr_name = path.shift.to_sym
-        raise "Name Error: #{path.first}" unless node.class.schema.include?(attr_name.to_sym)
+        inst_var_sym = "@#{attr_name}".to_sym
+        attr_name = attr_name.to_sym
 
         if path.empty?
           # Intention here is to handle simple types like string, integer
-          node.with(attr_name => diff.to)
+          # node.with(attr_name => diff.to)
+          # node.send(attr_name.to_s + "=", diff.to)
+          node.instance_variable_set(inst_var_sym, diff.to)
+          node
         else
-          # TODO: may need to handle complex object here (other than collection)
           child_collection = node.send(attr_name)
           id = path.shift
           # Note: if the path is empty at this point, there's no more need to drill down
           if path.empty?
             if diff.delete?
-              node.with(attr_name => child_collection.reject { |_k, v| v == diff.from })
+              # node.with(attr_name => child_collection.reject { |_k, v| v == diff.from })
+              node.send(attr_name).delete(diff.from)
+              node
             else
               apply_child_changes(node, attr_name, id, diff.to)
             end
           else
             id = id.to_i if child_collection.is_a? Array
             child = child_collection[id]
-            raise "Child #{id} not found in collection" if child.nil?
             apply_child_changes(node, attr_name, id, apply_diff(child, diff.with(entity: path.join("/"))))
           end
         end
@@ -122,23 +108,31 @@ module Archimate
         child_collection = node.send(attr_name)
         case child_collection
         when Hash
-          node.with(attr_name => child_collection.merge(id => child_value))
+          node.send(attr_name)[id] = child_value
+          # node.with(attr_name => child_collection.merge(id => child_value))
         when Array
-          id = id.to_i
-          nu_collection = child_collection.dup
-          nu_collection[id.to_i] = child_value
-          node.with(attr_name => nu_collection)
+          # id = id.to_i
+          # nu_collection = child_collection.dup
+          # nu_collection[id.to_i] = child_value
+          # node.with(attr_name => nu_collection)
+          node.send(attr_name)[id.to_i] = child_value
         else
           raise "Type Error #{child_collection.class} unexpected for collection type"
         end
+          node
       end
 
       # TODO: if we're looking at an Array, a conflict can be resolved by inserting both.
       def find_conflicts
+        message_io.puts "#{DateTime.now}: find_diff_entity_conflicts"
         conflicts << find_diff_entity_conflicts
+        message_io.puts "#{DateTime.now}: find_diagram_delete_update_conflicts"
         conflicts << find_diagram_delete_update_conflicts
+        message_io.puts "#{DateTime.now}: find_deleted_elements_referenced_in_diagrams"
         conflicts << find_deleted_elements_referenced_in_diagrams
+        message_io.puts "#{DateTime.now}: find_deleted_relationships_referenced_in_diagrams"
         conflicts << find_deleted_relationships_referenced_in_diagrams
+        message_io.puts "#{DateTime.now}: find_deleted_relationships_with_updated_source_or_target"
         conflicts << find_deleted_relationships_with_updated_source_or_target
       end
 

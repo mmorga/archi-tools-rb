@@ -3,7 +3,7 @@ require "set"
 
 module Archimate
   module DataModel
-    class Model < Dry::Struct::Value
+    class Model < Dry::Struct
       include DataModel::With
 
       attribute :id, Strict::String

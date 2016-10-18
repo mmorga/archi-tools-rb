@@ -17,6 +17,7 @@ module Archimate
             @path_stack << root
           end
         end
+        puts "Context.new path: #{path_stack.join("/")}"
       end
 
       def diffs
@@ -24,7 +25,7 @@ module Archimate
         return [Difference.insert(path_str, local)] if base.nil?
         return [Difference.delete(path_str, base)] if local.nil?
 
-        if base.is_a?(Dry::Struct::Value)
+        if base.is_a?(Dry::Struct)
           base.instance_variables.reject { |i| i == :@schema }.each_with_object([]) do |i, a|
             @path_stack.push i.to_s.delete('@')
             a.concat(
@@ -71,6 +72,7 @@ module Archimate
             if d.entity.is_a?(Integer)
               path << "[#{d.entity}]"
             else
+              puts "#{d.entity.class} d.entity"
               path << d.entity.to_s unless d.entity.to_s.empty?
             end
           end

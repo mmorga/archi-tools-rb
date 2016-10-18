@@ -39,9 +39,16 @@ module Archimate
 
         merge = Merge.three_way(base, local, remote)
 
+        refute_includes base.elements.values, local_el
+        refute_includes base.elements.values, remote_el
+
         assert_empty merge.conflicts
         assert_includes merge.merged.elements.values, local_el
         assert_includes merge.merged.elements.values, remote_el
+        puts "base #{base.object_id}, merged #{merge.merged.object_id}"
+        base.instance_variables.each do |iv|
+          puts "#{iv} #{base.instance_variable_get(iv).object_id} #{merge.merged.instance_variable_get(iv).object_id}"
+        end
         refute_equal base, merge.merged
       end
 
@@ -231,6 +238,24 @@ module Archimate
         merge = Merge.three_way(base, local, remote)
 
         refute_empty merge.conflicts
+        assert_equal base, merge.merged
+      end
+
+      def test_handle_bounds_changes
+        diagram = base.diagrams.values.first
+        child = diagram.children.values.first
+        bounds = child.bounds
+        remote = base.with
+        updated_child = child.with(bounds: bounds.with(x: bounds.x + 10.0, y: bounds.y + 10.0))
+        local = base.with(
+          diagrams: Archimate.array_to_id_hash(
+            diagram.with(children: Archimate.array_to_id_hash(updated_child))
+          )
+        )
+
+        merge = Merge.three_way(base, local, remote)
+        puts merge.conflicts
+        assert_empty merge.conflicts
         assert_equal base, merge.merged
       end
     end

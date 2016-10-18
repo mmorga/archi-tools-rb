@@ -2,12 +2,16 @@
 module Archimate
   module Cli
     class Merge
-      attr_reader :base, :local, :remote, :merged, :messages
+      attr_reader :base, :local, :remote, :merged, :message_io
 
-      def self.merge(base_file, local_file, remote_file, merged_file, message_io = STDERR)
+      def self.merge(base_file, remote_file, local_file, merged_file, message_io = STDERR)
+        message_io.puts "#{DateTime.now}: Reading base file: #{base_file}"
         base = Archimate::ArchiFileReader.read(base_file)
+        message_io.puts "#{DateTime.now}: Reading local file: #{local_file}"
         local = Archimate::ArchiFileReader.read(local_file)
+        message_io.puts "#{DateTime.now}: Reading remote file: #{remote_file}"
         remote = Archimate::ArchiFileReader.read(remote_file)
+        message_io.puts "#{DateTime.now}: Merged file is #{merged_file}"
         merged = merged_file
 
         my_merge = Merge.new(base, local, remote, merged, message_io)
@@ -23,8 +27,9 @@ module Archimate
       end
 
       def merge
-        merge = Archimate::Diff::Merge.three_way(base, local, remote)
-
+        @message_io.puts "#{DateTime.now}: Starting merging"
+        merge = Archimate::Diff::Merge.three_way(base, local, remote, message_io)
+        @message_io.puts "#{DateTime.now}: Done merging"
         @message_io.puts "Conflicts:"
         merge.conflicts.each { |d| @message_io.puts d }
       end

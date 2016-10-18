@@ -5,7 +5,7 @@ module Archimate
     # and diagrams. In the Archimate standard file export model exchange format,
     # this is representated as items. In the Archi file format, this is
     # represented as folders.
-    class Folder < Dry::Struct::Value
+    class Folder < Dry::Struct
       include DataModel::With
 
       attribute :id, Strict::String

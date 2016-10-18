@@ -31,8 +31,10 @@ module Archimate
 
   module Diff
     autoload :Conflict, 'archimate/diff/conflict'
+    autoload :Conflicts, 'archimate/diff/conflicts'
     autoload :Context, 'archimate/diff/context'
     autoload :Difference, 'archimate/diff/difference'
+    autoload :Hashify, 'archimate/diff/hashify'
     autoload :Merge, 'archimate/diff/merge'
   end
 
