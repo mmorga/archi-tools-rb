@@ -17,7 +17,7 @@ module Archimate
         documentation: parse_documentation(doc.root, "purpose"),
         properties: parse_properties(doc.root),
         elements: parse_elements(doc.root),
-        organization: parse_organization(doc.root),
+        folders: parse_folders(doc.root),
         relationships: parse_relationships(doc.root),
         diagrams: parse_diagrams(doc.root)
       )
@@ -47,10 +47,6 @@ module Archimate
         documentation: parse_documentation(node),
         properties: parse_properties(node)
       )
-    end
-
-    def parse_organization(model)
-      DataModel::Organization.new(folders: parse_folders(model))
     end
 
     def parse_folders(node)

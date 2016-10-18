@@ -15,15 +15,14 @@ module Archimate
       assert_equal 120, model.diagram_element_references.size
     end
 
-    def test_organization
-      org = model.organization
-      assert_instance_of DataModel::Organization, org
-      assert_equal 8, org.folders.size
-      assert org.folders.values.all? { |e| e.is_a? DataModel::Folder }
-      assert_equal 5, org.folders['8c90fdfa'].folders.size
-      assert_equal 30, org.folders['8c90fdfa'].folders['fa63373b'].items.size
-      assert org.folders['8c90fdfa'].folders['fa63373b'].items.all? { |e| e.is_a? String }
-      assert_equal "1544", org.folders['8c90fdfa'].folders['fa63373b'].items[0]
+    def test_folders
+      folders = model.folders
+      assert_equal 8, folders.size
+      assert folders.values.all? { |e| e.is_a? DataModel::Folder }
+      assert_equal 5, folders['8c90fdfa'].folders.size
+      assert_equal 30, folders['8c90fdfa'].folders['fa63373b'].items.size
+      assert folders['8c90fdfa'].folders['fa63373b'].items.all? { |e| e.is_a? String }
+      assert_equal "1544", folders['8c90fdfa'].folders['fa63373b'].items[0]
     end
   end
 end

@@ -11,7 +11,7 @@ module Archimate
       attribute :documentation, DocumentationList
       attribute :properties, PropertiesList
       attribute :elements, Strict::Hash
-      attribute :organization, Organization
+      attribute :folders, Strict::Hash
       attribute :relationships, Strict::Hash
       attribute :diagrams, Strict::Hash
 
@@ -20,7 +20,7 @@ module Archimate
           documentation: [],
           properties: [],
           elements: {},
-          organization: Organization.create,
+          folders: {},
           relationships: {},
           diagrams: {}
         }.merge(options)

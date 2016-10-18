@@ -87,7 +87,7 @@ module Minitest
         documentation: options.fetch(:documentation, []),
         properties: options.fetch(:properties, []),
         elements: elements,
-        organization: options.fetch(:organization, Archimate::DataModel::Organization.create),
+        folders: options.fetch(:folders, {}),
         relationships: relationships,
         diagrams: diagrams
       )
@@ -184,12 +184,6 @@ module Minitest
         )
         a[folder.id] = folder
       end
-    end
-
-    def build_organization(options = {})
-      Archimate::DataModel::Organization.new(
-        folders: options.fetch(:folders, build_folders(options.fetch(:with_folders, 0)))
-      )
     end
 
     def build_bendpoint(options = {})
