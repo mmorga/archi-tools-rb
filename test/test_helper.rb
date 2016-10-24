@@ -18,6 +18,8 @@ require 'faker'
 require 'pp'
 require 'archimate'
 
+Minitest::Test.make_my_diffs_pretty!
+
 module Minitest
   class Test
     def build_id

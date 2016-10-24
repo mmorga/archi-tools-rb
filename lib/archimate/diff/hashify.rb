@@ -1,8 +1,8 @@
 module Archimate
   module Diff
     module Hashify
+      # TODO: this isn't used. Delete me.
       def self.hashify(thing)
-        # case thing.is_a?(Dry::Struct) ? "Dry::Struct" : thing.class.name
         case thing
         when Dry::Struct
           thing.instance_variables.reject { |i| i == :@schema }.each_with_object({}) do |i, a|

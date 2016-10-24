@@ -19,6 +19,7 @@ module Archimate
       attr_reader :kind
       attr_accessor :entity # TODO: entity is accessed as a stack, consider changing from string to stack
       # TODO: would be nice if reference to the object is here too.
+      # TODO: this is really a path an XPATH (or JSONPath) expression would be a nice way to keep this associated with a particular object.
       attr_accessor :from
       attr_accessor :to
 
@@ -81,8 +82,6 @@ module Archimate
       end
 
       def with(options = {})
-        puts "Difference with #{options.fetch(:entity, entity)}"
-        raise "Bad entity" if options.fetch(:entity, entity) =~ /Bounds/
         Difference.new(
           options.fetch(:kind, kind),
           options.fetch(:entity, entity)

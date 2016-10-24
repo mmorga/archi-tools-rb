@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 require "deep_clone"
-require "hashdiff"
+require "ruby-progressbar"
 
 module Archimate
   module Diff
@@ -8,6 +8,10 @@ module Archimate
     # then it's actually the result of a de-duplication pass.
     # If so, then we could get good results by de-duping the
     # new side and comparing the results.
+    # TODO: Refactor notes. Split this up, three things happening here:
+    # 1. Merge
+    # 2. Find Conflicts
+    # 3. Apply Diffs to Model
     class Merge
       attr_reader :conflicts
       attr_reader :base_local_diffs
@@ -38,40 +42,42 @@ module Archimate
       def three_way
         message_io.puts "#{DateTime.now}: Computing base:local diffs"
         @base_local_diffs = Archimate.diff(base, local)
-
-        bl_diffs = HashDiff.diff(Hashify.hashify(base), Hashify.hashify(local))
-        message_io.puts "Local Diffs: #{bl_diffs.pretty_inspect}"
-        br_diffs = HashDiff.diff(Hashify.hashify(base), Hashify.hashify(remote))
-        message_io.puts "Remote Diffs: #{br_diffs.pretty_inspect}"
-
         message_io.puts "#{DateTime.now}: Computing base:remote diffs"
         @base_remote_diffs = Archimate.diff(base, remote)
-        puts "three_way diffs found"
-        puts (@base_remote_diffs + @base_local_diffs).map(&:entity).sort.uniq.join("\n")
         message_io.puts "#{DateTime.now}: Finding Conflicts"
         find_conflicts
         message_io.puts "#{DateTime.now}: Applying Diffs"
-        @merged = apply_diffs(
-          base_remote_diffs,
-          apply_diffs(
-            base_local_diffs,
-            @merged
-          )
-        )
+        @merged = apply_diffs(base_remote_diffs + base_local_diffs, @merged)
       end
 
       # TODO: All of the apply diff stuff belongs elsewhere?
       # Applies the set of diffs to the model returning a
       # new model with the diffs applied.
       def apply_diffs(diffs, model)
-        conflicts.filter_diffs(diffs).inject(model) do |m, diff|
+        message_io.puts "Applying #{diffs.size} diffs"
+        remaining_diffs = conflicts.filter_diffs(diffs)
+        message_io.puts "Filtering out #{conflicts.size} conflicts - applying #{remaining_diffs.size}"
+        progressbar = ProgressBar.create(
+          title: "Diffs",
+          total: remaining_diffs.size,
+          format: "%t %a %e %b\u{15E7}%i %p%%",
+          progress_mark: ' ',
+          remainder_mark: "\u{FF65}"
+        )
+
+        remaining_diffs.inject(model) do |m, diff|
+          progressbar.increment
           apply_diff(m, diff.with(entity: diff.entity.split("/")[1..-1].join("/")))
         end
       end
 
-      # This is in need of refactoring
+      # TODO: This is in need of refactoring
       def apply_diff(node, diff)
         path = diff.entity.split("/")
+        # TODO: this is a travesty! Fix me!
+        path.delete("Bounds")
+        path.delete("Style")
+        path.delete("Float")
         attr_name = path.shift.to_sym
         inst_var_sym = "@#{attr_name}".to_sym
         attr_name = attr_name.to_sym
@@ -88,8 +94,10 @@ module Archimate
           # Note: if the path is empty at this point, there's no more need to drill down
           if path.empty?
             if diff.delete?
-              # node.with(attr_name => child_collection.reject { |_k, v| v == diff.from })
               node.send(attr_name).delete(diff.from)
+              node
+            elsif child_collection.is_a? Dry::Struct
+              node.instance_variable_set("@#{id}".to_sym, diff.to)
               node
             else
               apply_child_changes(node, attr_name, id, diff.to)
@@ -109,17 +117,12 @@ module Archimate
         case child_collection
         when Hash
           node.send(attr_name)[id] = child_value
-          # node.with(attr_name => child_collection.merge(id => child_value))
         when Array
-          # id = id.to_i
-          # nu_collection = child_collection.dup
-          # nu_collection[id.to_i] = child_value
-          # node.with(attr_name => nu_collection)
           node.send(attr_name)[id.to_i] = child_value
         else
-          raise "Type Error #{child_collection.class} unexpected for collection type"
+          raise "Type Error #{child_collection.class} unexpected for collection type, node class=#{node.class}, attr_name=#{attr_name}, id=#{id}, child_value=#{child_value.pretty_inspect}"
         end
-          node
+        node
       end
 
       # TODO: if we're looking at an Array, a conflict can be resolved by inserting both.

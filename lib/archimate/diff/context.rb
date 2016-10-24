@@ -17,7 +17,6 @@ module Archimate
             @path_stack << root
           end
         end
-        puts "Context.new path: #{path_stack.join("/")}"
       end
 
       def diffs
@@ -72,7 +71,6 @@ module Archimate
             if d.entity.is_a?(Integer)
               path << "[#{d.entity}]"
             else
-              puts "#{d.entity.class} d.entity"
               path << d.entity.to_s unless d.entity.to_s.empty?
             end
           end

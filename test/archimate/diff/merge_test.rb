@@ -45,10 +45,6 @@ module Archimate
         assert_empty merge.conflicts
         assert_includes merge.merged.elements.values, local_el
         assert_includes merge.merged.elements.values, remote_el
-        puts "base #{base.object_id}, merged #{merge.merged.object_id}"
-        base.instance_variables.each do |iv|
-          puts "#{iv} #{base.instance_variable_get(iv).object_id} #{merge.merged.instance_variable_get(iv).object_id}"
-        end
         refute_equal base, merge.merged
       end
 
