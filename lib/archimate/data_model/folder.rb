@@ -31,7 +31,7 @@ module Archimate
         Folder.new(
           id: id.clone,
           name: name.clone,
-          type: type.clone,
+          type: type.nil? ? nil : type.clone,
           items: items.map(&:clone),
           documentation: documentation.map(&:clone),
           properties: properties.map(&:clone),

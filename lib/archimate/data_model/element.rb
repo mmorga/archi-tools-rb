@@ -25,8 +25,8 @@ module Archimate
       def clone
         Element.new(
           id: id.clone,
-          type: type.clone,
-          label: label.clone,
+          type: type.nil? ? nil : type.clone,
+          label: label.nil? ? nil : label.clone,
           documentation: documentation.map(&:clone),
           properties: properties.map(&:clone)
         )

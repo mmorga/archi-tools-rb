@@ -72,6 +72,7 @@ module Archimate
         path.delete("Bounds")
         path.delete("Style")
         path.delete("Float")
+        path.delete("Fixnum")
         attr_name = path.shift.to_sym
         inst_var_sym = "@#{attr_name}".to_sym
         attr_name = attr_name.to_sym
@@ -114,7 +115,7 @@ module Archimate
         when Array
           node.send(attr_name)[id.to_i] = child_value
         else
-          raise "Type Error #{child_collection.class} unexpected for collection type, node class=#{node.class}, attr_name=#{attr_name}, id=#{id}, child_value=#{child_value.pretty_inspect}"
+          raise "Type Error #{child_collection.class} unexpected for collection type, node class=#{node.class}, attr_name=#{attr_name}, id=#{id}, child_value=#{child_value.inspect}"
         end
         node
       end
@@ -161,10 +162,27 @@ module Archimate
       end
 
       def find_diff_entity_conflicts
-        @base_local_diffs.each_with_object([]) do |local_diff, cfx|
-          conflicting_remote_diffs = @base_remote_diffs.select { |remote_diff| local_diff.entity == remote_diff.entity }
+        @base_local_diffs.each_with_object([]) do |ldiff, cfx|
+          conflicting_remote_diffs =
+            @base_remote_diffs.select { |rdiff| ldiff.entity == rdiff.entity && ldiff != rdiff }.select do |rdiff|
+              if !(ldiff.on_array? && rdiff.on_array?)
+                true
+              else
+                case [ldiff, rdiff].map(&:kind).sort
+                when [:change, :change]
+                  # TODO: if froms same and tos diff then conflict if froms diff then 2 sep changes else 1 change
+                  ldiff.from == rdiff.from && ldiff.to != rdiff.to
+                when [:change, :delete]
+                  # TODO: if c.from d.from same then conflict else 1 c and 1 d
+                  ldiff.from == rdiff.from
+                else
+                  false
+                end
+              end
+            end.uniq
+
           cfx << Conflict.new(
-            local_diff,
+            ldiff,
             conflicting_remote_diffs,
             "Conflicting changes"
           ) unless conflicting_remote_diffs.empty?

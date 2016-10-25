@@ -17,7 +17,7 @@ module Archimate
       def clone
         Property.new(
           key: key.clone,
-          value: value.clone
+          value: value.nil? ? nil : value.clone
         )
       end
     end

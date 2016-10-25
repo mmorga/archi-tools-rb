@@ -27,7 +27,7 @@ module Archimate
           type: type.clone,
           source: source.clone,
           target: target.clone,
-          name: name.clone,
+          name: name.nil? ? nil : name.clone,
           documentation: documentation.map(&:clone),
           properties: properties.map(&:clone)
         )

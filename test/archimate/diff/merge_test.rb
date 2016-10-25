@@ -108,6 +108,19 @@ module Archimate
         assert_equal base, merge.merged
       end
 
+      def test_local_remote_duplicate_change_no_conflict
+        local_el = base_el1.with(label: "#{base_el1.label}-same")
+        remote_el = base_el1.with(label: "#{base_el1.label}-same")
+        local = base.insert_element(local_el)
+        remote = base.insert_element(remote_el)
+
+        merge = Merge.three_way(base, local, remote, aio)
+
+        assert_empty merge.conflicts
+        assert_equal local_el, merge.merged.elements[local_el.id]
+        assert_equal remote_el, merge.merged.elements[local_el.id]
+      end
+
       def test_insert_in_remote
         local = base
         iel = build_element
@@ -123,6 +136,19 @@ module Archimate
         local = base.insert_element(iel)
         merge = Merge.three_way(base, local, remote, aio)
         assert_equal local, merge.merged
+      end
+
+      def test_insert_in_local_and_remote
+        ier = build_element
+        remote = base.insert_element(ier)
+        iel = build_element
+        local = base.insert_element(iel)
+        refute_includes base.elements, ier.id
+        refute_includes base.elements, iel.id
+        merge = Merge.three_way(base, local, remote, aio)
+        assert_empty merge.conflicts
+        assert_equal ier, merge.merged.elements[ier.id]
+        assert_equal iel, merge.merged.elements[iel.id]
       end
 
       def test_apply_diff_insert_element

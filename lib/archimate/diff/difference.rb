@@ -111,6 +111,10 @@ module Archimate
         kind == :change
       end
 
+      def on_array?
+        entity =~ /\[\d+\]$/
+      end
+
       # Returns true if this diff is for a diagram (not a part within a diagram)
       def diagram?
         entity =~ %r{/diagrams/([^/]+)$} ? true : false
