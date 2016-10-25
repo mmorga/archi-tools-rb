@@ -26,6 +26,18 @@ module Archimate
         }.merge(options)
         Folder.new(new_opts)
       end
+
+      def clone
+        Folder.new(
+          id: id.clone,
+          name: name.clone,
+          type: type.clone,
+          items: items.map(&:clone),
+          documentation: documentation.map(&:clone),
+          properties: properties.map(&:clone),
+          folders: folders.each_with_object({}) { |(k, v), a| a[k] = v.clone }
+        )
+      end
     end
     Dry::Types.register_class(Folder)
   end

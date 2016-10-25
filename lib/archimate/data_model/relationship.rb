@@ -21,6 +21,18 @@ module Archimate
         Relationship.new(new_opts)
       end
 
+      def clone
+        Relationship.new(
+          id: id.clone,
+          type: type.clone,
+          source: source.clone,
+          target: target.clone,
+          name: name.clone,
+          documentation: documentation.map(&:clone),
+          properties: properties.map(&:clone)
+        )
+      end
+
       def to_s
         "#{type}<#{id}> #{name} #{source} -> #{target} docs[#{documentation.size}] props[#{properties.size}]"
       end

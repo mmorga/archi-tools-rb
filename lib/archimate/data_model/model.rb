@@ -27,6 +27,19 @@ module Archimate
         Model.new(new_opts)
       end
 
+      def clone
+        Model.new(
+          id: id.clone,
+          name: name.clone,
+          documentation: documentation.map(&:clone),
+          properties: properties.map(&:clone),
+          elements: elements.each_with_object({}) { |(k, v), a| a[k] = v.clone },
+          folders: folders.each_with_object({}) { |(k, v), a| a[k] = v.clone },
+          relationships: relationships.each_with_object({}) { |(k, v), a| a[k] = v.clone },
+          diagrams: diagrams.each_with_object({}) { |(k, v), a| a[k] = v.clone }
+        )
+      end
+
       # returns a copy of self with element added
       # (or replaced with) the given element
       def insert_element(element)

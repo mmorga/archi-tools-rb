@@ -34,6 +34,23 @@ module Archimate
         Child.new(new_opts)
       end
 
+      def clone
+        Child.new(
+          id: id.clone,
+          type: type.nil? ? nil : type.clone,
+          model: model.nil? ? nil : model.clone,
+          name: name.nil? ? nil : name.clone,
+          target_connections: target_connections.nil? ? nil : target_connections.clone,
+          archimate_element: archimate_element.nil? ? nil : archimate_element.clone,
+          bounds: bounds.nil? ? nil : bounds.clone,
+          children: children.each_with_object({}) { |(k, v), a| a[k] = v.clone },
+          source_connections: source_connections.map(&:clone),
+          documentation: documentation.map(&:clone),
+          properties: properties.map(&:clone),
+          style: style.nil? ? nil : style.clone
+        )
+      end
+
       def element_references
         children.each_with_object([archimate_element]) { |(_id, child), a| a.concat(child.element_references) }
       end

@@ -1,4 +1,7 @@
 # frozen_string_literal: true
+require "ruby-progressbar"
+require "highline"
+
 HighLine.color_scheme = HighLine::ColorScheme.new do |cs|
   cs[:headline]        = [:bold, :yellow, :on_black]
   cs[:horizontal_line] = [:bold, :white]
@@ -18,6 +21,7 @@ module Archimate
     attr_reader :err
     attr_reader :verbose
     attr_reader :force
+    attr_reader :progressbar
 
     def initialize(options = {})
       opts = {
@@ -37,6 +41,23 @@ module Archimate
       @verbose = opts[:verbose]
       @force = opts[:force]
       @hl = HighLine.new(@uin, @uout)
+      @progressbar = nil
+    end
+
+    def create_progressbar(options = {})
+      return unless verbose
+      @progressbar = ProgressBar.create(
+        {
+          total: 100,
+          format: "%t %a %e %b\u{15E7}%i %p%%",
+          progress_mark: ' ',
+          remainder_mark: "\u{FF65}"
+        }.merge(options)
+      )
+    end
+
+    def increment_progressbar
+      progressbar.increment if progressbar
     end
 
     def error(msg)

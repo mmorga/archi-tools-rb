@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-require "deep_clone"
-require "ruby-progressbar"
 
 module Archimate
   module Diff
@@ -20,33 +18,35 @@ module Archimate
       attr_reader :local
       attr_reader :remote
       attr_reader :merged
-      attr_reader :message_io
+      attr_reader :aio
 
-      def initialize(base, local, remote, message_io = STDERR)
-        @merged = DeepClone.clone base
+      def initialize(base, local, remote, aio)
+        # @merged = DeepClone.clone base
+        @merged = base.clone
         @base = IceNine.deep_freeze!(base)
         @local = IceNine.deep_freeze!(local)
         @remote = IceNine.deep_freeze!(remote)
         @conflicts = Conflicts.new
         @base_local_diffs = []
         @base_remote_diffs = []
-        @message_io = message_io
+        @aio = aio
       end
 
-      def self.three_way(base, local, remote, message_io = STDERR)
-        merge = Merge.new(base, local, remote, message_io)
+      # TODO: refactor message_io should be an AIO not an IO. EIEIO.
+      def self.three_way(base, local, remote, aio)
+        merge = Merge.new(base, local, remote, aio)
         merge.three_way
         merge
       end
 
       def three_way
-        message_io.puts "#{DateTime.now}: Computing base:local diffs"
+        aio.debug "#{DateTime.now}: Computing base:local diffs"
         @base_local_diffs = Archimate.diff(base, local)
-        message_io.puts "#{DateTime.now}: Computing base:remote diffs"
+        aio.debug "#{DateTime.now}: Computing base:remote diffs"
         @base_remote_diffs = Archimate.diff(base, remote)
-        message_io.puts "#{DateTime.now}: Finding Conflicts"
+        aio.debug "#{DateTime.now}: Finding Conflicts"
         find_conflicts
-        message_io.puts "#{DateTime.now}: Applying Diffs"
+        aio.debug "#{DateTime.now}: Applying Diffs"
         @merged = apply_diffs(base_remote_diffs + base_local_diffs, @merged)
       end
 
@@ -54,19 +54,13 @@ module Archimate
       # Applies the set of diffs to the model returning a
       # new model with the diffs applied.
       def apply_diffs(diffs, model)
-        message_io.puts "Applying #{diffs.size} diffs"
+        aio.debug "Applying #{diffs.size} diffs"
         remaining_diffs = conflicts.filter_diffs(diffs)
-        message_io.puts "Filtering out #{conflicts.size} conflicts - applying #{remaining_diffs.size}"
-        progressbar = ProgressBar.create(
-          title: "Diffs",
-          total: remaining_diffs.size,
-          format: "%t %a %e %b\u{15E7}%i %p%%",
-          progress_mark: ' ',
-          remainder_mark: "\u{FF65}"
-        )
+        aio.debug "Filtering out #{conflicts.size} conflicts - applying #{remaining_diffs.size}"
+        aio.create_progressbar(title: "Diffs", total: remaining_diffs.size)
 
         remaining_diffs.inject(model) do |m, diff|
-          progressbar.increment
+          aio.increment_progressbar
           apply_diff(m, diff.with(entity: diff.entity.split("/")[1..-1].join("/")))
         end
       end
@@ -127,15 +121,15 @@ module Archimate
 
       # TODO: if we're looking at an Array, a conflict can be resolved by inserting both.
       def find_conflicts
-        message_io.puts "#{DateTime.now}: find_diff_entity_conflicts"
+        aio.debug "#{DateTime.now}: find_diff_entity_conflicts"
         conflicts << find_diff_entity_conflicts
-        message_io.puts "#{DateTime.now}: find_diagram_delete_update_conflicts"
+        aio.debug "#{DateTime.now}: find_diagram_delete_update_conflicts"
         conflicts << find_diagram_delete_update_conflicts
-        message_io.puts "#{DateTime.now}: find_deleted_elements_referenced_in_diagrams"
+        aio.debug "#{DateTime.now}: find_deleted_elements_referenced_in_diagrams"
         conflicts << find_deleted_elements_referenced_in_diagrams
-        message_io.puts "#{DateTime.now}: find_deleted_relationships_referenced_in_diagrams"
+        aio.debug "#{DateTime.now}: find_deleted_relationships_referenced_in_diagrams"
         conflicts << find_deleted_relationships_referenced_in_diagrams
-        message_io.puts "#{DateTime.now}: find_deleted_relationships_with_updated_source_or_target"
+        aio.debug "#{DateTime.now}: find_deleted_relationships_with_updated_source_or_target"
         conflicts << find_deleted_relationships_with_updated_source_or_target
       end
 

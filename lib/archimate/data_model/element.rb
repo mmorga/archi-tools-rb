@@ -22,6 +22,16 @@ module Archimate
         Element.new(new_opts)
       end
 
+      def clone
+        Element.new(
+          id: id.clone,
+          type: type.clone,
+          label: label.clone,
+          documentation: documentation.map(&:clone),
+          properties: properties.map(&:clone)
+        )
+      end
+
       def to_s
         "#{type}<#{id}> #{label} docs[#{documentation.size}] props[#{properties.size}]"
       end

@@ -28,6 +28,21 @@ module Archimate
         }.merge(options)
         SourceConnection.new(new_opts)
       end
+
+      def clone
+        SourceConnection.new(
+          id: id.clone,
+          source: source.clone,
+          target: target.clone,
+          relationship: relationship.nil? ? nil : relationship.clone,
+          name: name.nil? ? nil : name.clone,
+          type: type.nil? ? nil : type.clone,
+          bendpoints: bendpoints.map(&:clone),
+          documentation: documentation.map(&:clone),
+          properties: properties.map(&:clone),
+          style: style.nil? ? nil : style.clone
+        )
+      end
     end
     Dry::Types.register_class(SourceConnection)
     SourceConnectionList = Strict::Array.member("archimate.data_model.source_connection")

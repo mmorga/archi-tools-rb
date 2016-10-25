@@ -60,3 +60,39 @@ Diff computation is fast
 deleted relationships referenced in diagrams is slow
 
 apply diffs is too slow - problem is likely in the ice_nine deep freeze
+
+---
+
+# All about names
+
+Merge in an OO way.
+
+Load the candidate documents which could be different type/version files into standard model
+
+```ruby
+base = LoadDocument.load("base.archimate")
+local = LoadDocument.load("local.archimate")
+remote = LoadDocument.load("remote.archimate")
+
+merged_document, conflicts = base.merge(local, remote) # three way merge?
+```
+
+Merger might be the right name for the object?
+
+```ruby
+patch_set, unresolved_conflicts = conflicts.resolve(review)
+```
+
+# My Classes
+
+* Conflict
+* Conflicts
+  - `#resolve : Review -> (PatchSet, Conflicts)`
+* Difference
+* Document
+  - `#merge : ~local:Document -> ~remote:Document -> (Document, Conflicts)`
+  - `#patch : PatchSet -> Document`
+* PatchSet
+* Review
+  - `#resolve : Conflict -> Difference`
+

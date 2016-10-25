@@ -13,6 +13,13 @@ module Archimate
         }.merge(options)
         Property.new(new_opts)
       end
+
+      def clone
+        Property.new(
+          key: key.clone,
+          value: value.clone
+        )
+      end
     end
 
     Dry::Types.register_class(Property)
