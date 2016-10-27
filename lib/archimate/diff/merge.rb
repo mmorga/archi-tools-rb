@@ -79,8 +79,6 @@ module Archimate
 
         if path.empty?
           # Intention here is to handle simple types like string, integer
-          # node.with(attr_name => diff.to)
-          # node.send(attr_name.to_s + "=", diff.to)
           node.instance_variable_set(inst_var_sym, diff.to)
           node
         else
@@ -120,7 +118,6 @@ module Archimate
         node
       end
 
-      # TODO: if we're looking at an Array, a conflict can be resolved by inserting both.
       def find_conflicts
         aio.debug "#{DateTime.now}: find_diff_entity_conflicts"
         conflicts << find_diff_entity_conflicts
@@ -130,8 +127,8 @@ module Archimate
         conflicts << find_deleted_elements_referenced_in_diagrams
         aio.debug "#{DateTime.now}: find_deleted_relationships_referenced_in_diagrams"
         conflicts << find_deleted_relationships_referenced_in_diagrams
-        aio.debug "#{DateTime.now}: find_deleted_relationships_with_updated_source_or_target"
-        conflicts << find_deleted_relationships_with_updated_source_or_target
+        # aio.debug "#{DateTime.now}: find_deleted_relationships_with_updated_source_or_target"
+        # conflicts << find_deleted_relationships_with_updated_source_or_target
       end
 
       # Returns the set of conflicts caused by one diff set deleting a diagram
@@ -233,6 +230,7 @@ module Archimate
         end
       end
 
+      # TODO: this is bollocks: the test should be deleted on one side and source or target changed on the other.
       def find_deleted_relationships_with_updated_source_or_target
         [ModelDiffs.new(local, base_local_diffs),
          ModelDiffs.new(remote, base_remote_diffs)].permutation(2).each_with_object([]) do |(md1, md2), a|
@@ -240,6 +238,7 @@ module Archimate
           a.concat(
             md1.diffs.select { |d| d.relationship? && d.delete? }.each_with_object([]) do |md1_diff, conflicts|
               relationship = base.relationships[md1_diff.relationship_id]
+              # conflicting_md2_diffs = md2.diffs.select { |d| d.entity == md1_diff.entity }
               conflicting_md2_diffs = md2_updated_elements.select do |md2_diff|
                 [relationship.source, relationship.target].include? md2_diff.element_id
               end

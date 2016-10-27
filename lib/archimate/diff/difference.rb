@@ -143,7 +143,7 @@ module Archimate
       end
 
       def relationship?
-        entity =~  %r{/relationships/([^/]+)$} ? true : false
+        entity =~ %r{/relationships/([^/]+)$} ? true : false
       end
 
       def relationship_id
