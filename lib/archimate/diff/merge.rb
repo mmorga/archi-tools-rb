@@ -61,13 +61,13 @@ module Archimate
 
         remaining_diffs.inject(model) do |m, diff|
           aio.increment_progressbar
-          apply_diff(m, diff.with(entity: diff.entity.split("/")[1..-1].join("/")))
+          apply_diff(m, diff.with(path: diff.path.split("/")[1..-1].join("/")))
         end
       end
 
       # TODO: This is in need of refactoring
       def apply_diff(node, diff)
-        path = diff.entity.split("/")
+        path = diff.path.split("/")
         # TODO: this is a travesty! Fix me!
         path.delete("Bounds")
         path.delete("Style")
@@ -86,7 +86,7 @@ module Archimate
           id = path.shift
           # Note: if the path is empty at this point, there's no more need to drill down
           if path.empty?
-            if diff.delete?
+            if diff.is_a?(Delete)
               node.send(attr_name).delete(diff.from)
               node
             elsif child_collection.is_a? Dry::Struct
@@ -98,7 +98,7 @@ module Archimate
           else
             id = id.to_i if child_collection.is_a? Array
             child = child_collection[id]
-            apply_child_changes(node, attr_name, id, apply_diff(child, diff.with(entity: path.join("/"))))
+            apply_child_changes(node, attr_name, id, apply_diff(child, diff.with(path: path.join("/"))))
           end
         end
       end
@@ -119,16 +119,16 @@ module Archimate
       end
 
       def find_conflicts
-        aio.debug "#{DateTime.now}: find_diff_entity_conflicts"
-        conflicts << find_diff_entity_conflicts
+        aio.debug "#{DateTime.now}: find_diff_path_conflicts"
+        conflicts << find_diff_path_conflicts
         aio.debug "#{DateTime.now}: find_diagram_delete_update_conflicts"
         conflicts << find_diagram_delete_update_conflicts
         aio.debug "#{DateTime.now}: find_deleted_elements_referenced_in_diagrams"
         conflicts << find_deleted_elements_referenced_in_diagrams
         aio.debug "#{DateTime.now}: find_deleted_relationships_referenced_in_diagrams"
         conflicts << find_deleted_relationships_referenced_in_diagrams
-        # aio.debug "#{DateTime.now}: find_deleted_relationships_with_updated_source_or_target"
-        # conflicts << find_deleted_relationships_with_updated_source_or_target
+        aio.debug "#{DateTime.now}: find_deleted_elements_referenced_in_relationships"
+        conflicts << find_deleted_elements_referenced_in_relationships
       end
 
       # Returns the set of conflicts caused by one diff set deleting a diagram
@@ -141,7 +141,7 @@ module Archimate
           a.concat(
             diagram_diffs_in_conflict(
               diagram_deleted_diffs(diffs1),
-              Difference.diagram_updated_diffs(diffs2)
+              diagram_updated_diffs(diffs2)
             )
           )
         end
@@ -158,11 +158,11 @@ module Archimate
         end
       end
 
-      def find_diff_entity_conflicts
+      def find_diff_path_conflicts
         @base_local_diffs.each_with_object([]) do |ldiff, cfx|
           conflicting_remote_diffs =
-            @base_remote_diffs.select { |rdiff| ldiff.entity == rdiff.entity && ldiff != rdiff }.select do |rdiff|
-              if !(ldiff.on_array? && rdiff.on_array?)
+            @base_remote_diffs.select { |rdiff| ldiff.path == rdiff.path && ldiff != rdiff }.select do |rdiff|
+              if !(ldiff.array? && rdiff.array?)
                 true
               else
                 case [ldiff, rdiff].map(&:kind).sort
@@ -187,7 +187,11 @@ module Archimate
       end
 
       def diagram_deleted_diffs(diffs)
-        diffs.select { |i| i.delete? && i.diagram? }
+        diffs.select { |i| i.is_a?(Delete) && i.diagram? }
+      end
+
+      def diagram_updated_diffs(diffs)
+        diffs.select(&:in_diagram?)
       end
 
       # What are we looking for?
@@ -201,7 +205,7 @@ module Archimate
          ModelDiffs.new(remote, base_remote_diffs)].permutation(2).each_with_object([]) do |(md1, md2), a|
           md2_diagram_diffs = md2.diffs.select(&:in_diagram?)
           a.concat(
-            md1.diffs.select { |d| d.element? && d.delete? }.each_with_object([]) do |md1_diff, conflicts|
+            md1.diffs.select { |d| d.element? && d.is_a?(Delete) }.each_with_object([]) do |md1_diff, conflicts|
               conflicting_md2_diffs = md2_diagram_diffs.select do |md2_diff|
                 md2.model.diagrams[md2_diff.diagram_id].element_references.include? md1_diff.element_id
               end
@@ -218,7 +222,7 @@ module Archimate
          ModelDiffs.new(remote, base_remote_diffs)].permutation(2).each_with_object([]) do |(md1, md2), a|
           md2_diagram_diffs = md2.diffs.select(&:in_diagram?)
           a.concat(
-            md1.diffs.select { |d| d.relationship? && d.delete? }.each_with_object([]) do |md1_diff, conflicts|
+            md1.diffs.select { |d| d.relationship? && d.is_a?(Delete) }.each_with_object([]) do |md1_diff, conflicts|
               conflicting_md2_diffs = md2_diagram_diffs.select do |md2_diff|
                 md2.model.diagrams[md2_diff.diagram_id].relationships.include? md1_diff.relationship_id
               end
@@ -230,21 +234,21 @@ module Archimate
         end
       end
 
-      # TODO: this is bollocks: the test should be deleted on one side and source or target changed on the other.
-      def find_deleted_relationships_with_updated_source_or_target
+      def find_deleted_elements_referenced_in_relationships
         [ModelDiffs.new(local, base_local_diffs),
          ModelDiffs.new(remote, base_remote_diffs)].permutation(2).each_with_object([]) do |(md1, md2), a|
-          md2_updated_elements = md2.diffs.select { |d| d.in_element? && !d.delete? }
+          md2_deleted_elements = md2.diffs.select { |d| d.in_element? && !d.is_a?(Delete) }
           a.concat(
-            md1.diffs.select { |d| d.relationship? && d.delete? }.each_with_object([]) do |md1_diff, conflicts|
+            md1.diffs.select { |d| d.relationship? && !d.is_a?(Delete) }.each_with_object([]) do |md1_diff, conflicts|
               relationship = base.relationships[md1_diff.relationship_id]
-              # conflicting_md2_diffs = md2.diffs.select { |d| d.entity == md1_diff.entity }
-              conflicting_md2_diffs = md2_updated_elements.select do |md2_diff|
+              conflicting_md2_diffs = md2_deleted_elements.select do |md2_diff|
                 [relationship.source, relationship.target].include? md2_diff.element_id
               end
-              conflicts << Conflict.new(md1_diff,
-                                        conflicting_md2_diffs,
-                                        "Source/Target referenced in deleted relationship") unless conflicting_md2_diffs.empty?
+              conflicts << Conflict.new(
+                md1_diff,
+                conflicting_md2_diffs,
+                "Added/updated relationship references in deleted element"
+              ) unless conflicting_md2_diffs.empty?
             end
           )
         end

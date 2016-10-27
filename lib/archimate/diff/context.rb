@@ -2,9 +2,11 @@
 module Archimate
   module Diff
     class Context
-      attr_reader :base, :local, :path_stack
+      attr_reader :base_model, :local_model, :base, :local, :path_stack
 
-      def initialize(base, local, path = [])
+      def initialize(base_model, local_model, base, local, path = [])
+        @base_model = base_model
+        @local_model = local_model
         @base = base
         @local = local
         raise TypeError, "Both models must be the same type" unless base.nil? || local.nil? || base.class == local.class
@@ -21,15 +23,15 @@ module Archimate
 
       def diffs
         return [] if base == local
-        return [Difference.insert(path_str, local)] if base.nil?
-        return [Difference.delete(path_str, base)] if local.nil?
+        return [Insert.new(path_str, local_model, local)] if base.nil?
+        return [Delete.new(path_str, base_model, base)] if local.nil?
 
         if base.is_a?(Dry::Struct)
           base.instance_variables.reject { |i| i == :@schema }.each_with_object([]) do |i, a|
             @path_stack.push i.to_s.delete('@')
             a.concat(
               apply_context(
-                Context.new(base.instance_variable_get(i), local.instance_variable_get(i)).diffs
+                Context.new(base_model, local_model, base.instance_variable_get(i), local.instance_variable_get(i)).diffs
               )
             )
             @path_stack.pop
@@ -37,24 +39,24 @@ module Archimate
         elsif base.is_a?(Hash) # TODO: Refactor
           diff_list = []
           base.each do |id, el|
-            diff_list << Context.new(el, local[id], [id]).diffs if local.include?(id) && el != local[id]
-            diff_list << Difference.delete(id, el) unless local.include?(id)
+            diff_list << Context.new(base_model, local_model, el, local[id], [id]).diffs if local.include?(id) && el != local[id]
+            diff_list << Delete.new(id, base_model, el) unless local.include?(id)
           end
           local.each do |id, el|
-            diff_list << Difference.insert(id, el) unless base.include?(id)
+            diff_list << Insert.new(id, local_model, el) unless base.include?(id)
           end
           diff_list.flatten
         elsif base.is_a?(Array)
           diff_list = []
           base.each_with_index do |item, idx|
-            diff_list << Difference.delete(idx, item) unless local.include?(item)
+            diff_list << Delete.new(idx, base_model, item) unless local.include?(item)
           end
           local.each_with_index do |item, idx|
-            diff_list << Difference.insert(idx, item) { |d| d.entity = idx } unless base.include?(item)
+            diff_list << Insert.new(idx, local_model, item) { |d| d.path = idx } unless base.include?(item)
           end
           diff_list
         else
-          [Difference.change(path_str, base, local)]
+          [Change.new(path_str, base_model, local_model, base, local)]
         end
       end
 
@@ -67,14 +69,14 @@ module Archimate
       def apply_context(diffs)
         diffs.map do |d|
           path = @path_stack.dup
-          unless d.entity.nil?
-            if d.entity.is_a?(Integer)
-              path << "[#{d.entity}]"
+          unless d.path.nil?
+            if d.path.is_a?(Integer)
+              path << "[#{d.path}]"
             else
-              path << d.entity.to_s unless d.entity.to_s.empty?
+              path << d.path.to_s unless d.path.to_s.empty?
             end
           end
-          d.entity = path.join("/")
+          d.path = path.join("/")
           d
         end
       end

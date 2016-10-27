@@ -243,19 +243,18 @@ module Archimate
         assert_equal base, merge.merged
       end
 
-      # delete: relationship (ok - if source & target also deleted & not referenced by remaining diagrams)
-      def test_delete_relationship_when_other_touches_source_or_target
+      # delete: element (ok - unless other doc doesn't add relationship which references it)
+      def xtest_delete_element_when_referenced_in_other_change_set
         target_relationship = base.relationships.values.first
         element_id = target_relationship.source
-        element_referenced = base.elements[element_id]
         relationship_id = target_relationship.id
-
-        # update diagram that references child
+        new_relationship = build_relationship(source_id: element_id)
         remote = base.with(
-          elements: base.elements.each_with_object({}) { |(k, v), a| a[k] = k == element_id ? element_referenced.with(label: "changed name") : v }
+          relationships: base.relationships.merge(new_relationship.id => new_relationship)
         )
 
         local = base.with(
+          elements: base.elements.reject { |k, _v| k == element_id },
           relationships: base.relationships.reject { |k, _v| k == relationship_id }
         )
 
