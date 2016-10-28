@@ -18,7 +18,14 @@ module Archimate
       end
 
       def to_s
-        "#{HighLine.color('INSERT: ', :green)}#{path}: #{inserted}"
+        "#{'INSERT:'.green} #{path}: #{describe}"
+      end
+
+      def describe
+        parent, remaining_path = describeable_parent(to_model)
+        s = parent.describe(to_model)
+        s += " #{remaining_path.light_blue} #{inserted.light_green}" unless remaining_path.empty?
+        s
       end
     end
   end

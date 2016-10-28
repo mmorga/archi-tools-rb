@@ -38,6 +38,15 @@ module Archimate
           folders: folders.each_with_object({}) { |(k, v), a| a[k] = v.clone }
         )
       end
+
+      def self.find_in_folders(folder_hash, folder_id)
+        return folder_hash[folder_id] if folder_hash.keys.include?(folder_id)
+        folder_hash.values.each do |v|
+          f = find_in_folders(v.folders, folder_id)
+          return f unless f.nil?
+        end
+        nil
+      end
     end
     Dry::Types.register_class(Folder)
   end

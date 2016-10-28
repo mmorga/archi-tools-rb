@@ -22,6 +22,14 @@ module Archimate
         m2 = m1.with(name: "felix")
         refute_equal m1, m2
       end
+
+      def test_find_folder
+        inner_folder = build_folder
+        outer_folder = build_folder(folders: { inner_folder.id => inner_folder })
+        model = build_model(folders: { outer_folder.id => outer_folder })
+        assert_equal outer_folder, model.find_folder(outer_folder.id)
+        assert_equal inner_folder, model.find_folder(inner_folder.id)
+      end
     end
   end
 end

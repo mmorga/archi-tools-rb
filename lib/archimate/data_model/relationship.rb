@@ -37,6 +37,14 @@ module Archimate
         "#{type}<#{id}> #{name} #{source} -> #{target} docs[#{documentation.size}] props[#{properties.size}]"
       end
 
+      def type_name
+        "#{type.blue.italic}[#{name.black.underline}]".on_light_magenta
+      end
+
+      def describe(model)
+        "#{type_name} #{model.elements[source].short_desc}->#{model.elements[target].short_desc}"
+      end
+
       def element_reference
         [@source, @target]
       end

@@ -19,36 +19,35 @@ module Archimate
                        CompositionRelationship FlowRelationship TriggeringRelationship
                        GroupingRelationship SpecialisationRelationship InfluenceRelationship).freeze
 
-    # TODO: the archimate: portion of element names is from the Archi file format - shouldn't be here
     LAYER_ELEMENTS = {
       "Business" =>
-        ["archimate:BusinessActor", "archimate:BusinessCollaboration",
-         "archimate:BusinessEvent", "archimate:BusinessFunction",
-         "archimate:BusinessInteraction", "archimate:BusinessInterface",
-         "archimate:BusinessObject", "archimate:BusinessProcess",
-         "archimate:BusinessRole", "archimate:BusinessService",
-         "archimate:Contract", "archimate:Location",
-         "archimate:Meaning", "archimate:Value",
-         "archimate:Product", "archimate:Representation"],
+        ["BusinessActor", "BusinessCollaboration",
+         "BusinessEvent", "BusinessFunction",
+         "BusinessInteraction", "BusinessInterface",
+         "BusinessObject", "BusinessProcess",
+         "BusinessRole", "BusinessService",
+         "Contract", "Location",
+         "Meaning", "Value",
+         "Product", "Representation"],
       "Application" =>
-        ["archimate:ApplicationCollaboration", "archimate:ApplicationComponent",
-         "archimate:ApplicationFunction", "archimate:ApplicationInteraction",
-         "archimate:ApplicationInterface", "archimate:ApplicationService",
-         "archimate:DataObject"],
+        ["ApplicationCollaboration", "ApplicationComponent",
+         "ApplicationFunction", "ApplicationInteraction",
+         "ApplicationInterface", "ApplicationService",
+         "DataObject"],
       "Technology" =>
-        ["archimate:Artifact", "archimate:CommunicationPath",
-         "archimate:Device", "archimate:InfrastructureFunction",
-         "archimate:InfrastructureInterface", "archimate:InfrastructureService",
-         "archimate:Network", "archimate:Node", "archimate:SystemSoftware"],
+        ["Artifact", "CommunicationPath",
+         "Device", "InfrastructureFunction",
+         "InfrastructureInterface", "InfrastructureService",
+         "Network", "Node", "SystemSoftware"],
       "Motivation" =>
-        ["archimate:Assessment", "archimate:Constraint", "archimate:Driver",
-         "archimate:Goal", "archimate:Principle", "archimate:Requirement",
-         "archimate:Stakeholder"],
+        ["Assessment", "Constraint", "Driver",
+         "Goal", "Principle", "Requirement",
+         "Stakeholder"],
       "Implementation and Migration" =>
-        ["archimate:Deliverable", "archimate:Gap", "archimate:Plateau",
-         "archimate:WorkPackage"],
+        ["Deliverable", "Gap", "Plateau",
+         "WorkPackage"],
       "Connectors" =>
-        ["archimate:AndJunction", "archimate:Junction", "archimate:OrJunction"]
+        ["AndJunction", "Junction", "OrJunction"]
     }.freeze
 
     ELEMENT_LAYER = LAYER_ELEMENTS.each_with_object({}) do |(layer, elements), el_layer_hash|

@@ -22,6 +22,19 @@ module Archimate
       def to_s
         "#{HighLine.color('CHANGE: ', :yellow)}#{path}: #{from} -> #{to}"
       end
+
+      def diff_type
+        'CHANGE:'.yellow
+      end
+
+      def describe
+        to_parent, to_remaining_path = describeable_parent(to_model)
+        # from_parent, from_remaining_path = describeable_parent(from_model)
+        s = diff_type
+        s += to_parent.describe(to_model)
+        s += " #{to_remaining_path.light_blue} #{from.light_red} -> #{to.light_green}" unless to_remaining_path.empty?
+        s
+      end
     end
   end
 end

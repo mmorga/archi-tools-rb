@@ -25,7 +25,7 @@ module Archimate
 
       def test_short_desc
         el = Element.create(id: "abc123", type: "DataObject", label: "Thing")
-        assert_equal "DataObject<abc123> Thing", el.short_desc
+        assert_equal "DataObject[Thing]", el.short_desc.uncolorize
       end
 
       def test_to_id_string
@@ -34,17 +34,17 @@ module Archimate
       end
 
       def test_layer
-        el = Element.create(id: "abc123", type: "archimate:BusinessRole", label: "Thing")
+        el = Element.create(id: "abc123", type: "BusinessRole", label: "Thing")
         assert_equal "Business", el.layer
-        el = el.with(type: "archimate:DataObject")
+        el = el.with(type: "DataObject")
         assert_equal "Application", el.layer
-        el = el.with(type: "archimate:Device")
+        el = el.with(type: "Device")
         assert_equal "Technology", el.layer
-        el = el.with(type: "archimate:Goal")
+        el = el.with(type: "Goal")
         assert_equal "Motivation", el.layer
-        el = el.with(type: "archimate:Gap")
+        el = el.with(type: "Gap")
         assert_equal "Implementation and Migration", el.layer
-        el = el.with(type: "archimate:Junction")
+        el = el.with(type: "Junction")
         assert_equal "Connectors", el.layer
         el = el.with(type: "Bogus")
         assert_equal "None", el.layer

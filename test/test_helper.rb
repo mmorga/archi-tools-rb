@@ -79,17 +79,24 @@ module Minitest
       )
     end
 
+    def requested_folders(options, _elements)
+      build_folders(
+        options.fetch(:with_folders, 0)
+      )
+    end
+
     def build_model(options = {})
       elements = requested_elements(options)
       relationships = requested_relationships(options, elements)
       diagrams = requested_diagrams(options, elements, relationships)
+      folders = requested_folders(options, elements)
       Archimate::DataModel::Model.new(
         id: options.fetch(:id, build_id),
         name: options.fetch(:name, Faker::Company.name),
         documentation: options.fetch(:documentation, []),
         properties: options.fetch(:properties, []),
         elements: elements,
-        folders: options.fetch(:folders, {}),
+        folders: options.fetch(:folders, folders),
         relationships: relationships,
         diagrams: diagrams
       )
@@ -179,10 +186,11 @@ module Minitest
       )
     end
 
-    def build_folders(count, min_items: 1, max_items: 10)
+    def build_folders(count, min_items: 1, max_items: 10, child_folders: {})
       (1..count).each_with_object({}) do |_i, a|
         folder = build_folder(
-          items: (0..random(min_items, max_items)).each_with_object([]) { |_i2, a2| a2 << build_id }
+          items: (0..random(min_items, max_items)).each_with_object([]) { |_i2, a2| a2 << build_id },
+          folders: child_folders
         )
         a[folder.id] = folder
       end
@@ -227,7 +235,7 @@ module Minitest
 
     def random_relationship_type
       @random ||= Random.new(Random.new_seed)
-      Archimate::Constants::ELEMENTS[@random.rand(Archimate::Constants::ELEMENTS.size)]
+      Archimate::Constants::RELATIONSHIPS[@random.rand(Archimate::Constants::RELATIONSHIPS.size)]
     end
 
     def random_element_type

@@ -40,6 +40,10 @@ module Archimate
         )
       end
 
+      def describe(_model)
+        "#{'Model'.cyan.italic}[#{name.white.underline}]"
+      end
+
       # returns a copy of self with element added
       # (or replaced with) the given element
       def insert_element(element)
@@ -56,6 +60,10 @@ module Archimate
           relationships:
             relationships.merge(relationship.id => relationship)
         )
+      end
+
+      def find_folder(folder_id)
+        Folder.find_in_folders(folders, folder_id)
       end
 
       # TODO: consider refactoring all of the ref/unref methods to another class

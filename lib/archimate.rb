@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 require "nokogiri"
 require "highline"
+require "colorize"
 require "dry-types"
 require "dry-struct"
 require "archimate/version"

@@ -55,11 +55,11 @@ module Archimate
       end
 
       def element?
-        path =~  %r{/elements/([^/]+)$} ? true : false
+        path =~ %r{/elements/([^/]+)$} ? true : false
       end
 
       def in_element?
-        path =~  %r{/elements/([^/]+)/} ? true : false
+        path =~ %r{/elements/([^/]+)/} ? true : false
       end
 
       def element_id
@@ -67,13 +67,66 @@ module Archimate
         m[1] if m
       end
 
+      def in_folder?
+        path =~ %r{/folders/([^/]+)/} ? true : false
+      end
+
+      def folder_id
+        m = path.match(%r{/folders/([^/]+)/?})
+        m[1] if m
+      end
+
       def relationship?
         path =~ %r{/relationships/([^/]+)$} ? true : false
+      end
+
+      def in_relationship?
+        path =~ %r{/relationships/([^/]+)/} ? true : false
       end
 
       def relationship_id
         m = path.match(%r{/relationships/([^/]+)/?})
         m[1] if m
+      end
+
+      def element_and_remaining_path(model)
+        m = path.match(%r{/elements/([^/]+)(/?.*)$})
+        [model.elements[m[1]], m[2]] if m
+      end
+
+      def folder_and_remaining_path(model)
+        idx = path.rindex(%r{/folders/([^/]+)(.*)$})
+        m = path[idx..-1].match(%r{/folders/([^/]+)(.*)$})
+        [model.find_folder(m[1]), m[2]] if m
+      end
+
+      def relationship_and_remaining_path(model)
+        m = path.match(%r{/relationships/([^/]+)(/?.*)$})
+        [model.relationships[m[1]], m[2]] if m
+      end
+
+      def diagram_and_remaining_path(model)
+        m = path.match(%r{/diagrams/([^/]+)(/?.*)$})
+        [model.diagrams[m[1]], m[2]] if m
+      end
+
+      def model_and_remaining_path(model)
+        m = path.match(%r{^Model<[^\]]*>(/?.*)$})
+        [model, m[1]] if m
+      end
+
+      def describeable_parent(model)
+        if in_element?
+          element_and_remaining_path(model)
+        elsif in_folder?
+          folder_and_remaining_path(model)
+        elsif in_relationship?
+          relationship_and_remaining_path(model)
+        elsif in_diagram?
+          diagram_and_remaining_path(model)
+        else
+          model_and_remaining_path(model)
+        end
       end
     end
   end

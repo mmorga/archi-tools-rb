@@ -74,7 +74,16 @@ module Archimate
           source: "src",
           target: "tar"
         )
-        assert_equal ["src", "tar"], rel.element_reference
+        assert_equal %w(src tar), rel.element_reference
+      end
+
+      def test_describe
+        model = build_model(with_relationships: 2, with_elements: 4)
+        rel1 = model.relationships.first[1]
+        source = model.elements[rel1.source]
+        target = model.elements[rel1.target]
+        assert_equal "#{rel1.type}[#{rel1.name}] #{source.short_desc}->#{target.short_desc}".uncolorize,
+                     rel1.describe(model).uncolorize
       end
     end
   end
