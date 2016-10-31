@@ -165,11 +165,11 @@ module Archimate
               if !(ldiff.array? && rdiff.array?)
                 true
               else
-                case [ldiff, rdiff].map(&:kind).sort
-                when [:change, :change]
+                case [ldiff, rdiff].map { |d| d.class.name.split('::').last }.sort
+                when %w(Change Change)
                   # TODO: if froms same and tos diff then conflict if froms diff then 2 sep changes else 1 change
                   ldiff.from == rdiff.from && ldiff.to != rdiff.to
-                when [:change, :delete]
+                when %w(Change Delete)
                   # TODO: if c.from d.from same then conflict else 1 c and 1 d
                   ldiff.from == rdiff.from
                 else
@@ -240,7 +240,7 @@ module Archimate
           md2_deleted_elements = md2.diffs.select { |d| d.in_element? && !d.is_a?(Delete) }
           a.concat(
             md1.diffs.select { |d| d.relationship? && !d.is_a?(Delete) }.each_with_object([]) do |md1_diff, conflicts|
-              relationship = base.relationships[md1_diff.relationship_id]
+              relationship = md1_diff.relationship
               conflicting_md2_diffs = md2_deleted_elements.select do |md2_diff|
                 [relationship.source, relationship.target].include? md2_diff.element_id
               end

@@ -89,6 +89,10 @@ module Archimate
         m[1] if m
       end
 
+      def relationship
+        model.relationships[relationship_id] if relationship?
+      end
+
       def element_and_remaining_path(model)
         m = path.match(%r{/elements/([^/]+)(/?.*)$})
         [model.elements[m[1]], m[2]] if m

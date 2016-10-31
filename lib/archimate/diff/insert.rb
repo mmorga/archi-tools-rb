@@ -6,6 +6,7 @@ module Archimate
       attr_accessor :to_model
 
       alias to inserted
+      alias model to_model
 
       def initialize(path, to_model, inserted)
         super(path)
@@ -14,7 +15,9 @@ module Archimate
       end
 
       def ==(other)
-        super && inserted == other.inserted
+        super &&
+          other.is_a?(Insert) &&
+          inserted == other.inserted
       end
 
       def to_s
@@ -24,7 +27,7 @@ module Archimate
       def describe
         parent, remaining_path = describeable_parent(to_model)
         s = parent.describe(to_model)
-        s += " #{remaining_path.light_blue} #{inserted.light_green}" unless remaining_path.empty?
+        s += " #{remaining_path.light_blue} #{inserted.to_s.light_green}" unless remaining_path.empty?
         s
       end
     end

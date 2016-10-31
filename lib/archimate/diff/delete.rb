@@ -6,6 +6,7 @@ module Archimate
       attr_accessor :from_model
 
       alias from deleted
+      alias model from_model
 
       def initialize(path, from_model, val)
         super(path)
@@ -14,11 +15,13 @@ module Archimate
       end
 
       def ==(other)
-        super && @deleted == other.deleted
+        super &&
+          other.is_a?(Delete) &&
+          deleted == other.deleted
       end
 
       def to_s
-        "#{diff_type} #{path}: #{deleted.is_a?(Dry::Struct) ? deleted.describe(to_model) : deleted}"
+        "#{diff_type} #{path}: #{deleted.is_a?(Dry::Struct) ? deleted.describe(from_model) : deleted}"
       end
 
       def diff_type
@@ -31,6 +34,10 @@ module Archimate
         s += parent.describe(from_model)
         s += " #{remaining_path.light_blue} #{inserted.light_green}" unless remaining_path.empty?
         s
+      end
+
+      def to
+        nil
       end
     end
   end

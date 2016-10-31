@@ -7,6 +7,8 @@ module Archimate
       attr_accessor :from
       attr_accessor :to
 
+      alias model to_model
+
       def initialize(path, from_model, to_model, from, to)
         super(path)
         @from = from
@@ -16,7 +18,9 @@ module Archimate
       end
 
       def ==(other)
-        super && @from == other.from && @to == other.to
+        super &&
+          other.is_a?(Change) &&
+          @from == other.from && @to == other.to
       end
 
       def to_s
