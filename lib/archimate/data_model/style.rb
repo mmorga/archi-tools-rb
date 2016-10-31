@@ -19,6 +19,10 @@ module Archimate
           font: font.nil? ? nil : font.clone
         )
       end
+
+      def describe(_model)
+        inspect
+      end
     end
 
     Dry::Types.register_class(Style)

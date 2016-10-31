@@ -43,6 +43,16 @@ module Archimate
           style: style.nil? ? nil : style.clone
         )
       end
+
+      def type_name
+        "#{'SourceConnection'.blue.italic}[#{(name || '').black.underline}]".on_light_magenta
+      end
+
+      def describe(model)
+        s = model.elements[source]
+        t = model.elements[target]
+        "#{type_name} #{s.nil? ? 'nothing' : s.short_desc}->#{t.nil? ? 'nothing' : t.short_desc}"
+      end
     end
     Dry::Types.register_class(SourceConnection)
     SourceConnectionList = Strict::Array.member("archimate.data_model.source_connection")

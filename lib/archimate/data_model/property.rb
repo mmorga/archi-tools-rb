@@ -20,6 +20,14 @@ module Archimate
           value: value.nil? ? nil : value.clone
         )
       end
+
+      def to_s
+        "Property(key: #{key}, value: #{value || 'no value'})"
+      end
+
+      def describe(_model)
+        to_s
+      end
     end
 
     Dry::Types.register_class(Property)

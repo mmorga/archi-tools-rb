@@ -47,6 +47,10 @@ module Archimate
         end
         nil
       end
+
+      def describe(_model)
+        "#{'Folder'.cyan.italic}[#{name.white.underline}]"
+      end
     end
     Dry::Types.register_class(Folder)
   end

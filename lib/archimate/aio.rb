@@ -46,14 +46,7 @@ module Archimate
 
     def create_progressbar(options = {})
       return unless verbose
-      @progressbar = ProgressBar.create(
-        {
-          total: 100,
-          format: "%t %a %e %b\u{15E7}%i %p%%",
-          progress_mark: ' ',
-          remainder_mark: "\u{FF65}"
-        }.merge(options)
-      )
+      @progressbar = ProgressBar.create(options)
     end
 
     def increment_progressbar

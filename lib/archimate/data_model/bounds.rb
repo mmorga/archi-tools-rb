@@ -8,7 +8,12 @@ module Archimate
       attribute :y, Coercible::Float.optional
       attribute :width, Coercible::Float
       attribute :height, Coercible::Float
+
+      def describe(_model)
+        "Bounds(x: #{x}, y: #{y}, width: #{width}, height: #{height})"
+      end
     end
+
     Dry::Types.register_class(Bounds)
     OptionalBounds = Bounds.optional
   end

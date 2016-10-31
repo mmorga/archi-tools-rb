@@ -47,6 +47,10 @@ module Archimate
           a.concat(child.relationships)
         end
       end
+
+      def describe(model)
+        "#{'Diagram'.cyan.italic}[#{name.white.underline}]"
+      end
     end
   end
 end

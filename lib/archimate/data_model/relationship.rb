@@ -38,7 +38,7 @@ module Archimate
       end
 
       def type_name
-        "#{type.blue.italic}[#{name.black.underline}]".on_light_magenta
+        "#{type.blue.italic}[#{(name || '').black.underline}]".on_light_magenta
       end
 
       def describe(model)

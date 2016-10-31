@@ -132,6 +132,18 @@ module Archimate
           model_and_remaining_path(model)
         end
       end
+
+      def delete?
+        is_a?(Delete)
+      end
+
+      def change?
+        is_a?(Change)
+      end
+
+      def insert?
+        is_a?(Insert)
+      end
     end
   end
 end

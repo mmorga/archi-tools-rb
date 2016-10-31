@@ -60,6 +60,10 @@ module Archimate
           a.concat(child.relationships)
         end
       end
+
+      def describe(model)
+        "Child[#{name || ""}](#{model.elements[archimate_element].short_desc if archimate_element})"
+      end
     end
 
     Dry::Types.register_class(Child)

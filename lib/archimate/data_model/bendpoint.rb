@@ -7,6 +7,10 @@ module Archimate
       attribute :start_y, Coercible::Float.optional
       attribute :end_x, Coercible::Float.optional
       attribute :end_y, Coercible::Float.optional
+
+      def describe(_model)
+        "Bendpoint(start_x: #{start_x}, start_y: #{start_y}, end_x: #{end_x}, end_y: #{end_y})"
+      end
     end
 
     Dry::Types.register_class(Bendpoint)

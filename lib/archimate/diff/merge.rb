@@ -57,10 +57,7 @@ module Archimate
         aio.debug "Applying #{diffs.size} diffs"
         remaining_diffs = conflicts.filter_diffs(diffs)
         aio.debug "Filtering out #{conflicts.size} conflicts - applying #{remaining_diffs.size}"
-        aio.create_progressbar(title: "Diffs", total: remaining_diffs.size)
-
         remaining_diffs.inject(model) do |m, diff|
-          aio.increment_progressbar
           apply_diff(m, diff.with(path: diff.path.split("/")[1..-1].join("/")))
         end
       end
@@ -194,20 +191,13 @@ module Archimate
         diffs.select(&:in_diagram?)
       end
 
-      # What are we looking for?
-      # set1: extract element id of elements changed
-      # set2: extract element ids of child archimateElements in diagrams
-      # conflicts are the diffs with element id ref'd in deleted diagram
-      ModelDiffs = Struct.new(:model, :diffs)
-
       def find_deleted_elements_referenced_in_diagrams
-        [ModelDiffs.new(local, base_local_diffs),
-         ModelDiffs.new(remote, base_remote_diffs)].permutation(2).each_with_object([]) do |(md1, md2), a|
-          md2_diagram_diffs = md2.diffs.select(&:in_diagram?)
+        [base_local_diffs, base_remote_diffs].permutation(2).each_with_object([]) do |(md1, md2), a|
+          md2_diagram_diffs = md2.select(&:in_diagram?)
           a.concat(
-            md1.diffs.select { |d| d.element? && d.is_a?(Delete) }.each_with_object([]) do |md1_diff, conflicts|
+            md1.select { |d| d.element? && d.is_a?(Delete) }.each_with_object([]) do |md1_diff, conflicts|
               conflicting_md2_diffs = md2_diagram_diffs.select do |md2_diff|
-                md2.model.diagrams[md2_diff.diagram_id].element_references.include? md1_diff.element_id
+                md2_diff.model.diagrams[md2_diff.diagram_id].element_references.include? md1_diff.element_id
               end
               conflicts << Conflict.new(md1_diff,
                                         conflicting_md2_diffs,
@@ -217,14 +207,19 @@ module Archimate
         end
       end
 
+      # There exists a conflict between d1 & d2 if d1 deletes a relationship that is added or part of a change referenced
+      # in a d2 diagram.
+      #
+      # Side one filter: diffs1.delete?.relationship?
+      # Side two filter: diffs2.!delete?.source_connection?
+      # Check: diff2.source_connection.relationship == diff1.relationship_id
       def find_deleted_relationships_referenced_in_diagrams
-        [ModelDiffs.new(local, base_local_diffs),
-         ModelDiffs.new(remote, base_remote_diffs)].permutation(2).each_with_object([]) do |(md1, md2), a|
-          md2_diagram_diffs = md2.diffs.select(&:in_diagram?)
+        [base_local_diffs, base_remote_diffs].permutation(2).each_with_object([]) do |(md1, md2), a|
+          md2_diagram_diffs = md2.select(&:in_diagram?)
           a.concat(
-            md1.diffs.select { |d| d.relationship? && d.is_a?(Delete) }.each_with_object([]) do |md1_diff, conflicts|
+            md1.select { |d| d.relationship? && d.is_a?(Delete) }.each_with_object([]) do |md1_diff, conflicts|
               conflicting_md2_diffs = md2_diagram_diffs.select do |md2_diff|
-                md2.model.diagrams[md2_diff.diagram_id].relationships.include? md1_diff.relationship_id
+                md2_diff.model.diagrams[md2_diff.diagram_id].relationships.include? md1_diff.relationship_id
               end
               conflicts << Conflict.new(md1_diff,
                                         conflicting_md2_diffs,
@@ -234,23 +229,45 @@ module Archimate
         end
       end
 
+      # There exists a conflict if a relationship is added (or changed?) on one side that references an
+      # element that is deleted on the other side.
+      #
+      # Side one filter: diffs1.insert?.relationship? map(:source, :target)
+      # Side two filter: diffs2.delete?.element? map(:element_id)
+      # Check diffs1.source == element_id or diffs1.target == element_id
+      #
+      # Associative: false
+      # 
       def find_deleted_elements_referenced_in_relationships
-        [ModelDiffs.new(local, base_local_diffs),
-         ModelDiffs.new(remote, base_remote_diffs)].permutation(2).each_with_object([]) do |(md1, md2), a|
-          md2_deleted_elements = md2.diffs.select { |d| d.in_element? && !d.is_a?(Delete) }
-          a.concat(
-            md1.diffs.select { |d| d.relationship? && !d.is_a?(Delete) }.each_with_object([]) do |md1_diff, conflicts|
-              relationship = md1_diff.relationship
-              conflicting_md2_diffs = md2_deleted_elements.select do |md2_diff|
-                [relationship.source, relationship.target].include? md2_diff.element_id
-              end
-              conflicts << Conflict.new(
-                md1_diff,
-                conflicting_md2_diffs,
-                "Added/updated relationship references in deleted element"
-              ) unless conflicting_md2_diffs.empty?
-            end
-          )
+        # [ModelDiffs.new(local, base_local_diffs),
+        #  ModelDiffs.new(remote, base_remote_diffs)].permutation(2).each_with_object([]) do |(md1, md2), a|
+        # md2_deleted_elements = md2.diffs.select { |d| d.element? && !d.is_a?(Delete) }
+        # a.concat(
+        #   md1.diffs.select { |d| d.relationship? && !d.is_a?(Delete) }.each_with_object([]) do |md1_diff, conflicts|
+        #     relationship = md1_diff.relationship
+        #     conflicting_md2_diffs = md2_deleted_elements.select do |md2_diff|
+        #       [relationship.source, relationship.target].include? md2_diff.element_id
+        #     end
+        #     conflicts << Conflict.new(
+        #       md1_diff,
+        #       conflicting_md2_diffs,
+        #       "Added/updated relationship references in deleted element"
+        #     ) unless conflicting_md2_diffs.empty?
+        #   end
+        # )
+        [base_remote_diffs, base_local_diffs].permutation(2).each_with_object([]) do |(md1, md2), a|
+          ds1 = md1.reject(&:delete?).select(&:relationship?)
+          ds2 = md2.select(&:delete?).select(&:element?)
+          ds1.each do |d1|
+            rel = d1.relationship
+            rel_el_ids = [rel.source, rel.target]
+            ds2_conflicts = ds2.select { |d2| rel_el_ids.include?(d2.element_id) }
+            a << Conflict.new(
+              d1,
+              ds2_conflicts,
+              "Added/updated relationship references in deleted element"
+            ) unless ds2_conflicts.empty?
+          end
         end
       end
     end

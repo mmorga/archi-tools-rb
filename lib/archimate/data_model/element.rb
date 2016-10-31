@@ -66,6 +66,10 @@ module Archimate
       def layer
         Archimate::Constants::ELEMENT_LAYER.fetch(@type, "None")
       end
+
+      def describe(_model)
+        short_desc
+      end
     end
   end
 end
