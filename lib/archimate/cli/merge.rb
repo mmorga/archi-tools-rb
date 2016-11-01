@@ -30,7 +30,6 @@ module Archimate
         aio.debug "#{DateTime.now}: Starting merging"
         merge = Archimate::Diff::Merge.three_way(base, local, remote, aio)
         aio.debug "#{DateTime.now}: Done merging"
-        aio.debug "Conflicts:"
         aio.debug merge.conflicts
       end
     end

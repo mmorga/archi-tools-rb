@@ -35,7 +35,7 @@ module Archimate
       end
 
       def to_s
-        "Conflicts\n\t#{conflicts.map(&:to_s).join("\n\t")}\n"
+        "Conflicts:\n\n#{conflicts.map(&:to_s).join("\n\n")}\n"
       end
     end
   end

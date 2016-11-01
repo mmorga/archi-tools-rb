@@ -20,19 +20,14 @@ module Archimate
           deleted == other.deleted
       end
 
-      def to_s
-        "#{diff_type} #{path}: #{deleted.is_a?(Dry::Struct) ? deleted.describe(from_model) : deleted}"
-      end
-
       def diff_type
         'DELETE:'.red
       end
 
-      def describe
+      def to_s
         parent, remaining_path = describeable_parent(from_model)
-        s = diff_type
-        s += parent.describe(from_model)
-        s += " #{remaining_path.light_blue} #{inserted.light_green}" unless remaining_path.empty?
+        s = "#{diff_type} in #{parent.describe(model)}"
+        s += " at #{remaining_path.light_blue}: #{model.describe(from)}" unless remaining_path.empty?
         s
       end
 

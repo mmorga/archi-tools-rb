@@ -20,14 +20,14 @@ module Archimate
           inserted == other.inserted
       end
 
-      def to_s
-        "#{'INSERT:'.green} #{path}: #{describe}"
+      def diff_type
+        'INSERT:'.green
       end
 
-      def describe
-        parent, remaining_path = describeable_parent(to_model)
-        s = parent.describe(to_model)
-        s += " #{remaining_path.light_blue} #{inserted.to_s.light_green}" unless remaining_path.empty?
+      def to_s
+        parent, remaining_path = describeable_parent(model)
+        s = "#{diff_type} in #{parent.describe(model)}"
+        s += " at #{remaining_path.light_blue}: #{model.describe(inserted)}" unless remaining_path.empty?
         s
       end
     end

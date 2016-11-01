@@ -56,7 +56,7 @@ module Archimate
       end
 
       def short_desc
-        colored_by_type "#{type.italic.light_black}[#{label.underline}]"
+        colored_by_type "#{type.italic.light_black}<#{id}>[#{label.underline}]"
       end
 
       def to_id_string

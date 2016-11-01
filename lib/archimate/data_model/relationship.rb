@@ -34,15 +34,20 @@ module Archimate
       end
 
       def to_s
-        "#{type}<#{id}> #{name} #{source} -> #{target} docs[#{documentation.size}] props[#{properties.size}]"
+        "#{type_name} #{source} -> #{target} docs[#{documentation.size}] props[#{properties.size}]"
       end
 
       def type_name
-        "#{type.blue.italic}[#{(name || '').black.underline}]".on_light_magenta
+        "#{type.black.italic}<#{id}>[#{(name || '').black.underline}]".on_light_magenta
       end
 
-      def describe(model)
-        "#{type_name} #{model.elements[source].short_desc}->#{model.elements[target].short_desc}"
+      def describe(model, options = {})
+        s = type_name
+        if options.include?(:from_model)
+          from_model = options[:from_model]
+          s += " #{from_model.elements[options[:from]].describe(from_model)} -> #{model.elements[options[:to]].describe(model)}"
+        end
+        s
       end
 
       def element_reference

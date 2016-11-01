@@ -17,17 +17,17 @@ module Archimate
       end
 
       def test_to_s
-        diff = Delete.new("Delete", model, "old and busted")
-        assert_equal "DELETE: Delete: old and busted", HighLine.uncolor(diff.to_s)
+        diff = Delete.new("Model<#{model.id}>/name", model, "old and busted")
+        assert_equal "DELETE: in Model[#{model.name}] at /name: old and busted", HighLine.uncolor(diff.to_s)
       end
 
       def test_fmt_to_s
-        diff = Delete.new(:model, model, "deleted")
+        diff = Delete.new("Model<#{model.id}>/name", model, "deleted")
         assert_match "DELETE: ", HighLine.uncolor(diff.to_s)
       end
 
       def test_diff_description_delete
-        diff = Delete.new(:path, model, "deleted")
+        diff = Delete.new("Model<#{model.id}>/name", model, "deleted")
         assert_match "deleted", diff.to_s
       end
 

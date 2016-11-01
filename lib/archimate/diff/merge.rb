@@ -19,6 +19,7 @@ module Archimate
       attr_reader :remote
       attr_reader :merged
       attr_reader :aio
+      attr_reader :all_diffs
 
       def initialize(base, local, remote, aio)
         # @merged = DeepClone.clone base
@@ -45,6 +46,7 @@ module Archimate
         aio.debug "#{DateTime.now}: Computing base:remote diffs"
         @base_remote_diffs = Archimate.diff(base, remote)
         aio.debug "#{DateTime.now}: Finding Conflicts"
+        @all_diffs = base_local_diffs + base_remote_diffs
         find_conflicts
         aio.debug "#{DateTime.now}: Applying Diffs"
         @merged = apply_diffs(base_remote_diffs + base_local_diffs, @merged)
@@ -214,18 +216,17 @@ module Archimate
       # Side two filter: diffs2.!delete?.source_connection?
       # Check: diff2.source_connection.relationship == diff1.relationship_id
       def find_deleted_relationships_referenced_in_diagrams
-        [base_local_diffs, base_remote_diffs].permutation(2).each_with_object([]) do |(md1, md2), a|
-          md2_diagram_diffs = md2.select(&:in_diagram?)
-          a.concat(
-            md1.select { |d| d.relationship? && d.is_a?(Delete) }.each_with_object([]) do |md1_diff, conflicts|
-              conflicting_md2_diffs = md2_diagram_diffs.select do |md2_diff|
-                md2_diff.model.diagrams[md2_diff.diagram_id].relationships.include? md1_diff.relationship_id
-              end
-              conflicts << Conflict.new(md1_diff,
-                                        conflicting_md2_diffs,
-                                        "Relationship referenced in deleted diagram") unless conflicting_md2_diffs.empty?
-            end
-          )
+        ds1 = all_diffs.select(&:delete?).select(&:relationship?)
+        ds2 = all_diffs.reject(&:delete?).select(&:in_diagram?)
+        ds1.each_with_object([]) do |d1, a|
+          ds2c = ds2.select do |d2|
+            d2.model.diagrams[d2.diagram_id].relationships.include? d1.relationship_id
+          end
+          a << Conflict.new(
+            d1,
+            ds2c,
+            "Relationship referenced in deleted diagram"
+          ) unless ds2c.empty?
         end
       end
 
@@ -235,39 +236,18 @@ module Archimate
       # Side one filter: diffs1.insert?.relationship? map(:source, :target)
       # Side two filter: diffs2.delete?.element? map(:element_id)
       # Check diffs1.source == element_id or diffs1.target == element_id
-      #
-      # Associative: false
-      # 
       def find_deleted_elements_referenced_in_relationships
-        # [ModelDiffs.new(local, base_local_diffs),
-        #  ModelDiffs.new(remote, base_remote_diffs)].permutation(2).each_with_object([]) do |(md1, md2), a|
-        # md2_deleted_elements = md2.diffs.select { |d| d.element? && !d.is_a?(Delete) }
-        # a.concat(
-        #   md1.diffs.select { |d| d.relationship? && !d.is_a?(Delete) }.each_with_object([]) do |md1_diff, conflicts|
-        #     relationship = md1_diff.relationship
-        #     conflicting_md2_diffs = md2_deleted_elements.select do |md2_diff|
-        #       [relationship.source, relationship.target].include? md2_diff.element_id
-        #     end
-        #     conflicts << Conflict.new(
-        #       md1_diff,
-        #       conflicting_md2_diffs,
-        #       "Added/updated relationship references in deleted element"
-        #     ) unless conflicting_md2_diffs.empty?
-        #   end
-        # )
-        [base_remote_diffs, base_local_diffs].permutation(2).each_with_object([]) do |(md1, md2), a|
-          ds1 = md1.reject(&:delete?).select(&:relationship?)
-          ds2 = md2.select(&:delete?).select(&:element?)
-          ds1.each do |d1|
-            rel = d1.relationship
-            rel_el_ids = [rel.source, rel.target]
-            ds2_conflicts = ds2.select { |d2| rel_el_ids.include?(d2.element_id) }
-            a << Conflict.new(
-              d1,
-              ds2_conflicts,
-              "Added/updated relationship references in deleted element"
-            ) unless ds2_conflicts.empty?
-          end
+        ds1 = all_diffs.reject(&:delete?).select(&:relationship?)
+        ds2 = all_diffs.select(&:delete?).select(&:element?)
+        ds1.each_with_object([]) do |d1, a|
+          rel = d1.relationship
+          rel_el_ids = [rel.source, rel.target]
+          ds2_conflicts = ds2.select { |d2| rel_el_ids.include?(d2.element_id) }
+          a << Conflict.new(
+            d1,
+            ds2_conflicts,
+            "Added/updated relationship references in deleted element"
+          ) unless ds2_conflicts.empty?
         end
       end
     end

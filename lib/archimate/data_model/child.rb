@@ -52,7 +52,9 @@ module Archimate
       end
 
       def element_references
-        children.each_with_object([archimate_element]) { |(_id, child), a| a.concat(child.element_references) }
+        children.each_with_object([archimate_element]) do |(_id, child), a|
+          a.concat(child.element_references)
+        end
       end
 
       def relationships
@@ -61,8 +63,12 @@ module Archimate
         end
       end
 
-      def describe(model)
-        "Child[#{name || ""}](#{model.elements[archimate_element].short_desc if archimate_element})"
+      def to_s
+        "Child<#{id}>[#{name || ''}]"
+      end
+
+      def describe(model, options = {})
+        "Child[#{name || ''}](#{model.elements[archimate_element].short_desc if archimate_element})"
       end
     end
 

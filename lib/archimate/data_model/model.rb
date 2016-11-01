@@ -40,8 +40,15 @@ module Archimate
         )
       end
 
-      def describe(_model)
-        "#{'Model'.cyan.italic}[#{name.white.underline}]"
+      def describe(item)
+        case item
+        when Model
+          "#{'Model'.cyan.italic}[#{name.white.underline}]"
+        when Dry::Struct
+          item.describe(self)
+        else
+          item.to_s
+        end
       end
 
       # returns a copy of self with element added
@@ -76,7 +83,7 @@ module Archimate
       end
 
       def diagram_element_references
-        diagrams.values.map(&:element_references).flatten.uniq
+        diagrams.values.map(&:element_references).flatten.compact.uniq
       end
 
       def unref_set

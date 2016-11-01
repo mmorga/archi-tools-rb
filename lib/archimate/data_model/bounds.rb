@@ -9,8 +9,12 @@ module Archimate
       attribute :width, Coercible::Float
       attribute :height, Coercible::Float
 
-      def describe(_model)
+      def to_s
         "Bounds(x: #{x}, y: #{y}, width: #{width}, height: #{height})"
+      end
+
+      def describe(_model)
+        to_s
       end
     end
 

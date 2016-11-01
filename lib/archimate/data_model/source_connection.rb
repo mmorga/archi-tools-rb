@@ -48,7 +48,7 @@ module Archimate
         "#{'SourceConnection'.blue.italic}[#{(name || '').black.underline}]".on_light_magenta
       end
 
-      def describe(model)
+      def describe(model, options = {})
         s = model.elements[source]
         t = model.elements[target]
         "#{type_name} #{s.nil? ? 'nothing' : s.short_desc}->#{t.nil? ? 'nothing' : t.short_desc}"

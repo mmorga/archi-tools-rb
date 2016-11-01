@@ -13,7 +13,7 @@ module Archimate
       end
 
       def to_s
-        "CONFLICT: #{reason}\n" \
+        "#{'CONFLICT:'.black.on_red} #{reason}\n" \
           "\tBase->Local Diff(s):\n\t\t#{base_local_diffs.map(&:to_s).join("\n\t\t")}" \
           "\n\tBase->Remote Diffs(s):\n\t\t#{base_remote_diffs.map(&:to_s).join("\n\t\t")}"
       end
