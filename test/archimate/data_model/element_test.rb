@@ -25,7 +25,7 @@ module Archimate
 
       def test_short_desc
         el = Element.create(id: "abc123", type: "DataObject", label: "Thing")
-        assert_equal "DataObject[Thing]", el.short_desc.uncolorize
+        assert_equal "DataObject<abc123>[Thing]", el.short_desc.uncolorize
       end
 
       def test_to_id_string

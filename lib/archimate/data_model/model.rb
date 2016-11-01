@@ -40,7 +40,7 @@ module Archimate
         )
       end
 
-      def describe(item)
+      def describe(item, options = {})
         case item
         when Model
           "#{'Model'.cyan.italic}[#{name.white.underline}]"

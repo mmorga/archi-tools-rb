@@ -64,7 +64,7 @@ module Archimate
           source: "src",
           target: "tar"
         )
-        assert_equal "complicated<abc123>  src -> tar docs[0] props[0]", rel.to_s
+        assert_equal "complicated<abc123>[] src -> tar docs[0] props[0]", rel.to_s.uncolorize
       end
 
       def test_element_reference
@@ -82,7 +82,7 @@ module Archimate
         rel1 = model.relationships.first[1]
         source = model.elements[rel1.source]
         target = model.elements[rel1.target]
-        assert_equal "#{rel1.type}[#{rel1.name}] #{source.short_desc}->#{target.short_desc}".uncolorize,
+        assert_equal "#{rel1.type}<#{rel1.id}>[#{rel1.name}]".uncolorize,
                      rel1.describe(model).uncolorize
       end
     end

@@ -21,7 +21,7 @@ module Archimate
 
       def test_to_s
         diff = Change.new("Model<#{from_model.id}>/name", from_model, to_model, "old and busted", "new hotness")
-        assert_equal "CHANGE: in Model[#{from_model.name}] at /name: old and busted -> new hotness", HighLine.uncolor(diff.to_s)
+        assert_equal "CHANGE: in Model[#{from_model.name}] at /name", HighLine.uncolor(diff.to_s)
       end
 
       def test_fmt_kind
