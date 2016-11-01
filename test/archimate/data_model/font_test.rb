@@ -10,11 +10,16 @@ module Archimate
         @style = "normal"
 
         @s1 = Font.new(
+          parent_id: nil,
           name: @name,
           size: @size,
           style: @style
         )
         @s2 = build_font
+      end
+
+      def test_with
+        assert Font.ancestors.include?(With)
       end
 
       def test_new

@@ -5,10 +5,11 @@ module Archimate
   module DataModel
     class ModelTest < Minitest::Test
       def test_create
-        model = Model.create(id: "123", name: "my model", documentation: %w(documentation1 documentation2))
+        expected = build_documentation_list(count: 2)
+        model = Model.create(id: "123", name: "my model", documentation: expected)
         assert_equal "123", model.id
         assert_equal "my model", model.name
-        assert_equal %w(documentation1 documentation2), model.documentation
+        assert_equal expected, model.documentation
       end
 
       def test_equality_operator

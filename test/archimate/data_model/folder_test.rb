@@ -5,8 +5,8 @@ module Archimate
   module DataModel
     class FolderTest < Minitest::Test
       def setup
-        @f1 = Folder.new(id: "123", name: "Sales", type: "Business", items: [], documentation: [], properties: [], folders: {})
-        @f2 = Folder.new(id: "123", name: "Sales", type: "Business", items: [], documentation: [], properties: [], folders: {})
+        @f1 = Folder.new(parent_id: nil, id: "123", name: "Sales", type: "Business", items: [], documentation: [], properties: [], folders: {})
+        @f2 = Folder.new(parent_id: nil, id: "123", name: "Sales", type: "Business", items: [], documentation: [], properties: [], folders: {})
       end
 
       def test_new

@@ -6,8 +6,6 @@ module Archimate
     Coercible = Archimate::DataModel::Coercible
     Strict = Archimate::DataModel::Strict
 
-    DocumentationList = Strict::Array.member(Strict::String)
-
     require 'archimate/data_model/with'
     require 'archimate/data_model/color'
     require 'archimate/data_model/font'
@@ -15,6 +13,7 @@ module Archimate
     require 'archimate/data_model/property'
     require 'archimate/data_model/bendpoint'
     require 'archimate/data_model/bounds'
+    require 'archimate/data_model/documentation'
     require 'archimate/data_model/source_connection'
     require 'archimate/data_model/child'
     require 'archimate/data_model/diagram'

@@ -4,6 +4,7 @@ module Archimate
     class Child < Dry::Struct
       include DataModel::With
 
+      attribute :parent_id, Strict::String.optional
       attribute :id, Strict::String
       attribute :type, Strict::String.optional
       attribute :model, Strict::String.optional
@@ -19,6 +20,7 @@ module Archimate
 
       def self.create(options = {})
         new_opts = {
+          parent_id: nil,
           type: nil,
           model: nil,
           name: nil,
@@ -34,20 +36,25 @@ module Archimate
         Child.new(new_opts)
       end
 
+      def comparison_attributes
+        [:@id, :@type, :@model, :@name, :@target_connections, :@archimate_element, :@bounds, :@children, :@source_connections, :@documentation, :@properties, :@style]
+      end
+      
       def clone
         Child.new(
+          parent_id: parent_id&.clone,
           id: id.clone,
-          type: type.nil? ? nil : type.clone,
-          model: model.nil? ? nil : model.clone,
-          name: name.nil? ? nil : name.clone,
-          target_connections: target_connections.nil? ? nil : target_connections.clone,
-          archimate_element: archimate_element.nil? ? nil : archimate_element.clone,
-          bounds: bounds.nil? ? nil : bounds.clone,
+          type: type&.clone,
+          model: model&.clone,
+          name: name&.clone,
+          target_connections: target_connections&.clone,
+          archimate_element: archimate_element&.clone,
+          bounds: bounds&.clone,
           children: children.each_with_object({}) { |(k, v), a| a[k] = v.clone },
           source_connections: source_connections.map(&:clone),
           documentation: documentation.map(&:clone),
           properties: properties.map(&:clone),
-          style: style.nil? ? nil : style.clone
+          style: style&.clone
         )
       end
 

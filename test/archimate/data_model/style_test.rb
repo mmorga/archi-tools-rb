@@ -13,6 +13,7 @@ module Archimate
         @font = build_font
 
         @s1 = Style.new(
+          parent_id: nil,
           text_alignment: @text_alignment,
           fill_color: @fill_color,
           line_color: @line_color,
@@ -21,6 +22,10 @@ module Archimate
           font: @font
         )
         @s2 = build_style
+      end
+
+      def test_with
+        assert Style.ancestors.include?(With)
       end
 
       def test_new

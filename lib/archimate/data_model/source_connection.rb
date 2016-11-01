@@ -4,6 +4,7 @@ module Archimate
     class SourceConnection < Dry::Struct
       include DataModel::With
 
+      attribute :parent_id, Strict::String.optional
       attribute :id, Strict::String
       attribute :source, Strict::String
       attribute :target, Strict::String
@@ -15,8 +16,13 @@ module Archimate
       attribute :properties, PropertiesList
       attribute :style, OptionalStyle
 
+      def comparison_attributes
+        [:@id, :@source, :@target, :@relationship, :@name, :@type, :@bendpoints, :@documentation, :@properties, :@style]
+      end
+
       def self.create(options = {})
         new_opts = {
+          parent_id: nil,
           relationship: nil,
           name: nil,
           bendpoints: [],
@@ -31,16 +37,17 @@ module Archimate
 
       def clone
         SourceConnection.new(
+          parent_id: parent_id&.clone,
           id: id.clone,
           source: source.clone,
           target: target.clone,
-          relationship: relationship.nil? ? nil : relationship.clone,
-          name: name.nil? ? nil : name.clone,
-          type: type.nil? ? nil : type.clone,
+          relationship: relationship&.clone,
+          name: name&.clone,
+          type: type&.clone,
           bendpoints: bendpoints.map(&:clone),
           documentation: documentation.map(&:clone),
           properties: properties.map(&:clone),
-          style: style.nil? ? nil : style.clone
+          style: style&.clone
         )
       end
 

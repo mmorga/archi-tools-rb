@@ -5,8 +5,8 @@ module Archimate
   module DataModel
     class ColorTest < Minitest::Test
       def setup
-        @c1 = Color.new(r: 0, g: 10, b: 255, a: 100)
-        @c2 = Color.new(r: 255, g: 100, b: 125, a: 100)
+        @c1 = build_color(r: 0, g: 10, b: 255, a: 100)
+        @c2 = build_color(r: 255, g: 100, b: 125, a: 100)
       end
 
       def test_new
@@ -33,12 +33,12 @@ module Archimate
       end
 
       def test_constraints
-        assert_raises { Color.new(r: 0, g: nil, b: nil, a: nil) }
-        assert_raises { Color.new(r: nil, g: nil, b: nil, a: nil) }
-        assert_raises { Color.new(r: -1, g: 0, b: 0, a: 50) }
-        assert_raises { Color.new(r: 256, g: 0, b: 0, a: 50) }
-        assert_raises { Color.new(r: 0, g: 0, b: 0, a: 101) }
-        assert_raises { Color.new(r: 0, g: 0, b: 0, a: -1) }
+        assert_raises { Color.new(parent_id: nil, r: 0, g: nil, b: nil, a: nil) }
+        assert_raises { Color.new(parent_id: nil, r: nil, g: nil, b: nil, a: nil) }
+        assert_raises { Color.new(parent_id: nil, r: -1, g: 0, b: 0, a: 50) }
+        assert_raises { Color.new(parent_id: nil, r: 256, g: 0, b: 0, a: 50) }
+        assert_raises { Color.new(parent_id: nil, r: 0, g: 0, b: 0, a: 101) }
+        assert_raises { Color.new(parent_id: nil, r: 0, g: 0, b: 0, a: -1) }
       end
     end
   end

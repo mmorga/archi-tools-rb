@@ -8,6 +8,7 @@ module Archimate
     class Folder < Dry::Struct
       include DataModel::With
 
+      attribute :parent_id, Strict::String.optional
       attribute :id, Strict::String
       attribute :name, Strict::String
       attribute :type, Strict::String.optional
@@ -18,6 +19,7 @@ module Archimate
 
       def self.create(options = {})
         new_opts = {
+          parent_id: nil,
           type: nil,
           items: [],
           documentation: [],
@@ -27,11 +29,15 @@ module Archimate
         Folder.new(new_opts)
       end
 
+      def comparison_attributes
+        [:@id, :@name, :@type, :@items, :@documentation, :@properties, :@folders]
+      end
+
       def clone
         Folder.new(
           id: id.clone,
           name: name.clone,
-          type: type.nil? ? nil : type.clone,
+          type: type&.clone,
           items: items.map(&:clone),
           documentation: documentation.map(&:clone),
           properties: properties.map(&:clone),

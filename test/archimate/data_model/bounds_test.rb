@@ -5,8 +5,8 @@ module Archimate
   module DataModel
     class BoundsTest < Minitest::Test
       def setup
-        @b1 = Bounds.new(x: 0, y: 10, width: 500, height: 700)
-        @b2 = Bounds.new(x: 0, y: 10, width: 500, height: 700)
+        @b1 = Bounds.new(parent_id: nil, x: 0, y: 10, width: 500, height: 700)
+        @b2 = Bounds.new(parent_id: nil, x: 0, y: 10, width: 500, height: 700)
       end
 
       def test_new
@@ -33,15 +33,15 @@ module Archimate
       end
 
       def test_optional_x_y
-        assert_kind_of Bounds, Bounds.new(x: nil, y: nil, width: 500, height: 700)
+        assert_kind_of Bounds, Bounds.new(parent_id: nil, x: nil, y: nil, width: 500, height: 700)
       end
 
       def test_width_required
-        assert_raises { Bounds.new(x: 0, y: 10, width: nil, height: 700) }
+        assert_raises { Bounds.new(parent_id: nil, x: 0, y: 10, width: nil, height: 700) }
       end
 
       def test_height_required
-        assert_raises { Bounds.new(x: 0, y: 10, width: 500, height: nil) }
+        assert_raises { Bounds.new(parent_id: nil, x: 0, y: 10, width: 500, height: nil) }
       end
     end
   end

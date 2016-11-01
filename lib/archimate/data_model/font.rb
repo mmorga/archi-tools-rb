@@ -2,15 +2,23 @@
 module Archimate
   module DataModel
     class Font < Dry::Struct
+      include DataModel::With
+
+      attribute :parent_id, Strict::String.optional
       attribute :name, Strict::String
       attribute :size, Coercible::Int.constrained(gt: 0)
       attribute :style, Strict::String.optional
 
+      def comparison_attributes
+        [:@name, :@size, :@style]
+      end
+
       def clone
         Font.new(
+          parent_id: parent_id&.clone,
           name: name.clone,
           size: size,
-          style: style.nil? ? nil : style.clone
+          style: style&.clone
         )
       end
 

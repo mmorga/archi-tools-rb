@@ -51,8 +51,8 @@ module Archimate
       end
 
       def test_independent_changes_element_documentation
-        local_el = base_el1.with(documentation: build_documentation)
-        remote_el = base_el2.with(documentation: build_documentation)
+        local_el = base_el1.with(documentation: build_documentation_list)
+        remote_el = base_el2.with(documentation: build_documentation_list)
         local = base.insert_element(local_el)
         remote = base.insert_element(remote_el)
 
@@ -66,8 +66,8 @@ module Archimate
 
       def test_both_insert_element_documentation
         skip("Re-enable after a better conflict detector is written")
-        doc1 = build_documentation
-        doc2 = build_documentation
+        doc1 = build_documentation_list
+        doc2 = build_documentation_list
         local_el = base_el1.with(documentation: doc1)
         remote_el = base_el1.with(documentation: doc2)
         local = base.insert_element(local_el)

@@ -21,13 +21,16 @@ module Archimate
         end
       end
 
+      # TODO: Refactor this. Can be a lot more clear.
       def diffs
         return [] if base == local
         return [Insert.new(path_str, local_model, local)] if base.nil?
         return [Delete.new(path_str, base_model, base)] if local.nil?
 
         if base.is_a?(Dry::Struct)
-          base.instance_variables.reject { |i| i == :@schema }.each_with_object([]) do |i, a|
+          # TODO: Use an attribute in the object for this so we can only diff
+          # against certain attributes rather than all.
+          base.comparison_attributes.reject { |i| i == :@schema }.each_with_object([]) do |i, a|
             @path_stack.push i.to_s.delete('@')
             a.concat(
               apply_context(

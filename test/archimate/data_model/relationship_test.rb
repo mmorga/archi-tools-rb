@@ -5,10 +5,11 @@ module Archimate
   module DataModel
     class RelationshipTest < Minitest::Test
       def test_build_test_helper
-        rel = build_relationship(id: "123", name: "my rel", documentation: %w(documentation1 documentation2))
+        docs = build_documentation_list(count: 2)
+        rel = build_relationship(id: "123", name: "my rel", documentation: docs)
         assert_equal "123", rel.id
         assert_equal "my rel", rel.name
-        assert_equal %w(documentation1 documentation2), rel.documentation
+        assert_equal docs, rel.documentation
       end
 
       def test_create

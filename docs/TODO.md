@@ -1,5 +1,13 @@
 # TODO
 
+* [ ] Add other entities to describable_model (like Child and SourceConnection).
+* [ ] Write code to detect duplicate element merges
+* [ ] Refactor merge to pull conflict detection out
+* [ ] Refactor merge to pull apply diffs out
+* [ ] Clean up the way that the describe is done on data model
+* [ ] Permit model items to link back to their model
+* [ ] Data model items that reference something else by id should have the actual object available - not just the id
+* [ ] Should be a master hash index of id to object in Model
 * [ ] Implement check for de-duplicated merges
 * [ ] Improve description of diffs for conflict display
 * [ ] Convert all CLIs to use AIO
@@ -11,13 +19,13 @@
 * [ ] See what can be done about performance
   - Reading file 11-12 secs
   - deleted relationships referenced in diagrams is slow
-* [ ] Clean up TODOs
 * [ ] Refactor to better OO design where necessary (see all about names below)
 * Convert support for
   - [ ] Rdf
   - [ ] Gremlin
   - [X] N-Quad
   - [X] GraphML
+* [X] Clean up TODOs
 * [x] Experiment with Ox, Oga, Sax-Machine for better performance on convert
 * [x] Map conversion between archi and archimate diagram formats
 

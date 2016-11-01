@@ -167,13 +167,15 @@ module Archimate
       end
 
       def test_diff_model_documentation
-        model1 = Archimate::DataModel::Model.create(id: "123", name: "base", documentation: %w(documentation1))
-        model2 = Archimate::DataModel::Model.create(id: "123", name: "base", documentation: %w(documentation2))
+        doc1 = build_documentation_list
+        doc2 = build_documentation_list
+        model1 = Archimate::DataModel::Model.create(id: "123", name: "base", documentation: doc1)
+        model2 = Archimate::DataModel::Model.create(id: "123", name: "base", documentation: doc2)
         model_diffs = Context.new(base, local, model1, model2).diffs
         assert_equal(
           [
-            Delete.new("Model<123>/documentation/[0]", base, "documentation1"),
-            Insert.new("Model<123>/documentation/[0]", local, "documentation2")
+            Delete.new("Model<123>/documentation/[0]", base, doc1.first),
+            Insert.new("Model<123>/documentation/[0]", local, doc2.first)
           ], model_diffs
         )
       end

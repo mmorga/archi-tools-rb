@@ -3,6 +3,8 @@ module Archimate
   module DataModel
     class Bendpoint < Dry::Struct
       include DataModel::With
+
+      attribute :parent_id, Strict::String.optional
       attribute :start_x, Coercible::Float.optional
       attribute :start_y, Coercible::Float.optional
       attribute :end_x, Coercible::Float.optional
@@ -14,6 +16,10 @@ module Archimate
 
       def describe(_model)
         to_s
+      end
+
+      def comparison_attributes
+        [:@start_x, :@start_y, :@end_x, :@end_y]
       end
     end
 

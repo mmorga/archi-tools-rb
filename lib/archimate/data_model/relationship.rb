@@ -4,6 +4,7 @@ module Archimate
     class Relationship < Dry::Struct
       include DataModel::With
 
+      attribute :parent_id, Strict::String.optional
       attribute :id, Strict::String
       attribute :type, Strict::String
       attribute :source, Strict::String
@@ -14,6 +15,7 @@ module Archimate
 
       def self.create(options = {})
         new_opts = {
+          parent_id: nil,
           name: nil,
           documentation: [],
           properties: []
@@ -21,13 +23,18 @@ module Archimate
         Relationship.new(new_opts)
       end
 
+      def comparison_attributes
+        [:@id, :@type, :@source, :@target, :@name, :@documentation, :@properties]
+      end
+
       def clone
         Relationship.new(
+          parent_id: parent_id&.clone,
           id: id.clone,
           type: type.clone,
           source: source.clone,
           target: target.clone,
-          name: name.nil? ? nil : name.clone,
+          name: name&.clone,
           documentation: documentation.map(&:clone),
           properties: properties.map(&:clone)
         )

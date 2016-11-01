@@ -2,10 +2,17 @@
 module Archimate
   module DataModel
     class Color < Dry::Struct
+      include DataModel::With
+
+      attribute :parent_id, Strict::String.optional
       attribute :r, Coercible::Int.constrained(lt: 256, gt: -1)
       attribute :g, Coercible::Int.constrained(lt: 256, gt: -1)
       attribute :b, Coercible::Int.constrained(lt: 256, gt: -1)
       attribute :a, Coercible::Int.constrained(lt: 101, gt: -1)
+
+      def comparison_attributes
+        [:@r, :@g, :@b, :@a]
+      end
 
       def describe(_model)
         "Color(r: #{r}, g: #{g}, b: #{b}, a: #{a})"

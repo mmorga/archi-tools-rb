@@ -5,8 +5,8 @@ module Archimate
   module DataModel
     class BendpointTest < Minitest::Test
       def setup
-        @b1 = Bendpoint.new(start_x: 0, start_y: 10, end_x: 500, end_y: 700)
-        @b2 = Bendpoint.new(start_x: 0, start_y: 10, end_x: 500, end_y: 700)
+        @b1 = Bendpoint.new(start_x: 0, start_y: 10, end_x: 500, end_y: 700, parent_id: nil)
+        @b2 = Bendpoint.new(start_x: 0, start_y: 10, end_x: 500, end_y: 700, parent_id: nil)
       end
 
       def test_new

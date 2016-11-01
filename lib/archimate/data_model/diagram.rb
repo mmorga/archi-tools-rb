@@ -4,6 +4,7 @@ module Archimate
     class Diagram < Dry::Struct
       include DataModel::With
 
+      attribute :parent_id, Strict::String.optional
       attribute :id, Strict::String
       attribute :name, Strict::String
       attribute :viewpoint, Strict::String.optional
@@ -16,6 +17,7 @@ module Archimate
 
       def self.create(options = {})
         new_opts = {
+          parent_id: nil,
           documentation: [],
           properties: [],
           children: {},
@@ -27,17 +29,22 @@ module Archimate
         Diagram.new(new_opts)
       end
 
+      def comparison_attributes
+        [:@id, :@name, :@viewpoint, :@documentation, :@properties, :@children, :@connection_router_type, :@type]
+      end
+
       def clone
         Diagram.new(
+          parent_id: parent_id&.clone,
           id: id.clone,
           name: name.clone,
-          viewpoint: viewpoint.nil? ? nil : viewpoint.clone,
+          viewpoint: viewpoint&.clone,
           documentation: documentation.map(&:clone),
           properties: properties.map(&:clone),
           children: children.each_with_object({}) { |(k, v), a| a[k] = v.clone },
           # element_references: element_references.map(&:clone),
           connection_router_type: connection_router_type,
-          type: type.nil? ? nil : type.clone
+          type: type&.clone
         )
       end
 

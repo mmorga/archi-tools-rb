@@ -4,6 +4,7 @@ module Archimate
     class Element < Dry::Struct
       include DataModel::With
 
+      attribute :parent_id, Strict::String.optional
       attribute :id, Strict::String
       attribute :type, Strict::String.optional
       attribute :label, Strict::String.optional
@@ -14,6 +15,7 @@ module Archimate
 
       def self.create(options = {})
         new_opts = {
+          parent_id: nil,
           type: nil,
           label: nil,
           documentation: [],
@@ -22,11 +24,16 @@ module Archimate
         Element.new(new_opts)
       end
 
+      def comparison_attributes
+        [:@id, :@type, :@label, :@documentation, :@properties]
+      end
+
       def clone
         Element.new(
+          parent_id: parent_id&.clone,
           id: id.clone,
-          type: type.nil? ? nil : type.clone,
-          label: label.nil? ? nil : label.clone,
+          type: type&.clone,
+          label: label&.clone,
           documentation: documentation.map(&:clone),
           properties: properties.map(&:clone)
         )
