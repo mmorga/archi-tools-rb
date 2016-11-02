@@ -40,6 +40,7 @@ module Archimate
     autoload :Insert, 'archimate/diff/insert'
     autoload :Merge, 'archimate/diff/merge'
     class Conflicts
+      autoload :BaseConflict, 'archimate/diff/conflicts/base_conflict'
       autoload :DeletedElementsReferencedInDiagramsConflict, 'archimate/diff/conflicts/deleted_elements_referenced_in_diagrams_conflict'
       autoload :DeletedElementsReferencedInRelationshipsConflict, 'archimate/diff/conflicts/deleted_elements_referenced_in_relationships_conflict'
       autoload :DeletedRelationshipsReferencedInDiagramsConflict, 'archimate/diff/conflicts/deleted_relationships_referenced_in_diagrams_conflict'

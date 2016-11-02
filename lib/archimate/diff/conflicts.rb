@@ -11,7 +11,6 @@ module Archimate
       attr_reader :aio
       attr_reader :base_local_diffs
       attr_reader :base_remote_diffs
-      attr_reader :all_diffs
 
       def_delegator :@conflicts, :empty?
       def_delegator :@conflicts, :size
@@ -23,7 +22,6 @@ module Archimate
         @cwhere = {}
         @base_local_diffs = []
         @base_remote_diffs = []
-        @all_diffs = []
       end
 
       def add_conflicts(conflict)
@@ -53,10 +51,12 @@ module Archimate
       def find(base_local_diffs, base_remote_diffs)
         @base_local_diffs = base_local_diffs
         @base_remote_diffs = base_remote_diffs
-        @all_diffs = @base_local_diffs + @base_remote_diffs
 
-        conflict_finders = Conflicts.constants.select { |k| Conflicts.const_get(k).is_a? Class }.map { |k| Conflicts.const_get(k) }
-        conflict_finders.each do |cf_class|
+        @conflict_finders ||= Conflicts.constants
+                                       .select { |k| Conflicts.const_get(k).is_a? Class }
+                                       .reject { |k| k == :BaseConflict }
+                                       .map { |k| Conflicts.const_get(k) }
+        @conflict_finders.each do |cf_class|
           cf = cf_class.new(base_local_diffs, base_remote_diffs)
           aio.debug cf.describe
           add_conflicts(cf.conflicts)

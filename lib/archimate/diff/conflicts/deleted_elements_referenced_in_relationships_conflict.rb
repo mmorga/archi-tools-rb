@@ -2,45 +2,29 @@
 module Archimate
   module Diff
     class Conflicts
-      class DeletedElementsReferencedInRelationshipsConflict
-        attr_reader :associative
-
-        def initialize(base_local_diffs, base_remote_diffs)
-          @associative = false
-          @base_local_diffs = base_local_diffs
-          @base_remote_diffs = base_remote_diffs
-          @all_diffs = @base_local_diffs + @base_remote_diffs
-        end
-
+      # There exists a conflict if a relationship is added (or changed?) on one side that references an
+      # element that is deleted on the other side.
+      #
+      # Side one filter: diffs1.insert?.relationship? map(:source, :target)
+      # Side two filter: diffs2.delete?.element? map(:element_id)
+      # Check diffs1.source == element_id or diffs1.target == element_id
+      class DeletedElementsReferencedInRelationshipsConflict < BaseConflict
         def describe
           "Deleted Elements in one change set are referenced in Relationships updated in the other"
         end
 
         def filter1
+          -> (diff) { !diff.delete? && diff.relationship? }
         end
 
         def filter2
+          -> (diff) { diff.delete? && diff.element? }
         end
 
-        # There exists a conflict if a relationship is added (or changed?) on one side that references an
-        # element that is deleted on the other side.
-        #
-        # Side one filter: diffs1.insert?.relationship? map(:source, :target)
-        # Side two filter: diffs2.delete?.element? map(:element_id)
-        # Check diffs1.source == element_id or diffs1.target == element_id
-        def conflicts
-          ds1 = @all_diffs.reject(&:delete?).select(&:relationship?)
-          ds2 = @all_diffs.select(&:delete?).select(&:element?)
-          ds1.each_with_object([]) do |d1, a|
-            rel = d1.relationship
-            rel_el_ids = [rel.source, rel.target]
-            ds2_conflicts = ds2.select { |d2| rel_el_ids.include?(d2.element_id) }
-            a << Conflict.new(
-              d1,
-              ds2_conflicts,
-              "Added/updated relationship references in deleted element"
-            ) unless ds2_conflicts.empty?
-          end
+        def diff_conflicts(diff1, diff2)
+          rel = diff1.relationship
+          rel_el_ids = [rel.source, rel.target]
+          rel_el_ids.include?(diff2.element_id)
         end
       end
     end

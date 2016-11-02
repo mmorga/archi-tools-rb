@@ -104,7 +104,12 @@ module Archimate
         merge = Merge.three_way(base, local, remote, aio)
 
         assert_equal 1, merge.conflicts.size
-        assert_equal Conflict.new(merge.base_local_diffs[0], merge.base_remote_diffs[0], "Conflicting changes"), merge.conflicts.first
+        assert_equal(
+          Conflict.new(
+            merge.base_local_diffs[0],
+            merge.base_remote_diffs[0],
+            "Differences in one change set conflict with changes in other change set at the same path"
+          ), merge.conflicts.first)
         assert_equal base, merge.merged
       end
 

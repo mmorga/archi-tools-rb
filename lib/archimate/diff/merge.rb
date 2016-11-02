@@ -41,13 +41,13 @@ module Archimate
       end
 
       def three_way
-        aio.debug "#{DateTime.now}: Computing base:local diffs"
+        aio.debug "Computing base:local diffs"
         @base_local_diffs = Archimate.diff(base, local)
-        aio.debug "#{DateTime.now}: Computing base:remote diffs"
+        aio.debug "Computing base:remote diffs"
         @base_remote_diffs = Archimate.diff(base, remote)
-        aio.debug "#{DateTime.now}: Finding Conflicts"
+        aio.debug "Finding Conflicts"
         conflicts.find(@base_local_diffs, @base_remote_diffs)
-        aio.debug "#{DateTime.now}: Applying Diffs"
+        aio.debug "Applying Diffs"
         @merged = apply_diffs(base_remote_diffs + base_local_diffs, @merged)
       end
 

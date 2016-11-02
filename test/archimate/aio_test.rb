@@ -46,7 +46,7 @@ module Archimate
     def test_debug
       ioe = AIO.new(uout: StringIO.new, verbose: true)
       ioe.debug "Give us the funk"
-      assert_equal "Debug: Give us the funk\n", HighLine.uncolor(ioe.uout.string)
+      assert_match(/Debug: .+ Give us the funk\n/, HighLine.uncolor(ioe.uout.string))
     end
   end
 end

@@ -66,7 +66,7 @@ module Archimate
     end
 
     def debug(msg)
-      @hl.say("#{@hl.color('Debug:', :debug)} #{msg}") if @verbose
+      @hl.say("#{@hl.color('Debug:', :debug)} #{DateTime.now} #{msg}") if @verbose
     end
   end
 end
