@@ -240,6 +240,20 @@ module Archimate
         )
       end
 
+      def build_diff_list(options = {})
+        (1..options.fetch(:with_diffs, 3)).map { build_diff(options) }
+      end
+
+      def build_diff(options = {})
+        model = options.fetch(:model, build_model)
+        to = options.fetch(:diff_to_value, Faker::Name.name)
+        Archimate::Diff::Insert.new(
+          options.fetch(:path, "Model<#{model.id}>/name"),
+          model,
+          to
+        )
+      end
+
       def random_relationship_type
         @random ||= Random.new(Random.new_seed)
         Archimate::Constants::RELATIONSHIPS[@random.rand(Archimate::Constants::RELATIONSHIPS.size)]
