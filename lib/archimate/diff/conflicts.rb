@@ -1,21 +1,32 @@
+# frozen_string_literal: true
+
 require 'forwardable'
 
 module Archimate
   module Diff
     class Conflicts
       extend Forwardable
+
       attr_reader :conflicts
+      attr_reader :aio
+      attr_reader :base_local_diffs
+      attr_reader :base_remote_diffs
+      attr_reader :all_diffs
 
       def_delegator :@conflicts, :empty?
       def_delegator :@conflicts, :size
       def_delegator :@conflicts, :first
 
-      def initialize
+      def initialize(aio)
+        @aio = aio
         @conflicts = []
         @cwhere = {}
+        @base_local_diffs = []
+        @base_remote_diffs = []
+        @all_diffs = []
       end
 
-      def <<(conflict)
+      def add_conflicts(conflict)
         conflict_ary = Array(conflict)
         # TODO: remove this - it's for testing/debug only
         raise TypeError, "Must be a Conflict was a '#{conflict.class}'" unless conflict_ary.all? { |i| i.is_a?(Archimate::Diff::Conflict) }
@@ -26,6 +37,7 @@ module Archimate
       end
 
       def diffs
+        raise TypeError, "Conflicts must contain only Conflict instances" unless conflicts.all? { |i| i.is_a?(Conflict) }
         conflicts.map(&:diffs).flatten
       end
 
@@ -36,6 +48,19 @@ module Archimate
 
       def to_s
         "Conflicts:\n\n#{conflicts.map(&:to_s).join("\n\n")}\n"
+      end
+
+      def find(base_local_diffs, base_remote_diffs)
+        @base_local_diffs = base_local_diffs
+        @base_remote_diffs = base_remote_diffs
+        @all_diffs = @base_local_diffs + @base_remote_diffs
+
+        conflict_finders = Conflicts.constants.select { |k| Conflicts.const_get(k).is_a? Class }.map { |k| Conflicts.const_get(k) }
+        conflict_finders.each do |cf_class|
+          cf = cf_class.new(base_local_diffs, base_remote_diffs)
+          aio.debug cf.describe
+          add_conflicts(cf.conflicts)
+        end
       end
     end
   end

@@ -39,6 +39,13 @@ module Archimate
     autoload :Difference, 'archimate/diff/difference'
     autoload :Insert, 'archimate/diff/insert'
     autoload :Merge, 'archimate/diff/merge'
+    class Conflicts
+      autoload :DeletedElementsReferencedInDiagramsConflict, 'archimate/diff/conflicts/deleted_elements_referenced_in_diagrams_conflict'
+      autoload :DeletedElementsReferencedInRelationshipsConflict, 'archimate/diff/conflicts/deleted_elements_referenced_in_relationships_conflict'
+      autoload :DeletedRelationshipsReferencedInDiagramsConflict, 'archimate/diff/conflicts/deleted_relationships_referenced_in_diagrams_conflict'
+      autoload :DiagramDeleteUpdateConflict, 'archimate/diff/conflicts/diagram_delete_update_conflict'
+      autoload :PathConflict, 'archimate/diff/conflicts/path_conflict'
+    end
   end
 
   autoload :AIO, 'archimate/aio'

@@ -24,10 +24,10 @@ module Archimate
       def initialize(base, local, remote, aio)
         # @merged = DeepClone.clone base
         @merged = base.clone
-        @base = base # IceNine.deep_freeze!(base)
-        @local = local # IceNine.deep_freeze!(local)
-        @remote = remote # IceNine.deep_freeze!(remote)
-        @conflicts = Conflicts.new
+        @base = base
+        @local = local
+        @remote = remote
+        @conflicts = Conflicts.new(aio)
         @base_local_diffs = []
         @base_remote_diffs = []
         @aio = aio
@@ -46,8 +46,7 @@ module Archimate
         aio.debug "#{DateTime.now}: Computing base:remote diffs"
         @base_remote_diffs = Archimate.diff(base, remote)
         aio.debug "#{DateTime.now}: Finding Conflicts"
-        @all_diffs = base_local_diffs + base_remote_diffs
-        find_conflicts
+        conflicts.find(@base_local_diffs, @base_remote_diffs)
         aio.debug "#{DateTime.now}: Applying Diffs"
         @merged = apply_diffs(base_remote_diffs + base_local_diffs, @merged)
       end
@@ -115,140 +114,6 @@ module Archimate
           raise "Type Error #{child_collection.class} unexpected for collection type, node class=#{node.class}, attr_name=#{attr_name}, id=#{id}, child_value=#{child_value.inspect}"
         end
         node
-      end
-
-      def find_conflicts
-        aio.debug "#{DateTime.now}: find_diff_path_conflicts"
-        conflicts << find_diff_path_conflicts
-        aio.debug "#{DateTime.now}: find_diagram_delete_update_conflicts"
-        conflicts << find_diagram_delete_update_conflicts
-        aio.debug "#{DateTime.now}: find_deleted_elements_referenced_in_diagrams"
-        conflicts << find_deleted_elements_referenced_in_diagrams
-        aio.debug "#{DateTime.now}: find_deleted_relationships_referenced_in_diagrams"
-        conflicts << find_deleted_relationships_referenced_in_diagrams
-        aio.debug "#{DateTime.now}: find_deleted_elements_referenced_in_relationships"
-        conflicts << find_deleted_elements_referenced_in_relationships
-      end
-
-      # Returns the set of conflicts caused by one diff set deleting a diagram
-      # that the other diff set shows updated. This means that the diagram
-      # probably shouldn't be deleted.
-      #
-      # TODO: should this be some other class?
-      def find_diagram_delete_update_conflicts
-        [base_local_diffs, base_remote_diffs].permutation(2).each_with_object([]) do |(diffs1, diffs2), a|
-          a.concat(
-            diagram_diffs_in_conflict(
-              diagram_deleted_diffs(diffs1),
-              diagram_updated_diffs(diffs2)
-            )
-          )
-        end
-      end
-
-      # we want to make a Conflict for each parent_diff and set of child_diffs with the same diagram_id
-      def diagram_diffs_in_conflict(parent_diffs, child_diffs)
-        parent_diffs.each_with_object([]) do |parent_diff, a|
-          conflicting_child_diffs = child_diffs.select { |child_diff| parent_diff.diagram_id == child_diff.diagram_id }
-          a << Conflict.new(
-            # TODO: we need a context here to know if it's a base to remote or remote to base conflict
-            parent_diff, conflicting_child_diffs, "Diagram deleted in one change set modified in another"
-          ) unless conflicting_child_diffs.empty?
-        end
-      end
-
-      def find_diff_path_conflicts
-        @base_local_diffs.each_with_object([]) do |ldiff, cfx|
-          conflicting_remote_diffs =
-            @base_remote_diffs.select { |rdiff| ldiff.path == rdiff.path && ldiff != rdiff }.select do |rdiff|
-              if !(ldiff.array? && rdiff.array?)
-                true
-              else
-                case [ldiff, rdiff].map { |d| d.class.name.split('::').last }.sort
-                when %w(Change Change)
-                  # TODO: if froms same and tos diff then conflict if froms diff then 2 sep changes else 1 change
-                  ldiff.from == rdiff.from && ldiff.to != rdiff.to
-                when %w(Change Delete)
-                  # TODO: if c.from d.from same then conflict else 1 c and 1 d
-                  ldiff.from == rdiff.from
-                else
-                  false
-                end
-              end
-            end.uniq
-
-          cfx << Conflict.new(
-            ldiff,
-            conflicting_remote_diffs,
-            "Conflicting changes"
-          ) unless conflicting_remote_diffs.empty?
-        end
-      end
-
-      def diagram_deleted_diffs(diffs)
-        diffs.select { |i| i.is_a?(Delete) && i.diagram? }
-      end
-
-      def diagram_updated_diffs(diffs)
-        diffs.select(&:in_diagram?)
-      end
-
-      def find_deleted_elements_referenced_in_diagrams
-        [base_local_diffs, base_remote_diffs].permutation(2).each_with_object([]) do |(md1, md2), a|
-          md2_diagram_diffs = md2.select(&:in_diagram?)
-          a.concat(
-            md1.select { |d| d.element? && d.is_a?(Delete) }.each_with_object([]) do |md1_diff, conflicts|
-              conflicting_md2_diffs = md2_diagram_diffs.select do |md2_diff|
-                md2_diff.model.diagrams[md2_diff.diagram_id].element_references.include? md1_diff.element_id
-              end
-              conflicts << Conflict.new(md1_diff,
-                                        conflicting_md2_diffs,
-                                        "Elements referenced in deleted diagram") unless conflicting_md2_diffs.empty?
-            end
-          )
-        end
-      end
-
-      # There exists a conflict between d1 & d2 if d1 deletes a relationship that is added or part of a change referenced
-      # in a d2 diagram.
-      #
-      # Side one filter: diffs1.delete?.relationship?
-      # Side two filter: diffs2.!delete?.source_connection?
-      # Check: diff2.source_connection.relationship == diff1.relationship_id
-      def find_deleted_relationships_referenced_in_diagrams
-        ds1 = all_diffs.select(&:delete?).select(&:relationship?)
-        ds2 = all_diffs.reject(&:delete?).select(&:in_diagram?)
-        ds1.each_with_object([]) do |d1, a|
-          ds2c = ds2.select do |d2|
-            d2.model.diagrams[d2.diagram_id].relationships.include? d1.relationship_id
-          end
-          a << Conflict.new(
-            d1,
-            ds2c,
-            "Relationship referenced in deleted diagram"
-          ) unless ds2c.empty?
-        end
-      end
-
-      # There exists a conflict if a relationship is added (or changed?) on one side that references an
-      # element that is deleted on the other side.
-      #
-      # Side one filter: diffs1.insert?.relationship? map(:source, :target)
-      # Side two filter: diffs2.delete?.element? map(:element_id)
-      # Check diffs1.source == element_id or diffs1.target == element_id
-      def find_deleted_elements_referenced_in_relationships
-        ds1 = all_diffs.reject(&:delete?).select(&:relationship?)
-        ds2 = all_diffs.select(&:delete?).select(&:element?)
-        ds1.each_with_object([]) do |d1, a|
-          rel = d1.relationship
-          rel_el_ids = [rel.source, rel.target]
-          ds2_conflicts = ds2.select { |d2| rel_el_ids.include?(d2.element_id) }
-          a << Conflict.new(
-            d1,
-            ds2_conflicts,
-            "Added/updated relationship references in deleted element"
-          ) unless ds2_conflicts.empty?
-        end
       end
     end
   end
