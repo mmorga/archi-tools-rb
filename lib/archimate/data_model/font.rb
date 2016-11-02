@@ -4,7 +4,7 @@ module Archimate
     class Font < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String.optional
+      attribute :parent_id, Strict::String
       attribute :name, Strict::String
       attribute :size, Coercible::Int.constrained(gt: 0)
       attribute :style, Strict::String.optional
@@ -22,7 +22,7 @@ module Archimate
         )
       end
 
-      def describe(_model)
+      def to_s
         "Font(name: #{name}, size: #{size}, style: #{style})"
       end
     end

@@ -7,7 +7,7 @@ module Archimate
       attr_reader :src_conn
 
       def setup
-        @src_conn = SourceConnection.create(
+        @src_conn = build_source_connection(
           id: "abc123",
           type: "three",
           source: "source",
@@ -20,11 +20,6 @@ module Archimate
         assert_equal "abc123", src_conn.id
         assert_equal "three", src_conn.type
         refute_respond_to src_conn, :type=
-      end
-
-      def test_with
-        sc2 = src_conn.with(type: "do not eat")
-        assert_equal "do not eat", sc2.type
       end
     end
   end

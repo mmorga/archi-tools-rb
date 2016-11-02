@@ -26,8 +26,8 @@ module Archimate
 
       def to_s
         parent, remaining_path = describeable_parent(model)
-        s = "#{diff_type} in #{parent.describe(model)}"
-        s += " at #{remaining_path.light_blue}: #{model.describe(inserted)}" unless remaining_path.empty?
+        s = "#{diff_type} in #{parent}"
+        s += " at #{remaining_path.light_blue}: #{inserted}" unless remaining_path.empty?
         s
       end
     end

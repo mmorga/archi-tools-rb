@@ -26,7 +26,7 @@ module Archimate
 
       def setup
         @aio = Archimate::AIO.new(uout: StringIO.new, verbose: false)
-        @base = build_model(with_relationships: 2)
+        @base = build_model(with_relationships: 2, with_diagrams: 1)
         @base_el1 = base.elements[base.elements.keys.first]
         @base_el2 = base.elements[base.elements.keys.last]
         @base_rel1 = base.relationships[base.relationships.keys.first]

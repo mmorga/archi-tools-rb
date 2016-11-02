@@ -4,7 +4,7 @@ module Archimate
     class Child < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String.optional
+      attribute :parent_id, Strict::String
       attribute :id, Strict::String
       attribute :type, Strict::String.optional
       attribute :model, Strict::String.optional
@@ -20,7 +20,6 @@ module Archimate
 
       def self.create(options = {})
         new_opts = {
-          parent_id: nil,
           type: nil,
           model: nil,
           name: nil,
@@ -39,10 +38,10 @@ module Archimate
       def comparison_attributes
         [:@id, :@type, :@model, :@name, :@target_connections, :@archimate_element, :@bounds, :@children, :@source_connections, :@documentation, :@properties, :@style]
       end
-      
+
       def clone
         Child.new(
-          parent_id: parent_id&.clone,
+          parent_id: parent_id.clone,
           id: id.clone,
           type: type&.clone,
           model: model&.clone,
@@ -71,11 +70,7 @@ module Archimate
       end
 
       def to_s
-        "Child<#{id}>[#{name || ''}]"
-      end
-
-      def describe(model, options = {})
-        "Child[#{name || ''}](#{model.elements[archimate_element].short_desc if archimate_element})"
+        "Child[#{name || ''}](#{in_model.lookup(archimate_element) if archimate_element})"
       end
     end
 

@@ -18,7 +18,7 @@ module Archimate
 
       def test_to_s
         diff = Delete.new("Model<#{model.id}>/name", model, "old and busted")
-        assert_equal "DELETE: in Model[#{model.name}] at /name: old and busted", HighLine.uncolor(diff.to_s)
+        assert_equal "DELETE: in Model<#{model.id}>[#{model.name}] at /name: old and busted", HighLine.uncolor(diff.to_s)
       end
 
       def test_fmt_to_s

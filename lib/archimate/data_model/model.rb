@@ -29,6 +29,31 @@ module Archimate
         Model.new(new_opts)
       end
 
+      def self.flat_folder_hash(folders, h = {})
+        folders.each_with_object(h) do |(id, folder), a|
+          a[id] = folder
+          a.merge!(flat_folder_hash(folder.folders))
+        end
+      end
+
+      def initialize(attributes)
+        super
+        assign_model(self)
+      end
+
+      def lookup(id)
+        @index_hash ||= { id => self }.merge(
+          elements.merge(
+            relationships.merge(
+              diagrams.merge(
+                Model.flat_folder_hash(folders)
+              )
+            )
+          )
+        )
+        @index_hash[id]
+      end
+
       def comparison_attributes
         [:@id, :@name, :@documentation, :@properties, :@elements, :@folders, :@relationships, :@diagrams]
       end
@@ -47,15 +72,8 @@ module Archimate
         )
       end
 
-      def describe(item, options = {})
-        case item
-        when Model
-          "#{'Model'.cyan.italic}[#{name.white.underline}]"
-        when Dry::Struct
-          item.describe(self)
-        else
-          item.to_s
-        end
+      def to_s
+        "#{'Model'.cyan.italic}<#{id}>[#{name.white.underline}]"
       end
 
       # returns a copy of self with element added

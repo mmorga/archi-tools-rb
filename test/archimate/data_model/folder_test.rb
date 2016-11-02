@@ -5,8 +5,9 @@ module Archimate
   module DataModel
     class FolderTest < Minitest::Test
       def setup
-        @f1 = Folder.new(parent_id: nil, id: "123", name: "Sales", type: "Business", items: [], documentation: [], properties: [], folders: {})
-        @f2 = Folder.new(parent_id: nil, id: "123", name: "Sales", type: "Business", items: [], documentation: [], properties: [], folders: {})
+        @parent_id = build_id
+        @f1 = build_folder(parent_id: @parent_id, id: "123", name: "Sales", type: "Business")
+        @f2 = build_folder(parent_id: @parent_id, id: "123", name: "Sales", type: "Business")
       end
 
       def test_new
@@ -20,7 +21,7 @@ module Archimate
       end
 
       def test_build_folders_empty
-        result = build_folders(0)
+        result = build_folder_list(with_folders: 0)
         assert result.is_a?(Hash)
         assert_empty(result)
       end
@@ -38,6 +39,15 @@ module Archimate
 
         assert_instance_of Hash, f.folders
         assert_empty f.folders
+        refute_nil f.parent_id
+      end
+
+      def test_clone
+        folder = build_folder
+        refute_nil folder.parent_id
+        folder_clone = folder.clone
+        assert_equal folder, folder_clone
+        refute_equal folder.object_id, folder_clone.object_id
       end
 
       def test_hash
@@ -53,7 +63,7 @@ module Archimate
       end
 
       def test_operator_eqleql_false
-        refute @f1 == Folder.create(id: "234", name: "Sales", type: "Business")
+        refute @f1 == Folder.create(parent_id: @parent_id, id: "234", name: "Sales", type: "Business")
       end
     end
   end

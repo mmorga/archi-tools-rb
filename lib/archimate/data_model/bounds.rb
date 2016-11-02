@@ -4,7 +4,7 @@ module Archimate
     class Bounds < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String.optional
+      attribute :parent_id, Strict::String
       attribute :x, Coercible::Float.optional
       attribute :y, Coercible::Float.optional
       attribute :width, Coercible::Float
@@ -16,10 +16,6 @@ module Archimate
 
       def to_s
         "Bounds(x: #{x}, y: #{y}, width: #{width}, height: #{height})"
-      end
-
-      def describe(_model)
-        to_s
       end
     end
 

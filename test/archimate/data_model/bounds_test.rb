@@ -5,8 +5,9 @@ module Archimate
   module DataModel
     class BoundsTest < Minitest::Test
       def setup
-        @b1 = Bounds.new(parent_id: nil, x: 0, y: 10, width: 500, height: 700)
-        @b2 = Bounds.new(parent_id: nil, x: 0, y: 10, width: 500, height: 700)
+        @parent_id = build_id
+        @b1 = build_bounds(parent_id: @parent_id, x: 0, y: 10, width: 500, height: 700)
+        @b2 = build_bounds(parent_id: @parent_id, x: 0, y: 10, width: 500, height: 700)
       end
 
       def test_new
@@ -33,15 +34,19 @@ module Archimate
       end
 
       def test_optional_x_y
-        assert_kind_of Bounds, Bounds.new(parent_id: nil, x: nil, y: nil, width: 500, height: 700)
+        assert_kind_of Bounds, build_bounds(x: nil, y: nil, width: 500, height: 700)
       end
 
       def test_width_required
-        assert_raises { Bounds.new(parent_id: nil, x: 0, y: 10, width: nil, height: 700) }
+        assert_raises { build_bounds(x: 0, y: 10, width: nil, height: 700) }
       end
 
       def test_height_required
-        assert_raises { Bounds.new(parent_id: nil, x: 0, y: 10, width: 500, height: nil) }
+        assert_raises { build_bounds(x: 0, y: 10, width: 500, height: nil) }
+      end
+
+      def test_to_s
+        assert_equal "Bounds(x: #{@b1.x}, y: #{@b1.y}, width: #{@b1.width}, height: #{@b1.height})", @b1.to_s
       end
     end
   end

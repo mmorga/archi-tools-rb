@@ -4,7 +4,7 @@ module Archimate
     class Color < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String.optional
+      attribute :parent_id, Strict::String
       attribute :r, Coercible::Int.constrained(lt: 256, gt: -1)
       attribute :g, Coercible::Int.constrained(lt: 256, gt: -1)
       attribute :b, Coercible::Int.constrained(lt: 256, gt: -1)
@@ -14,7 +14,7 @@ module Archimate
         [:@r, :@g, :@b, :@a]
       end
 
-      def describe(_model)
+      def to_s
         "Color(r: #{r}, g: #{g}, b: #{b}, a: #{a})"
       end
     end

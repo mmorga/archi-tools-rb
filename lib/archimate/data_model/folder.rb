@@ -8,7 +8,7 @@ module Archimate
     class Folder < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String.optional
+      attribute :parent_id, Strict::String
       attribute :id, Strict::String
       attribute :name, Strict::String
       attribute :type, Strict::String.optional
@@ -19,7 +19,6 @@ module Archimate
 
       def self.create(options = {})
         new_opts = {
-          parent_id: nil,
           type: nil,
           items: [],
           documentation: [],
@@ -35,6 +34,7 @@ module Archimate
 
       def clone
         Folder.new(
+          parent_id: parent_id&.clone,
           id: id.clone,
           name: name.clone,
           type: type&.clone,
@@ -54,8 +54,8 @@ module Archimate
         nil
       end
 
-      def describe(_model)
-        "#{'Folder'.cyan.italic}[#{name.white.underline}]"
+      def to_s
+        "#{'Folder'.cyan.italic}<#{id}>[#{name.white.underline}]"
       end
     end
     Dry::Types.register_class(Folder)

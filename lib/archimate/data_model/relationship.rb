@@ -4,7 +4,7 @@ module Archimate
     class Relationship < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String.optional
+      attribute :parent_id, Strict::String
       attribute :id, Strict::String
       attribute :type, Strict::String
       attribute :source, Strict::String
@@ -15,7 +15,6 @@ module Archimate
 
       def self.create(options = {})
         new_opts = {
-          parent_id: nil,
           name: nil,
           documentation: [],
           properties: []
@@ -29,7 +28,7 @@ module Archimate
 
       def clone
         Relationship.new(
-          parent_id: parent_id&.clone,
+          parent_id: parent_id.clone,
           id: id.clone,
           type: type.clone,
           source: source.clone,
@@ -41,20 +40,7 @@ module Archimate
       end
 
       def to_s
-        "#{type_name} #{source} -> #{target} docs[#{documentation.size}] props[#{properties.size}]"
-      end
-
-      def type_name
-        "#{type.black.italic}<#{id}>[#{(name || '').black.underline}]".on_light_magenta
-      end
-
-      def describe(model, options = {})
-        s = type_name
-        if options.include?(:from_model)
-          from_model = options[:from_model]
-          s += " #{from_model.elements[options[:from]].describe(from_model)} -> #{model.elements[options[:to]].describe(model)}"
-        end
-        s
+        "#{type.black.italic}<#{id}>[#{(name || '').black.underline}]".on_light_magenta + " #{source} -> #{target}"
       end
 
       def element_reference

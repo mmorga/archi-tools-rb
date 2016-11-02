@@ -7,7 +7,7 @@ module Archimate
       attr_accessor :model, :to_model
 
       def setup
-        @model = build_model(with_relationships: 2, with_folders: 2)
+        @model = build_model(with_relationships: 2, with_folders: 2, with_diagrams: 1)
         @to_model = build_model
       end
 

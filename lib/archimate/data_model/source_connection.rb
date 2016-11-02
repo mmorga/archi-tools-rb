@@ -4,7 +4,7 @@ module Archimate
     class SourceConnection < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String.optional
+      attribute :parent_id, Strict::String
       attribute :id, Strict::String
       attribute :source, Strict::String
       attribute :target, Strict::String
@@ -22,7 +22,6 @@ module Archimate
 
       def self.create(options = {})
         new_opts = {
-          parent_id: nil,
           relationship: nil,
           name: nil,
           bendpoints: [],
@@ -37,7 +36,7 @@ module Archimate
 
       def clone
         SourceConnection.new(
-          parent_id: parent_id&.clone,
+          parent_id: parent_id.clone,
           id: id.clone,
           source: source.clone,
           target: target.clone,
@@ -55,10 +54,10 @@ module Archimate
         "#{'SourceConnection'.blue.italic}[#{(name || '').black.underline}]".on_light_magenta
       end
 
-      def describe(model, options = {})
-        s = model.elements[source]
-        t = model.elements[target]
-        "#{type_name} #{s.nil? ? 'nothing' : s.short_desc}->#{t.nil? ? 'nothing' : t.short_desc}"
+      def to_s
+        s = in_model.elements[source]
+        t = in_model.elements[target]
+        "#{type_name} #{s.nil? ? 'nothing' : s} -> #{t.nil? ? 'nothing' : t}"
       end
     end
     Dry::Types.register_class(SourceConnection)

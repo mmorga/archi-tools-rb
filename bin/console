@@ -4,6 +4,9 @@
 require "bundler/setup"
 require "nokogiri"
 require "archimate"
+require "faker"
+require_relative "../test/examples/factories"
+include Archimate::Examples::Factories
 
 require "pry"
 Pry.start

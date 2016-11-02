@@ -24,9 +24,9 @@ module Archimate
       def initialize(base, local, remote, aio)
         # @merged = DeepClone.clone base
         @merged = base.clone
-        @base = IceNine.deep_freeze!(base)
-        @local = IceNine.deep_freeze!(local)
-        @remote = IceNine.deep_freeze!(remote)
+        @base = base # IceNine.deep_freeze!(base)
+        @local = local # IceNine.deep_freeze!(local)
+        @remote = remote # IceNine.deep_freeze!(remote)
         @conflicts = Conflicts.new
         @base_local_diffs = []
         @base_remote_diffs = []

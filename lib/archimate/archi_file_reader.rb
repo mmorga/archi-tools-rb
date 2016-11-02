@@ -13,6 +13,7 @@ module Archimate
     def parse(doc)
       DataModel::Model.new(
         parent_id: nil,
+        index_hash: {},
         id: doc.root["id"],
         name: doc.root["name"],
         documentation: parse_documentation(doc.root, "purpose"),
@@ -133,14 +134,16 @@ module Archimate
     end
 
     def parse_style(node)
+      style = node.at_css(">style")
+      return nil unless style
       DataModel::Style.new(
-        parent_id: nil,
-        text_alignment: nil, # node["textAlignment"],
-        fill_color: nil, # node["fillColor"],
-        line_color: nil, # node["lineColor"],
-        font_color: nil, # node["fontColor"],
-        font: nil, # parse_font(node["font"])
-        line_width: nil
+        parent_id: node.attr("id"),
+        text_alignment: style["textAlignment"],
+        fill_color: style["fillColor"],
+        line_color: style["lineColor"],
+        font_color: style["fontColor"],
+        font: parse_font(style),
+        line_width: style["lineWidth"]
       )
     end
 

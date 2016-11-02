@@ -4,7 +4,7 @@ module Archimate
     class Diagram < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String.optional
+      attribute :parent_id, Strict::String
       attribute :id, Strict::String
       attribute :name, Strict::String
       attribute :viewpoint, Strict::String.optional
@@ -17,7 +17,6 @@ module Archimate
 
       def self.create(options = {})
         new_opts = {
-          parent_id: nil,
           documentation: [],
           properties: [],
           children: {},
@@ -35,7 +34,7 @@ module Archimate
 
       def clone
         Diagram.new(
-          parent_id: parent_id&.clone,
+          parent_id: parent_id.clone,
           id: id.clone,
           name: name.clone,
           viewpoint: viewpoint&.clone,
@@ -61,18 +60,8 @@ module Archimate
         end
       end
 
-      def describe(model, options = {})
-        s = "#{'Diagram'.cyan.italic}[#{name.white.underline}]"
-        if options.include?(:from_model)
-          from_model = options[:from_model]
-          case options[:path].split("/").last
-          when "archimate_element"
-            s += " #{from_model.elements[options[:from]].describe(from_model)} -> #{model.elements[options[:to]].describe(model)}"
-          else
-            s += " #{options[:from]} -> #{options[:to]}"
-          end
-        end
-        s
+      def to_s
+        "#{'Diagram'.cyan.italic}<#{id}>[#{name.white.underline}]"
       end
     end
   end

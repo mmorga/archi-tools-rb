@@ -9,17 +9,12 @@ module Archimate
         @size = 16
         @style = "normal"
 
-        @s1 = Font.new(
-          parent_id: nil,
+        @s1 = build_font(
           name: @name,
           size: @size,
           style: @style
         )
         @s2 = build_font
-      end
-
-      def test_with
-        assert Font.ancestors.include?(With)
       end
 
       def test_new
@@ -36,12 +31,16 @@ module Archimate
         refute_equal @s1.hash, @s2.hash
       end
 
-      def test_operator_eqleql_true
-        assert_equal @s1, Font.new(@s1.to_h)
-      end
-
       def test_operator_eqleql_false
         refute_equal @s1, @s2
+      end
+
+      def test_comparison_attributes
+        assert_equal [:@name, :@size, :@style], @s1.comparison_attributes
+      end
+
+      def test_to_s
+        assert_equal "Font(name: #{@name}, size: #{@size}, style: #{@style})", @s1.to_s
       end
     end
   end

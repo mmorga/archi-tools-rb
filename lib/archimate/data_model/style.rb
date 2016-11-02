@@ -4,7 +4,7 @@ module Archimate
     class Style < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String.optional
+      attribute :parent_id, Strict::String
       attribute :text_alignment, Coercible::Int.optional
       attribute :fill_color, OptionalColor
       attribute :line_color, OptionalColor
@@ -28,8 +28,9 @@ module Archimate
         )
       end
 
-      def describe(_model)
-        inspect
+      def to_s
+        attr_name_vals = comparison_attributes.map { |ca| "#{ca.to_s.delete('@')}: #{instance_variable_get(ca)}" }.join(", ")
+        "Style(#{attr_name_vals})"
       end
     end
 

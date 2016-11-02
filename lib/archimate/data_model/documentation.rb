@@ -4,7 +4,7 @@ module Archimate
     class Documentation < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String.optional
+      attribute :parent_id, Strict::String
       attribute :lang, Strict::String.optional
       attribute :text, Strict::String
 

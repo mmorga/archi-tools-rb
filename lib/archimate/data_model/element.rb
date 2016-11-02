@@ -4,7 +4,7 @@ module Archimate
     class Element < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String.optional
+      attribute :parent_id, Strict::String
       attribute :id, Strict::String
       attribute :type, Strict::String.optional
       attribute :label, Strict::String.optional
@@ -15,7 +15,6 @@ module Archimate
 
       def self.create(options = {})
         new_opts = {
-          parent_id: nil,
           type: nil,
           label: nil,
           documentation: [],
@@ -30,17 +29,13 @@ module Archimate
 
       def clone
         Element.new(
-          parent_id: parent_id&.clone,
+          parent_id: parent_id.clone,
           id: id.clone,
           type: type&.clone,
           label: label&.clone,
           documentation: documentation.map(&:clone),
           properties: properties.map(&:clone)
         )
-      end
-
-      def to_s
-        "#{type}<#{id}> #{label} docs[#{documentation.size}] props[#{properties.size}]"
       end
 
       def colored_by_type(str)
@@ -62,20 +57,12 @@ module Archimate
         end
       end
 
-      def short_desc
+      def to_s
         colored_by_type "#{type.italic.light_black}<#{id}>[#{label.underline}]"
-      end
-
-      def to_id_string
-        "#{type}<#{id}>"
       end
 
       def layer
         Archimate::Constants::ELEMENT_LAYER.fetch(@type, "None")
-      end
-
-      def describe(_model)
-        short_desc
       end
     end
   end

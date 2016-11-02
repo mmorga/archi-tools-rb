@@ -4,7 +4,7 @@ module Archimate
     class Property < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String.optional
+      attribute :parent_id, Strict::String
       attribute :key, Strict::String
       attribute :value, Strict::String.optional
 
@@ -14,7 +14,6 @@ module Archimate
 
       def self.create(options = {})
         new_opts = {
-          parent_id: nil,
           value: nil
         }.merge(options)
         Property.new(new_opts)
@@ -22,6 +21,7 @@ module Archimate
 
       def clone
         Property.new(
+          parent_id: parent_id.clone,
           key: key.clone,
           value: value&.clone
         )
@@ -29,10 +29,6 @@ module Archimate
 
       def to_s
         "Property(key: #{key}, value: #{value || 'no value'})"
-      end
-
-      def describe(_model)
-        to_s
       end
     end
 
