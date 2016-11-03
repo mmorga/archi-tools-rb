@@ -15,10 +15,6 @@ module Archimate
         @outfile.unlink
       end
 
-      def test_it_outputs_formatted_xml
-        skip "Test the output!"
-      end
-
       def test_indent
         assert_equal "    ", @xml_textconv.indent(2)
       end

@@ -19,7 +19,6 @@ module Archimate
       attr_reader :remote
       attr_reader :merged
       attr_reader :aio
-      attr_reader :all_diffs
 
       def initialize(base, local, remote, aio)
         # @merged = DeepClone.clone base
@@ -111,25 +110,33 @@ module Archimate
               node.instance_variable_set("@#{id}".to_sym, diff.to)
               node
             else
-              apply_child_changes(node, attr_name, id, diff.to)
+              apply_child_changes(node, attr_name, id, diff.to, diff)
             end
           else
             id = id.to_i if child_collection.is_a? Array
             child = child_collection[id]
-            apply_child_changes(node, attr_name, id, apply_diff(child, diff.with(path: path.join("/"))))
+            apply_child_changes(node, attr_name, id, apply_diff(child, diff.with(path: path.join("/"))), diff)
           end
         end
       end
 
       # TODO: this is a little hokey. I'd like to basically call a diff method based on the
       # type of the child collection here.
-      def apply_child_changes(node, attr_name, id, child_value)
+      # TODO: for an array, an insert should be after some other value. not sure if the id would be sufficient
+      def apply_child_changes(node, attr_name, id, child_value, diff)
         child_collection = node.send(attr_name)
         case child_collection
         when Hash
           node.send(attr_name)[id] = child_value
         when Array
-          node.send(attr_name)[id.to_i] = child_value
+          id = id.to_i
+          ary = node.send(attr_name)
+          case diff
+          when Insert
+            ary.insert(id < ary.size ? id + 1 : id, child_value)
+          else
+            ary[id] = child_value
+          end
         else
           raise "Type Error #{child_collection.class} unexpected for collection type, node class=#{node.class}, attr_name=#{attr_name}, id=#{id}, child_value=#{child_value.inspect}"
         end

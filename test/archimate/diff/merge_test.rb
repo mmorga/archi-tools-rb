@@ -65,9 +65,8 @@ module Archimate
       end
 
       def test_both_insert_element_documentation
-        skip("Re-enable after a better conflict detector is written")
-        doc1 = build_documentation_list
-        doc2 = build_documentation_list
+        doc1 = build_documentation_list(parent_id: base_el1)
+        doc2 = build_documentation_list(parent_id: base_el1)
         local_el = base_el1.with(documentation: doc1)
         remote_el = base_el1.with(documentation: doc2)
         local = base.insert_element(local_el)
@@ -244,11 +243,12 @@ module Archimate
 
         merge = Merge.three_way(base, local, remote, aio)
 
-        refute_empty merge.conflicts
+        refute merge.conflicts.empty?
         assert_equal base, merge.merged
       end
 
       # delete: element (ok - unless other doc doesn't add relationship which references it)
+      # TODO: determine if this is a valid test case
       def xtest_delete_element_when_referenced_in_other_change_set
         target_relationship = base.relationships.values.first
         element_id = target_relationship.source
@@ -265,7 +265,7 @@ module Archimate
 
         merge = Merge.three_way(base, local, remote, aio)
 
-        refute_empty merge.conflicts
+        refute merge.conflicts.empty?
         assert_equal base, merge.merged
       end
 
@@ -284,6 +284,32 @@ module Archimate
         merge = Merge.three_way(base, local, remote, aio)
         assert_empty merge.conflicts
         assert_equal base, merge.merged
+      end
+
+      def test_apply_child_changes_on_empty_array_with_insert
+        node = build_element
+        doc = build_documentation(parent_id: node.id)
+        assert_empty node.documentation
+        merge = Merge.new(base, base, base, aio)
+        diff = Insert.new("", base, doc)
+        merge.apply_child_changes(node, "documentation", "[0]", doc, diff)
+        assert_equal 1, node.documentation.size
+        assert_equal doc, node.documentation.first
+      end
+
+      def test_apply_child_changes_on_current_array_with_insert
+        node = build_element(documentation: build_documentation_list(count: 1))
+        doc = build_documentation(parent_id: node.id)
+        assert_equal 1, node.documentation.size
+        initial_doc = node.documentation[0]
+
+        merge = Merge.new(base, base, base, aio)
+
+        diff = Insert.new("", base, doc)
+        merge.apply_child_changes(node, "documentation", "[0]", doc, diff)
+        assert_equal 2, node.documentation.size
+        assert_equal initial_doc, node.documentation[0]
+        assert_equal doc, node.documentation[1]
       end
     end
   end

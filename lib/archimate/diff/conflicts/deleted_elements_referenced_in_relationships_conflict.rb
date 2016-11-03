@@ -23,7 +23,9 @@ module Archimate
 
         def diff_conflicts(diff1, diff2)
           rel = diff1.relationship
+          return false if rel.nil?
           rel_el_ids = [rel.source, rel.target]
+          return false if diff2.element_id.nil?
           rel_el_ids.include?(diff2.element_id)
         end
       end

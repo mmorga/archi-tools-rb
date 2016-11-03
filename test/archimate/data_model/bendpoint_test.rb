@@ -33,8 +33,8 @@ module Archimate
         refute @b1 == build_bounds
       end
 
-      def test_at_least_two_attributes_must_be_present
-        skip
+      # TODO: if we implement a DSL, then this will be useful, otherwise not.
+      def xtest_at_least_two_attributes_must_be_present
         assert_raises { build_bendpoint(start_x: 0, start_y: nil, end_x: nil, end_y: nil) }
         assert_raises { build_bendpoint(start_x: nil, start_y: nil, end_x: nil, end_y: nil) }
       end

@@ -39,14 +39,22 @@ module Archimate
         )
       end
 
-      def build_element(options = {})
-        Archimate::DataModel::Element.new(
-          parent_id: options.fetch(:parent_id, build_id),
-          id: options.fetch(:id, build_id),
-          label: options.fetch(:label, Faker::Company.buzzword),
-          type: options.fetch(:type, random_element_type),
+      def build_model(options = {})
+        model_id = options.fetch(:id, build_id)
+        elements = build_element_list(options.merge(parent_id: model_id))
+        relationships = build_relationship_list(options.merge(elements: elements, parent_id: model_id))
+        diagrams = options.fetch(:diagrams, build_diagram_list(options.merge(elements: elements, relationships: relationships, parent_id: model_id)))
+        folders = options.fetch(:folders, build_folder_list(options.merge(parent_id: model_id)))
+        Archimate::DataModel::Model.new(
+          parent_id: nil,
+          id: model_id,
+          name: options.fetch(:name, Faker::Company.name),
           documentation: options.fetch(:documentation, []),
-          properties: options.fetch(:properties, [])
+          properties: options.fetch(:properties, []),
+          elements: elements,
+          folders: folders,
+          relationships: relationships,
+          diagrams: diagrams
         )
       end
 
@@ -60,18 +68,14 @@ module Archimate
         Archimate.array_to_id_hash(bel)
       end
 
-      def build_relationship_list(options = {})
-        count = options.fetch(:with_relationships, 0)
-        other_rels = options.fetch(:relationships, [])
-        elements = options.fetch(:elements, {})
-        needed_elements = [0, count * 2 - elements.size].max
-        elements.merge!(build_element_list(with_elements: needed_elements)) unless needed_elements.zero?
-        el_ids = elements.values.map(&:id).each_slice(2).each_with_object([]) { |i, a| a << i }
-        Archimate.array_to_id_hash(
-          (1..count).map do
-            src_id, target_id = el_ids.shift
-            build_relationship(source: src_id, target: target_id, parent_id: options.fetch(:parent_id, build_id))
-          end + other_rels
+      def build_element(options = {})
+        Archimate::DataModel::Element.new(
+          parent_id: options.fetch(:parent_id, build_id),
+          id: options.fetch(:id, build_id),
+          label: options.fetch(:label, Faker::Company.buzzword),
+          type: options.fetch(:type, random_element_type),
+          documentation: options.fetch(:documentation, []),
+          properties: options.fetch(:properties, [])
         )
       end
 
@@ -85,25 +89,6 @@ module Archimate
         end.flatten
         Archimate.array_to_id_hash(
           (1..count).map { build_diagram(children: Archimate.array_to_id_hash(child_list), parent_id: options.fetch(:parent_id, build_id)) }
-        )
-      end
-
-      def build_model(options = {})
-        model_id = options.fetch(:id, build_id)
-        elements = build_element_list(options.merge(parent_id: model_id))
-        relationships = build_relationship_list(options.merge(elements: elements, parent_id: model_id))
-        diagrams = build_diagram_list(options.merge(elements: elements, relationships: relationships, parent_id: model_id))
-        folders = options.fetch(:folders, build_folder_list(options.merge(parent_id: model_id)))
-        Archimate::DataModel::Model.new(
-          parent_id: nil,
-          id: model_id,
-          name: options.fetch(:name, Faker::Company.name),
-          documentation: options.fetch(:documentation, []),
-          properties: options.fetch(:properties, []),
-          elements: elements,
-          folders: folders,
-          relationships: relationships,
-          diagrams: diagrams
         )
       end
 
@@ -163,6 +148,21 @@ module Archimate
         )
       end
 
+      def build_relationship_list(options = {})
+        count = options.fetch(:with_relationships, 0)
+        other_rels = options.fetch(:relationships, [])
+        elements = options.fetch(:elements, {})
+        needed_elements = [0, count * 2 - elements.size].max
+        elements.merge!(build_element_list(with_elements: needed_elements)) unless needed_elements.zero?
+        el_ids = elements.values.map(&:id).each_slice(2).each_with_object([]) { |i, a| a << i }
+        Archimate.array_to_id_hash(
+          (1..count).map do
+            src_id, target_id = el_ids.shift
+            build_relationship(source: src_id, target: target_id, parent_id: options.fetch(:parent_id, build_id))
+          end + other_rels
+        )
+      end
+
       def build_relationship(options = {})
         Archimate::DataModel::Relationship.new(
           parent_id: options.fetch(:parent_id, build_id),
@@ -173,19 +173,6 @@ module Archimate
           name: options.fetch(:name, Faker::Company.catch_phrase),
           documentation: options.fetch(:documentation, []),
           properties: options.fetch(:properties, [])
-        )
-      end
-
-      def build_folder(options = {})
-        Archimate::DataModel::Folder.new(
-          parent_id: options.fetch(:parent_id, build_id),
-          id: options.fetch(:id, build_id),
-          name: options.fetch(:name, Faker::Commerce.department),
-          type: options.fetch(:type, random_relationship_type),
-          documentation: options.fetch(:documentation, []),
-          properties: options.fetch(:properties, []),
-          items: options.fetch(:items, []),
-          folders: options.fetch(:folders, {})
         )
       end
 
@@ -201,6 +188,19 @@ module Archimate
           )
           a[folder.id] = folder
         end
+      end
+
+      def build_folder(options = {})
+        Archimate::DataModel::Folder.new(
+          parent_id: options.fetch(:parent_id, build_id),
+          id: options.fetch(:id, build_id),
+          name: options.fetch(:name, Faker::Commerce.department),
+          type: options.fetch(:type, random_relationship_type),
+          documentation: options.fetch(:documentation, []),
+          properties: options.fetch(:properties, []),
+          items: options.fetch(:items, []),
+          folders: options.fetch(:folders, {})
+        )
       end
 
       def build_bendpoint(options = {})
