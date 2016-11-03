@@ -54,7 +54,7 @@ module Archimate
 
         @conflict_finders ||= Conflicts.constants
                                        .select { |k| Conflicts.const_get(k).is_a? Class }
-                                       .reject { |k| k == :BaseConflict }
+                                       .reject { |k| k == :BaseConflict || k =~ /Test$/ }
                                        .map { |k| Conflicts.const_get(k) }
         @conflict_finders.each do |cf_class|
           cf = cf_class.new(base_local_diffs, base_remote_diffs)
