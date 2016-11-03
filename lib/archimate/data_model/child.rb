@@ -70,7 +70,7 @@ module Archimate
       end
 
       def to_s
-        "Child[#{name || ''}](#{in_model.lookup(archimate_element) if archimate_element})"
+        "Child[#{name || ''}](#{in_model.lookup(archimate_element) if archimate_element && in_model})"
       end
     end
 

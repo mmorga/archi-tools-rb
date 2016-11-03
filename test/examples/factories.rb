@@ -64,6 +64,8 @@ module Archimate
         count = options.fetch(:with_relationships, 0)
         other_rels = options.fetch(:relationships, [])
         elements = options.fetch(:elements, {})
+        needed_elements = [0, count * 2 - elements.size].max
+        elements.merge!(build_element_list(with_elements: needed_elements)) unless needed_elements.zero?
         el_ids = elements.values.map(&:id).each_slice(2).each_with_object([]) { |i, a| a << i }
         Archimate.array_to_id_hash(
           (1..count).map do
@@ -132,11 +134,13 @@ module Archimate
       def build_child(options = {})
         node_element = options.fetch(:element, build_element)
         relationships = options.fetch(:relationships, {})
+        with_children = options.delete(:with_children)
         Archimate::DataModel::Child.create(
           parent_id: options.fetch(:parent_id, build_id),
           id: options.fetch(:id, build_id),
           type: "archimate:DiagramObject",
           name: options[:name],
+          children: build_children(count: with_children || 0),
           archimate_element: node_element.id,
           bounds: build_bounds,
           source_connections: relationships.values.map do |rel|

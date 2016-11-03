@@ -11,8 +11,6 @@ module Archimate
 
     def test_read_diagrams
       assert_equal 17, model.diagrams.size
-      assert model.diagram_element_references.all? { |i| i.is_a?(String) }
-      assert_equal 120, model.diagram_element_references.size
     end
 
     def test_folders

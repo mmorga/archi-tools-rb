@@ -4,10 +4,10 @@ require 'test_helper'
 module Archimate
   module DataModel
     class SourceConnectionTest < Minitest::Test
-      attr_reader :src_conn
+      attr_reader :subject
 
       def setup
-        @src_conn = build_source_connection(
+        @subject = build_source_connection(
           id: "abc123",
           type: "three",
           source: "source",
@@ -17,9 +17,14 @@ module Archimate
       end
 
       def test_create
-        assert_equal "abc123", src_conn.id
-        assert_equal "three", src_conn.type
-        refute_respond_to src_conn, :type=
+        assert_equal "abc123", subject.id
+        assert_equal "three", subject.type
+        refute_respond_to subject, :type=
+      end
+
+      def test_to_s
+        assert_match("SourceConnection", subject.to_s)
+        assert_match("[#{subject.name}]", subject.to_s)
       end
     end
   end

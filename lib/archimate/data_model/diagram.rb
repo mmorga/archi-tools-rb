@@ -11,7 +11,6 @@ module Archimate
       attribute :documentation, DocumentationList
       attribute :properties, PropertiesList
       attribute :children, ChildHash
-      # attribute :element_references, Strict::Array.member(Strict::String)
       attribute :connection_router_type, Coercible::Int.optional # TODO: fill this in, should be an enum
       attribute :type, Strict::String.optional
 
@@ -21,7 +20,6 @@ module Archimate
           properties: [],
           children: {},
           viewpoint: nil,
-          # element_references: [],
           connection_router_type: nil,
           type: nil
         }.merge(options)
@@ -41,7 +39,6 @@ module Archimate
           documentation: documentation.map(&:clone),
           properties: properties.map(&:clone),
           children: children.each_with_object({}) { |(k, v), a| a[k] = v.clone },
-          # element_references: element_references.map(&:clone),
           connection_router_type: connection_router_type,
           type: type&.clone
         )

@@ -55,8 +55,9 @@ module Archimate
       end
 
       def to_s
-        s = in_model.elements[source]
-        t = in_model.elements[target]
+        els = in_model&.elements
+        s = els[source] unless els.nil?
+        t = els[target] unless els.nil?
         "#{type_name} #{s.nil? ? 'nothing' : s} -> #{t.nil? ? 'nothing' : t}"
       end
     end

@@ -4,6 +4,10 @@ require 'test_helper'
 module Archimate
   module DataModel
     class ModelTest < Minitest::Test
+      def setup
+        @subject = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_folders: 4)
+      end
+
       def test_create
         expected = build_documentation_list(count: 2)
         model = Model.create(id: "123", name: "my model", documentation: expected)
@@ -54,6 +58,12 @@ module Archimate
         m.relationships.all? { |id, r| assert_equal r, m.lookup(id) }
         m.elements.all? { |id, r| assert_equal r, m.lookup(id) }
         m.folders.all? { |id, r| assert_equal r, m.lookup(id) }
+      end
+
+      def test_clone
+        s2 = @subject.clone
+        assert_equal @subject, s2
+        refute_equal @subject.object_id, s2.object_id
       end
     end
   end

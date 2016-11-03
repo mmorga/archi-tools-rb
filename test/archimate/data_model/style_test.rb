@@ -48,6 +48,13 @@ module Archimate
       def test_operator_eqleql_false
         refute_equal @s1, @s2
       end
+
+      def test_to_s
+        assert_match(/Style/, @s1.to_s)
+        [:text_alignment, :fill_color, :line_color, :font_color, :line_width].each do |attr|
+          assert_match(@s1.send(attr).to_s, @s1.to_s, "Expect to_s to include #{attr} value")
+        end
+      end
     end
   end
 end

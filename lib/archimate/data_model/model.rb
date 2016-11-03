@@ -97,27 +97,6 @@ module Archimate
       def find_folder(folder_id)
         Folder.find_in_folders(folders, folder_id)
       end
-
-      # TODO: consider refactoring all of the ref/unref methods to another class
-      def ref_set
-        Set.new(relationship_element_references + diagram_element_references)
-      end
-
-      def relationship_element_references
-        relationships.map(&:element_references).flatten.uniq
-      end
-
-      def diagram_element_references
-        diagrams.values.map(&:element_references).flatten.compact.uniq
-      end
-
-      def unref_set
-        model_set - ref_set
-      end
-
-      def unrefed_ids
-        unref_set + (relation_ids - relation_ref_ids)
-      end
     end
   end
 end

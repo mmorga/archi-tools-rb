@@ -38,27 +38,8 @@ module Archimate
         )
       end
 
-      def colored_by_type(str)
-        case layer
-        when "Business"
-          str.black.on_yellow
-        when "Application"
-          str.black.on_light_blue
-        when "Technology"
-          str.black.on_light_green
-        when "Motivation"
-          str.white.on_blue
-        when "Implementation and Migration"
-          str.white.on_green
-        when "Connectors"
-          str.white.on_black
-        else
-          str.black.on_red
-        end
-      end
-
       def to_s
-        colored_by_type "#{type.italic.light_black}<#{id}>[#{label.underline}]"
+        AIO.layer_color(layer, "#{type.italic.light_black}<#{id}>[#{label.underline}]")
       end
 
       def layer

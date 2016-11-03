@@ -99,11 +99,7 @@ module Archimate
           properties: parse_properties(i),
           children: parse_children(i),
           connection_router_type: i["connectionRouterType"],
-          type: i.attr("type"),
-          # TODO: This is a quick fix to permit diff/merge
-          # element_references: i.css("[archimateElement]").each_with_object([]) do |i2, a2|
-          #   a2 << i2["archimateElement"]
-          # end
+          type: i.attr("type")
         )
       end
     end

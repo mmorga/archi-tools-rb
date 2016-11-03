@@ -68,5 +68,24 @@ module Archimate
     def debug(msg)
       @hl.say("#{@hl.color('Debug:', :debug)} #{DateTime.now} #{msg}") if @verbose
     end
+
+    def self.layer_color(layer, str)
+      case layer
+      when "Business"
+        str.black.on_yellow
+      when "Application"
+        str.black.on_light_blue
+      when "Technology"
+        str.black.on_light_green
+      when "Motivation"
+        str.white.on_blue
+      when "Implementation and Migration"
+        str.white.on_green
+      when "Connectors"
+        str.white.on_black
+      else
+        str.black.on_red
+      end
+    end
   end
 end

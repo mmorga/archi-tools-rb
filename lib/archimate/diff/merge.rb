@@ -45,10 +45,30 @@ module Archimate
         @base_local_diffs = Archimate.diff(base, local)
         aio.debug "Computing base:remote diffs"
         @base_remote_diffs = Archimate.diff(base, remote)
+        aio.debug "Identify merged duplicates"
+        find_merged_duplicates
         aio.debug "Finding Conflicts"
         conflicts.find(@base_local_diffs, @base_remote_diffs)
         aio.debug "Applying Diffs"
         @merged = apply_diffs(base_remote_diffs + base_local_diffs, @merged)
+      end
+
+      def find_merged_duplicates
+        [@base_local_diffs, @base_remote_diffs].map do |diffs|
+          deleted_element_diffs = diffs.select(&:delete?).select(&:element?)
+          deleted_element_diffs.each_with_object({}) do |diff, a|
+            element = diff.from_model.lookup(diff.element_id)
+            found = diff.from_model.elements.select do |id, el|
+              el != element && el.type == element.type && el.name == element.name
+            end
+            unless found.empty?
+              a[diff] = found
+              puts "\nFound potential de-duplication:"
+              puts "\t#{diff}"
+              puts "Might be replaced with:\n\t#{found.values.map(&:to_s).join("\n\t")}\n\n"
+            end
+          end
+        end
       end
 
       # TODO: All of the apply diff stuff belongs elsewhere?

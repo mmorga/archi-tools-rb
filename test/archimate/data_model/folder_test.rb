@@ -6,15 +6,16 @@ module Archimate
     class FolderTest < Minitest::Test
       def setup
         @parent_id = build_id
-        @f1 = build_folder(parent_id: @parent_id, id: "123", name: "Sales", type: "Business")
-        @f2 = build_folder(parent_id: @parent_id, id: "123", name: "Sales", type: "Business")
+        @child_folders = build_folder_list(with_folders: 3)
+        @f1 = build_folder(parent_id: @parent_id, id: "123", name: "Sales", type: "Business", folders: @child_folders)
+        @f2 = build_folder(parent_id: @parent_id, id: "123", name: "Sales", type: "Business", folders: @child_folders)
       end
 
       def test_new
         assert_equal "123", @f1.id
         assert_equal "Sales", @f1.name
         assert_equal "Business", @f1.type
-        assert_empty @f1.folders
+        assert_equal @child_folders, @f1.folders
         assert_empty @f1.items
         assert_empty @f1.documentation
         assert_empty @f1.properties
@@ -43,11 +44,9 @@ module Archimate
       end
 
       def test_clone
-        folder = build_folder
-        refute_nil folder.parent_id
-        folder_clone = folder.clone
-        assert_equal folder, folder_clone
-        refute_equal folder.object_id, folder_clone.object_id
+        fclone = @f1.clone
+        assert_equal @f1, fclone
+        refute_equal @f1.object_id, fclone.object_id
       end
 
       def test_hash
@@ -64,6 +63,11 @@ module Archimate
 
       def test_operator_eqleql_false
         refute @f1 == Folder.create(parent_id: @parent_id, id: "234", name: "Sales", type: "Business")
+      end
+
+      def test_to_s
+        assert_match "Folder", @f1.to_s
+        assert_match @f1.name, @f1.to_s
       end
     end
   end
