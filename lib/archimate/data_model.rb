@@ -19,7 +19,7 @@ module Archimate
     require 'archimate/data_model/diagram'
     require 'archimate/data_model/element'
     require 'archimate/data_model/folder'
-    require 'archimate/data_model/model'
     require 'archimate/data_model/relationship'
+    require 'archimate/data_model/model'
   end
 end

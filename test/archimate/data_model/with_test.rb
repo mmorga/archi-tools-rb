@@ -15,13 +15,13 @@ module Archimate
 
       def test_in_model
         m = build_model(with_elements: 3, with_relationships: 2, with_diagrams: 1)
-        m.elements.values.each { |e| assert_equal m, e.in_model }
+        m.elements.each { |e| assert_equal m, e.in_model }
       end
 
       def test_parent
         m = build_model(with_elements: 3, with_relationships: 2, with_diagrams: 1)
-        m.elements.values.each { |e| assert_equal m.id, e.parent_id }
-        m.elements.values.each { |e| assert_equal m, e.parent }
+        m.elements.each { |e| assert_equal m.id, e.parent_id }
+        m.elements.each { |e| assert_equal m, e.parent }
       end
     end
   end

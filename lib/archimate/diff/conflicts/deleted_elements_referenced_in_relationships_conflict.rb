@@ -25,8 +25,8 @@ module Archimate
           rel = diff1.relationship
           return false if rel.nil?
           rel_el_ids = [rel.source, rel.target]
-          return false if diff2.element_id.nil?
-          rel_el_ids.include?(diff2.element_id)
+          return false if diff2.element_idx.nil?
+          rel_el_ids.include?(diff2.element.id)
         end
       end
     end

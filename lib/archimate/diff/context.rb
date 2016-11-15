@@ -21,7 +21,7 @@ module Archimate
         end
       end
 
-      # TODO: Refactor this. Can be a lot more clear.
+      # TODO: Refactor this. Can be a lot more clear. Maybe use refinements?
       def diffs
         return [] if base == local
         return [Insert.new(path_str, local_model, local)] if base.nil?
@@ -39,31 +39,54 @@ module Archimate
             )
             @path_stack.pop
           end
-        elsif base.is_a?(Hash) # TODO: Refactor
+        elsif base.is_a?(Array) # TODO: this probably isn't right yet
           diff_list = []
-          base.each do |id, el|
-            diff_list << Context.new(base_model, local_model, el, local[id], [id]).diffs if local.include?(id) && el != local[id]
-            diff_list << Delete.new(id, base_model, el) unless local.include?(id)
-          end
-          local.each do |id, el|
-            diff_list << Insert.new(id, local_model, el) unless base.include?(id)
+          base_idx = 0
+          local_idx = 0
+          while base_idx < base.size || local_idx < local.size
+            if base_idx >= base.size
+              idx = base.size
+              until local_idx >= local.size
+                diff_list << Insert.new("[#{local_idx}]", local_model, local[local_idx])
+                idx += 1
+                local_idx += 1
+              end
+            elsif local_idx >= local.size
+              idx = base.size
+              until base_idx >= base.size
+                diff_list << Delete.new("[#{base_idx}]", base_model, base[base_idx])
+                idx += 1
+                base_idx += 1
+              end
+            elsif base[base_idx] == local[local_idx]
+              base_idx += 1
+              local_idx += 1
+            elsif match(base[base_idx], local[local_idx])
+              diff_list << Context.new(base_model, local_model, base[base_idx], local[local_idx], "[#{local_idx}]").diffs
+              base_idx += 1
+              local_idx += 1
+            elsif local[local_idx + 1..-1].any? { |i| match(i, base[base_idx]) }
+              diff_list << Insert.new("[#{base_idx}]", local_model, local[local_idx])
+              local_idx += 1
+            else
+              diff_list << Delete.new("[#{base_idx}]", base_model, base[base_idx])
+              base_idx += 1
+            end
           end
           diff_list.flatten
-        elsif base.is_a?(Array)
-          diff_list = []
-          base.each_with_index do |item, idx|
-            diff_list << Delete.new(idx, base_model, item) unless local.include?(item)
-          end
-          local.each_with_index do |item, idx|
-            diff_list << Insert.new(idx, local_model, item) { |d| d.path = idx } unless base.include?(item)
-          end
-          diff_list
+        elsif base.is_a?(Hash) # TODO: Refactor
+          raise "Woah - I didn't expect any more hashes."
         else
           [Change.new(path_str, base_model, local_model, base, local)]
         end
       end
 
       private
+
+      def match(a, b)
+        a.is_a?(b.class) &&
+          ((a.respond_to?(:id) && a.id == b.id) || a == b)
+      end
 
       def path_str
         @path_stack.compact.delete_if(&:empty?).join("/")

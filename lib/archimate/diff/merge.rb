@@ -32,7 +32,6 @@ module Archimate
         @aio = aio
       end
 
-      # TODO: refactor message_io should be an AIO not an IO. EIEIO.
       def self.three_way(base, local, remote, aio)
         merge = Merge.new(base, local, remote, aio)
         merge.three_way
@@ -56,8 +55,8 @@ module Archimate
         [@base_local_diffs, @base_remote_diffs].map do |diffs|
           deleted_element_diffs = diffs.select(&:delete?).select(&:element?)
           deleted_element_diffs.each_with_object({}) do |diff, a|
-            element = diff.from_model.lookup(diff.element_id)
-            found = diff.from_model.elements.select do |id, el|
+            element = diff.from_model.elements[diff.element_idx]
+            found = diff.from_model.elements.select do |el|
               el != element && el.type == element.type && el.name == element.name
             end
             unless found.empty?
@@ -113,9 +112,10 @@ module Archimate
               apply_child_changes(node, attr_name, id, diff.to, diff)
             end
           else
-            id = id.to_i if child_collection.is_a? Array
-            child = child_collection[id]
-            apply_child_changes(node, attr_name, id, apply_diff(child, diff.with(path: path.join("/"))), diff)
+            m = id.match(%r{\[(\d+)\]})
+            raise TypeError, "#{id.class} '#{id}', expected an Int" unless m
+            cc_id = m[1].to_i
+            apply_child_changes(node, attr_name, id, apply_diff(child_collection[cc_id], diff.with(path: path.join("/"))), diff)
           end
         end
       end
@@ -125,20 +125,15 @@ module Archimate
       # TODO: for an array, an insert should be after some other value. not sure if the id would be sufficient
       def apply_child_changes(node, attr_name, id, child_value, diff)
         child_collection = node.send(attr_name)
-        case child_collection
-        when Hash
-          node.send(attr_name)[id] = child_value
-        when Array
-          id = id.to_i
-          ary = node.send(attr_name)
-          case diff
-          when Insert
-            ary.insert(id < ary.size ? id + 1 : id, child_value)
-          else
-            ary[id] = child_value
-          end
+        raise TypeError, "#{child_collection.class} unexpected for collection type, node class=#{node.class}, attr_name=#{attr_name}, id=#{id}, child_value=#{child_value.inspect}" unless child_collection.is_a?(Array)
+        m = id.match(%r{\[(\d+)\]})
+        raise TypeError, "#{id.class} '#{id}', expected an Int" unless m
+        id = m[1].to_i
+        case diff
+        when Insert
+          child_collection.insert(id < child_collection.size ? id + 1 : id, child_value)
         else
-          raise "Type Error #{child_collection.class} unexpected for collection type, node class=#{node.class}, attr_name=#{attr_name}, id=#{id}, child_value=#{child_value.inspect}"
+          child_collection[id] = child_value
         end
         node
       end

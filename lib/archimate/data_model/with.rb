@@ -11,7 +11,7 @@ module Archimate
       end
 
       def in_model
-        instance_variable_get(:@in_model)
+        instance_variable_get(:@in_model) if defined?(@in_model)
       end
 
       def assign_model(model)

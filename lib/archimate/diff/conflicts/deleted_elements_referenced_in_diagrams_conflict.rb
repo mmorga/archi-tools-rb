@@ -16,7 +16,8 @@ module Archimate
         end
 
         def diff_conflicts(diff1, diff2)
-          diff2.model.diagrams[diff2.diagram_id]&.element_references&.include? diff1.element_id
+          return false unless diff2.diagram_idx
+          diff2.model.diagrams[diff2.diagram_idx].element_references.include?(diff1.element.id)
         end
       end
     end

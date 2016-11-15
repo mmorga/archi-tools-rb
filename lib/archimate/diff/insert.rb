@@ -21,7 +21,7 @@ module Archimate
       end
 
       def diff_type
-        'INSERT:'.green
+        HighLine.color('INSERT:', :insert)
       end
 
       def to_s

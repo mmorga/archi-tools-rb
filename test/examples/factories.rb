@@ -64,8 +64,7 @@ module Archimate
         el_count = [options.fetch(:with_relationships, 0) * 2, options.fetch(:with_elements, 0) + given_element_count].max
         count = el_count - given_element_count
         given_elements = given_elements.values if given_elements.is_a? Hash
-        bel = (1..count).map { build_element(options) } + given_elements
-        Archimate.array_to_id_hash(bel)
+        (1..count).map { build_element(options) } + given_elements
       end
 
       def build_element(options = {})
@@ -80,16 +79,14 @@ module Archimate
       end
 
       def build_diagram_list(options)
-        elements = options.fetch(:elements, {})
-        relationships = options.fetch(:relationships, {})
+        elements = options.fetch(:elements, [])
+        relationships = options.fetch(:relationships, [])
         count = options.fetch(:with_diagrams, 0)
-        child_list = relationships.map do |id, rel|
-          [build_child(element: elements[rel.source], relationships: { id => rel }),
-           build_child(element: elements[rel.target], relationships: {})]
+        child_list = relationships.map do |rel|
+          [build_child(element: elements.find { |i| i.id == rel.source }, relationships: [rel]),
+           build_child(element: elements.find { |i| i.id == rel.target }, relationships: [])]
         end.flatten
-        Archimate.array_to_id_hash(
-          (1..count).map { build_diagram(children: Archimate.array_to_id_hash(child_list), parent_id: options.fetch(:parent_id, build_id)) }
-        )
+        (1..count).map { build_diagram(children: child_list, parent_id: options.fetch(:parent_id, build_id)) }
       end
 
       def build_diagram(options = {})
@@ -104,16 +101,12 @@ module Archimate
           children: children,
           connection_router_type: nil,
           type: nil,
-          element_references: children.each_with_object([]) { |(_id, child), a| a.concat(child.element_references) }
+          element_references: children.map(&:element_references).flatten
         )
       end
 
       def build_children(options = {})
-        count = options.fetch(:count, 3)
-        (1..count).each_with_object({}) do |_i, a|
-          child = build_child
-          a[child.id] = child
-        end
+        (1..options.fetch(:count, 3)).map { build_child }
       end
 
       def build_child(options = {})
@@ -128,7 +121,7 @@ module Archimate
           children: build_children(count: with_children || 0),
           archimate_element: node_element.id,
           bounds: build_bounds,
-          source_connections: relationships.values.map do |rel|
+          source_connections: relationships.map do |rel|
             build_source_connection(for_relationship: rel)
           end,
           style: build_style
@@ -141,6 +134,7 @@ module Archimate
         Archimate::DataModel::SourceConnection.create(
           parent_id: options.fetch(:parent_id, build_id),
           id: options.fetch(:id, build_id),
+          name: options.fetch(:name, Faker::Company.catch_phrase),
           type: options.fetch(:type, random_element_type),
           source: options.fetch(:source, relationship&.source || build_id),
           target: options.fetch(:target, relationship&.target || build_id),
@@ -151,16 +145,14 @@ module Archimate
       def build_relationship_list(options = {})
         count = options.fetch(:with_relationships, 0)
         other_rels = options.fetch(:relationships, [])
-        elements = options.fetch(:elements, {})
+        elements = options.fetch(:elements, [])
         needed_elements = [0, count * 2 - elements.size].max
-        elements.merge!(build_element_list(with_elements: needed_elements)) unless needed_elements.zero?
-        el_ids = elements.values.map(&:id).each_slice(2).each_with_object([]) { |i, a| a << i }
-        Archimate.array_to_id_hash(
-          (1..count).map do
-            src_id, target_id = el_ids.shift
-            build_relationship(source: src_id, target: target_id, parent_id: options.fetch(:parent_id, build_id))
-          end + other_rels
-        )
+        elements.concat(build_element_list(with_elements: needed_elements)) unless needed_elements.zero?
+        el_ids = elements.map(&:id).each_slice(2).each_with_object([]) { |i, a| a << i }
+        (1..count).map do
+          src_id, target_id = el_ids.shift
+          build_relationship(source: src_id, target: target_id, parent_id: options.fetch(:parent_id, build_id))
+        end + other_rels
       end
 
       def build_relationship(options = {})
@@ -180,13 +172,12 @@ module Archimate
         count = options.fetch(:with_folders, 0)
         min_items = 1
         max_items = 10
-        (1..count).each_with_object({}) do |_i, a|
-          folder = build_folder(
+        (1..count).map do
+          build_folder(
             parent_id: options.fetch(:parent_id, build_id),
             items: (0..random(min_items, max_items)).each_with_object([]) { |_i2, a2| a2 << build_id },
-            folders: options.fetch(:child_folders, {})
+            folders: options.fetch(:child_folders, [])
           )
-          a[folder.id] = folder
         end
       end
 
@@ -199,7 +190,7 @@ module Archimate
           documentation: options.fetch(:documentation, []),
           properties: options.fetch(:properties, []),
           items: options.fetch(:items, []),
-          folders: options.fetch(:folders, {})
+          folders: options.fetch(:folders, [])
         )
       end
 

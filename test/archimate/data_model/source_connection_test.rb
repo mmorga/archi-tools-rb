@@ -10,6 +10,7 @@ module Archimate
         @subject = build_source_connection(
           id: "abc123",
           type: "three",
+          name: "test_name",
           source: "source",
           target: "target",
           relationship: "complicated"
@@ -24,7 +25,7 @@ module Archimate
 
       def test_to_s
         assert_match("SourceConnection", subject.to_s)
-        assert_match("[#{subject.name}]", subject.to_s)
+        assert_match("[#{subject.name}]", HighLine.uncolor(subject.to_s))
       end
     end
   end

@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-require "colorize"
-
 module Archimate
   module Cli
     class Merger

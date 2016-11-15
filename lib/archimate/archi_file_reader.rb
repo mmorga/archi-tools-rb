@@ -38,8 +38,8 @@ module Archimate
     end
 
     def parse_elements(model)
-      model.css(Conversion::ArchiFileFormat::FOLDER_XPATHS.join(",")).css('element[id]').each_with_object({}) do |i, a|
-        a[i["id"]] = DataModel::Element.new(
+      model.css(Conversion::ArchiFileFormat::FOLDER_XPATHS.join(",")).css('element[id]').map do |i|
+        DataModel::Element.new(
           parent_id: model.attr("id"), # TODO: this is wrong. Needs to be the parent of the node - not the top level model.
           id: i["id"],
           label: i["name"],
@@ -51,20 +51,18 @@ module Archimate
     end
 
     def parse_folders(node)
-      Archimate.array_to_id_hash(
-        node.css("> folder").each_with_object([]) do |i, a|
-          a << DataModel::Folder.new(
-            parent_id: node.attr("id"),
-            id: i.attr("id"),
-            name: i.attr("name"),
-            type: i.attr("type"),
-            documentation: parse_documentation(i),
-            properties: parse_properties(i),
-            items: child_element_ids(i),
-            folders: parse_folders(i)
-          )
-        end
-      )
+      node.css("> folder").each_with_object([]) do |i, a|
+        a << DataModel::Folder.new(
+          parent_id: node.attr("id"),
+          id: i.attr("id"),
+          name: i.attr("name"),
+          type: i.attr("type"),
+          documentation: parse_documentation(i),
+          properties: parse_properties(i),
+          items: child_element_ids(i),
+          folders: parse_folders(i)
+        )
+      end
     end
 
     def child_element_ids(node)
@@ -72,8 +70,8 @@ module Archimate
     end
 
     def parse_relationships(model)
-      model.css(Conversion::ArchiFileFormat::RELATION_XPATHS.join(",")).css("element").each_with_object({}) do |i, a|
-        a[i["id"]] = DataModel::Relationship.new(
+      model.css(Conversion::ArchiFileFormat::RELATION_XPATHS.join(",")).css("element").map do |i|
+        DataModel::Relationship.new(
           parent_id: model.attr("id"), # TODO: this is wrong - should be the immediate parent
           id: i["id"],
           type: i.attr("xsi:type").sub("archimate:", ""),
@@ -89,8 +87,8 @@ module Archimate
     def parse_diagrams(model)
       model.css(Conversion::ArchiFileFormat::DIAGRAM_XPATHS.join(",")).css(
         'element[xsi|type="archimate:ArchimateDiagramModel"]'
-      ).each_with_object({}) do |i, a|
-        a[i["id"]] = DataModel::Diagram.new(
+      ).map do |i|
+        DataModel::Diagram.new(
           parent_id: model.attr("id"),
           id: i["id"],
           name: i["name"],
@@ -105,28 +103,26 @@ module Archimate
     end
 
     def parse_children(node)
-      Archimate.array_to_id_hash(
-        node.css("> child").each_with_object([]) do |child_node, a|
-          child_hash = {
-            id: "id",
-            type: "type",
-            model: "model",
-            name: "name",
-            target_connections: "targetConnections",
-            archimate_element: "archimateElement"
-          }.each_with_object({}) do |(hash_attr, node_attr), a2|
-            a2[hash_attr] = child_node.attr(node_attr) # if child_node.attributes.include?(node_attr)
-          end
-          child_hash[:parent_id] = node.attr("id")
-          child_hash[:bounds] = parse_bounds(child_node)
-          child_hash[:children] = parse_children(child_node)
-          child_hash[:source_connections] = parse_source_connections(child_node)
-          child_hash[:documentation] = parse_documentation(child_node)
-          child_hash[:properties] = parse_properties(child_node)
-          child_hash[:style] = parse_style(child_node)
-          a << DataModel::Child.new(child_hash)
+      node.css("> child").each_with_object([]) do |child_node, a|
+        child_hash = {
+          id: "id",
+          type: "type",
+          model: "model",
+          name: "name",
+          target_connections: "targetConnections",
+          archimate_element: "archimateElement"
+        }.each_with_object({}) do |(hash_attr, node_attr), a2|
+          a2[hash_attr] = child_node.attr(node_attr) # if child_node.attributes.include?(node_attr)
         end
-      )
+        child_hash[:parent_id] = node.attr("id")
+        child_hash[:bounds] = parse_bounds(child_node)
+        child_hash[:children] = parse_children(child_node)
+        child_hash[:source_connections] = parse_source_connections(child_node)
+        child_hash[:documentation] = parse_documentation(child_node)
+        child_hash[:properties] = parse_properties(child_node)
+        child_hash[:style] = parse_style(child_node)
+        a << DataModel::Child.new(child_hash)
+      end
     end
 
     def parse_style(node)

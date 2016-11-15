@@ -22,7 +22,7 @@ module Archimate
         end
 
         def diff_conflicts(diff1, diff2)
-          diff2.model.diagrams[diff2.diagram_id].relationships.include?(diff1.relationship_id)
+          diff2.model.diagrams[diff2.diagram_idx].relationships.include?(diff1.relationship.id)
         end
       end
     end

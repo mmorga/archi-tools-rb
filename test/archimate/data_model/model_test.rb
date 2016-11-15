@@ -17,53 +17,65 @@ module Archimate
       end
 
       def test_build_model
-        m = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_folders: 4)
-        assert_equal 4, m.elements.size
-        assert_equal 2, m.relationships.size
-        assert_equal 2, m.diagrams.size
-        assert_equal 4, Model.flat_folder_hash(m.folders).size
+        assert_equal 4, @subject.elements.size
+        assert_equal 2, @subject.relationships.size
+        assert_equal 2, @subject.diagrams.size
+        assert_equal 4, Model.flat_folder_hash(@subject.folders).size
 
-        assert m.elements.all? { |_id, i| i.parent_id == m.id }
-        assert m.relationships.all? { |_id, i| i.parent_id == m.id }
-        assert m.diagrams.all? { |_id, i| i.parent_id == m.id }
-        assert m.folders.all? { |_id, i| i.parent_id == m.id }
+        assert @subject.elements.all? { |i| i.parent_id == @subject.id }
+        assert @subject.relationships.all? { |i| i.parent_id == @subject.id }
+        assert @subject.diagrams.all? { |i| i.parent_id == @subject.id }
+        assert @subject.folders.all? { |i| i.parent_id == @subject.id }
       end
 
       def test_equality_operator
-        m1 = build_model(with_elements: 3)
-        m2 = m1.dup
-        assert_equal m1, m2
+        m2 = @subject.clone
+        assert_equal @subject, m2
       end
 
       def test_equality_operator_false
-        m1 = build_model(with_elements: 3)
-        m2 = m1.with(name: "felix")
-        refute_equal m1, m2
+        m2 = @subject.with(name: "felix")
+        refute_equal @subject, m2
       end
 
       def test_find_folder
         inner_folder = build_folder
-        outer_folder = build_folder(folders: { inner_folder.id => inner_folder })
-        model = build_model(folders: { outer_folder.id => outer_folder })
+        outer_folder = build_folder(folders: [inner_folder])
+        model = build_model(folders: [outer_folder])
         assert_equal outer_folder, model.find_folder(outer_folder.id)
         assert_equal inner_folder, model.find_folder(inner_folder.id)
       end
 
-      def test_entity_id_lookup
-        m = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_folders: 4)
-        assert_equal 2, m.relationships.size
-        assert_equal 2, m.diagrams.size
-        assert_equal 4, m.elements.size
-        assert_equal 4, Model.flat_folder_hash(m.folders).size
-        m.relationships.all? { |id, r| assert_equal r, m.lookup(id) }
-        m.elements.all? { |id, r| assert_equal r, m.lookup(id) }
-        m.folders.all? { |id, r| assert_equal r, m.lookup(id) }
+      def test_lookup
+        @subject.relationships.each { |r| assert_equal r, @subject.lookup(r.id) }
+        @subject.elements.each { |e| assert_equal e, @subject.lookup(e.id) }
+        @subject.folders.each { |f| assert_equal f, @subject.lookup(f.id) }
+        @subject.diagrams.each { |d| assert_equal d, @subject.lookup(d.id) }
       end
 
       def test_clone
         s2 = @subject.clone
         assert_equal @subject, s2
         refute_equal @subject.object_id, s2.object_id
+      end
+
+      def test_insert_element
+        m2 = @subject.insert_element(build_element)
+        assert_kind_of Array, m2.elements
+        assert m2.elements.all? { |e| e.is_a?(Element) }
+      end
+
+      def test_insert_element_replacing_element
+        replaced_element = @subject.elements.first
+        replacement_element = replaced_element.with(label: replaced_element.label + "-changed")
+        refute_equal replaced_element, replacement_element
+
+        m2 = @subject.insert_element(replacement_element)
+
+        assert_equal @subject.elements.size, m2.elements.size
+        assert_includes m2.elements, replacement_element
+        refute_includes m2.elements, replaced_element
+        assert_equal @subject.elements.index(replaced_element), m2.elements.index(replacement_element)
       end
     end
   end

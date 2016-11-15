@@ -5,6 +5,7 @@ module Archimate
   module DataModel
     class ChildTest < Minitest::Test
       def setup
+        @model = build_model(diagrams: build_diagram_list(with_diagrams: 1))
         @subject = build_child(
           with_children: 3,
           relationships: build_relationship_list(with_relationships: 2)
@@ -45,8 +46,13 @@ module Archimate
       def test_element_references
         expected = []
         expected << @subject.archimate_element
-        expected.concat @subject.children.values.map { |child| child.archimate_element }
+        expected.concat(@subject.children.map(&:archimate_element))
         assert_equal expected, @subject.element_references
+      end
+
+      def test_child_element
+        skip("TODO")
+        assert_equal @model.lookup(@element_id), @subject.element
       end
     end
   end

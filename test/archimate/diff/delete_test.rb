@@ -31,9 +31,9 @@ module Archimate
         assert_match "deleted", diff.to_s
       end
 
-      def test_diagram_id
-        diff = Delete.new("Model<abcd1234>/diagrams/1234abcd/children/3439023/source_connection/384793837", model, "old")
-        assert_equal "1234abcd", diff.diagram_id, "Expected to find diagram id for #{diff.path}"
+      def test_diagram_idx
+        diff = Delete.new("Model<abcd1234>/diagrams/[0]/children/[0]/source_connection/[0]", model, "old")
+        assert_equal 0, diff.diagram_idx, "Expected to find diagram idx for #{diff.path}"
       end
     end
   end

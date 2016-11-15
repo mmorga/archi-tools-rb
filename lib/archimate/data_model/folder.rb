@@ -15,7 +15,7 @@ module Archimate
       attribute :items, Strict::Array.member(Strict::String)
       attribute :documentation, DocumentationList
       attribute :properties, PropertiesList
-      attribute :folders, Strict::Hash
+      attribute :folders, Strict::Array.member(Folder)
 
       def self.create(options = {})
         new_opts = {
@@ -23,7 +23,7 @@ module Archimate
           items: [],
           documentation: [],
           properties: [],
-          folders: {}
+          folders: []
         }.merge(options)
         Folder.new(new_opts)
       end
@@ -41,21 +41,32 @@ module Archimate
           items: items.map(&:clone),
           documentation: documentation.map(&:clone),
           properties: properties.map(&:clone),
-          folders: folders.each_with_object({}) { |(k, v), a| a[k] = v.clone }
+          folders: folders.map(&:clone)
         )
       end
 
-      def self.find_in_folders(folder_hash, folder_id)
-        return folder_hash[folder_id] if folder_hash.keys.include?(folder_id)
-        folder_hash.values.each do |v|
-          f = find_in_folders(v.folders, folder_id)
-          return f unless f.nil?
+      def self.find_in_folders(folders, folder_id)
+        folder = folders.find { |i| i.id == folder_id }
+        return folder unless folder.nil?
+
+        folders.each do |f|
+          folder = find_in_folders(f.folders, folder_id)
+          return folder unless folder.nil?
+        end
+        nil
+      end
+
+      def find_folder(folder_id)
+        return self if id == folder_id
+        folders.each do |f|
+          found_folder = f.find_folder(folder_id)
+          return found_folder unless found_folder.nil?
         end
         nil
       end
 
       def to_s
-        "#{'Folder'.cyan.italic}<#{id}>[#{name.white.underline}]"
+        "#{'Folder'.cyan}<#{id}>[#{name.white.underline}]"
       end
     end
     Dry::Types.register_class(Folder)

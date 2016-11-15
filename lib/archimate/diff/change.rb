@@ -24,7 +24,7 @@ module Archimate
       end
 
       def diff_type
-        'CHANGE:'.yellow
+        HighLine.color('CHANGE:', :change)
       end
 
       def to_s

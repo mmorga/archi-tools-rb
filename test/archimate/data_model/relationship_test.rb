@@ -67,7 +67,7 @@ module Archimate
           source: "src",
           target: "tar"
         )
-        assert_equal "complicated<abc123>[] src -> tar", rel.to_s.uncolorize
+        assert_equal "complicated<abc123>[] src -> tar", HighLine.uncolor(rel.to_s)
       end
 
       def test_element_reference

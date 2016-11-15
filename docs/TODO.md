@@ -1,6 +1,8 @@
 # TODO
 
-* [ ] Add other entities to describable_model (like Child and SourceConnection).
+* [ ] Figure out how to make rmagick optional and/or remove rmagick dependency
+* [ ] Decide between ox and nokogiri and eliminate the alternate
+* [X] Use one color method - currently using HighLine and Colorize
 * [ ] Refactor merge to pull conflict detection out
 * [ ] Refactor merge to pull apply diffs out
 * [X] Clean up the way that the describe is done on data model
@@ -8,13 +10,13 @@
 * [ ] Data model items that reference something else by id should have the actual object available - not just the id
 * [X] Should be a master hash index of id to object in Model
 * [ ] Implement check for de-duplicated merges
-* [ ] Improve description of diffs for conflict display
+* [X] Improve description of diffs for conflict display
 * [ ] Convert all CLIs to use AIO
 * [ ] Eliminate use of Document in favor of Model
   - [ ] cli/archi.rb
   - [ ] cli/cleanup.rb
   - [ ] cli/convert.rb
-  - [ ] cli/svger.rb
+  - [X] cli/svger.rb
 * [ ] See what can be done about performance
   - Reading file 11-12 secs
   - deleted relationships referenced in diagrams is slow

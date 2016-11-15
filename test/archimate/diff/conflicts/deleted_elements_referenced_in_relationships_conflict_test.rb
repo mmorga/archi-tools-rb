@@ -18,14 +18,14 @@ module Archimate
               elements: elements,
               relationships: relationships
             ),
-            relationships: relationships.values
+            relationships: relationships
           )
 
-          @element = @model.elements.values.first
-          @relationship = @model.relationships.values.first
+          @element = @model.elements.first
+          @relationship = @model.relationships.first
           @diff_name = Archimate::Diff::Delete.new("Model<#{@model.id}>/name", @model, @model.name)
-          @diff1 = Archimate::Diff::Insert.new("Model<#{@model.id}>/relationships/#{@relationship.id}", @model, @relationship)
-          @diff2 = Archimate::Diff::Delete.new("Model<#{@model.id}>/elements/#{@element.id}", @model, @element)
+          @diff1 = Archimate::Diff::Insert.new("Model<#{@model.id}>/relationships/[0]", @model, @relationship)
+          @diff2 = Archimate::Diff::Delete.new("Model<#{@model.id}>/elements/[0]", @model, @element)
           @subject = DeletedElementsReferencedInRelationshipsConflict.new([@diff_name, @diff1], [])
         end
 

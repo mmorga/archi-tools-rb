@@ -40,13 +40,13 @@ module Archimate
       end
 
       def to_s
-        "#{type.black.italic}<#{id}>[#{(name || '').black.underline}]".on_light_magenta + " #{source} -> #{target}"
+        "#{type.black}<#{id}>[#{(name || '').black.underline}]".on_light_magenta + " #{source} -> #{target}"
       end
 
       def element_reference
         [@source, @target]
       end
-      Dry::Types.register_class(Relationship)
     end
+    Dry::Types.register_class(Relationship)
   end
 end

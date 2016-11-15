@@ -13,7 +13,7 @@ module Archimate
 
       def test_to_s
         el = build_element(id: "abc123", type: "DataObject", label: "Thing")
-        assert_equal "DataObject<abc123>[Thing]", el.to_s.uncolorize
+        assert_equal "DataObject<abc123>[Thing]", HighLine.uncolor(el.to_s)
       end
 
       def test_layer

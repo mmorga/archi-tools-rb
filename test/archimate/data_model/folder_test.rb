@@ -23,7 +23,7 @@ module Archimate
 
       def test_build_folders_empty
         result = build_folder_list(with_folders: 0)
-        assert result.is_a?(Hash)
+        assert result.is_a?(Array)
         assert_empty(result)
       end
 
@@ -38,7 +38,7 @@ module Archimate
           assert_empty f.send(sym)
         end
 
-        assert_instance_of Hash, f.folders
+        assert_instance_of Array, f.folders
         assert_empty f.folders
         refute_nil f.parent_id
       end

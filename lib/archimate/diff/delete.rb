@@ -21,7 +21,7 @@ module Archimate
       end
 
       def diff_type
-        'DELETE:'.red
+        HighLine.color('DELETE:', :delete)
       end
 
       def to_s

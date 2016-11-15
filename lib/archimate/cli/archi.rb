@@ -33,7 +33,7 @@ module Archimate
              required: true,
              desc: "Write output to OUTPUTDIR"
       def svg(archifile)
-        Archimate::Cli::Svger.new.make_svgs(archifile, options[:output])
+        Archimate::Cli::Svger.export_svgs(archifile, Archimate::AIO.new)
       end
 
       desc "dupes ARCHIFILE", "List all duplicate elements in Archi file"

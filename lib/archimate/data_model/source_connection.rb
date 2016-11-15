@@ -51,7 +51,7 @@ module Archimate
       end
 
       def type_name
-        "#{'SourceConnection'.blue.italic}[#{(name || '').black.underline}]".on_light_magenta
+        "#{'SourceConnection'.blue}[#{(@name || '').white.underline}]".on_light_magenta
       end
 
       def to_s

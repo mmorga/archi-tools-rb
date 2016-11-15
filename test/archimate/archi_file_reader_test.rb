@@ -16,11 +16,11 @@ module Archimate
     def test_folders
       folders = model.folders
       assert_equal 8, folders.size
-      assert folders.values.all? { |e| e.is_a? DataModel::Folder }
-      assert_equal 5, folders['8c90fdfa'].folders.size
-      assert_equal 30, folders['8c90fdfa'].folders['fa63373b'].items.size
-      assert folders['8c90fdfa'].folders['fa63373b'].items.all? { |e| e.is_a? String }
-      assert_equal "1544", folders['8c90fdfa'].folders['fa63373b'].items[0]
+      assert folders.all? { |e| e.is_a? DataModel::Folder }
+      assert_equal 5, folders.find { |i| i.id == '8c90fdfa' }.folders.size
+      assert_equal 30, folders.find { |i| i.id == '8c90fdfa' }.folders.find { |i| i.id == 'fa63373b' }.items.size
+      assert folders.find { |i| i.id == '8c90fdfa' }.folders.find { |i| i.id == 'fa63373b' }.items.all? { |e| e.is_a? String }
+      assert_equal "1544", folders.find { |i| i.id == '8c90fdfa' }.folders.find { |i| i.id == 'fa63373b' }.items[0]
     end
   end
 end

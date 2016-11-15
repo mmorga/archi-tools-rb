@@ -7,7 +7,6 @@
 /db/
 /doc/
 /generated/
-/Gemfile.lock
 /pkg/
 /spec/reports/
 /tmp/

@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-require "colorize"
-
 module Archimate
   module Cli
     class Mapper
@@ -25,7 +23,7 @@ module Archimate
       def header_row(widths, headers)
         titles = []
         widths.each_with_index { |w, i| titles << "%-#{w}s" % headers[i] }
-        @output.puts titles.map { |t| t.capitalize.colorize(mode: :bold, color: :blue) }.join(COL_DIVIDER.light_black)
+        @output.puts titles.map { |t| t.capitalize.bold.blue }.join(COL_DIVIDER.light_black)
         @output.puts widths.map { |w| "-" * w }.join("-+-").light_black
       end
 
@@ -53,7 +51,7 @@ module Archimate
         initial_widths = headers.map(&:size)
         diagrams.each_with_object(initial_widths) do |diagram, memo|
           diagram.slice(0, headers.size).each_with_index do |o, i|
-            memo[i] = !o.nil? && o.uncolorize.size > memo[i] ? o.uncolorize.size : memo[i]
+            memo[i] = !o.nil? && HighLine.uncolor(o).size > memo[i] ? HighLine.uncolor(o).size : memo[i]
           end
           memo
         end
@@ -88,7 +86,7 @@ module Archimate
         end
 
         folder_paths.keys.sort.each do |folder_name|
-          @output.puts ("%-#{widths.inject(COL_DIVIDER.size * (HEADERS.size - 1), &:+)}s" % folder_name).colorize(mode: :bold, color: :green, background: :light_black)
+          @output.puts ("%-#{widths.inject(COL_DIVIDER.size * (HEADERS.size - 1), &:+)}s" % folder_name).bold.green.on_light_black
           output_diagrams(process_diagrams(folder_paths[folder_name].css(">" + DIAGRAM_SELECTOR)), widths)
         end
 

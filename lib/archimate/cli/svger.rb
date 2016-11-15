@@ -1,5 +1,10 @@
 # frozen_string_literal: true
-require 'RMagick'
+
+begin
+  require 'RMagick'
+rescue LoadError
+  $stderr.puts "SVG production depends on ImageMagick and the RMagick gem. Install ImageMagick from http://www.imagemagick.org/ and 'gem install rmagick'"
+end
 
 module Archimate
   module Cli
@@ -16,13 +21,19 @@ module Archimate
         "BusinessActor" => "#actor-badge"
       }.freeze
 
-      Struct.new("Bounds", :x, :y, :width, :height)
+      def self.export_svgs(archi_file, aio)
+        model = Archimate::ArchiFileReader.read(archi_file)
+        new(model, aio).export_svgs
+      end
 
-      def initialize
+      def initialize(model, aio)
+        @model = model
+        @aio = aio
         reset_min_max
         @todos = Hash.new(0)
       end
 
+      # TODO: refactor this to a font/style class
       def text_width(text)
         draw = Magick::Draw.new
         draw.font = "/System/Library/Fonts/LucidaGrande.ttc"
@@ -30,6 +41,7 @@ module Archimate
         draw.get_type_metrics(text).width
       end
 
+      # TODO: refactor this to a font/style class
       def fit_text_to_width(text, width)
         # t = Text.new
         results = []
@@ -50,15 +62,11 @@ module Archimate
         results
       end
 
-      def element_type(el)
-        el.attribute_with_ns("type", XSI).value[10..-1]
-      end
-
       def draw_element_rect(xml, element, ctx)
+        return if element.is_a?(Archimate::DataModel::Model) #TODO: why is this happening?
         x = ctx["x"].to_i + ctx["width"].to_i - 25
         y = ctx["y"].to_i + 5
-        el_type = element_type(element)
-        case el_type
+        case element.type
         when "ApplicationService", "BusinessService", "InfrastructureService"
           xml.rect(x: ctx["x"], y: ctx["y"], width: ctx["width"], height: ctx["height"], rx: "27.5", ry: "27.5")
         when "ApplicationInterface", "BusinessInterface"
@@ -96,25 +104,21 @@ module Archimate
           xml.rect(x: ctx["x"], y: ctx["y"], width: ctx["width"], height: "14", class: "topbox")
         else
           # puts "TODO: implement #{el_type}"
-          $todos[el_type] += 1
+          puts element
+          # $todos[element&.type] += 1
           xml.rect(x: ctx["x"], y: ctx["y"], width: ctx["width"], height: ctx["height"])
         end
       end
 
       def element_text_bounds(element, ctx)
-        case element_type(element)
+        return Archimate::DataModel::Bounds.zero if element.is_a?(Archimate::DataModel::Model) #TODO: why is this happening?
+        case element.type
         when "ApplicationService"
-          {
-            x: ctx["x"].to_i + 10, y: ctx["y"].to_i, width: ctx["width"].to_i - 20, height: ctx["height"]
-          }
+          ctx.with(x: ctx.x + 10, y: ctx.y, width: ctx.width - 20, height: ctx.height)
         when "DataObject"
-          {
-            x: ctx["x"].to_i + 5, y: ctx["y"].to_i + 14, width: ctx["width"].to_i - 10, height: ctx["height"]
-          }
+          ctx.with(x: ctx.x + 5, y: ctx.y + 14, width: ctx.width - 10, height: ctx.height)
         else
-          {
-            x: ctx["x"].to_i + 5, y: ctx["y"].to_i, width: ctx["width"].to_i - 30, height: ctx["height"]
-          }
+          ctx.with(x: ctx.x + 5, y: ctx.y, width: ctx.width - 30, height: ctx.height)
         end
       end
 
@@ -125,12 +129,6 @@ module Archimate
         @max_y = 100
       end
 
-      def parse_bounds(bounds_node)
-        b = Hash.new { |h, k| h[k] = 0 }
-        bounds_node.attributes.select { |k, _v| %w(x y width height).include? k }.each_pair { |k, v| b[k] = v.value.to_i }
-        Struct::Bounds.new(b["x"], b["y"], b["width"], b["height"])
-      end
-
       def compute_drawing_bounds(b)
         @min_x = b.x if b.x < @min_x
         @max_x = (b.x + b.width) if (b.x + b.width) > @max_x
@@ -138,36 +136,37 @@ module Archimate
         @max_y = b.y + b.height if b.y + b.height > @max_y
       end
 
-      def draw_element(xml, obj, context = nil)
-        bounds = parse_bounds(obj.at_css(">bounds"))
+      def draw_element(xml, child, context = nil)
+        bounds = child.bounds
         compute_drawing_bounds(bounds)
-        element_id = obj.attr("archimateElement") || obj.attr("id")
-        element = obj.document.at_css("##{element_id}")
-        group_attrs = { id: element_id, class: element_type(element) }
+        element_id = child.archimate_element
+        element = @model.lookup(element_id)
+        group_class = element.is_a?(Archimate::DataModel::Model) ? "" : element&.type
+        group_attrs = { id: element_id, class: group_class }
         group_attrs[:transform] = "translate(#{context['x']}, #{context['y']})" unless context.nil?
         xml.g(group_attrs) do
           draw_element_rect(xml, element, bounds)
-          tctx = element_text_bounds(element, bounds)
-          y = tctx[:y].to_i
+          text_bounds = element_text_bounds(element, bounds)
+          y = text_bounds.y
           x = bounds.x + (bounds.width / 2)
-          content = element.attr("name") || element.at_css("content").nil? ? "" : element.at_css("content").text
-          fit_text_to_width(content, tctx[:width].to_i).each do |line|
+          content = element.name || ""
+          fit_text_to_width(content, text_bounds.width).each do |line|
             y += 17
             xml.text_(x: x, y: y, "text-anchor" => :middle) do
               xml.text line
             end
           end
-          obj.css(">child").each { |child| draw_element(xml, child, bounds) }
+          child.children.values.each { |c| draw_element(xml, c, bounds) }
         end
       end
 
       def pos_element(element)
-        offset = Struct::Bounds.new(0, 0, 0, 0)
+        offset = Archimate::DataModel::Bounds.zero
+        return offset if element.nil?
         el = element.parent
-        while raw_bounds = el.at_css(">bounds")
-          bounds = parse_bounds(raw_bounds)
-          offset.x += bounds.x
-          offset.y += bounds.y
+        while el.bounds
+          bounds = el.bounds
+          offset = offset.with(x: offset.x + bounds.x, y: offset.y + bounds.y)
           el = el.parent
         end
         offset
@@ -183,48 +182,51 @@ module Archimate
         # Same for y
       end
 
-      def draw_connection(xml, obj, _context = nil)
-        obj.css("sourceConnection").each do |src_conn|
-          source = obj.document.at_css("##{src_conn.attr('source')}")
-          source_bounds = parse_bounds(source.at_css(">bounds"))
-          target = obj.document.at_css("##{src_conn.attr('target')}")
-          target_bounds = parse_bounds(target.at_css(">bounds"))
+      def draw_connection(xml, child, _context = nil)
+        child.source_connections.each do |src_conn|
+          source = src_conn.in_model.lookup(src_conn.source)
+          next unless source
+          target = src_conn.in_model.lookup(src_conn.target)
+          next unless target
           src_offset = pos_element(source)
           target_offset = pos_element(target)
-          next if source.ancestors.include?(target)
-          next if target.ancestors.include?(source)
-          rel = src_conn.key?("relationship") ? element_type(obj.document.at_css("##{src_conn.attr('relationship')}")) : ""
-          startx = src_offset.x + source_bounds.x + (source_bounds.width / 2)
-          starty = src_offset.y + source_bounds.y + (source_bounds.height / 2)
-          endx = target_offset.x + target_bounds.x + (target_bounds.width / 2)
-          endy = target_offset.y + target_bounds.y + (target_bounds.height / 2)
+          # TODO: implement ancestors in DataModel::Element
+          next if source&.ancestors&.include?(target)
+          next if target&.ancestors&.include?(source)
+          rel = src_conn.relationship || ""
+          startx = src_offset.x + source.bounds.x + (source.bounds.width / 2)
+          starty = src_offset.y + source.bounds.y + (source.bounds.height / 2)
+          endx = target_offset.x + target.bounds.x + (target.bounds.width / 2)
+          endy = target_offset.y + target.bounds.y + (target.bounds.height / 2)
           xml.path(d: "M #{startx} #{starty} L #{endx} #{endy}", class: rel) do |path|
             path.title do |title|
-              source_element = source.key?("archimateElement") ? obj.document.at_css("##{source.attr('archimateElement')}").attr("name") : ""
-              target_element = target.key?("archimateElement") ? obj.document.at_css("##{target.attr('archimateElement')}").attr("name") : ""
+              source_element = source.element&.name || ""
+              target_element = target.element&.name || ""
               title.text "#{rel}: #{source_element} to #{target_element}" unless source_element.empty? || target_element.empty?
             end
           end
         end
       end
 
-      def make_svgs(archi_file, output_dir)
-        doc = Nokogiri::XML(File.open(archi_file))
+      def svg_template
+        Nokogiri::XML::Document.parse(File.read(File.join(File.dirname(__FILE__), "svg_template.svg")))
+      end
 
-        doc.css('element[xsi|type="archimate:ArchimateDiagramModel"]').each do |diagram|
+      def export_svgs
+        @model.diagrams.each do |diagram|
           reset_min_max
-          svg_doc = Nokogiri::XML::Document.parse(File.read(File.join(File.dirname(__FILE__), "svg_template.svg")))
+          svg_doc = svg_template
           svg = svg_doc.at_css("svg")
 
-          name = diagram.attr("name")
+          name = diagram.name
           # TODO: use output message helper puts name
-          diagram.css(">child").each do |child|
+          diagram.children.each do |child|
             Nokogiri::XML::Builder.with(svg) do |xml|
               draw_element(xml, child)
             end
           end
 
-          diagram.css(">child").each do |child|
+          diagram.children.each do |child|
             Nokogiri::XML::Builder.with(svg) do |xml|
               draw_connection(xml, child)
             end
@@ -240,7 +242,7 @@ module Archimate
           svg.set_attribute(:height, height)
           svg.set_attribute("viewBox", "#{x} #{y} #{width} #{height}")
 
-          File.open(File.join(output_dir, "#{name}.svg"), "wb") do |f|
+          File.open(File.join(@aio.output_dir, "#{name}.svg"), "wb") do |f|
             f.write(svg_doc.to_xml(encoding: 'UTF-8', indent: 2))
           end
         end

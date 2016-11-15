@@ -10,6 +10,9 @@ HighLine.color_scheme = HighLine::ColorScheme.new do |cs|
   cs[:error]           = [:bold, :red]
   cs[:warning]         = [:bold, :yellow]
   cs[:debug]           = [:gray]
+  cs[:insert]          = [:bold, :green]
+  cs[:change]          = [:bold, :yellow]
+  cs[:delete]          = [:bold, :red]
 end
 
 module Archimate
@@ -22,6 +25,7 @@ module Archimate
     attr_reader :verbose
     attr_reader :force
     attr_reader :progressbar
+    attr_reader :output_dir
 
     def initialize(options = {})
       opts = {
@@ -40,6 +44,7 @@ module Archimate
       @uout = opts[:uout]
       @verbose = opts[:verbose]
       @force = opts[:force]
+      @output_dir = Dir.pwd
       @hl = HighLine.new(@uin, @uout)
       @progressbar = nil
     end

@@ -42,76 +42,90 @@ module Archimate
 
       # Returns true if this diff is for a diagram (not a part within a diagram)
       def diagram?
-        path =~ %r{/diagrams/([^/]+)$} ? true : false
+        path =~ %r{/diagrams/\[(\d+)\]$} ? true : false
       end
 
-      def diagram_id
-        m = path.match(%r{/diagrams/([^/]+)/?})
-        m[1] if m
+      def diagram_idx
+        m = path.match(%r{/diagrams/\[(\d+)\]/?})
+        m[1].to_i if m
       end
 
       def in_diagram?
-        path =~ %r{/diagrams/([^/]+)/}
+        path =~ %r{/diagrams/\[(\d+)\]/}
       end
 
       def element?
-        path =~ %r{/elements/([^/]+)$} ? true : false
+        path =~ %r{/elements/\[(\d+)\]$} ? true : false
       end
 
       def in_element?
-        path =~ %r{/elements/([^/]+)/} ? true : false
+        path =~ %r{/elements/\[(\d+)\]/} ? true : false
       end
 
-      def element_id
-        m = path.match(%r{/elements/([^/]+)/?})
-        m[1] if m
+      def element_idx
+        m = path.match(%r{/elements/\[(\d+)\]/?})
+        m[1].to_i if m
       end
 
       def in_folder?
-        path =~ %r{/folders/([^/]+)/} ? true : false
+        path =~ %r{/folders/\[(\d+)\]/} ? true : false
       end
 
-      def folder_id
-        m = path.match(%r{/folders/([^/]+)/?})
-        m[1] if m
+      def folder_idx
+        m = path.match(%r{/folders/\[(\d+)\]/?})
+        m[1].to_i if m
       end
 
       def relationship?
-        path =~ %r{/relationships/([^/]+)$} ? true : false
+        path =~ %r{/relationships/\[(\d+)\]$} ? true : false
       end
 
       def in_relationship?
-        path =~ %r{/relationships/([^/]+)/} ? true : false
+        path =~ %r{/relationships/\[(\d+)\]/} ? true : false
       end
 
-      def relationship_id
-        m = path.match(%r{/relationships/([^/]+)/?})
-        m[1] if m
+      def relationship_idx
+        m = path.match(%r{/relationships/\[(\d+)\]/?})
+        m[1].to_i if m
       end
 
       def relationship
-        model.relationships[relationship_id] if relationship?
+        model.relationships[relationship_idx] if relationship?
+      end
+
+      def element
+        model.elements[element_idx] if element?
       end
 
       def element_and_remaining_path(model)
-        m = path.match(%r{/elements/([^/]+)(/?.*)$})
-        [model.elements[m[1]], m[2]] if m
+        m = path.match(%r{/elements/\[(\d+)\](/?.*)$})
+        [model.elements[m[1].to_i], m[2]] if m
       end
 
       def folder_and_remaining_path(model)
-        idx = path.rindex(%r{/folders/([^/]+)(.*)$})
-        m = path[idx..-1].match(%r{/folders/([^/]+)(.*)$})
-        [model.find_folder(m[1]), m[2]] if m
+        re = Regexp.compile(%r{/folders/\[(\d+)\]})
+        folder_parts = path.split(re).reject(&:empty?)
+        folder_parts.shift # Throw away leading parts
+        remaining_path = folder_parts.pop
+        folder_parts = folder_parts.map(&:to_i)
+
+        folder = model
+        folder = folder.folders[folder_parts.shift] until folder_parts.empty?
+        result = [folder, remaining_path]
+        # idx = path.rindex(%r{/folders/\[(\d+)\](.*)$})
+        # m = path[idx..-1].match(%r{/folders/\[(\d+)\](.*)$})
+        # result = m ? [model.find_folder(m[1]), m[2]] : nil
+        result
       end
 
       def relationship_and_remaining_path(model)
-        m = path.match(%r{/relationships/([^/]+)(/?.*)$})
-        [model.relationships[m[1]], m[2]] if m
+        m = path.match(%r{/relationships/\[(\d+)\](/?.*)$})
+        [model.relationships[m[1].to_i], m[2]] if m
       end
 
       def diagram_and_remaining_path(model)
-        m = path.match(%r{/diagrams/([^/]+)(/?.*)$})
-        [model.diagrams[m[1]], m[2]] if m
+        m = path.match(%r{/diagrams/\[(\d+)\](/?.*)$})
+        [model.diagrams[m[1].to_i], m[2]] if m
       end
 
       def model_and_remaining_path(model)
@@ -119,6 +133,7 @@ module Archimate
         [model, m[1]] if m
       end
 
+      # TODO: add other parents here like SourceConnection and Child
       def describeable_parent(model)
         if in_element?
           element_and_remaining_path(model)

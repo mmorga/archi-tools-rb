@@ -12,7 +12,7 @@ module Archimate
       attribute :target_connections, Strict::String.optional # TODO: this is a list encoded in a string
       attribute :archimate_element, Strict::String.optional
       attribute :bounds, OptionalBounds
-      attribute :children, Strict::Hash
+      attribute :children, Strict::Array.member(Child)
       attribute :source_connections, SourceConnectionList
       attribute :documentation, DocumentationList
       attribute :properties, PropertiesList
@@ -26,7 +26,7 @@ module Archimate
           target_connections: nil,
           archimate_element: nil,
           bounds: nil,
-          children: {},
+          children: [],
           source_connections: [],
           documentation: [],
           properties: [],
@@ -49,7 +49,7 @@ module Archimate
           target_connections: target_connections&.clone,
           archimate_element: archimate_element&.clone,
           bounds: bounds&.clone,
-          children: children.each_with_object({}) { |(k, v), a| a[k] = v.clone },
+          children: children.map(&:clone),
           source_connections: source_connections.map(&:clone),
           documentation: documentation.map(&:clone),
           properties: properties.map(&:clone),
@@ -58,14 +58,14 @@ module Archimate
       end
 
       def element_references
-        children.each_with_object([archimate_element]) do |(_id, child), a|
-          a.concat(child.element_references)
+        children.each_with_object([archimate_element]) do |i, a|
+          a.concat(i.element_references)
         end
       end
 
       def relationships
-        children.each_with_object(source_connections.map(&:relationship).compact) do |(_id, child), a|
-          a.concat(child.relationships)
+        children.each_with_object(source_connections.map(&:relationship).compact) do |i, a|
+          a.concat(i.relationships)
         end
       end
 
@@ -75,7 +75,6 @@ module Archimate
     end
 
     Dry::Types.register_class(Child)
-    ChildHash = Strict::Hash
   end
 end
 

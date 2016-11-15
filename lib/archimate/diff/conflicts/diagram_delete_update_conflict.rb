@@ -16,7 +16,7 @@ module Archimate
         end
 
         def diff_conflicts(diff1, diff2)
-          diff1.diagram_id == diff2.diagram_id
+          diff1.diagram_idx == diff2.diagram_idx
         end
       end
     end

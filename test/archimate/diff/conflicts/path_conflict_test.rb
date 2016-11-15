@@ -18,12 +18,12 @@ module Archimate
               elements: elements,
               relationships: relationships
             ),
-            relationships: relationships.values
+            relationships: relationships
           )
 
-          @element = @model.elements.values.first
-          @relationship = @model.relationships.values.first
-          @relationship2 = @model.relationships.values[1]
+          @element = @model.elements.first
+          @relationship = @model.relationships.first
+          @relationship2 = @model.relationships[1]
           @diff_name = Archimate::Diff::Delete.new("Model<#{@model.id}>/name", @model, @model.name)
 
           @diff1 = Archimate::Diff::Insert.new("Model<#{@model.id}>/relationships/#{@relationship.id}", @model, @relationship)

@@ -39,12 +39,13 @@ module Archimate
       end
 
       def to_s
-        AIO.layer_color(layer, "#{type.italic.light_black}<#{id}>[#{label.underline}]")
+        AIO.layer_color(layer, "#{type.light_black}<#{id}>[#{label.underline}]")
       end
 
       def layer
         Archimate::Constants::ELEMENT_LAYER.fetch(@type, "None")
       end
     end
+    Dry::Types.register_class(Element)
   end
 end

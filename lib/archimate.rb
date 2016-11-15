@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 require "nokogiri"
 require "highline"
-require "colorize"
 require "dry-types"
 require "dry-struct"
 require "archimate/version"
 require 'archimate/data_model'
+require 'archimate/aio'
+
+HighLine.colorize_strings
 
 module Archimate
   module Cli
@@ -49,7 +51,10 @@ module Archimate
     end
   end
 
-  autoload :AIO, 'archimate/aio'
+  module Svg
+    autoload :Font, 'archimate/svg/font'
+  end
+
   autoload :ArchiFileReader, 'archimate/archi_file_reader'
   autoload :Constants, 'archimate/constants'
   autoload :Diff, 'archimate/diff'
@@ -66,10 +71,6 @@ module Archimate
 
   def self.parse_xml(xml_str)
     Nokogiri::XML(xml_str)
-  end
-
-  def self.array_to_id_hash(ary)
-    Array(ary).each_with_object({}) { |i, a| a[i.id] = i }
   end
 
   def self.diff(local, remote)

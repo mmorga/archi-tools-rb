@@ -27,11 +27,10 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
   spec.metadata["yard.run"] = "yri" # use "yard" to build full HTML docs.
-  spec.required_ruby_version = '>= 2.1.0'
+  spec.required_ruby_version = '>= 2.3.0'
 
   spec.add_runtime_dependency "dry-struct", "~> 0.1.0"
   spec.add_runtime_dependency "nokogiri", "~> 1.6"
-  spec.add_runtime_dependency "colorize", "~> 0.7"
   spec.add_runtime_dependency "rmagick", "~> 2.15"
   spec.add_runtime_dependency "thor", "~> 0.19"
   spec.add_runtime_dependency "highline", "~> 1.7"
