@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 module Archimate
   class ArchiFileWriter
+    TEXT_SUBSTITUTIONS = [
+      ['&#13;', '&#xD;'],
+      ['"', '&quot;'],
+      ['&gt;', '>']
+    ].freeze
+
     attr_reader :model
 
     def self.write(model, archifile)
@@ -13,11 +19,30 @@ module Archimate
       @version = "3.1.1"
     end
 
+    def process_text(doc_str)
+      %w(documentation content).each do |tag|
+        TEXT_SUBSTITUTIONS.each do |from, to|
+          doc_str.gsub!(%r{<#{tag}>([^<]*#{from}[^<]*)</#{tag}>}) do |str|
+            str.gsub(from, to)
+          end
+        end
+      end
+      doc_str
+    end
+
     def write(archifile_io)
       builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
         serialize_model(xml)
       end
-      archifile_io.write(builder.to_xml)
+      archifile_io.write(
+        process_text(
+          builder.to_xml.gsub(
+            %r{<(/)?archimate:}, "<\\1"
+          ).gsub(
+            %r{<(/)?model}, "<\\1archimate:model"
+          )
+        )
+      )
     end
 
     def serialize(xml, collection)
@@ -90,7 +115,7 @@ module Archimate
       xml.property(remove_nil_values(key: property.key, value: property.value))
     end
 
-    def serialize_documentation(xml, documentation, element_name="documentation")
+    def serialize_documentation(xml, documentation, element_name = "documentation")
       xml.send(element_name) { xml.text(documentation.text) }
     end
 
@@ -130,16 +155,17 @@ module Archimate
     def serialize_diagram(xml, diagram)
       xml.element(
         remove_nil_values(
-          "xsi:type" => "archimate:ArchimateDiagramModel",
+          "xsi:type" => diagram.type || "archimate:ArchimateDiagramModel",
           "id" => diagram.id,
           "name" => diagram.name,
           "connectionRouterType" => diagram.connection_router_type,
-          "viewpoint" => diagram.viewpoint
+          "viewpoint" => diagram.viewpoint,
+          "background" => diagram.background
         )
       ) do
+        serialize(xml, diagram.children)
         serialize(xml, diagram.documentation)
         serialize(xml, diagram.properties)
-        serialize(xml, diagram.children)
       end
     end
 
@@ -167,10 +193,10 @@ module Archimate
     def archi_style_hash(style)
       {
         "fillColor" => archi_color_string(style&.fill_color),
+        "font" => archi_font_string(style&.font),
         "fontColor" => archi_color_string(style&.font_color),
         "lineColor" => archi_color_string(style&.line_color),
         "lineWidth" => style&.line_width,
-        "font" => archi_font_string(style&.font),
         "textAlignment" => style&.text_alignment,
         "textPosition" => style&.text_position
       }

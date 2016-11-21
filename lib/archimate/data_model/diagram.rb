@@ -12,7 +12,8 @@ module Archimate
       attribute :properties, PropertiesList
       attribute :children, Strict::Array.member(Child)
       attribute :connection_router_type, Coercible::Int.optional # TODO: fill this in, should be an enum
-      attribute :type, Strict::String.optional # TODO: remove this
+      attribute :type, Strict::String.optional
+      attribute :background, Coercible::Int.optional
 
       def self.create(options = {})
         new_opts = {
@@ -21,13 +22,14 @@ module Archimate
           children: [],
           viewpoint: nil,
           connection_router_type: nil,
-          type: nil
+          type: nil,
+          background: nil
         }.merge(options)
         Diagram.new(new_opts)
       end
 
       def comparison_attributes
-        [:@id, :@name, :@viewpoint, :@documentation, :@properties, :@children, :@connection_router_type, :@type]
+        [:@id, :@name, :@viewpoint, :@documentation, :@properties, :@children, :@connection_router_type, :@type, :@background]
       end
 
       def clone
@@ -40,7 +42,8 @@ module Archimate
           properties: properties.map(&:clone),
           children: children.map(&:clone),
           connection_router_type: connection_router_type,
-          type: type&.clone
+          type: type&.clone,
+          background: background
         )
       end
 

@@ -1,6 +1,6 @@
 # TODO
 
-* [ ] Not handling sketch diagram model in archi
+* [x] Not handling sketch diagram model in archi
 * [ ] Archi file could have ids that conflict (i.e. 2 relationships with same id - this is bad!!! Was it a bad merge or something worse)
 * [ ] make classes for each element and relationship type
 * [ ] figure out a better parent mechanism - it's really not fully cooked
@@ -8,7 +8,7 @@
 * [ ] Figure out how to make rmagick optional and/or remove rmagick dependency
 * [ ] Decide between ox and nokogiri and eliminate the alternate
 * [X] Use one color method - currently using HighLine and Colorize
-* [ ] Refactor merge to pull conflict detection out
+* [x] Refactor merge to pull conflict detection out
 * [ ] Refactor merge to pull apply diffs out
 * [X] Clean up the way that the describe is done on data model
 * [X] Permit model items to link back to their parent

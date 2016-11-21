@@ -3,11 +3,16 @@ module Archimate
   class ArchiFileReader
     def self.read(archifile)
       reader = new
-      reader.read(archifile)
+      reader.read(File.read(archifile))
+    end
+
+    def self.parse(archi_string)
+      reader = new
+      reader.read(archi_string)
     end
 
     def read(archifile)
-      parse(Nokogiri::XML(File.read(archifile)))
+      parse(Nokogiri::XML(archifile))
     end
 
     def parse(doc)
@@ -27,7 +32,7 @@ module Archimate
 
     def parse_documentation(node, element_name = "documentation")
       node.css(">#{element_name}").each_with_object([]) do |i, a|
-        a << DataModel::Documentation.new(text: i.content.strip, lang: i.attr("lang"), parent_id: node.attr("id"))
+        a << DataModel::Documentation.new(text: i.content, lang: i.attr("lang"), parent_id: node.attr("id"))
       end
     end
 
@@ -87,7 +92,8 @@ module Archimate
 
     def parse_diagrams(model)
       model.css(Conversion::ArchiFileFormat::DIAGRAM_XPATHS.join(",")).css(
-        'element[xsi|type="archimate:ArchimateDiagramModel"]'
+        'element[xsi|type="archimate:ArchimateDiagramModel"]',
+        'element[xsi|type="archimate:SketchModel"]'
       ).map do |i|
         DataModel::Diagram.new(
           parent_id: model.attr("id"),
@@ -98,7 +104,8 @@ module Archimate
           properties: parse_properties(i),
           children: parse_children(i),
           connection_router_type: i["connectionRouterType"],
-          type: i.attr("type")
+          type: i.attr("xsi:type"),
+          background: i.attr("background")
         )
       end
     end
