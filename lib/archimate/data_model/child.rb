@@ -9,6 +9,7 @@ module Archimate
       attribute :type, Strict::String.optional
       attribute :model, Strict::String.optional
       attribute :name, Strict::String.optional
+      attribute :content, Strict::String.optional
       attribute :target_connections, Strict::String.optional # TODO: this is a list encoded in a string
       attribute :archimate_element, Strict::String.optional
       attribute :bounds, OptionalBounds
@@ -17,12 +18,14 @@ module Archimate
       attribute :documentation, DocumentationList
       attribute :properties, PropertiesList
       attribute :style, OptionalStyle
+      attribute :child_type, Coercible::Int.optional
 
       def self.create(options = {})
         new_opts = {
           type: nil,
           model: nil,
           name: nil,
+          content: nil,
           target_connections: nil,
           archimate_element: nil,
           bounds: nil,
@@ -30,13 +33,18 @@ module Archimate
           source_connections: [],
           documentation: [],
           properties: [],
-          style: nil
+          style: nil,
+          child_type: nil
         }.merge(options)
         Child.new(new_opts)
       end
 
       def comparison_attributes
-        [:@id, :@type, :@model, :@name, :@target_connections, :@archimate_element, :@bounds, :@children, :@source_connections, :@documentation, :@properties, :@style]
+        [
+          :@id, :@type, :@model, :@name, :@content, :@target_connections,
+          :@archimate_element, :@bounds, :@children, :@source_connections,
+          :@documentation, :@properties, :@style, :@child_type
+        ]
       end
 
       def clone
@@ -46,6 +54,7 @@ module Archimate
           type: type&.clone,
           model: model&.clone,
           name: name&.clone,
+          content: content&.clone,
           target_connections: target_connections&.clone,
           archimate_element: archimate_element&.clone,
           bounds: bounds&.clone,
@@ -53,7 +62,8 @@ module Archimate
           source_connections: source_connections.map(&:clone),
           documentation: documentation.map(&:clone),
           properties: properties.map(&:clone),
-          style: style&.clone
+          style: style&.clone,
+          child_type: child_type
         )
       end
 

@@ -6,34 +6,57 @@ module Archimate
     # * path (reference to the path or attribute)
     # * from (invalid for insert)
     # * to (invalid for delete)
+    # TODO: I really need to have the from value - idx isn't enough to make sure when applying diffs
     class Difference
       attr_accessor :path # TODO: path is accessed as a stack, consider changing from string to stack
 
       def initialize(path)
         raise "Instantiating abstract Difference" if self.class == Difference
         @path = path
+        @array_re = Regexp.compile(/\[(\d+)\]/)
         yield self if block_given?
-      end
-
-      def apply(diffs)
-        diffs.map do |d|
-          diff = d.dup
-          diff.path = path
-          diff
-        end
       end
 
       def with(options = {})
         diff = dup
         diff.path = options.fetch(:path, path)
-        # diff.from = options.fetch(:from, from)
-        # diff.to = options.fetch(:to, to)
         diff
       end
 
       def ==(other)
         return false unless other.is_a?(Difference)
         @path == other.path
+      end
+
+      # Difference sorting is based on the path.
+      # Top level components are sorted in this order: (elements, relationships, diagrams, folders)
+      # Array entries are sorted by numeric order
+      # Others are sorted alphabetically
+      def <=>(other)
+        top_order = %w(elements relationships diagrams folders)
+        a = path_to_array
+        b = other.path_to_array
+
+        res = top_order.index(a.shift) <=> top_order.index(b.shift)
+        return res unless res.zero?
+
+        # a needs to be at least as long as b to get the zip behavior I want
+        a.push(nil) while a.size < b.size
+        # a, b = [a, b].sort { |x, y| y.size <=> x.size }
+        a.zip(b).each do |pa, pb|
+          return -1 if pb.nil?
+          return 1 if pa.nil?
+          res = pa <=> pb
+          return res unless res.zero?
+        end
+        0
+      end
+
+      def path_to_array
+        path.split("/")[1..-1].map do |p|
+          md = @array_re.match(p)
+          md ? md[1].to_i : p
+        end
       end
 
       def array?
@@ -71,11 +94,6 @@ module Archimate
         path =~ %r{/folders/\[(\d+)\]/} ? true : false
       end
 
-      def folder_idx
-        m = path.match(%r{/folders/\[(\d+)\]/?})
-        m[1].to_i if m
-      end
-
       def relationship?
         path =~ %r{/relationships/\[(\d+)\]$} ? true : false
       end
@@ -111,11 +129,7 @@ module Archimate
 
         folder = model
         folder = folder.folders[folder_parts.shift] until folder_parts.empty?
-        result = [folder, remaining_path]
-        # idx = path.rindex(%r{/folders/\[(\d+)\](.*)$})
-        # m = path[idx..-1].match(%r{/folders/\[(\d+)\](.*)$})
-        # result = m ? [model.find_folder(m[1]), m[2]] : nil
-        result
+        [folder, remaining_path]
       end
 
       def relationship_and_remaining_path(model)
@@ -133,7 +147,6 @@ module Archimate
         [model, m[1]] if m
       end
 
-      # TODO: add other parents here like SourceConnection and Child
       def describeable_parent(model)
         if in_element?
           element_and_remaining_path(model)

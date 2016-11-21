@@ -13,8 +13,8 @@ module Archimate
       end
 
       def test_change
-        d = Change.new(:path, from_model, to_model, "from_val", "to_val")
-        assert_equal :path, d.path
+        d = Change.new("Model<#{from_model.id}>/name", from_model, to_model, "from_val", "to_val")
+        assert_equal "Model<#{from_model.id}>/name", d.path
         assert_equal "from_val", d.from
         assert_equal "to_val", d.to
       end
@@ -27,6 +27,9 @@ module Archimate
       def test_fmt_kind
         diff = Change.new("Model<#{from_model.id}>/name", from_model, to_model, "old and busted", "new hotness")
         assert_match "CHANGE: ", HighLine.uncolor(diff.to_s)
+      end
+
+      def test_sort
       end
     end
   end

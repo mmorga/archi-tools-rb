@@ -113,6 +113,10 @@ module Archimate
         node_element = options.fetch(:element, build_element)
         relationships = options.fetch(:relationships, {})
         with_children = options.delete(:with_children)
+        source_connections = options.fetch(
+          :source_connections,
+          relationships.map { |rel| build_source_connection(for_relationship: rel) }
+        )
         Archimate::DataModel::Child.create(
           parent_id: options.fetch(:parent_id, build_id),
           id: options.fetch(:id, build_id),
@@ -121,10 +125,9 @@ module Archimate
           children: build_children(count: with_children || 0),
           archimate_element: node_element.id,
           bounds: build_bounds,
-          source_connections: relationships.map do |rel|
-            build_source_connection(for_relationship: rel)
-          end,
-          style: build_style
+          source_connections: source_connections,
+          style: build_style,
+          child_type: options.fetch(:child_type, nil)
         )
       end
 
@@ -164,7 +167,8 @@ module Archimate
           target: options.fetch(:target, build_id),
           name: options.fetch(:name, Faker::Company.catch_phrase),
           documentation: options.fetch(:documentation, []),
-          properties: options.fetch(:properties, [])
+          properties: options.fetch(:properties, []),
+          access_type: options.fetch(:access_type, nil)
         )
       end
 
@@ -219,7 +223,8 @@ module Archimate
           parent_id: options.fetch(:parent_id, build_id),
           name: options.fetch(:name, Faker::Name.name),
           size: options.fetch(:size, random(6, 20)),
-          style: options.fetch(:style, Faker::Name.name)
+          style: options.fetch(:style, Faker::Name.name),
+          font_data: nil
         )
       end
 
@@ -231,7 +236,8 @@ module Archimate
           line_color: build_color,
           font_color: build_color,
           line_width: random(1, 10),
-          font: build_font
+          font: build_font,
+          text_position: nil
         )
       end
 

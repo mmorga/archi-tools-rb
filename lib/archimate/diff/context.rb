@@ -13,7 +13,7 @@ module Archimate
         @path_stack = Array(path)
         if @path_stack.empty?
           m = @base || @local
-          unless m.nil? || m.is_a?(String)
+          if m.is_a?(DataModel::Model)
             root = m.class.name.split('::').last
             root += "<#{m.id}>" if m.respond_to?(:id)
             @path_stack << root

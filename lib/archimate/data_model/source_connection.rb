@@ -55,9 +55,8 @@ module Archimate
       end
 
       def to_s
-        els = in_model&.elements
-        s = els[source] unless els.nil?
-        t = els[target] unless els.nil?
+        s = in_model.lookup(source) unless source.nil?
+        t = in_model.lookup(target) unless target.nil?
         "#{type_name} #{s.nil? ? 'nothing' : s} -> #{t.nil? ? 'nothing' : t}"
       end
     end

@@ -148,6 +148,127 @@ module Archimate
         assert_equal outer_folder, m2
         assert_equal "/name", remaining_path
       end
+
+      def test_change
+        folder = model.folders.first
+        change_diff = Change.new("Model<#{model.id}>/folders/[0]/name", model, model, folder.name, folder.name + "changed")
+        insert_diff = Insert.new("Model<abcd1234>/diagrams/[3]/children/[0]", model, "new")
+
+        assert change_diff.change?
+        refute change_diff.insert?
+
+        assert insert_diff.insert?
+        refute insert_diff.change?
+      end
+
+      def test_describeable_parent_for_folder
+        folder_diff = Delete.new("Model<#{model.id}>/folders/[0]/name", model, model.folders.first.name)
+        assert_equal [model.folders.first, "/name"], folder_diff.describeable_parent(model)
+      end
+
+      def test_describeable_parent_for_element
+        diff = Delete.new("Model<#{model.id}>/elements/[0]/label", model, model.elements.first.label)
+        assert_equal [model.elements.first, "/label"], diff.describeable_parent(model)
+      end
+
+      def test_describeable_parent_for_relationship
+        diff = Delete.new("Model<#{model.id}>/relationships/[0]/name", model, model.relationships.first.name)
+        assert_equal [model.relationships.first, "/name"], diff.describeable_parent(model)
+      end
+
+      def test_sort
+        paths = [
+          "Model<bee5a0a7>/diagrams/[52]/children/[0]/bounds/x",
+          "Model<bee5a0a7>/diagrams/[52]/children/[1]/bounds/width",
+          "Model<bee5a0a7>/diagrams/[52]/children/[1]/bounds/x",
+          "Model<bee5a0a7>/diagrams/[52]/children/[1]/bounds/y",
+          "Model<bee5a0a7>/diagrams/[52]/children/[2]/bounds/width",
+          "Model<bee5a0a7>/diagrams/[52]/children/[2]/target_connections",
+          "Model<bee5a0a7>/diagrams/[64]/children/[0]/children/[1]/archimate_element",
+          "Model<bee5a0a7>/diagrams/[74]/children/[2]/children/[2]/archimate_element",
+          "Model<bee5a0a7>/diagrams/[90]/children/[7]/archimate_element",
+          "Model<bee5a0a7>/diagrams/[90]/children/[0]/archimate_element",
+          "Model<bee5a0a7>/elements/[1032]/label",
+          "Model<bee5a0a7>/elements/[135]/label",
+          "Model<bee5a0a7>/elements/[1430]/label",
+          "Model<bee5a0a7>/elements/[3]/label",
+          "Model<bee5a0a7>/relationships/[1009]/source",
+          "Model<bee5a0a7>/relationships/[100]/target",
+          "Model<bee5a0a7>/relationships/[4]/source",
+          "Model<bee5a0a7>/diagrams/[121]/children/[4]/children/[0]/archimate_element",
+          "Model<bee5a0a7>/diagrams/[121]/children/[4]/archimate_element",
+          "Model<bee5a0a7>/relationships/[5689]",
+          "Model<bee5a0a7>/folders/[8]/items/[46]",
+          "Model<bee5a0a7>/folders/[8]/items/[35]",
+          "Model<bee5a0a7>/folders/[8]/folders/[9]/folders/[2]",
+          "Model<bee5a0a7>/folders/[8]/folders/[6]/folders/[5]",
+          "Model<bee5a0a7>/folders/[8]/folders/[6]/folders/[4]",
+          "Model<bee5a0a7>/folders/[8]/folders/[37]",
+          "Model<bee5a0a7>/folders/[8]/folders/[33]/items/[2]",
+          "Model<bee5a0a7>/folders/[8]/folders/[1]/folders/[1]/folders/[0]",
+          "Model<bee5a0a7>/folders/[7]/items/[28]",
+          "Model<bee5a0a7>/folders/[6]/items/[6978]",
+          "Model<bee5a0a7>/folders/[6]/items/[6976]",
+          "Model<bee5a0a7>/elements/[1483]"
+        ]
+        expected_paths = [
+          "Model<bee5a0a7>/elements/[3]/label",
+          "Model<bee5a0a7>/elements/[135]/label",
+          "Model<bee5a0a7>/elements/[1032]/label",
+          "Model<bee5a0a7>/elements/[1430]/label",
+          "Model<bee5a0a7>/elements/[1483]",
+          "Model<bee5a0a7>/relationships/[4]/source",
+          "Model<bee5a0a7>/relationships/[100]/target",
+          "Model<bee5a0a7>/relationships/[1009]/source",
+          "Model<bee5a0a7>/relationships/[5689]",
+          "Model<bee5a0a7>/diagrams/[52]/children/[0]/bounds/x",
+          "Model<bee5a0a7>/diagrams/[52]/children/[1]/bounds/width",
+          "Model<bee5a0a7>/diagrams/[52]/children/[1]/bounds/x",
+          "Model<bee5a0a7>/diagrams/[52]/children/[1]/bounds/y",
+          "Model<bee5a0a7>/diagrams/[52]/children/[2]/bounds/width",
+          "Model<bee5a0a7>/diagrams/[52]/children/[2]/target_connections",
+          "Model<bee5a0a7>/diagrams/[64]/children/[0]/children/[1]/archimate_element",
+          "Model<bee5a0a7>/diagrams/[74]/children/[2]/children/[2]/archimate_element",
+          "Model<bee5a0a7>/diagrams/[90]/children/[0]/archimate_element",
+          "Model<bee5a0a7>/diagrams/[90]/children/[7]/archimate_element",
+          "Model<bee5a0a7>/diagrams/[121]/children/[4]/archimate_element",
+          "Model<bee5a0a7>/diagrams/[121]/children/[4]/children/[0]/archimate_element",
+          "Model<bee5a0a7>/folders/[6]/items/[6976]",
+          "Model<bee5a0a7>/folders/[6]/items/[6978]",
+          "Model<bee5a0a7>/folders/[7]/items/[28]",
+          "Model<bee5a0a7>/folders/[8]/folders/[1]/folders/[1]/folders/[0]",
+          "Model<bee5a0a7>/folders/[8]/folders/[6]/folders/[4]",
+          "Model<bee5a0a7>/folders/[8]/folders/[6]/folders/[5]",
+          "Model<bee5a0a7>/folders/[8]/folders/[9]/folders/[2]",
+          "Model<bee5a0a7>/folders/[8]/folders/[33]/items/[2]",
+          "Model<bee5a0a7>/folders/[8]/folders/[37]",
+          "Model<bee5a0a7>/folders/[8]/items/[35]",
+          "Model<bee5a0a7>/folders/[8]/items/[46]"
+        ]
+        diffs = paths.map { |p| Delete.new(p, model, "n/a") }
+
+        result = diffs.sort
+
+        assert_equal expected_paths, result.map(&:path)
+      end
+
+      def test_sort_bounds_attributes
+        d1 = Delete.new("Model<bee5a0a7>/diagrams/[52]/children/[0]/bounds/x", model, "n/a")
+        d2 = Delete.new("Model<bee5a0a7>/diagrams/[52]/children/[1]/bounds/width", model, "n/a")
+        expected = [d1, d2]
+
+        assert_equal expected, [d1, d2].sort
+        assert_equal expected, [d2, d1].sort
+      end
+
+      def test_sort_elements_index
+        d1 = Delete.new("Model<bee5a0a7>/elements/[1430]/label", model, "n/a")
+        d2 = Delete.new("Model<bee5a0a7>/elements/[3]/label", model, "n/a")
+        expected = [d2, d1]
+
+        assert_equal expected, [d1, d2].sort
+        assert_equal expected, [d2, d1].sort
+      end
     end
   end
 end

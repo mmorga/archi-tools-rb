@@ -20,6 +20,19 @@ module Archimate
           deleted == other.deleted
       end
 
+      # def <=>(other)
+      #   case other
+      #   when Insert, Change
+      #     1
+      #   else
+      #     if self == other
+      #       0
+      #     else
+      #       other.path <=> path
+      #     end
+      #   end
+      # end
+
       def diff_type
         HighLine.color('DELETE:', :delete)
       end

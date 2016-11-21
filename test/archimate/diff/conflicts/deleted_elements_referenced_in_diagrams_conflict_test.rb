@@ -26,7 +26,8 @@ module Archimate
           @diff_name = Archimate::Diff::Delete.new("Model<#{@model.id}>/name", @model, @model.name)
           @diff1 = Archimate::Diff::Delete.new("Model<#{@model.id}>/elements/[0]", @model, @element)
           @diff2 = Archimate::Diff::Insert.new("Model<#{@model.id}>/diagrams/[0]/name", @model, @diagram.name)
-          @subject = DeletedElementsReferencedInDiagramsConflict.new([@diff_name, @diff1], [])
+          @diff3 = Archimate::Diff::Delete.new("Model<#{@model.id}>/diagrams/[0]/children[0]", @model, @diagram.children[0])
+          @subject = DeletedElementsReferencedInDiagramsConflict.new([@diff_name, @diff1], [@diff3])
         end
 
         def test_filter1
@@ -37,6 +38,7 @@ module Archimate
         def test_filter2
           assert @subject.filter2.call(@diff2)
           refute @subject.filter2.call(@diff_name)
+          refute @subject.filter2.call(@diff3)
         end
 
         def test_diff_conflicts_diffs_in_conflict

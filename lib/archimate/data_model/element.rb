@@ -39,11 +39,27 @@ module Archimate
       end
 
       def to_s
-        AIO.layer_color(layer, "#{type.light_black}<#{id}>[#{label.underline}]")
+        AIO.layer_color(layer, "#{type.light_black}<#{id}>[#{label}]")
       end
 
       def layer
         Archimate::Constants::ELEMENT_LAYER.fetch(@type, "None")
+      end
+
+      def composed_by
+        in_model.relationships.select { |r|
+          r.type == "CompositionRelationship" && r.target == id
+        }.map { |r|
+          in_model.lookup(r.source)
+        }
+      end
+
+      def composes
+        in_model.relationships.select { |r|
+          r.type == "CompositionRelationship" && r.source == id
+        }.map { |r|
+          in_model.lookup(r.target)
+        }
       end
     end
     Dry::Types.register_class(Element)

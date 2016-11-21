@@ -4,8 +4,10 @@ require 'test_helper'
 module Archimate
   module DataModel
     class ModelTest < Minitest::Test
+      ELEMENT_COUNT = 4
+
       def setup
-        @subject = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_folders: 4)
+        @subject = build_model(with_relationships: 2, with_diagrams: 2, with_elements: ELEMENT_COUNT, with_folders: 4)
       end
 
       def test_create
@@ -76,6 +78,39 @@ module Archimate
         assert_includes m2.elements, replacement_element
         refute_includes m2.elements, replaced_element
         assert_equal @subject.elements.index(replaced_element), m2.elements.index(replacement_element)
+      end
+
+      0.upto(ELEMENT_COUNT - 1) do |idx|
+        define_method("test_delete_at_#{idx}") do
+          expected_size = @subject.elements.size - 1
+          deleted_element = @subject.elements[idx]
+
+          @subject.delete_at("Model<#{@subject.id}>/elements/[#{idx}]")
+
+          refute_includes @subject.elements, deleted_element
+          assert_equal expected_size, @subject.elements.size
+        end
+      end
+
+      def test_insert_at
+        inserted_element = build_element
+        expected_elements = @subject.elements.map(&:clone)
+        expected_elements.insert(2, inserted_element)
+
+        @subject.insert_at("Model<#{@subject.id}>/elements/[2]", inserted_element)
+
+        assert_equal expected_elements, @subject.elements
+        assert_includes @subject.elements, inserted_element
+        assert_equal ELEMENT_COUNT + 1, @subject.elements.size
+      end
+
+      def test_application_components
+        el = build_element(type: "ApplicationComponent")
+        elements = @subject.elements + [el]
+        model = @subject.with(elements: elements)
+        expected = model.elements.select { |e| e.type == "ApplicationComponent" }
+
+        assert_equal expected, model.application_components
       end
     end
   end

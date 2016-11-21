@@ -9,6 +9,7 @@ module Archimate
       attribute :type, Strict::String
       attribute :source, Strict::String
       attribute :target, Strict::String
+      attribute :access_type, Coercible::Int.optional
       attribute :name, Strict::String.optional
       attribute :documentation, DocumentationList
       attribute :properties, PropertiesList
@@ -17,13 +18,14 @@ module Archimate
         new_opts = {
           name: nil,
           documentation: [],
-          properties: []
+          properties: [],
+          access_type: nil
         }.merge(options)
         Relationship.new(new_opts)
       end
 
       def comparison_attributes
-        [:@id, :@type, :@source, :@target, :@name, :@documentation, :@properties]
+        [:@id, :@type, :@source, :@target, :@name, :@documentation, :@properties, :@access_type]
       end
 
       def clone
@@ -34,6 +36,7 @@ module Archimate
           source: source.clone,
           target: target.clone,
           name: name&.clone,
+          access_type: access_type,
           documentation: documentation.map(&:clone),
           properties: properties.map(&:clone)
         )

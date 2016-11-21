@@ -45,17 +45,6 @@ module Archimate
         )
       end
 
-      def self.find_in_folders(folders, folder_id)
-        folder = folders.find { |i| i.id == folder_id }
-        return folder unless folder.nil?
-
-        folders.each do |f|
-          folder = find_in_folders(f.folders, folder_id)
-          return folder unless folder.nil?
-        end
-        nil
-      end
-
       def find_folder(folder_id)
         return self if id == folder_id
         folders.each do |f|

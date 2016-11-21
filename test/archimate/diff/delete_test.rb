@@ -11,9 +11,9 @@ module Archimate
       end
 
       def test_delete
-        del = Delete.new(0, model, "Something")
+        del = Delete.new("Model<#{model.id}>/name", model, "Something")
         assert_equal "Something", del.deleted
-        assert_equal 0, del.path
+        assert_equal "Model<#{model.id}>/name", del.path
       end
 
       def test_to_s

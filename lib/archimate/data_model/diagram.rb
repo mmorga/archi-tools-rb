@@ -7,12 +7,12 @@ module Archimate
       attribute :parent_id, Strict::String
       attribute :id, Strict::String
       attribute :name, Strict::String
-      attribute :viewpoint, Strict::String.optional
+      attribute :viewpoint, Strict::String.optional # TODO: change to (int?) or make parser deal with this and make enum
       attribute :documentation, DocumentationList
       attribute :properties, PropertiesList
       attribute :children, Strict::Array.member(Child)
       attribute :connection_router_type, Coercible::Int.optional # TODO: fill this in, should be an enum
-      attribute :type, Strict::String.optional
+      attribute :type, Strict::String.optional # TODO: remove this
 
       def self.create(options = {})
         new_opts = {

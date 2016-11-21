@@ -152,7 +152,9 @@ module Archimate
         local = base.insert_element(iel)
         refute_includes base.elements, ier.id
         refute_includes base.elements, iel.id
+
         merge = Merge.three_way(base, local, remote, aio)
+
         assert_empty merge.conflicts
         assert_equal ier, merge.merged.elements.find { |i| i.id == ier.id }
         assert_equal iel, merge.merged.elements.find { |i| i.id == iel.id }
@@ -171,7 +173,9 @@ module Archimate
       def test_apply_diff_on_model_attributes
         m1 = build_model
         m2 = m1.with(id: Faker::Number.hexadecimal(8))
+
         merge = Merge.three_way(m1, m2, m1, aio)
+
         assert_equal 1, merge.base_local_diffs.size
         assert_equal m2, merge.merged
       end
@@ -279,49 +283,18 @@ module Archimate
       end
 
       def test_handle_bounds_changes
-        diagram = base.diagrams.first
-        child = diagram.children.first
-        diagram_children = diagram.children.reject { |c| c == child }
-        bounds = child.bounds
         remote = base.clone
-        updated_child = child.with(bounds: bounds.with(x: bounds.x + 10.0, y: bounds.y + 10.0))
-        diagram_children.unshift(updated_child)
-        local = base.with(
-          diagrams: [
-            diagram.with(children: diagram_children)
-          ]
-        )
+        diagram = base.diagrams.first.clone
+        bounds = diagram.children[0].bounds
+        diagram.children[0] = diagram.children[0].with(bounds: bounds.with(x: bounds.x + 10.0, y: bounds.y + 10.0))
+        updated_diagrams = base.diagrams.reject { |d| d.id == diagram.id }.unshift(diagram)
+        local = base.with(diagrams: updated_diagrams)
 
         merge = Merge.three_way(base, local, remote, aio)
 
         assert_empty merge.conflicts
-        assert_equal base, merge.merged
-      end
-
-      def test_apply_child_changes_on_empty_array_with_insert
-        node = build_element
-        doc = build_documentation(parent_id: node.id)
-        assert_empty node.documentation
-        merge = Merge.new(base, base, base, aio)
-        diff = Insert.new("", base, doc)
-        merge.apply_child_changes(node, "documentation", "[0]", doc, diff)
-        assert_equal 1, node.documentation.size
-        assert_equal doc, node.documentation.first
-      end
-
-      def test_apply_child_changes_on_current_array_with_insert
-        node = build_element(documentation: build_documentation_list(count: 1))
-        doc = build_documentation(parent_id: node.id)
-        assert_equal 1, node.documentation.size
-        initial_doc = node.documentation[0]
-
-        merge = Merge.new(base, base, base, aio)
-
-        diff = Insert.new("", base, doc)
-        merge.apply_child_changes(node, "documentation", "[0]", doc, diff)
-        assert_equal 2, node.documentation.size
-        assert_equal initial_doc, node.documentation[0]
-        assert_equal doc, node.documentation[1]
+        refute_equal base, merge.merged
+        assert_equal local, merge.merged
       end
     end
   end

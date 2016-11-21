@@ -26,7 +26,7 @@ module Archimate
 
         diffs = Context.new(base, local, el2, el2b).diffs
         expected = [
-          Change.new("Element<#{el2.id}>/label", base, local, el2.label, el2b.label)
+          Change.new("label", base, local, el2.label, el2b.label)
         ]
         assert_equal expected, diffs
       end
@@ -74,8 +74,10 @@ module Archimate
       def test_diff_name
         f1 = build_folder
         f2 = f1.with(name: f1.name + "changed")
+
         folder_diffs = Context.new(base, local, f1, f2).diffs
-        assert_equal [Change.new("Folder<#{f1.id}>/name", base, local, f1.name, f2.name)], folder_diffs
+
+        assert_equal [Change.new("name", base, local, f1.name, f2.name)], folder_diffs
       end
 
       def test_folder_added
@@ -84,7 +86,7 @@ module Archimate
         folders = f1.folders.dup
         folders << added_folder
         f2 = f1.with(folders: folders)
-        expected = [Insert.new("Folder<#{f1.id}>/folders/[0]", local, added_folder)]
+        expected = [Insert.new("folders/[0]", local, added_folder)]
 
         folder_diffs = Context.new(base, local, f1, f2).diffs
 
@@ -97,7 +99,7 @@ module Archimate
         assert_empty f2.folders
         deleted_folder = build_folder
         f1 = f2.with(folders: [deleted_folder])
-        expected = [Delete.new("Folder<#{f1.id}>/folders/[0]", base, deleted_folder)]
+        expected = [Delete.new("folders/[0]", base, deleted_folder)]
 
         diffs = Context.new(base, local, f1, f2).diffs
 
@@ -123,17 +125,19 @@ module Archimate
 
         folder_diffs = Context.new(base, local, base.folders.first, local.folders.first).diffs
         assert_equal [
-          Change.new("Folder<#{base.folders.first.id}>/folders/[0]/name", base, local, testing_folder.name, changed_folder.name)
+          Change.new("folders/[0]/name", base, local, testing_folder.name, changed_folder.name)
         ], folder_diffs
       end
 
       def test_relationship_diffs
         r1 = build_relationship
         r2 = r1.with(name: r1.name + "-changed")
-        diffs = Context.new(base, local, r1, r2).diffs
         expected = [
-          Change.new("Relationship<#{r1.id}>/name", base, local, r1.name, r2.name)
+          Change.new("name", base, local, r1.name, r2.name)
         ]
+
+        diffs = Context.new(base, local, r1, r2).diffs
+
         assert_equal(expected, diffs)
       end
 

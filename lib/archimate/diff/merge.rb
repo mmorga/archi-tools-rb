@@ -21,7 +21,6 @@ module Archimate
       attr_reader :aio
 
       def initialize(base, local, remote, aio)
-        # @merged = DeepClone.clone base
         @merged = base.clone
         @base = base
         @local = local
@@ -43,8 +42,8 @@ module Archimate
         @base_local_diffs = Archimate.diff(base, local)
         aio.debug "Computing base:remote diffs"
         @base_remote_diffs = Archimate.diff(base, remote)
-        aio.debug "Identify merged duplicates"
-        find_merged_duplicates
+        # aio.debug "Identify merged duplicates"
+        # find_merged_duplicates
         aio.debug "Finding Conflicts"
         conflicts.find(@base_local_diffs, @base_remote_diffs)
         aio.debug "Applying Diffs"
@@ -61,81 +60,49 @@ module Archimate
             end
             unless found.empty?
               a[diff] = found
-              puts "\nFound potential de-duplication:"
-              puts "\t#{diff}"
-              puts "Might be replaced with:\n\t#{found.values.map(&:to_s).join("\n\t")}\n\n"
+              aio.debug "\nFound potential de-duplication:"
+              aio.debug "\t#{diff}"
+              aio.debug "Might be replaced with:\n\t#{found.map(&:to_s).join("\n\t")}\n\n"
             end
           end
         end
       end
 
+      def filter_path_conflicts(diffs)
+        diffs.sort { |a, b| a.path_to_array.size <=> b.path_to_array.size }.each_with_object([]) do |i, e|
+          diffs.delete(i)
+          path_conflicts = diffs.select { |d| d.path.start_with?(i.path) }
+          path_conflicts.each { |d| diffs.delete(d) }
+          # puts "#{i}<#{i.path}> should replace #{path_conflicts.map { |d| "#{d}<#{d.path}>" }.join(", ")}" unless path_conflicts.empty?
+          e << i
+        end
+      end
+
       # TODO: All of the apply diff stuff belongs elsewhere?
+      # TODO: diffs should be sorted to apply in a way that makes sense, right?
       # Applies the set of diffs to the model returning a
       # new model with the diffs applied.
       def apply_diffs(diffs, model)
         aio.debug "Applying #{diffs.size} diffs"
         remaining_diffs = conflicts.filter_diffs(diffs)
         aio.debug "Filtering out #{conflicts.size} conflicts - applying #{remaining_diffs.size}"
-        remaining_diffs.inject(model) do |m, diff|
-          apply_diff(m, diff.with(path: diff.path.split("/")[1..-1].join("/")))
+        remaining_diffs = filter_path_conflicts(remaining_diffs)
+        remaining_diffs.sort.inject(model) do |m, diff|
+          apply_diff(m, diff)
         end
       end
 
-      # TODO: This is in need of refactoring
-      def apply_diff(node, diff)
-        path = diff.path.split("/")
-        # TODO: this is a travesty! Fix me!
-        path.delete("Bounds")
-        path.delete("Style")
-        path.delete("Float")
-        path.delete("Fixnum")
-        attr_name = path.shift.to_sym
-        inst_var_sym = "@#{attr_name}".to_sym
-        attr_name = attr_name.to_sym
-
-        if path.empty?
-          # Intention here is to handle simple types like string, integer
-          node.instance_variable_set(inst_var_sym, diff.to)
-          node
-        else
-          child_collection = node.send(attr_name)
-          id = path.shift
-          # Note: if the path is empty at this point, there's no more need to drill down
-          if path.empty?
-            if diff.is_a?(Delete)
-              node.send(attr_name).delete(diff.from)
-              node
-            elsif child_collection.is_a? Dry::Struct
-              node.instance_variable_set("@#{id}".to_sym, diff.to)
-              node
-            else
-              apply_child_changes(node, attr_name, id, diff.to, diff)
-            end
-          else
-            m = id.match(%r{\[(\d+)\]})
-            raise TypeError, "#{id.class} '#{id}', expected an Int" unless m
-            cc_id = m[1].to_i
-            apply_child_changes(node, attr_name, id, apply_diff(child_collection[cc_id], diff.with(path: path.join("/"))), diff)
-          end
-        end
-      end
-
-      # TODO: this is a little hokey. I'd like to basically call a diff method based on the
-      # type of the child collection here.
-      # TODO: for an array, an insert should be after some other value. not sure if the id would be sufficient
-      def apply_child_changes(node, attr_name, id, child_value, diff)
-        child_collection = node.send(attr_name)
-        raise TypeError, "#{child_collection.class} unexpected for collection type, node class=#{node.class}, attr_name=#{attr_name}, id=#{id}, child_value=#{child_value.inspect}" unless child_collection.is_a?(Array)
-        m = id.match(%r{\[(\d+)\]})
-        raise TypeError, "#{id.class} '#{id}', expected an Int" unless m
-        id = m[1].to_i
+      def apply_diff(model, diff)
+        aio.debug("Applying #{diff.path}: #{diff}")
         case diff
+        when Delete
+          model.delete_at(diff.path)
         when Insert
-          child_collection.insert(id < child_collection.size ? id + 1 : id, child_value)
-        else
-          child_collection[id] = child_value
+          model.insert_at(diff.path, diff.inserted)
+        when Change
+          model.set_at(diff.path, diff.to)
         end
-        node
+        model
       end
     end
   end

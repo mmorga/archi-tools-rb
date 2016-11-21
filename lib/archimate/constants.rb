@@ -21,33 +21,33 @@ module Archimate
 
     LAYER_ELEMENTS = {
       "Business" =>
-        ["BusinessActor", "BusinessCollaboration",
-         "BusinessEvent", "BusinessFunction",
-         "BusinessInteraction", "BusinessInterface",
-         "BusinessObject", "BusinessProcess",
-         "BusinessRole", "BusinessService",
-         "Contract", "Location",
-         "Meaning", "Value",
-         "Product", "Representation"],
+        %w(BusinessActor BusinessCollaboration
+           BusinessEvent BusinessFunction
+           BusinessInteraction BusinessInterface
+           BusinessObject BusinessProcess
+           BusinessRole BusinessService
+           Contract Location
+           Meaning Value
+           Product Representation),
       "Application" =>
-        ["ApplicationCollaboration", "ApplicationComponent",
-         "ApplicationFunction", "ApplicationInteraction",
-         "ApplicationInterface", "ApplicationService",
-         "DataObject"],
+        %w(ApplicationCollaboration ApplicationComponent
+           ApplicationFunction ApplicationInteraction
+           ApplicationInterface ApplicationService
+           DataObject),
       "Technology" =>
-        ["Artifact", "CommunicationPath",
-         "Device", "InfrastructureFunction",
-         "InfrastructureInterface", "InfrastructureService",
-         "Network", "Node", "SystemSoftware"],
+        %w(Artifact CommunicationPath
+           Device InfrastructureFunction
+           InfrastructureInterface InfrastructureService
+           Network Node SystemSoftware),
       "Motivation" =>
-        ["Assessment", "Constraint", "Driver",
-         "Goal", "Principle", "Requirement",
-         "Stakeholder"],
+        %w(Assessment Constraint Driver
+           Goal Principle Requirement
+           Stakeholder),
       "Implementation and Migration" =>
-        ["Deliverable", "Gap", "Plateau",
-         "WorkPackage"],
+        %w(Deliverable Gap Plateau
+           WorkPackage),
       "Connectors" =>
-        ["AndJunction", "Junction", "OrJunction"]
+        %w(AndJunction Junction OrJunction)
     }.freeze
 
     ELEMENT_LAYER = LAYER_ELEMENTS.each_with_object({}) do |(layer, elements), el_layer_hash|

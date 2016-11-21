@@ -29,7 +29,11 @@ module Archimate
 
       def test_comparison_attributes
         assert_equal(
-          [:@id, :@type, :@model, :@name, :@target_connections, :@archimate_element, :@bounds, :@children, :@source_connections, :@documentation, :@properties, :@style],
+          [
+            :@id, :@type, :@model, :@name, :@content, :@target_connections,
+            :@archimate_element, :@bounds, :@children, :@source_connections,
+            :@documentation, :@properties, :@style, :@child_type
+          ],
           @subject.comparison_attributes
         )
       end

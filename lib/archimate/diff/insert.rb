@@ -20,6 +20,21 @@ module Archimate
           inserted == other.inserted
       end
 
+      # def <=>(other)
+      #   case other
+      #   when Change
+      #     1
+      #   when Delete
+      #     -1
+      #   else
+      #     if self == other
+      #       0
+      #     else
+      #       other.path <=> path
+      #     end
+      #   end
+      # end
+
       def diff_type
         HighLine.color('INSERT:', :insert)
       end

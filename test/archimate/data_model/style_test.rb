@@ -11,6 +11,7 @@ module Archimate
         @font_color = build_color
         @line_width = 2
         @font = build_font
+        @text_position = 1
 
         @s1 = Style.new(
           parent_id: build_id,
@@ -19,7 +20,8 @@ module Archimate
           line_color: @line_color,
           font_color: @font_color,
           line_width: @line_width,
-          font: @font
+          font: @font,
+          text_position: @text_position
         )
         @s2 = build_style
       end
@@ -31,6 +33,7 @@ module Archimate
         assert_equal @font_color, @s1.font_color
         assert_equal @line_width, @s1.line_width
         assert_equal @font, @s1.font
+        assert_equal @text_position, @s1.text_position
       end
 
       def test_hash

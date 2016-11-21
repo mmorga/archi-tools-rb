@@ -7,6 +7,9 @@ module Archimate
       attr_reader :subject
 
       def setup
+        @src_el = build_element
+        @target_el = build_element
+        @rel = build_relationship(source: @src_el.id, target: @src_el.id)
         @subject = build_source_connection(
           id: "abc123",
           type: "three",
@@ -14,6 +17,19 @@ module Archimate
           source: "source",
           target: "target",
           relationship: "complicated"
+        )
+        @model = build_model(
+          elements: [@src_el, @target_el],
+          relationships: [@rel],
+          diagrams: [
+            build_diagram(
+              children: [
+                build_child(
+                  source_connections: [@subject]
+                )
+              ]
+            )
+          ]
         )
       end
 

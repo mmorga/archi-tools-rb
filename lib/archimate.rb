@@ -56,6 +56,7 @@ module Archimate
   end
 
   autoload :ArchiFileReader, 'archimate/archi_file_reader'
+  autoload :ArchiFileWriter, 'archimate/archi_file_writer'
   autoload :Constants, 'archimate/constants'
   autoload :Diff, 'archimate/diff'
   autoload :Document, 'archimate/document'
@@ -69,16 +70,7 @@ module Archimate
     Nokogiri::XML::Document.new(xml_str)
   end
 
-  def self.parse_xml(xml_str)
-    Nokogiri::XML(xml_str)
-  end
-
   def self.diff(local, remote)
     Diff::Context.new(local, remote, local, remote).diffs
-  end
-
-  def self.debug_puts(msg, diffs)
-    puts "\n#{msg}"
-    puts "\t" + diffs.map(&:to_s).join("\n\t")
   end
 end

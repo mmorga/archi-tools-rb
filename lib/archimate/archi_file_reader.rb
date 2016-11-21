@@ -78,6 +78,7 @@ module Archimate
           source: i.attr("source"),
           target: i.attr("target"),
           name: i["name"],
+          access_type: i["accessType"],
           documentation: parse_documentation(i),
           properties: parse_properties(i)
         )
@@ -106,7 +107,7 @@ module Archimate
       node.css("> child").each_with_object([]) do |child_node, a|
         child_hash = {
           id: "id",
-          type: "type",
+          type: "xsi:type",
           model: "model",
           name: "name",
           target_connections: "targetConnections",
@@ -121,33 +122,61 @@ module Archimate
         child_hash[:documentation] = parse_documentation(child_node)
         child_hash[:properties] = parse_properties(child_node)
         child_hash[:style] = parse_style(child_node)
+        child_hash[:content] = child_node.at_css("> content")&.text
+        child_hash[:child_type] = child_node.attr("type")
         a << DataModel::Child.new(child_hash)
       end
     end
 
-    def parse_style(node)
-      style = node.at_css(">style")
-      return nil unless style
-      DataModel::Style.new(
-        parent_id: node.attr("id"),
+    def parse_style(style)
+      # style = node.at_css(">style")
+      # return nil unless style
+      parent_id = style.attr("id")
+      style = DataModel::Style.new(
+        parent_id: parent_id,
         text_alignment: style["textAlignment"],
-        fill_color: style["fillColor"],
-        line_color: style["lineColor"],
-        font_color: style["fontColor"],
-        font: parse_font(style),
-        line_width: style["lineWidth"]
+        fill_color: parse_color(style["fillColor"], parent_id),
+        line_color: parse_color(style["lineColor"], parent_id),
+        font_color: parse_color(style["fontColor"], parent_id),
+        font: parse_font(style["font"], parent_id),
+        line_width: style["lineWidth"],
+        text_position: style["textPosition"]
       )
+      style
     end
 
-    def parse_color(str)
-      # TODO: implement me
-      # DataModel::Color.from_css(str)
+    def parse_color(str, parent_id)
+      return nil if str.nil?
+      md = str.match(%r{#([\da-f]{2})([\da-f]{2})([\da-f]{2})([\da-f]{2})?})
+      if md
+        return DataModel::Color.new(
+          parent_id: parent_id,
+          r: md[1].to_i(16),
+          g: md[2].to_i(16),
+          b: md[3].to_i(16),
+          a: md[4].nil? ? 100 : (md[4].to_i(16) / 256.0 * 100.0).to_i
+        )
+      end
       nil
     end
 
-    def parse_font(str)
-      # TODO: implement me
-      nil
+    # attribute :name, Strict::String
+    # attribute :size, Coercible::Int.constrained(gt: 0)
+    # attribute :style, Strict::String.optional
+    def parse_font(str, parent_id)
+      #  "1|Arial            |14.0|0|WINDOWS|1|0  |0|0|0|0  |0 |0|0|1|0|0|0|0 |Arial"
+      #  "1|Arial            |8.0 |0|WINDOWS|1|0  |0|0|0|0  |0 |0|0|1|0|0|0|0 |Arial"
+      #  "1|Segoe UI Semibold|12.0|2|WINDOWS|1|-16|0|0|0|600|-1|0|0|0|3|2|1|34|Segoe UI Semibold"
+      #  "1|Times New Roman  |12.0|3|WINDOWS|1|-16|0|0|0|700|-1|0|0|0|3|2|1|18|Times New Roman"
+      return nil if str.nil?
+      font_parts = str.split("|")
+      DataModel::Font.new(
+        parent_id: parent_id,
+        name: font_parts[1],
+        size: font_parts[2],
+        style: font_parts[3],
+        font_data: str
+      )
     end
 
     def parse_bounds(node)
@@ -158,7 +187,7 @@ module Archimate
         y: bounds.attr("y"),
         width: bounds.attr("width"),
         height: bounds.attr("height")
-      )
+      ) unless bounds.nil?
     end
 
     def parse_source_connections(node)

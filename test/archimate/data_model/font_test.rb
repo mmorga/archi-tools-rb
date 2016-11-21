@@ -6,7 +6,7 @@ module Archimate
     class FontTest < Minitest::Test
       def setup
         @name = Faker::Name.name
-        @size = 16
+        @size = 16.0
         @style = "normal"
 
         @s1 = build_font(
@@ -36,7 +36,7 @@ module Archimate
       end
 
       def test_comparison_attributes
-        assert_equal [:@name, :@size, :@style], @s1.comparison_attributes
+        assert_equal [:@name, :@size, :@style, :@font_data], @s1.comparison_attributes
       end
 
       def test_to_s

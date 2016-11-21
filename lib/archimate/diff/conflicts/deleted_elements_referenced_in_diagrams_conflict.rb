@@ -12,7 +12,7 @@ module Archimate
         end
 
         def filter2
-          ->(diff) { diff.in_diagram? }
+          ->(diff) { !diff.delete? && diff.in_diagram? }
         end
 
         def diff_conflicts(diff1, diff2)

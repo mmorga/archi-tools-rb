@@ -23,6 +23,19 @@ module Archimate
           @from == other.from && @to == other.to
       end
 
+      # def <=>(other)
+      #   case other
+      #   when Insert, Delete
+      #     -1
+      #   else
+      #     if self == other
+      #       0
+      #     else
+      #       path <=> other.path
+      #     end
+      #   end
+      # end
+
       def diff_type
         HighLine.color('CHANGE:', :change)
       end

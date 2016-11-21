@@ -6,6 +6,16 @@ module Archimate
     class Model < Dry::Struct
       include DataModel::With
 
+      Cmds = Struct.new(:array_func, :attribute_func) do
+        def call(node, child, value)
+          if node.is_a?(Array)
+            array_func.call(node, child, value)
+          else
+            attribute_func.call(node, child, value)
+          end
+        end
+      end
+
       attribute :parent_id, Strict::String.optional
       attribute :id, Strict::String
       attribute :name, Strict::String
@@ -39,6 +49,15 @@ module Archimate
       def initialize(attributes)
         super
         assign_model(self)
+        @attribute_set = ->(node, attrname, val) { node.instance_variable_set("@#{attrname}", val) }
+        @del_cmds = Cmds.new(->(node, idx, _val) { node.delete_at(idx) }, @attribute_set)
+        @ins_cmds = Cmds.new(->(node, idx, val) { node.insert(idx, val) }, @attribute_set)
+        @set_cmds = Cmds.new(->(node, idx, val) { node[idx] = val }, @attribute_set)
+        @get_cmds = Cmds.new(
+          ->(node, idx, _val) { node[idx] },
+          ->(node, idx, _val) { node.instance_variable_get("@#{idx}") }
+        )
+        @array_re = Regexp.compile(/\[(\d+)\]/)
       end
 
       def lookup(id)
@@ -49,6 +68,37 @@ module Archimate
         )
 
         @index_hash[id]
+      end
+
+      def delete_at(path)
+        at_path(@del_cmds, path)
+      end
+
+      def insert_at(path, value)
+        at_path(@ins_cmds, path, value)
+      end
+
+      def set_at(path, value)
+        at_path(@set_cmds, path, value)
+      end
+
+      def at(path)
+        at_path(@get_cmds, path)
+      end
+
+      # TODO: the [1..-1] gets rid of the initial model description (is it still needed at all?)
+      def path_str_to_array(path_str)
+        path_str.split("/")[1..-1].map do |p|
+          md = @array_re.match(p)
+          md ? md[1].to_i : p
+        end
+      end
+
+      def at_path(cmds, path, value = nil)
+        _child_val, child, node = path_str_to_array(path).inject([self, nil, nil]) do |a, e|
+          [a[0][e], e, a[0]]
+        end
+        cmds.call(node, child, value)
       end
 
       def comparison_attributes
@@ -99,6 +149,10 @@ module Archimate
           return found_folder unless found_folder.nil?
         end
         nil
+      end
+
+      def application_components
+        elements.select { |e| e.type == "ApplicationComponent" }
       end
     end
   end

@@ -6,11 +6,12 @@ module Archimate
 
       attribute :parent_id, Strict::String
       attribute :name, Strict::String
-      attribute :size, Coercible::Int.constrained(gt: 0)
+      attribute :size, Coercible::Float.constrained(gt: 0.0)
       attribute :style, Strict::String.optional
+      attribute :font_data, Strict::String.optional
 
       def comparison_attributes
-        [:@name, :@size, :@style]
+        [:@name, :@size, :@style, :@font_data]
       end
 
       def clone
@@ -18,7 +19,8 @@ module Archimate
           parent_id: parent_id&.clone,
           name: name.clone,
           size: size,
-          style: style&.clone
+          style: style&.clone,
+          font_data: font_data&.clone
         )
       end
 

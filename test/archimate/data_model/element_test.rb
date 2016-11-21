@@ -32,6 +32,38 @@ module Archimate
         el = el.with(type: "Bogus")
         assert_equal "None", el.layer
       end
+
+      def test_composed_by
+        element = build_element
+        composed_by_element = build_element
+        composed_by_relationship = build_relationship(
+          type: "CompositionRelationship",
+          source: composed_by_element.id,
+          target: element.id
+        )
+        model = build_model(
+          elements: [element, composed_by_element],
+          relationships: [composed_by_relationship]
+        )
+
+        assert_equal [composed_by_element], element.composed_by
+      end
+
+      def test_composes
+        element = build_element
+        composed_by_element = build_element
+        composed_by_relationship = build_relationship(
+          type: "CompositionRelationship",
+          source: composed_by_element.id,
+          target: element.id
+        )
+        model = build_model(
+          elements: [element, composed_by_element],
+          relationships: [composed_by_relationship]
+        )
+
+        assert_equal [element], composed_by_element.composes
+      end
     end
   end
 end

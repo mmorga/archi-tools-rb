@@ -11,9 +11,10 @@ module Archimate
       attribute :font_color, OptionalColor
       attribute :line_width, Coercible::Int.optional
       attribute :font, OptionalFont
+      attribute :text_position, Coercible::Int.optional
 
       def comparison_attributes
-        [:@text_alignment, :@fill_color, :@line_color, :@font_color, :@line_width, :@font]
+        [:@text_alignment, :@fill_color, :@line_color, :@font_color, :@line_width, :@font, :@text_position]
       end
 
       def clone
@@ -24,7 +25,8 @@ module Archimate
           line_color: line_color&.clone,
           font_color: font_color&.clone,
           line_width: line_width,
-          font: font&.clone
+          font: font&.clone,
+          text_position: text_position
         )
       end
 
