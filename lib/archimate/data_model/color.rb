@@ -19,14 +19,10 @@ module Archimate
       end
 
       def to_rgba
-        format(format_str, r, g, b, scaled_alpha)
+        a == 100 ? format("#%02x%02x%02x", r, g, b) : format("#%02x%02x%02x%02x", r, g, b, scaled_alpha)
       end
 
       private
-
-      def format_str
-        a == 100 ? "#%02x%02x%02x" : "#%02x%02x%02x%02x"
-      end
 
       def scaled_alpha(max = 255)
         (max * (a / 100.0)).round

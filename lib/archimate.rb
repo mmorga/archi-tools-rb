@@ -60,6 +60,7 @@ module Archimate
   autoload :Constants, 'archimate/constants'
   autoload :Diff, 'archimate/diff'
   autoload :Document, 'archimate/document'
+  autoload :FileFormat, 'archimate/file_format'
   autoload :MaybeIO, 'archimate/maybe_io'
   autoload :OutputIO, 'archimate/output_io'
 
@@ -72,5 +73,13 @@ module Archimate
 
   def self.diff(local, remote)
     Diff::Context.new(local, remote, local, remote).diffs
+  end
+
+  # Reads the given file and returns the Archimate model
+  #
+  # @param filename File name of the file to read
+  # @return Archimate::DataModel::Model of ArchiMate model in the file
+  def self.read(filename)
+    FileFormat.read(filename)
   end
 end

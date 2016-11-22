@@ -10,7 +10,7 @@ module Archimate
              desc: "Write output to FILE instead of stdout."
       def map(archifile)
         Archimate::OutputIO.new(options) do |output|
-          Archimate::Cli::Mapper.new(Document.read(archifile).doc, output).map
+          Archimate::Cli::Mapper.new(Archimate.read(archifile), output).map
         end
       end
 

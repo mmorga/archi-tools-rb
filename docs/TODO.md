@@ -1,6 +1,8 @@
 # TODO
 
-* [ ] Consider breaking this into a number of gems
+* [ ] Add a super strict mode to note when reader finds unexpected content
+* [ ] Make a format agnostic file reader (which delegates to appropriate file type readers)
+* [ ] Consider breaking this into a number of gems (for example: base lib, diff/merge, other cmdline tools)
 * [x] Not handling sketch diagram model in archi
 * [ ] Archi file could have ids that conflict (i.e. 2 relationships with same id - this is bad!!! Was it a bad merge or something worse)
 * [ ] make classes for each element and relationship type
@@ -17,7 +19,7 @@
 * [X] Should be a master hash index of id to object in Model
 * [ ] Implement check for de-duplicated merges
 * [X] Improve description of diffs for conflict display
-* [ ] Convert all CLIs to use AIO
+* [ ] Convert all CLIs to use AIO - merge with OutputIO and MaybeIO (maybe)
 * [ ] Eliminate use of Document in favor of Model
   - [ ] cli/archi.rb
   - [ ] cli/cleanup.rb
@@ -73,4 +75,22 @@ patch_set, unresolved_conflicts = conflicts.resolve(review)
 * PatchSet
 * Review
   - `#resolve : Conflict -> Difference`
+
+---
+
+# DSL additions
+
+# type                        from               to
+"AssociationRelationship",    "associated_with", "associated_with"
+"AccessRelationship",         "accesses",        "accessed_by"
+"UsedByRelationship",         "used_by",         "uses"
+"RealisationRelationship",    "realizes",        "realized_by"
+"AssignmentRelationship",     ""
+"AggregationRelationship"
+"CompositionRelationship"
+"FlowRelationship"
+"TriggeringRelationship"
+"GroupingRelationship"
+"SpecialisationRelationship"
+"InfluenceRelationship"
 

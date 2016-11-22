@@ -12,11 +12,12 @@ module Archimate
                     "Migration", "Implementation and Migration"].freeze
 
       HEADERS = %w(id name viewpoint).freeze
-      DIAGRAM_SELECTOR = '[xsi|type="archimate:ArchimateDiagramModel"],[xsi|type="archimate:SketchModel"],[xsi|type="canvas:CanvasModel"]'
       COL_DIVIDER = " | "
 
-      def initialize(doc, output_io)
-        @doc = doc
+      attr_reader :model
+
+      def initialize(model, output_io)
+        @model = model
         @output = output_io
       end
 
@@ -27,11 +28,8 @@ module Archimate
         @output.puts widths.map { |w| "-" * w }.join("-+-").light_black
       end
 
-      def process_diagrams(raw_diagrams)
-        raw_diagrams.map do |e|
-          [e.attr("id"), e.attr("name"), e.attr("viewpoint"),
-           e.attribute_with_ns("type", "http://www.w3.org/2001/XMLSchema-instance").value, e.attr("hintTitle")]
-        end.map do |row|
+      def process_diagrams(diagrams)
+        diagrams.map { |e| [e.id, e.name, e.viewpoint, e.type] }.map do |row|
           row[2] = case row[3]
                    when "canvas:CanvasModel"
                      ["Canvas", row[4]].compact.join(": ")
@@ -41,8 +39,8 @@ module Archimate
                      VIEWPOINTS[(row[2] || 0).to_i]
                    else
                      row[3]
-          end
-          row[0] = "http://10.14.212.38/rax-architecture/images/#{row[0]}.png".underline
+                   end
+          row[0] = "#{row[0]}.png".underline
           row
         end
       end
@@ -65,32 +63,27 @@ module Archimate
         end
       end
 
-      def full_folder_name(folder)
-        (folder.ancestors.map { |e| e.attr("name") }.compact.reverse << folder.attr("name")).join("/")
+      def build_folder_hash(folders, parent = "", hash = {})
+        folders.each_with_object(hash) do |i, a|
+          folder_path = [parent, i.name].join("/")
+          a[folder_path] = i
+          build_folder_hash(i.folders, folder_path, a)
+        end
       end
 
       def map
-        # <element xsi:type="archimate:ArchimateDiagramModel" id="d615e713" name="Rapid Provisioning Integration" viewpoint="3">
-
-        diagrams = process_diagrams(@doc.css(DIAGRAM_SELECTOR))
-
-        widths = compute_column_widths(diagrams, HEADERS)
-
+        widths = compute_column_widths(process_diagrams(model.diagrams), HEADERS)
+        adjusted_widths = widths.inject(COL_DIVIDER.size * (HEADERS.size - 1), &:+)
         header_row(widths, HEADERS)
-
-        # Display folders by path in alphabetical order
-        # TODO: same css query in here twice - What was intention?
-        folder_paths = (@doc.css('folder[name="Views"] folder') + @doc.css('folder[name="Views"]')).each_with_object({}) do |folder, memo|
-          memo[full_folder_name(folder)] = folder
-          memo
-        end
-
+        folder_paths = build_folder_hash(model.folders)
         folder_paths.keys.sort.each do |folder_name|
-          @output.puts ("%-#{widths.inject(COL_DIVIDER.size * (HEADERS.size - 1), &:+)}s" % folder_name).bold.green.on_light_black
-          output_diagrams(process_diagrams(folder_paths[folder_name].css(">" + DIAGRAM_SELECTOR)), widths)
+          diagrams = folder_paths[folder_name].items.map { |i| model.lookup(i) }.select { |i| i.is_a?(DataModel::Diagram) }
+          next if diagrams.empty?
+          @output.puts(format("%-#{adjusted_widths}s", folder_name).bold.green.on_light_black)
+          output_diagrams(process_diagrams(diagrams), widths)
         end
 
-        @output.puts "\n#{diagrams.size} Diagrams"
+        @output.puts "\n#{model.diagrams.size} Diagrams"
       end
     end
   end
