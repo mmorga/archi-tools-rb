@@ -27,6 +27,14 @@ module Archimate
       def to_s
         "Font(name: #{name}, size: #{size}, style: #{style})"
       end
+
+      def to_archi_font
+        font_data ||
+          [
+            1, font.name, font.size, font.style, "WINDOWS", 1, 0, 0, 0, 0, 0, 0,
+            0, 0, 1, 0, 0, 0, 0, font.name
+          ].map(&:to_s).join("|")
+      end
     end
 
     Dry::Types.register_class(Font)

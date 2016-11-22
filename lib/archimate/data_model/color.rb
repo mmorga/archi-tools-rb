@@ -17,6 +17,20 @@ module Archimate
       def to_s
         "Color(r: #{r}, g: #{g}, b: #{b}, a: #{a})"
       end
+
+      def to_rgba
+        format(format_str, r, g, b, scaled_alpha)
+      end
+
+      private
+
+      def format_str
+        a == 100 ? "#%02x%02x%02x" : "#%02x%02x%02x%02x"
+      end
+
+      def scaled_alpha(max = 255)
+        (max * (a / 100.0)).round
+      end
     end
 
     Dry::Types.register_class(Color)

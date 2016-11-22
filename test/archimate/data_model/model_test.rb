@@ -82,12 +82,13 @@ module Archimate
 
       0.upto(ELEMENT_COUNT - 1) do |idx|
         define_method("test_delete_at_#{idx}") do
-          expected_size = @subject.elements.size - 1
+          expected_size = @subject.elements.size
           deleted_element = @subject.elements[idx]
 
           @subject.delete_at("Model<#{@subject.id}>/elements/[#{idx}]")
 
           refute_includes @subject.elements, deleted_element
+          assert_nil @subject.elements[idx]
           assert_equal expected_size, @subject.elements.size
         end
       end
@@ -95,7 +96,8 @@ module Archimate
       def test_insert_at
         inserted_element = build_element
         expected_elements = @subject.elements.map(&:clone)
-        expected_elements.insert(2, inserted_element)
+        # expected_elements.insert(2, inserted_element)
+        expected_elements << inserted_element
 
         @subject.insert_at("Model<#{@subject.id}>/elements/[2]", inserted_element)
 

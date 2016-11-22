@@ -169,33 +169,12 @@ module Archimate
       end
     end
 
-    def archi_font_string(font)
-      return nil if font.nil?
-      if font.font_data.nil?
-        [
-          1, font.name, font.size, font.style, "WINDOWS", 1, 0, 0, 0, 0, 0, 0,
-          0, 0, 1, 0, 0, 0, 0, font.name
-        ].map(&:to_s).join("|")
-      else
-        font.font_data
-      end
-    end
-
-    def archi_color_string(color)
-      return nil if color.nil?
-      if color.a != 100
-        format("#%02x%02x%02x%02x", color.r, color.g, color.b, (255 * (color.a / 100.0)).round)
-      else
-        format("#%02x%02x%02x", color.r, color.g, color.b)
-      end
-    end
-
     def archi_style_hash(style)
       {
-        "fillColor" => archi_color_string(style&.fill_color),
-        "font" => archi_font_string(style&.font),
-        "fontColor" => archi_color_string(style&.font_color),
-        "lineColor" => archi_color_string(style&.line_color),
+        "fillColor" => style&.fill_color&.to_rgba,
+        "font" => style&.font&.to_archi_font,
+        "fontColor" => style&.font_color&.to_rgba,
+        "lineColor" => style&.line_color&.to_rgba,
         "lineWidth" => style&.line_width,
         "textAlignment" => style&.text_alignment,
         "textPosition" => style&.text_position

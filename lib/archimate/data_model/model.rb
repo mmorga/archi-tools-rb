@@ -50,8 +50,8 @@ module Archimate
         super
         assign_model(self)
         @attribute_set = ->(node, attrname, val) { node.instance_variable_set("@#{attrname}", val) }
-        @del_cmds = Cmds.new(->(node, idx, _val) { node.delete_at(idx) }, @attribute_set)
-        @ins_cmds = Cmds.new(->(node, idx, val) { node.insert(idx, val) }, @attribute_set)
+        @del_cmds = Cmds.new(->(node, idx, _val) { node[idx] = nil }, @attribute_set)
+        @ins_cmds = Cmds.new(->(node, _idx, val) { node << val }, @attribute_set)
         @set_cmds = Cmds.new(->(node, idx, val) { node[idx] = val }, @attribute_set)
         @get_cmds = Cmds.new(
           ->(node, idx, _val) { node[idx] },

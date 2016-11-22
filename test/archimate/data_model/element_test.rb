@@ -41,7 +41,7 @@ module Archimate
           source: composed_by_element.id,
           target: element.id
         )
-        model = build_model(
+        _model = build_model(
           elements: [element, composed_by_element],
           relationships: [composed_by_relationship]
         )
@@ -57,7 +57,7 @@ module Archimate
           source: composed_by_element.id,
           target: element.id
         )
-        model = build_model(
+        _model = build_model(
           elements: [element, composed_by_element],
           relationships: [composed_by_relationship]
         )

@@ -16,6 +16,10 @@ module Archimate
 
         my_merge = Merge.new(base, local, remote, merged, aio)
         my_merge.merge
+
+        # TODO: Resolve manual conflicts
+
+        File.open(merged_file, "w") { |f| f.write my_merge.merged }
       end
 
       def initialize(base, local, remote, merged, aio)
