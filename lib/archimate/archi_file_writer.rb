@@ -86,8 +86,8 @@ module Archimate
       xml["archimate"].model(
         "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
         "xmlns:archimate" => "http://www.archimatetool.com/archimate",
-        "name" => model["name"],
-        "id" => model['id'],
+        "name" => model.name,
+        "id" => model.id,
         "version" => @version
       ) do
         serialize(xml, model.folders)

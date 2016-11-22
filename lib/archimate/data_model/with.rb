@@ -28,6 +28,20 @@ module Archimate
           end
         end
       end
+
+      def compact
+        comparison_attributes.each do |attr|
+          val = instance_variable_get(attr)
+          case val
+          when Dry::Struct
+            val.compact
+          when Array
+            val.compact!
+            val.each { |i| i.compact if i.is_a?(Dry::Struct) }
+          end
+        end
+        self
+      end
     end
   end
 end

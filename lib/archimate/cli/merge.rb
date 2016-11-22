@@ -19,7 +19,7 @@ module Archimate
 
         # TODO: Resolve manual conflicts
 
-        File.open(merged_file, "w") { |f| f.write my_merge.merged }
+        Archimate::ArchiFileWriter.write(my_merge.merged, merged_file)
       end
 
       def initialize(base, local, remote, merged, aio)

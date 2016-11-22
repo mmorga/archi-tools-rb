@@ -6,10 +6,6 @@ module Archimate
     # then it's actually the result of a de-duplication pass.
     # If so, then we could get good results by de-duping the
     # new side and comparing the results.
-    # TODO: Refactor notes. Split this up, three things happening here:
-    # 1. Merge
-    # 2. Find Conflicts
-    # 3. Apply Diffs to Model
     class Merge
       attr_reader :conflicts
       attr_reader :base_local_diffs
@@ -72,7 +68,6 @@ module Archimate
           diffs.delete(i)
           path_conflicts = diffs.select { |d| d.path.start_with?(i.path) }
           path_conflicts.each { |d| diffs.delete(d) }
-          # puts "#{i}<#{i.path}> should replace #{path_conflicts.map { |d| "#{d}<#{d.path}>" }.join(", ")}" unless path_conflicts.empty?
           e << i
         end
       end
@@ -86,9 +81,7 @@ module Archimate
         remaining_diffs = conflicts.filter_diffs(diffs)
         aio.debug "Filtering out #{conflicts.size} conflicts - applying #{remaining_diffs.size}"
         remaining_diffs = filter_path_conflicts(remaining_diffs)
-        remaining_diffs.sort.inject(model) do |m, diff|
-          apply_diff(m, diff)
-        end
+        remaining_diffs.sort.inject(model) { |a, e| apply_diff(a, e) }.compact
       end
 
       def apply_diff(model, diff)
