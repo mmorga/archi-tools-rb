@@ -1,5 +1,6 @@
 # TODO
 
+* [ ] Consider breaking this into a number of gems
 * [x] Not handling sketch diagram model in archi
 * [ ] Archi file could have ids that conflict (i.e. 2 relationships with same id - this is bad!!! Was it a bad merge or something worse)
 * [ ] make classes for each element and relationship type
