@@ -62,7 +62,7 @@ module Archimate
               base_idx += 1
               local_idx += 1
             elsif match(base[base_idx], local[local_idx])
-              diff_list << Context.new(base_model, local_model, base[base_idx], local[local_idx], "[#{local_idx}]").diffs
+              diff_list << Context.new(base_model, local_model, base[base_idx], local[local_idx], "[#{base_idx}]").diffs
               base_idx += 1
               local_idx += 1
             elsif local[local_idx + 1..-1].any? { |i| match(i, base[base_idx]) }

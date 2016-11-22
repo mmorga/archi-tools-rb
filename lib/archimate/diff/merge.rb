@@ -58,12 +58,11 @@ module Archimate
             found = diff.from_model.elements.select do |el|
               el != element && el.type == element.type && el.name == element.name
             end
-            unless found.empty?
-              a[diff] = found
-              aio.debug "\nFound potential de-duplication:"
-              aio.debug "\t#{diff}"
-              aio.debug "Might be replaced with:\n\t#{found.map(&:to_s).join("\n\t")}\n\n"
-            end
+            next if found.empty?
+            a[diff] = found
+            aio.debug "\nFound potential de-duplication:"
+            aio.debug "\t#{diff}"
+            aio.debug "Might be replaced with:\n\t#{found.map(&:to_s).join("\n\t")}\n\n"
           end
         end
       end

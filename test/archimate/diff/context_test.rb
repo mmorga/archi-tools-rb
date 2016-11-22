@@ -11,7 +11,7 @@ module Archimate
 
       def setup
         @base = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_folders: 4)
-        @local =build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_folders: 4)
+        @local = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_folders: 4)
       end
 
       def test_new
