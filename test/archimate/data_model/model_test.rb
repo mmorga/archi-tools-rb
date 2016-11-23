@@ -114,6 +114,23 @@ module Archimate
 
         assert_equal expected, model.application_components
       end
+
+      def test_get_at_path
+        result = @subject.get_at_path("Model<#{@subject.id}>/elements/[0]")
+
+        assert_equal 3, result.size
+        assert_equal @subject.elements[0], result[0]
+        assert_equal 0, result[1]
+        assert_equal @subject.elements, result[2]
+      end
+
+      def test_at_for_array_index
+        assert_equal @subject.elements[0], @subject.at("Model<#{@subject.id}>/elements/[0]")
+      end
+
+      def test_at_for_item
+        assert_equal @subject.elements[0].label, @subject.at("Model<#{@subject.id}>/elements/[0]/label")
+      end
     end
   end
 end

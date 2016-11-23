@@ -93,13 +93,7 @@ module Archimate
       def apply_context(diffs)
         diffs.map do |d|
           path = @path_stack.dup
-          unless d.path.nil?
-            if d.path.is_a?(Integer)
-              path << "[#{d.path}]"
-            else
-              path << d.path.to_s unless d.path.to_s.empty?
-            end
-          end
+          path << d.path.to_s unless d.path.nil? || d.path.to_s.empty?
           d.path = path.join("/")
           d
         end
