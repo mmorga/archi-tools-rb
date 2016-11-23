@@ -4,10 +4,10 @@ require "highline"
 module Archimate
   module Cli
     class Duper
-      def initialize(input_doc, output_io, mergeall = false, force = false)
+      def initialize(model, output_io, mergeall = false, force = false)
         @output = output_io
         @cli = HighLine.new
-        @doc = input_doc
+        @model = model
         @skipall = false
         @mergeall = mergeall
         @force = force
@@ -15,9 +15,9 @@ module Archimate
 
       def get_dupe_list
         dupes = Hash.new { |hash, el_type_name| hash[el_type_name] = Hash.new { |hash2, name| hash2[name] = [] } }
-        @doc.element_type_names.each do |el_type|
-          @doc.elements_with_type(el_type).each do |node|
-            dupes[el_type.to_s][@doc.element_label(node)] << @doc.element_identifier(node)
+        @model.element_type_names.each do |el_type|
+          @model.elements_with_type(el_type).each do |el|
+            dupes[el_type.to_s][el.label] << el.id
           end
         end
         dupes.delete_if do |_key, val|
@@ -52,7 +52,7 @@ module Archimate
 
       def display_elements(ids)
         ids.each_with_index do |id, idx|
-          puts "#{idx}. #{@doc.stringize(@doc.element_by_identifier(id))}\n"
+          puts "#{idx}. #{@model.stringize(@model.element_by_identifier(id))}\n"
         end
       end
 
@@ -108,9 +108,9 @@ module Archimate
       #     3. Child `properties`
       #     4. Any other elements
       def merge_copies(original_id, copies_ids)
-        original = @doc.element_by_identifier(original_id)
+        original = @model.element_by_identifier(original_id)
         copies_ids.each do |copy_id|
-          copy = @doc.element_by_identifier(copy_id)
+          copy = @model.element_by_identifier(copy_id)
           merge_into(original, copy)
         end
       end
@@ -118,7 +118,7 @@ module Archimate
       # 3. Delete the copy element from the document
       def remove_copies(copies_ids)
         copies_ids.each do |copy_id|
-          @doc.element_by_identifier(copy_id).remove
+          @model.element_by_identifier(copy_id).remove
         end
       end
 
@@ -130,7 +130,7 @@ module Archimate
       #     5. `connection`: `relationshipref`, `source`, `target` attributes
       def update_associations(original_id, copies_ids)
         copies_ids.each do |copy_id|
-          @doc.elements_with_attribute_value(copy_id).each do |node|
+          @model.elements_with_attribute_value(copy_id).each do |node|
             attrs = node.attributes
             attrs.delete("identifier") # We shouldn't get a match here, but would be a bug
             attrs.each do |_attr_name, attr|
@@ -154,7 +154,7 @@ module Archimate
           end
         end
 
-        @output.write(@doc.doc)
+        @output.write(@model.doc)
       end
     end
   end

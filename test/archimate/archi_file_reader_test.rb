@@ -6,7 +6,7 @@ module Archimate
     attr_accessor :model
 
     def setup
-      @model = ArchiFileReader.read(File.join(TEST_EXAMPLES_FOLDER, "archisurance.archimate"))
+      @model = ArchiFileReader.parse(ARCHISURANCE_SOURCE)
     end
 
     def test_read_diagrams

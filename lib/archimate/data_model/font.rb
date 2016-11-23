@@ -7,8 +7,25 @@ module Archimate
       attribute :parent_id, Strict::String
       attribute :name, Strict::String
       attribute :size, Coercible::Float.constrained(gt: 0.0)
-      attribute :style, Strict::String.optional
+      attribute :style, Coercible::Int.optional
       attribute :font_data, Strict::String.optional
+
+      # Archi font strings look like this:
+      #  "1|Arial            |14.0|0|WINDOWS|1|0  |0|0|0|0  |0 |0|0|1|0|0|0|0 |Arial"
+      #  "1|Arial            |8.0 |0|WINDOWS|1|0  |0|0|0|0  |0 |0|0|1|0|0|0|0 |Arial"
+      #  "1|Segoe UI Semibold|12.0|2|WINDOWS|1|-16|0|0|0|600|-1|0|0|0|3|2|1|34|Segoe UI Semibold"
+      #  "1|Times New Roman  |12.0|3|WINDOWS|1|-16|0|0|0|700|-1|0|0|0|3|2|1|18|Times New Roman"
+      def self.archi_font_string(str, parent_id = "")
+        return nil if str.nil?
+        font_parts = str.split("|")
+        DataModel::Font.new(
+          parent_id: parent_id,
+          name: font_parts[1],
+          size: font_parts[2],
+          style: font_parts[3],
+          font_data: str
+        )
+      end
 
       def comparison_attributes
         [:@name, :@size, :@style, :@font_data]
@@ -19,7 +36,7 @@ module Archimate
           parent_id: parent_id&.clone,
           name: name.clone,
           size: size,
-          style: style&.clone,
+          style: style,
           font_data: font_data&.clone
         )
       end

@@ -136,54 +136,18 @@ module Archimate
     end
 
     def parse_style(style)
-      # style = node.at_css(">style")
-      # return nil unless style
       parent_id = style.attr("id")
       style = DataModel::Style.new(
         parent_id: parent_id,
         text_alignment: style["textAlignment"],
-        fill_color: parse_color(style["fillColor"], parent_id),
-        line_color: parse_color(style["lineColor"], parent_id),
-        font_color: parse_color(style["fontColor"], parent_id),
-        font: parse_font(style["font"], parent_id),
+        fill_color: DataModel::Color.rgba(style["fillColor"], parent_id),
+        line_color: DataModel::Color.rgba(style["lineColor"], parent_id),
+        font_color: DataModel::Color.rgba(style["fontColor"], parent_id),
+        font: DataModel::Font.archi_font_string(style["font"], parent_id),
         line_width: style["lineWidth"],
         text_position: style["textPosition"]
       )
       style
-    end
-
-    def parse_color(str, parent_id)
-      return nil if str.nil?
-      md = str.match(%r{#([\da-f]{2})([\da-f]{2})([\da-f]{2})([\da-f]{2})?})
-      if md
-        return DataModel::Color.new(
-          parent_id: parent_id,
-          r: md[1].to_i(16),
-          g: md[2].to_i(16),
-          b: md[3].to_i(16),
-          a: md[4].nil? ? 100 : (md[4].to_i(16) / 256.0 * 100.0).to_i
-        )
-      end
-      nil
-    end
-
-    # attribute :name, Strict::String
-    # attribute :size, Coercible::Int.constrained(gt: 0)
-    # attribute :style, Strict::String.optional
-    def parse_font(str, parent_id)
-      #  "1|Arial            |14.0|0|WINDOWS|1|0  |0|0|0|0  |0 |0|0|1|0|0|0|0 |Arial"
-      #  "1|Arial            |8.0 |0|WINDOWS|1|0  |0|0|0|0  |0 |0|0|1|0|0|0|0 |Arial"
-      #  "1|Segoe UI Semibold|12.0|2|WINDOWS|1|-16|0|0|0|600|-1|0|0|0|3|2|1|34|Segoe UI Semibold"
-      #  "1|Times New Roman  |12.0|3|WINDOWS|1|-16|0|0|0|700|-1|0|0|0|3|2|1|18|Times New Roman"
-      return nil if str.nil?
-      font_parts = str.split("|")
-      DataModel::Font.new(
-        parent_id: parent_id,
-        name: font_parts[1],
-        size: font_parts[2],
-        style: font_parts[3],
-        font_data: str
-      )
     end
 
     def parse_bounds(node)

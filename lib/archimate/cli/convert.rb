@@ -28,7 +28,7 @@ module Archimate
         when "graphml"
           model = Archimate.read(infile)
           return if model.nil?
-          output.write(Archimate::Conversion::GraphML.new.graph_ml(model))
+          output.write(Archimate::Conversion::GraphML.new(model).to_graphml)
         else
           @io.error "Conversion to '#{to_format}' is not supported yet."
         end

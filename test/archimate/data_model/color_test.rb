@@ -6,7 +6,7 @@ module Archimate
     class ColorTest < Minitest::Test
       def setup
         @c1 = build_color(r: 0, g: 10, b: 255, a: 100)
-        @c2 = build_color(r: 255, g: 100, b: 125, a: 100)
+        @c2 = build_color(r: 255, g: 100, b: 125, a: 50)
       end
 
       def test_new
@@ -39,6 +39,16 @@ module Archimate
         assert_raises { Color.new(parent_id: nil, r: 256, g: 0, b: 0, a: 50) }
         assert_raises { Color.new(parent_id: nil, r: 0, g: 0, b: 0, a: 101) }
         assert_raises { Color.new(parent_id: nil, r: 0, g: 0, b: 0, a: -1) }
+      end
+
+      def test_to_rgba
+        assert_equal "#ff647d80", @c2.to_rgba
+      end
+
+      def test_rgba
+        subject = Color.rgba("#ff647d80", @c2.parent_id)
+
+        assert_equal @c2, subject
       end
     end
   end

@@ -224,7 +224,7 @@ module Archimate
           parent_id: options.fetch(:parent_id, build_id),
           name: options.fetch(:name, Faker::Name.name),
           size: options.fetch(:size, random(6, 20)),
-          style: options.fetch(:style, Faker::Name.name),
+          style: options.fetch(:style, random(0, 3)),
           font_data: nil
         )
       end

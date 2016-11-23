@@ -24,5 +24,8 @@ Minitest::Test.make_my_diffs_pretty!
 module Minitest
   class Test
     include Archimate::Examples::Factories
+
+    ARCHISURANCE_FILE = File.join(TEST_EXAMPLES_FOLDER, "archisurance.archimate").freeze
+    ARCHISURANCE_SOURCE = File.read(ARCHISURANCE_FILE).freeze
   end
 end

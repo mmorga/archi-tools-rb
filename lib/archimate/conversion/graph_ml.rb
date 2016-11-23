@@ -11,7 +11,7 @@ module Archimate
         @model = model
       end
 
-      def to_graph_ml
+      def to_graphml
         @prop_id = 1
         @edge_id = 1
         @layers = Hash.new do |hash, key|

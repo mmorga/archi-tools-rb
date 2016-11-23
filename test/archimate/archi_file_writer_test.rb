@@ -6,7 +6,7 @@ module Archimate
     attr_accessor :model
 
     def setup
-      @model_source = File.read(File.join(TEST_EXAMPLES_FOLDER, "archisurance.archimate"))
+      @model_source = ARCHISURANCE_SOURCE
       @model = ArchiFileReader.parse(@model_source)
     end
 
@@ -25,7 +25,7 @@ module Archimate
         "a" => "this"
       }
       assert_equal %w(z m a), h.keys
-      expected_keys = ["z", "a"]
+      expected_keys = %w(z a)
 
       result = ArchiFileWriter.new(@model).remove_nil_values(h)
 

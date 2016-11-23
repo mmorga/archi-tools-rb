@@ -48,6 +48,10 @@ module Archimate
       def test_to_s
         assert_equal "Bounds(x: #{@b1.x}, y: #{@b1.y}, width: #{@b1.width}, height: #{@b1.height})", @b1.to_s
       end
+
+      def test_zero
+        assert_equal Bounds.new(parent_id: "", x: 0, y: 0, width: 0, height: 0), Bounds.zero
+      end
     end
   end
 end

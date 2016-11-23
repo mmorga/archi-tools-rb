@@ -23,8 +23,6 @@ module Archimate
             val.assign_model(model)
           when Array
             val.each { |i| i.assign_model(model) if i.is_a?(Dry::Struct) }
-          when Hash
-            val.values.each { |i| i.assign_model(model) if i.is_a?(Dry::Struct) }
           end
         end
       end

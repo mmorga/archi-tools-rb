@@ -74,8 +74,6 @@ module Archimate
             end
           end
           diff_list.flatten
-        elsif base.is_a?(Hash) # TODO: Refactor
-          raise "Woah - I didn't expect any more hashes."
         else
           [Change.new(path_str, base_model, local_model, base, local)]
         end

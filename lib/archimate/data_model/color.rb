@@ -10,6 +10,19 @@ module Archimate
       attribute :b, Coercible::Int.constrained(lt: 256, gt: -1)
       attribute :a, Coercible::Int.constrained(lt: 101, gt: -1)
 
+      def self.rgba(str, parent_id = "")
+        return nil if str.nil?
+        md = str.match(/#([\da-f]{2})([\da-f]{2})([\da-f]{2})([\da-f]{2})?/)
+        return nil unless md
+        DataModel::Color.new(
+          parent_id: parent_id,
+          r: md[1].to_i(16),
+          g: md[2].to_i(16),
+          b: md[3].to_i(16),
+          a: md[4].nil? ? 100 : (md[4].to_i(16) / 256.0 * 100.0).to_i
+        )
+      end
+
       def comparison_attributes
         [:@r, :@g, :@b, :@a]
       end

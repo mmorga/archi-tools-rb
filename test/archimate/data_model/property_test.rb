@@ -24,11 +24,14 @@ module Archimate
         refute_equal prop.object_id, prop_clone.object_id
       end
 
-      def test_with
-        prop = build_property(key: "keymaster", value: nil)
-        assert_nil prop.value
-        prop2 = prop.with(value: "gatekeeper")
-        assert_equal "gatekeeper", prop2.value
+      def test_to_s
+        subject = build_property
+
+        result = subject.to_s
+
+        assert_match "Property", result
+        assert_match subject.key, result
+        assert_match subject.value, result
       end
     end
   end
