@@ -30,11 +30,11 @@ module Archimate
         if base.is_a?(Dry::Struct)
           # TODO: Use an attribute in the object for this so we can only diff
           # against certain attributes rather than all.
-          base.comparison_attributes.reject { |i| i == :@schema }.each_with_object([]) do |i, a|
-            @path_stack.push i.to_s.delete('@')
+          base.struct_instance_variables.each_with_object([]) do |i, a|
+            @path_stack.push i.to_s
             a.concat(
               apply_context(
-                Context.new(base_model, local_model, base.instance_variable_get(i), local.instance_variable_get(i)).diffs
+                Context.new(base_model, local_model, base.instance_variable_get("@#{i}"), local.instance_variable_get("@#{i}")).diffs
               )
             )
             @path_stack.pop

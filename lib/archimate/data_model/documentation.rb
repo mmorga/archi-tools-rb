@@ -8,10 +8,6 @@ module Archimate
       attribute :lang, Strict::String.optional
       attribute :text, Strict::String
 
-      def comparison_attributes
-        [:@lang, :@text]
-      end
-
       def to_s
         "Documentation<#{object_id}>[#{[lang, text].compact.join(',')}]"
       end

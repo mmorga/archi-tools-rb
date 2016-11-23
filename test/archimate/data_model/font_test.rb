@@ -42,10 +42,6 @@ module Archimate
         refute_equal @s1, @s2
       end
 
-      def test_comparison_attributes
-        assert_equal [:@name, :@size, :@style, :@font_data], @s1.comparison_attributes
-      end
-
       def test_to_s
         assert_equal "Font(name: #{@name}, size: #{@size}, style: #{@style})", @s1.to_s
       end

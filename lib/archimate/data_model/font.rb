@@ -27,10 +27,6 @@ module Archimate
         )
       end
 
-      def comparison_attributes
-        [:@name, :@size, :@style, :@font_data]
-      end
-
       def clone
         Font.new(
           parent_id: parent_id&.clone,

@@ -27,17 +27,6 @@ module Archimate
         refute_equal @subject.object_id, s2.object_id
       end
 
-      def test_comparison_attributes
-        assert_equal(
-          [
-            :@id, :@type, :@model, :@name, :@content, :@target_connections,
-            :@archimate_element, :@bounds, :@children, :@source_connections,
-            :@documentation, :@properties, :@style, :@child_type
-          ],
-          @subject.comparison_attributes
-        )
-      end
-
       def test_to_s
         assert_match(/Child/, @subject.to_s)
         assert_match("[#{@subject.name}]", @subject.to_s)

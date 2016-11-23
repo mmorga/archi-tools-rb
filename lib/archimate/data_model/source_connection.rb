@@ -16,10 +16,6 @@ module Archimate
       attribute :properties, PropertiesList
       attribute :style, OptionalStyle
 
-      def comparison_attributes
-        [:@id, :@source, :@target, :@relationship, :@name, :@type, :@bendpoints, :@documentation, :@properties, :@style]
-      end
-
       def self.create(options = {})
         new_opts = {
           relationship: nil,

@@ -16,8 +16,7 @@ module Archimate
 
       def assign_model(model)
         instance_variable_set(:@in_model, model)
-        comparison_attributes.each do |attr|
-          val = instance_variable_get(attr)
+        struct_instance_variable_values.each do |val|
           case val
           when Dry::Struct
             val.assign_model(model)
@@ -27,9 +26,20 @@ module Archimate
         end
       end
 
+      def struct_instance_variables
+        self.class.schema.keys
+      end
+
+      def struct_instance_variable_values
+        struct_instance_variables.map { |a| instance_variable_get("@#{a}") }
+      end
+
+      def struct_instance_variable_hash
+        struct_instance_variables.each_with_object({}) { |i, a| a[i] = instance_variable_get("@#{i}") }
+      end
+
       def compact
-        comparison_attributes.each do |attr|
-          val = instance_variable_get(attr)
+        struct_instance_variable_values.each do |val|
           case val
           when Dry::Struct
             val.compact

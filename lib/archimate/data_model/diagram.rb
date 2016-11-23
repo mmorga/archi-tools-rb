@@ -28,10 +28,6 @@ module Archimate
         Diagram.new(new_opts)
       end
 
-      def comparison_attributes
-        [:@id, :@name, :@viewpoint, :@documentation, :@properties, :@children, :@connection_router_type, :@type, :@background]
-      end
-
       def clone
         Diagram.new(
           parent_id: parent_id.clone,

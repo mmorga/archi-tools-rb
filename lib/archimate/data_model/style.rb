@@ -13,10 +13,6 @@ module Archimate
       attribute :font, OptionalFont
       attribute :text_position, Coercible::Int.optional
 
-      def comparison_attributes
-        [:@text_alignment, :@fill_color, :@line_color, :@font_color, :@line_width, :@font, :@text_position]
-      end
-
       def clone
         Style.new(
           parent_id: parent_id&.clone,
@@ -31,7 +27,7 @@ module Archimate
       end
 
       def to_s
-        attr_name_vals = comparison_attributes.map { |ca| "#{ca.to_s.delete('@')}: #{instance_variable_get(ca)}" }.join(", ")
+        attr_name_vals = struct_instance_variable_hash.map { |a, v| "#{a}: #{v}" }.join(", ")
         "Style(#{attr_name_vals})"
       end
     end

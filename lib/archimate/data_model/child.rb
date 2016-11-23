@@ -39,14 +39,6 @@ module Archimate
         Child.new(new_opts)
       end
 
-      def comparison_attributes
-        [
-          :@id, :@type, :@model, :@name, :@content, :@target_connections,
-          :@archimate_element, :@bounds, :@children, :@source_connections,
-          :@documentation, :@properties, :@style, :@child_type
-        ]
-      end
-
       def clone
         Child.new(
           parent_id: parent_id.clone,

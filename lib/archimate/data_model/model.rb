@@ -108,10 +108,6 @@ module Archimate
         cmds.call(node, child, value)
       end
 
-      def comparison_attributes
-        [:@id, :@name, :@documentation, :@properties, :@elements, :@folders, :@relationships, :@diagrams]
-      end
-
       def clone
         Model.new(
           parent_id: parent_id&.clone,

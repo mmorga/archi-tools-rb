@@ -8,10 +8,6 @@ module Archimate
       attribute :key, Strict::String
       attribute :value, Strict::String.optional
 
-      def comparison_attributes
-        [:@key, :@value]
-      end
-
       def self.create(options = {})
         new_opts = {
           value: nil

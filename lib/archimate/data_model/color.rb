@@ -23,10 +23,6 @@ module Archimate
         )
       end
 
-      def comparison_attributes
-        [:@r, :@g, :@b, :@a]
-      end
-
       def to_s
         "Color(r: #{r}, g: #{g}, b: #{b}, a: #{a})"
       end

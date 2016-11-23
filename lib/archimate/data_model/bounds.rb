@@ -14,10 +14,6 @@ module Archimate
         Archimate::DataModel::Bounds.new(parent_id: "", x: 0, y: 0, width: 0, height: 0)
       end
 
-      def comparison_attributes
-        [:@x, :@y, :@width, :@height]
-      end
-
       def to_s
         "Bounds(x: #{x}, y: #{y}, width: #{width}, height: #{height})"
       end

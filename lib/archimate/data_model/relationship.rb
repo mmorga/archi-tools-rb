@@ -24,10 +24,6 @@ module Archimate
         Relationship.new(new_opts)
       end
 
-      def comparison_attributes
-        [:@id, :@type, :@source, :@target, :@name, :@documentation, :@properties, :@access_type]
-      end
-
       def clone
         Relationship.new(
           parent_id: parent_id.clone,

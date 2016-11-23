@@ -13,10 +13,6 @@ module Archimate
       def to_s
         "Bendpoint(start_x: #{start_x}, start_y: #{start_y}, end_x: #{end_x}, end_y: #{end_y})"
       end
-
-      def comparison_attributes
-        [:@start_x, :@start_y, :@end_x, :@end_y]
-      end
     end
 
     Dry::Types.register_class(Bendpoint)

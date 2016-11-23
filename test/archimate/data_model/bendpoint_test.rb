@@ -39,10 +39,6 @@ module Archimate
         assert_raises { build_bendpoint(start_x: nil, start_y: nil, end_x: nil, end_y: nil) }
       end
 
-      def test_comparison_attributes
-        assert_equal [:@start_x, :@start_y, :@end_x, :@end_y], @b1.comparison_attributes
-      end
-
       def test_to_s
         assert_equal "Bendpoint(start_x: #{@b1.start_x}, start_y: #{@b1.start_y}, end_x: #{@b1.end_x}, end_y: #{@b1.end_y})", @b1.to_s
       end

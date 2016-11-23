@@ -23,10 +23,6 @@ module Archimate
         Element.new(new_opts)
       end
 
-      def comparison_attributes
-        [:@id, :@type, :@label, :@documentation, :@properties]
-      end
-
       def clone
         Element.new(
           parent_id: parent_id.clone,

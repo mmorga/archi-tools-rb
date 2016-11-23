@@ -28,10 +28,6 @@ module Archimate
         Folder.new(new_opts)
       end
 
-      def comparison_attributes
-        [:@id, :@name, :@type, :@items, :@documentation, :@properties, :@folders]
-      end
-
       def clone
         Folder.new(
           parent_id: parent_id&.clone,
