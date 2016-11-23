@@ -4,11 +4,14 @@ require 'test_helper'
 module Archimate
   module Cli
     class SvgerTest < Minitest::Test
-      def test_me
-        model = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_folders: 4)
-        aio = AIO.new
-        svger = Svger.new(model, aio)
-        refute_nil svger
+      def test_export_svgs
+        model = Archimate.parse(ARCHISURANCE_SOURCE)
+        Dir.mktmpdir do |tmpdir|
+          aio = AIO.new(output_dir: tmpdir)
+          subject = Svger.new(model, aio)
+
+          subject.export_svgs
+        end
       end
     end
   end

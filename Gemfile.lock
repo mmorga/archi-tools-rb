@@ -83,6 +83,7 @@ GEM
       minitest (~> 5)
     minitest-matchers (1.4.1)
       minitest (~> 5.0)
+    minitest-profile (0.0.2)
     nenv (0.3.0)
     nokogiri (1.6.8.1)
       mini_portile2 (~> 2.1.0)
@@ -128,6 +129,7 @@ DEPENDENCIES
   minitest
   minitest-color
   minitest-matchers
+  minitest-profile
   pry
   rake
   ruby-prof

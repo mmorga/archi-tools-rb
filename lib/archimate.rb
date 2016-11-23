@@ -79,4 +79,12 @@ module Archimate
   def self.read(filename)
     FileFormat.read(filename)
   end
+
+  # Reads the given file and returns the Archimate model
+  #
+  # @param filename File name of the file to read
+  # @return Archimate::DataModel::Model of ArchiMate model in the file
+  def self.parse(filename)
+    FileFormat.parse(filename)
+  end
 end

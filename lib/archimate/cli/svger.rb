@@ -104,7 +104,7 @@ module Archimate
           xml.rect(x: ctx["x"], y: ctx["y"], width: ctx["width"], height: "14", class: "topbox")
         else
           # puts "TODO: implement #{el_type}"
-          puts element
+          # puts element
           # $todos[element&.type] += 1
           xml.rect(x: ctx["x"], y: ctx["y"], width: ctx["width"], height: ctx["height"])
         end
@@ -156,7 +156,7 @@ module Archimate
               xml.text line
             end
           end
-          child.children.values.each { |c| draw_element(xml, c, bounds) }
+          child.children.each { |c| draw_element(xml, c, bounds) }
         end
       end
 
@@ -248,7 +248,7 @@ module Archimate
         end
 
         # puts "\n\n"
-        todos.keys.sort.each { |el| puts "#{el}: #{todos[el]}" }
+        # todos.keys.sort.each { |el| puts "#{el}: #{todos[el]}" }
       end
     end
   end

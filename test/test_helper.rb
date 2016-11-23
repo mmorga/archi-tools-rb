@@ -14,6 +14,7 @@ end
 
 require 'minitest/autorun'
 require 'minitest/color'
+require 'minitest/profile'
 require 'faker'
 require 'pp'
 require 'archimate'

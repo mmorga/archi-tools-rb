@@ -44,7 +44,7 @@ module Archimate
       @uout = opts[:uout]
       @verbose = opts[:verbose]
       @force = opts[:force]
-      @output_dir = Dir.pwd
+      @output_dir = opts[:output_dir] || Dir.pwd
       @hl = HighLine.new(@uin, @uout)
       @progressbar = nil
     end
