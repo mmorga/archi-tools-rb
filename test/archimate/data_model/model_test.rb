@@ -22,7 +22,7 @@ module Archimate
         assert_equal 4, @subject.elements.size
         assert_equal 2, @subject.relationships.size
         assert_equal 2, @subject.diagrams.size
-        assert_equal 4, Model.flat_folder_hash(@subject.folders).size
+        assert_equal 4, @subject.flat_folder_hash.size
 
         assert @subject.elements.all? { |i| i.parent_id == @subject.id }
         assert @subject.relationships.all? { |i| i.parent_id == @subject.id }
@@ -52,7 +52,18 @@ module Archimate
         @subject.relationships.each { |r| assert_equal r, @subject.lookup(r.id) }
         @subject.elements.each { |e| assert_equal e, @subject.lookup(e.id) }
         @subject.folders.each { |f| assert_equal f, @subject.lookup(f.id) }
-        @subject.diagrams.each { |d| assert_equal d, @subject.lookup(d.id) }
+        @subject.diagrams.each do |d|
+          assert_equal d, @subject.lookup(d.id)
+          refute d.children.empty?
+          d.children.each do |c|
+            assert_equal c, @subject.lookup(c.id)
+
+            # refute c.source_connections.empty?
+            c.source_connections.each do |s|
+              assert_equal s, @subject.lookup(s.id)
+            end
+          end
+        end
       end
 
       def test_clone

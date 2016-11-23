@@ -74,6 +74,10 @@ module Archimate
       def to_s
         "Child[#{name || ''}](#{in_model.lookup(archimate_element) if archimate_element && in_model})"
       end
+
+      def element
+        in_model.lookup(archimate_element)
+      end
     end
 
     Dry::Types.register_class(Child)

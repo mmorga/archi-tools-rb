@@ -141,6 +141,7 @@ module Archimate
         compute_drawing_bounds(bounds)
         element_id = child.archimate_element
         element = @model.lookup(element_id)
+        return if element.nil?
         group_class = element.is_a?(Archimate::DataModel::Model) ? "" : element&.type
         group_attrs = { id: element_id, class: group_class }
         group_attrs[:transform] = "translate(#{context['x']}, #{context['y']})" unless context.nil?
@@ -164,7 +165,7 @@ module Archimate
         offset = Archimate::DataModel::Bounds.zero
         return offset if element.nil?
         el = element.parent
-        while el.bounds
+        while el.respond_to?(:bounds) && el.bounds
           bounds = el.bounds
           offset = offset.with(x: offset.x + bounds.x, y: offset.y + bounds.y)
           el = el.parent

@@ -28,5 +28,6 @@ module Minitest
 
     ARCHISURANCE_FILE = File.join(TEST_EXAMPLES_FOLDER, "archisurance.archimate").freeze
     ARCHISURANCE_SOURCE = File.read(ARCHISURANCE_FILE).freeze
+    ARCHISURANCE_MODEL = IceNine.deep_freeze(Archimate.parse(ARCHISURANCE_SOURCE))
   end
 end

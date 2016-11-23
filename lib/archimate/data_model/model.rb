@@ -39,11 +39,12 @@ module Archimate
         Model.new(new_opts)
       end
 
-      def self.flat_folder_hash(folders, h = {})
-        folders.each_with_object(h) do |folder, a|
-          a[folder.id] = folder
-          a.merge!(flat_folder_hash(folder.folders))
+      def flat_folder_hash
+        ffh = {}
+        folders.each do |f|
+          f.walk_struct(inst_proc: ->(n) { ffh[n.id] = n })
         end
+        ffh
       end
 
       def initialize(attributes)
@@ -61,13 +62,19 @@ module Archimate
       end
 
       def lookup(id)
-        @index_hash ||= elements.each_with_object(id => self) { |i, a| a[i.id] = i }.merge(
-          relationships.each_with_object({}) { |i, a| a[i.id] = i }.merge(
-            diagrams.each_with_object(Model.flat_folder_hash(folders)) { |i, a| a[i.id] = i }
-          )
-        )
-
+        @index_hash ||= {}
+        rebuild_index unless @index_hash.include?(id)
         @index_hash[id]
+      end
+
+      def register(c)
+        @index_hash ||= {}
+        @index_hash[c.id] = c if c.respond_to?(:id)
+      end
+
+      def rebuild_index
+        @index_hash = {}
+        walk_struct(inst_proc: -> (n) { register(n) })
       end
 
       def delete_at(path)

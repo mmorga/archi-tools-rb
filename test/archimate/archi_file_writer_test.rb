@@ -7,7 +7,7 @@ module Archimate
 
     def setup
       @model_source = ARCHISURANCE_SOURCE
-      @model = ArchiFileReader.parse(@model_source)
+      @model = ARCHISURANCE_MODEL
     end
 
     def test_write

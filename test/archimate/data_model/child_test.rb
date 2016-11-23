@@ -5,11 +5,25 @@ module Archimate
   module DataModel
     class ChildTest < Minitest::Test
       def setup
-        @model = build_model(diagrams: build_diagram_list(with_diagrams: 1))
+        @element = build_element
         @subject = build_child(
           with_children: 3,
+          element: @element,
           relationships: build_relationship_list(with_relationships: 2)
         )
+        @model = build_model(
+          elements: [@element],
+          diagrams: [
+            build_diagram(
+              children: [@subject]
+            )
+          ]
+        )
+        assert_equal @element.instance_variable_get(:@in_model), @model
+        assert @model.instance_variable_get(:@index_hash).include?(@element.id)
+        assert_equal @element, @model.elements[0]
+        assert_equal @element.id, @subject.archimate_element
+        assert_equal @model.diagrams[0].children[0], @subject
       end
 
       def test_create
@@ -44,8 +58,7 @@ module Archimate
       end
 
       def test_child_element
-        skip("TODO")
-        assert_equal @model.lookup(@element_id), @subject.element
+        assert_equal @element, @subject.element
       end
     end
   end

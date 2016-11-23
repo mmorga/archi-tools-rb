@@ -15,15 +15,12 @@ module Archimate
       end
 
       def assign_model(model)
-        instance_variable_set(:@in_model, model)
-        struct_instance_variable_values.each do |val|
-          case val
-          when Dry::Struct
-            val.assign_model(model)
-          when Array
-            val.each { |i| i.assign_model(model) if i.is_a?(Dry::Struct) }
+        walk_struct(
+          inst_proc: lambda do |n|
+            n.instance_variable_set(:@in_model, model)
+            model.register(n)
           end
-        end
+        )
       end
 
       def struct_instance_variables
@@ -39,16 +36,30 @@ module Archimate
       end
 
       def compact
+        walk_struct(array_proc: ->(n) { n.compact! })
+        self
+      end
+
+      # Recursively walk this model and all of it's children calling the passed
+      # proc for each instance
+      def walk_struct(inst_proc: -> (_n) {}, array_proc: -> (_n) {})
+        inst_proc.call(self)
         struct_instance_variable_values.each do |val|
           case val
           when Dry::Struct
-            val.compact
+            val.walk_struct(inst_proc: inst_proc, array_proc: array_proc)
           when Array
-            val.compact!
-            val.each { |i| i.compact if i.is_a?(Dry::Struct) }
+            array_proc.call(val)
+            val.each { |i| i.walk_struct(inst_proc: inst_proc, array_proc: array_proc) if i.is_a?(Dry::Struct) }
           end
         end
-        self
+      end
+
+      def ancestors
+        result = [self]
+        p = self
+        result << p until (p = p.parent).nil?
+        result
       end
     end
   end
