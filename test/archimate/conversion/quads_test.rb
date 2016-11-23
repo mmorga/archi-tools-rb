@@ -4,8 +4,15 @@ require 'test_helper'
 module Archimate
   module Conversion
     class QuadsTest < Minitest::Test
-      def test_me
-        refute_nil Quads.new
+      def test_quads
+        model = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_folders: 4)
+        subject = Quads.new(model)
+
+        results = subject.to_nq
+
+        model.elements.map(&:name).each do |e|
+          assert_match e, results
+        end
       end
     end
   end

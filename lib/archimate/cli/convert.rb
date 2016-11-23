@@ -22,11 +22,11 @@ module Archimate
           end
           # output.write(Archimate::Conversion.meff_from_archi(doc.doc).to_xml)
         when "nquads"
-          doc = Document.read(infile)
-          return if doc.nil?
-          output.write(Archimate::Conversion::Quads.new.n_quads(doc))
+          model = Archimate.read(infile)
+          return if model.nil?
+          output.write(Archimate::Conversion::Quads.new(model).to_nq)
         when "graphml"
-          model = Archimate::ArchiFileReader.read(infile)
+          model = Archimate.read(infile)
           return if model.nil?
           output.write(Archimate::Conversion::GraphML.new.graph_ml(model))
         else
