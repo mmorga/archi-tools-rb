@@ -24,7 +24,7 @@ module Archimate
         when "nquads"
           model = Archimate.read(infile)
           return if model.nil?
-          output.write(Archimate::Conversion::Quads.new(model).to_nq)
+          output.write(Archimate::Conversion::NQuads.new(model).to_nq)
         when "graphml"
           model = Archimate.read(infile)
           return if model.nil?

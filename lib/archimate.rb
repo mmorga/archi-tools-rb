@@ -28,7 +28,7 @@ module Archimate
     autoload :ArchiFileFormat, 'archimate/conversion/archi_file_format'
     autoload :ModelExchangeFileFormat, 'archimate/conversion/model_exchange_file_format'
     autoload :ArchiToMeff, 'archimate/conversion/archi_to_meff'
-    autoload :Quads, 'archimate/conversion/quads'
+    autoload :NQuads, 'archimate/conversion/n_quads'
     autoload :GraphML, 'archimate/conversion/graph_ml'
   end
 

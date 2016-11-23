@@ -3,10 +3,10 @@ require 'test_helper'
 
 module Archimate
   module Conversion
-    class QuadsTest < Minitest::Test
+    class NQuadsTest < Minitest::Test
       def test_quads
         model = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_folders: 4)
-        subject = Quads.new(model)
+        subject = NQuads.new(model)
 
         results = subject.to_nq
 

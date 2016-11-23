@@ -62,7 +62,7 @@ module Archimate
       end
     end
 
-    class Quads
+    class NQuads
       def initialize(model)
         @model = model
       end
