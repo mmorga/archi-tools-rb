@@ -19,9 +19,7 @@ module Archimate
     autoload :Mapper, 'archimate/cli/mapper'
     autoload :Merge, 'archimate/cli/merge'
     autoload :Merger, 'archimate/cli/merger'
-    autoload :Projector, 'archimate/cli/projector'
     autoload :Svger, 'archimate/cli/svger'
-    autoload :XmlTextconv, 'archimate/cli/xml_textconv'
   end
 
   module Conversion
@@ -59,7 +57,6 @@ module Archimate
   autoload :ArchiFileWriter, 'archimate/archi_file_writer'
   autoload :Constants, 'archimate/constants'
   autoload :Diff, 'archimate/diff'
-  autoload :Document, 'archimate/document'
   autoload :FileFormat, 'archimate/file_format'
   autoload :MaybeIO, 'archimate/maybe_io'
   autoload :OutputIO, 'archimate/output_io'

@@ -94,6 +94,13 @@ module Archimate
         end
       end
 
+      # returns value at path, last path segment, and path parent
+      def get_at_path(path)
+        path_str_to_array(path).inject([self, nil, nil]) do |a, e|
+          [a[0][e], e, a[0]]
+        end
+      end
+
       def at_path(cmds, path, value = nil)
         _child_val, child, node = path_str_to_array(path).inject([self, nil, nil]) do |a, e|
           [a[0][e], e, a[0]]
@@ -153,6 +160,14 @@ module Archimate
 
       def application_components
         elements.select { |e| e.type == "ApplicationComponent" }
+      end
+
+      def element_type_names
+        elements.map(&:type).uniq
+      end
+
+      def elements_with_type(t)
+        elements.select { |e| e.type == t }
       end
     end
   end

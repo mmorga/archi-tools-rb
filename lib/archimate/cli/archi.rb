@@ -22,11 +22,6 @@ module Archimate
         Archimate::Cli::Merger.new.merge_files(archifile1, archifile2)
       end
 
-      desc "project ARCHIFILE PROJECTFILE", "EXPERIMENTAL: Synchronize an Archi file and an MSProject XML file"
-      def project(archifile, projectfile)
-        Archimate::Cli::Projector.new.project(archifile, projectfile)
-      end
-
       desc "svg -o OUTPUTDIR ARCHIFILE", "IN DEVELOPMENT: Produce semantically meaningful SVG files from an Archi file"
       option :output,
              aliases: :o,
@@ -46,7 +41,7 @@ module Archimate
              desc: "Force overwriting of existing output file"
       def dupes(archifile)
         Archimate::OutputIO.new(options) do |output|
-          Archimate::Cli::Duper.new(Document.read(archifile), output).list_dupes
+          Archimate::Cli::Duper.new(Archimate.read(archifile), output).list_dupes
         end
       end
 
@@ -78,7 +73,7 @@ module Archimate
              desc: "Force overwriting of existing output file"
       def dedupe(archifile)
         Archimate::OutputIO.new(options, archifile) do |output|
-          Archimate::Cli::Duper.new(Document.read(archifile), output, options[:mergeall], options[:force]).merge
+          Archimate::Cli::Duper.new(Archimate.read(archifile), output, options[:mergeall], options[:force]).merge
         end
       end
 

@@ -5,13 +5,15 @@ require "set"
 module Archimate
   module Conversion
     class GraphML
-      def initialize
-        @prop_id = 1
-        @edge_id = 1
+      attr_reader :model
+
+      def initialize(model)
+        @model = model
       end
 
-      def graph_ml(model)
-        @model = model
+      def to_graph_ml
+        @prop_id = 1
+        @edge_id = 1
         @layers = Hash.new do |hash, key|
           hash[key] = [] unless hash.key?(key)
           hash[key]
@@ -85,10 +87,10 @@ module Archimate
       end
 
       def nodes(xml, elements)
-        elements.each do |id, element|
-          node(xml, id, element.name, element.type, element.documentation, element.properties)
+        elements.each do |element|
+          node(xml, element.id, element.name, element.type, element.documentation, element.properties)
 
-          @layers[element.layer] << id
+          @layers[element.layer] << element.id
         end
       end
 
@@ -99,8 +101,8 @@ module Archimate
       end
 
       def relationships(xml, relationships)
-        relationships.each do |id, r|
-          edge(xml, id, r.source, r.target, r.type, r.name, r.documentation, r.properties)
+        relationships.each do |r|
+          edge(xml, r.id, r.source, r.target, r.type, r.name, r.documentation, r.properties)
         end
       end
 
