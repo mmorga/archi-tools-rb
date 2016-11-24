@@ -11,7 +11,7 @@ module Archimate
       end
 
       def in_model
-        instance_variable_get(:@in_model) if defined?(@in_model)
+        @in_model if defined?(@in_model)
       end
 
       def assign_model(model)
@@ -28,11 +28,11 @@ module Archimate
       end
 
       def struct_instance_variable_values
-        struct_instance_variables.map { |a| instance_variable_get("@#{a}") }
+        struct_instance_variables.map { |a| send(a.to_sym) }
       end
 
       def struct_instance_variable_hash
-        struct_instance_variables.each_with_object({}) { |i, a| a[i] = instance_variable_get("@#{i}") }
+        struct_instance_variables.each_with_object({}) { |i, a| a[i] = send(i.to_sym) }
       end
 
       def compact

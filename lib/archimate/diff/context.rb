@@ -34,7 +34,7 @@ module Archimate
             @path_stack.push i.to_s
             a.concat(
               apply_context(
-                Context.new(base_model, local_model, base.instance_variable_get("@#{i}"), local.instance_variable_get("@#{i}")).diffs
+                Context.new(base_model, local_model, base.send(i.to_sym), local.send(i.to_sym)).diffs
               )
             )
             @path_stack.pop

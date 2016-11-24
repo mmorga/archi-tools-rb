@@ -13,8 +13,8 @@ module Archimate
       def test_with
         m2 = model.with(name: model.name + "-changed")
         refute_equal model, m2
-        model.struct_instance_variables.reject { |a| a == :name }.map { |a| "@#{a}" }.each do |a|
-          assert_equal model.instance_variable_get(a), m2.instance_variable_get(a)
+        model.struct_instance_variables.reject { |a| a == :name }.map(&:to_sym).each do |a|
+          assert_equal model.send(a), m2.send(a)
         end
       end
 

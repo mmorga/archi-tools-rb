@@ -56,7 +56,7 @@ module Archimate
         @set_cmds = Cmds.new(->(node, idx, val) { node[idx] = val }, @attribute_set)
         @get_cmds = Cmds.new(
           ->(node, idx, _val) { node[idx] },
-          ->(node, idx, _val) { node.instance_variable_get("@#{idx}") }
+          ->(node, idx, _val) { node.send(idx.to_sym) }
         )
         @array_re = Regexp.compile(/\[(\d+)\]/)
       end

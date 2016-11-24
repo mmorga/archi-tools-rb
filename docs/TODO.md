@@ -1,10 +1,15 @@
 # TODO
 
+* [ ] Add Split file feature
+* [ ] Merge unrelated files (this is the intent of Merger)
+* [ ] Stats (elements, relationships, diagrams)
+* [ ] Scorecard lint
+* [ ] CLI DSL
 * [ ] Add a super strict mode to note when reader finds unexpected content
 * [ ] Make a format agnostic file reader (which delegates to appropriate file type readers)
 * [ ] Consider breaking this into a number of gems (for example: base lib, diff/merge, other cmdline tools)
 * [ ] Archi file could have ids that conflict (i.e. 2 relationships with same id - this is bad!!! Was it a bad merge or something worse)
-* [ ] make classes for each element and relationship type
+* [ ] make classes for each element and relationship type?
 * [ ] Convert all CLIs to use AIO - merge with OutputIO and MaybeIO (maybe)
 * [ ] Figure out how to make rmagick optional and/or remove rmagick dependency
 * [ ] Decide between ox and nokogiri and eliminate the alternate

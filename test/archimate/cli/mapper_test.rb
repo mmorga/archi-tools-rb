@@ -8,7 +8,7 @@ module Archimate
         model = build_model
         output_io = StringIO.new
         mapper = Mapper.new(model, output_io)
-        assert_equal model, mapper.instance_variable_get(:@model)
+        assert_equal model, mapper.model
         assert_equal output_io, mapper.instance_variable_get(:@output)
       end
     end
