@@ -4,7 +4,6 @@ module Archimate
     class SourceConnection < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String
       attribute :id, Strict::String
       attribute :source, Strict::String
       attribute :target, Strict::String
@@ -32,7 +31,6 @@ module Archimate
 
       def clone
         SourceConnection.new(
-          parent_id: parent_id.clone,
           id: id.clone,
           source: source.clone,
           target: target.clone,

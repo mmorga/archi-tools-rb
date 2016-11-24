@@ -40,7 +40,6 @@ module Archimate
 
         assert_instance_of Array, f.folders
         assert_empty f.folders
-        refute_nil f.parent_id
       end
 
       def test_clone

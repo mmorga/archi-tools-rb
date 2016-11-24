@@ -5,8 +5,6 @@
 * [ ] Consider breaking this into a number of gems (for example: base lib, diff/merge, other cmdline tools)
 * [ ] Archi file could have ids that conflict (i.e. 2 relationships with same id - this is bad!!! Was it a bad merge or something worse)
 * [ ] make classes for each element and relationship type
-* [ ] figure out a better parent mechanism - it's really not fully cooked
-* [ ] remove parent_id from dry::struct objects - then can use class schema instead of comparison attributes
 * [ ] Convert all CLIs to use AIO - merge with OutputIO and MaybeIO (maybe)
 * [ ] Figure out how to make rmagick optional and/or remove rmagick dependency
 * [ ] Decide between ox and nokogiri and eliminate the alternate
@@ -22,6 +20,8 @@
   - [ ] Gremlin
   - [X] N-Quad
   - [X] GraphML
+* [X] figure out a better parent mechanism - it's really not fully cooked
+* [X] remove parent_id from dry::struct objects - then can use class schema instead of comparison attributes
 * [x] Not handling sketch diagram model in archi
 * [X] Use one color method - currently using HighLine and Colorize
 * [x] Refactor merge to pull conflict detection out

@@ -4,7 +4,6 @@ module Archimate
     class Property < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String
       attribute :key, Strict::String
       attribute :value, Strict::String.optional
 
@@ -17,7 +16,6 @@ module Archimate
 
       def clone
         Property.new(
-          parent_id: parent_id.clone,
           key: key.clone,
           value: value&.clone
         )

@@ -140,10 +140,10 @@ module Archimate
       style = DataModel::Style.new(
         parent_id: parent_id,
         text_alignment: style["textAlignment"],
-        fill_color: DataModel::Color.rgba(style["fillColor"], parent_id),
-        line_color: DataModel::Color.rgba(style["lineColor"], parent_id),
-        font_color: DataModel::Color.rgba(style["fontColor"], parent_id),
-        font: DataModel::Font.archi_font_string(style["font"], parent_id),
+        fill_color: DataModel::Color.rgba(style["fillColor"]),
+        line_color: DataModel::Color.rgba(style["lineColor"]),
+        font_color: DataModel::Color.rgba(style["fontColor"]),
+        font: DataModel::Font.archi_font_string(style["font"]),
         line_width: style["lineWidth"],
         text_position: style["textPosition"]
       )

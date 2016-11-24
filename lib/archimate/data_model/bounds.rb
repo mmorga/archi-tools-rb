@@ -4,7 +4,6 @@ module Archimate
     class Bounds < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String
       attribute :x, Coercible::Float.optional
       attribute :y, Coercible::Float.optional
       attribute :width, Coercible::Float

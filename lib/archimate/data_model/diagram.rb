@@ -4,7 +4,6 @@ module Archimate
     class Diagram < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String
       attribute :id, Strict::String
       attribute :name, Strict::String
       attribute :viewpoint, Strict::String.optional # TODO: change to (int?) or make parser deal with this and make enum
@@ -30,7 +29,6 @@ module Archimate
 
       def clone
         Diagram.new(
-          parent_id: parent_id.clone,
           id: id.clone,
           name: name.clone,
           viewpoint: viewpoint&.clone,

@@ -4,7 +4,6 @@ module Archimate
     class Font < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String
       attribute :name, Strict::String
       attribute :size, Coercible::Float.constrained(gt: 0.0)
       attribute :style, Coercible::Int.optional
@@ -15,11 +14,10 @@ module Archimate
       #  "1|Arial            |8.0 |0|WINDOWS|1|0  |0|0|0|0  |0 |0|0|1|0|0|0|0 |Arial"
       #  "1|Segoe UI Semibold|12.0|2|WINDOWS|1|-16|0|0|0|600|-1|0|0|0|3|2|1|34|Segoe UI Semibold"
       #  "1|Times New Roman  |12.0|3|WINDOWS|1|-16|0|0|0|700|-1|0|0|0|3|2|1|18|Times New Roman"
-      def self.archi_font_string(str, parent_id = "")
+      def self.archi_font_string(str)
         return nil if str.nil?
         font_parts = str.split("|")
         DataModel::Font.new(
-          parent_id: parent_id,
           name: font_parts[1],
           size: font_parts[2],
           style: font_parts[3],
@@ -29,7 +27,6 @@ module Archimate
 
       def clone
         Font.new(
-          parent_id: parent_id&.clone,
           name: name.clone,
           size: size,
           style: style,

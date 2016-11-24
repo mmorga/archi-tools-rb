@@ -7,7 +7,7 @@ module Archimate
       end
 
       def parent
-        in_model&.lookup(parent_id)
+        @parent if defined?(@parent)
       end
 
       def in_model
@@ -51,6 +51,18 @@ module Archimate
           when Array
             array_proc.call(val)
             val.each { |i| i.walk_struct(inst_proc: inst_proc, array_proc: array_proc) if i.is_a?(Dry::Struct) }
+          end
+        end
+      end
+
+      def assign_parent(p)
+        @parent = p
+        struct_instance_variable_values.each do |val|
+          case val
+          when Dry::Struct
+            val.assign_parent(self)
+          when Array
+            val.each { |i| i.assign_parent(self) if i.is_a?(Dry::Struct) }
           end
         end
       end

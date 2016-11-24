@@ -23,11 +23,6 @@ module Archimate
         assert_equal 2, @subject.relationships.size
         assert_equal 2, @subject.diagrams.size
         assert_equal 4, @subject.flat_folder_hash.size
-
-        assert @subject.elements.all? { |i| i.parent_id == @subject.id }
-        assert @subject.relationships.all? { |i| i.parent_id == @subject.id }
-        assert @subject.diagrams.all? { |i| i.parent_id == @subject.id }
-        assert @subject.folders.all? { |i| i.parent_id == @subject.id }
       end
 
       def test_equality_operator

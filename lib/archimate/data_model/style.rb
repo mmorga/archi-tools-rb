@@ -4,7 +4,6 @@ module Archimate
     class Style < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String
       attribute :text_alignment, Coercible::Int.optional
       attribute :fill_color, OptionalColor
       attribute :line_color, OptionalColor
@@ -15,7 +14,6 @@ module Archimate
 
       def clone
         Style.new(
-          parent_id: parent_id&.clone,
           text_alignment: text_alignment,
           fill_color: fill_color&.clone,
           line_color: line_color&.clone,

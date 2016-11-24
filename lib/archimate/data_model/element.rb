@@ -4,7 +4,6 @@ module Archimate
     class Element < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String
       attribute :id, Strict::String
       attribute :type, Strict::String.optional
       attribute :label, Strict::String.optional
@@ -25,7 +24,6 @@ module Archimate
 
       def clone
         Element.new(
-          parent_id: parent_id.clone,
           id: id.clone,
           type: type&.clone,
           label: label&.clone,

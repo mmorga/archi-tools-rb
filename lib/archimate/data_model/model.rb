@@ -16,7 +16,6 @@ module Archimate
         end
       end
 
-      attribute :parent_id, Strict::String.optional
       attribute :id, Strict::String
       attribute :name, Strict::String
       attribute :documentation, DocumentationList
@@ -50,6 +49,7 @@ module Archimate
       def initialize(attributes)
         super
         assign_model(self)
+        assign_parent(nil)
         @attribute_set = ->(node, attrname, val) { node.instance_variable_set("@#{attrname}", val) }
         @del_cmds = Cmds.new(->(node, idx, _val) { node[idx] = nil }, @attribute_set)
         @ins_cmds = Cmds.new(->(node, _idx, val) { node << val }, @attribute_set)
@@ -117,7 +117,6 @@ module Archimate
 
       def clone
         Model.new(
-          parent_id: parent_id&.clone,
           id: id.clone,
           name: name.clone,
           documentation: documentation.map(&:clone),

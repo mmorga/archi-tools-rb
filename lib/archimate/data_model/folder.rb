@@ -8,7 +8,6 @@ module Archimate
     class Folder < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String
       attribute :id, Strict::String
       attribute :name, Strict::String
       attribute :type, Strict::String.optional
@@ -30,7 +29,6 @@ module Archimate
 
       def clone
         Folder.new(
-          parent_id: parent_id&.clone,
           id: id.clone,
           name: name.clone,
           type: type&.clone,

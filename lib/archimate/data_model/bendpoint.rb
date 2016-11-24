@@ -4,7 +4,6 @@ module Archimate
     class Bendpoint < Dry::Struct
       include DataModel::With
 
-      attribute :parent_id, Strict::String
       attribute :start_x, Coercible::Float.optional
       attribute :start_y, Coercible::Float.optional
       attribute :end_x, Coercible::Float.optional

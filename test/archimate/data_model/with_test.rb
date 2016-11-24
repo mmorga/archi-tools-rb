@@ -23,7 +23,6 @@ module Archimate
       end
 
       def test_parent
-        model.elements.each { |e| assert_equal model.id, e.parent_id }
         model.elements.each { |e| assert_equal model, e.parent }
       end
 
@@ -62,7 +61,6 @@ module Archimate
 
       def test_struct_instance_variable_hash
         expected = {
-          parent_id: model.parent_id,
           id: model.id,
           name: model.name,
           documentation: model.documentation,
