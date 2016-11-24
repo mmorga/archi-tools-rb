@@ -5,8 +5,8 @@ module Archimate
       attr_reader :local, :remote
 
       def self.diff(local_file, remote_file, message_io = STDERR)
-        local = Archimate::ArchiFileReader.read(local_file)
-        remote = Archimate::ArchiFileReader.read(remote_file)
+        local = Archimate.read(local_file)
+        remote = Archimate.read(remote_file)
 
         my_diff = Diff.new(local, remote, message_io)
         my_diff.diff

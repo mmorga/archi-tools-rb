@@ -22,7 +22,7 @@ module Archimate
       }.freeze
 
       def self.export_svgs(archi_file, aio)
-        model = Archimate::ArchiFileReader.read(archi_file)
+        model = Archimate.read(archi_file)
         new(model, aio).export_svgs
       end
 

@@ -182,8 +182,8 @@ module Archimate
       end
 
       def test_models_equivalent
-        model1 = Archimate::ArchiFileReader.read(BASE)
-        model2 = Archimate::ArchiFileReader.read(BASE)
+        model1 = Archimate.read(BASE)
+        model2 = Archimate.read(BASE)
         ctx = Context.new(base, local, model1, model2)
         model_diffs = ctx.diffs
         assert_empty model_diffs

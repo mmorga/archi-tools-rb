@@ -2,11 +2,11 @@
 module Archimate
   class FileFormat
     def self.read(filename)
-      ArchiFileReader.read(filename)
+      FileFormats::ArchiFileReader.read(filename)
     end
 
     def self.parse(str)
-      ArchiFileReader.parse(str)
+      FileFormats::ArchiFileReader.parse(str)
     end
   end
 end

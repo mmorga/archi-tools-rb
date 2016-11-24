@@ -7,7 +7,6 @@ module Archimate
 
       def build_property(options = {})
         Archimate::DataModel::Property.new(
-          parent_id: options.fetch(:parent_id, build_id),
           key: options.fetch(:key, Faker::Company.buzzword),
           value: options.fetch(:value, Faker::Company.buzzword)
         )
@@ -23,7 +22,6 @@ module Archimate
 
       def build_documentation(options = {})
         Archimate::DataModel::Documentation.new(
-          parent_id: options.fetch(:parent_id, build_id),
           text: options.fetch(:text, Faker::ChuckNorris.fact),
           lang: options.fetch(:lang, nil)
         )
@@ -31,7 +29,6 @@ module Archimate
 
       def build_bounds(options = {})
         Archimate::DataModel::Bounds.new(
-          parent_id: options.fetch(:parent_id, build_id),
           x: options.fetch(:x, Faker::Number.positive),
           y: options.fetch(:y, Faker::Number.positive),
           width: options.fetch(:width, Faker::Number.positive),
@@ -41,12 +38,11 @@ module Archimate
 
       def build_model(options = {})
         model_id = options.fetch(:id, build_id)
-        elements = build_element_list(options.merge(parent_id: model_id))
-        relationships = build_relationship_list(options.merge(elements: elements, parent_id: model_id))
-        diagrams = options.fetch(:diagrams, build_diagram_list(options.merge(elements: elements, relationships: relationships, parent_id: model_id)))
-        folders = options.fetch(:folders, build_folder_list(options.merge(parent_id: model_id)))
+        elements = build_element_list(options)
+        relationships = build_relationship_list(options.merge(elements: elements))
+        diagrams = options.fetch(:diagrams, build_diagram_list(options.merge(elements: elements, relationships: relationships)))
+        folders = options.fetch(:folders, build_folder_list(options))
         Archimate::DataModel::Model.new(
-          parent_id: nil,
           id: model_id,
           name: options.fetch(:name, Faker::Company.name),
           documentation: options.fetch(:documentation, []),
@@ -69,7 +65,6 @@ module Archimate
 
       def build_element(options = {})
         Archimate::DataModel::Element.new(
-          parent_id: options.fetch(:parent_id, build_id),
           id: options.fetch(:id, build_id),
           label: options.fetch(:label, Faker::Company.buzzword),
           type: options.fetch(:type, random_element_type),
@@ -86,13 +81,12 @@ module Archimate
           [build_child(element: elements.find { |i| i.id == rel.source }, relationships: [rel]),
            build_child(element: elements.find { |i| i.id == rel.target }, relationships: [])]
         end.flatten
-        (1..count).map { build_diagram(children: child_list, parent_id: options.fetch(:parent_id, build_id)) }
+        (1..count).map { build_diagram(children: child_list) }
       end
 
       def build_diagram(options = {})
         children = options.fetch(:children, build_children)
         Archimate::DataModel::Diagram.new(
-          parent_id: options.fetch(:parent_id, build_id),
           id: options.fetch(:id, build_id),
           name: options.fetch(:name, Faker::Commerce.product_name),
           viewpoint: options.fetch(:viewpoint, nil),
@@ -119,7 +113,6 @@ module Archimate
           relationships.map { |rel| build_source_connection(for_relationship: rel) }
         )
         Archimate::DataModel::Child.create(
-          parent_id: options.fetch(:parent_id, build_id),
           id: options.fetch(:id, build_id),
           type: "archimate:DiagramObject",
           name: options[:name],
@@ -136,7 +129,6 @@ module Archimate
         relationship = options.fetch(:for_relationship, nil)
 
         Archimate::DataModel::SourceConnection.create(
-          parent_id: options.fetch(:parent_id, build_id),
           id: options.fetch(:id, build_id),
           name: options.fetch(:name, Faker::Company.catch_phrase),
           type: options.fetch(:type, random_element_type),
@@ -155,13 +147,12 @@ module Archimate
         el_ids = elements.map(&:id).each_slice(2).each_with_object([]) { |i, a| a << i }
         (1..count).map do
           src_id, target_id = el_ids.shift
-          build_relationship(source: src_id, target: target_id, parent_id: options.fetch(:parent_id, build_id))
+          build_relationship(source: src_id, target: target_id)
         end + other_rels
       end
 
       def build_relationship(options = {})
         Archimate::DataModel::Relationship.new(
-          parent_id: options.fetch(:parent_id, build_id),
           id: options.fetch(:id, build_id),
           type: options.fetch(:type, random_relationship_type),
           source: options.fetch(:source, build_id),
@@ -179,7 +170,6 @@ module Archimate
         max_items = 10
         (1..count).map do
           build_folder(
-            parent_id: options.fetch(:parent_id, build_id),
             items: (0..random(min_items, max_items)).each_with_object([]) { |_i2, a2| a2 << build_id },
             folders: options.fetch(:child_folders, [])
           )
@@ -188,7 +178,6 @@ module Archimate
 
       def build_folder(options = {})
         Archimate::DataModel::Folder.new(
-          parent_id: options.fetch(:parent_id, build_id),
           id: options.fetch(:id, build_id),
           name: options.fetch(:name, Faker::Commerce.department),
           type: options.fetch(:type, random_relationship_type),
@@ -201,7 +190,6 @@ module Archimate
 
       def build_bendpoint(options = {})
         Archimate::DataModel::Bendpoint.new(
-          parent_id: options.fetch(:parent_id, build_id),
           start_x: options.fetch(:start_x, random(0, 1000)),
           start_y: options.fetch(:start_y, random(0, 1000)),
           end_x: options.fetch(:end_x, random(0, 1000)),
@@ -211,7 +199,6 @@ module Archimate
 
       def build_color(options = {})
         Archimate::DataModel::Color.new(
-          parent_id: options.fetch(:parent_id, build_id),
           r: options.fetch(:r, random(0, 255)),
           g: options.fetch(:g, random(0, 255)),
           b: options.fetch(:b, random(0, 255)),
@@ -221,7 +208,6 @@ module Archimate
 
       def build_font(options = {})
         Archimate::DataModel::Font.new(
-          parent_id: options.fetch(:parent_id, build_id),
           name: options.fetch(:name, Faker::Name.name),
           size: options.fetch(:size, random(6, 20)),
           style: options.fetch(:style, random(0, 3)),
@@ -231,7 +217,6 @@ module Archimate
 
       def build_style(options = {})
         Archimate::DataModel::Style.new(
-          parent_id: options.fetch(:parent_id, build_id),
           text_alignment: random(0, 2),
           fill_color: build_color,
           line_color: build_color,
@@ -258,12 +243,12 @@ module Archimate
 
       def random_relationship_type
         @random ||= Random.new(Random.new_seed)
-        Archimate::Constants::RELATIONSHIPS[@random.rand(Archimate::Constants::RELATIONSHIPS.size)]
+        Archimate::DataModel::Constants::RELATIONSHIPS[@random.rand(Archimate::DataModel::Constants::RELATIONSHIPS.size)]
       end
 
       def random_element_type
         @random ||= Random.new(Random.new_seed)
-        Archimate::Constants::ELEMENTS[@random.rand(Archimate::Constants::ELEMENTS.size)]
+        Archimate::DataModel::Constants::ELEMENTS[@random.rand(Archimate::DataModel::Constants::ELEMENTS.size)]
       end
 
       def random(min, max)

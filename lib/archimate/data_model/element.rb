@@ -37,7 +37,7 @@ module Archimate
       end
 
       def layer
-        Archimate::Constants::ELEMENT_LAYER.fetch(@type, "None")
+        Constants::ELEMENT_LAYER.fetch(@type, "None")
       end
 
       def composed_by

@@ -23,7 +23,6 @@ module Archimate
   end
 
   module Conversion
-    autoload :ArchiFileFormat, 'archimate/conversion/archi_file_format'
     autoload :ModelExchangeFileFormat, 'archimate/conversion/model_exchange_file_format'
     autoload :ArchiToMeff, 'archimate/conversion/archi_to_meff'
     autoload :NQuads, 'archimate/conversion/n_quads'
@@ -49,14 +48,12 @@ module Archimate
     end
   end
 
-  module Svg
-    autoload :Font, 'archimate/svg/font'
+  module FileFormats
+    autoload :ArchiFileFormat, 'archimate/file_formats/archi_file_format'
+    autoload :ArchiFileReader, 'archimate/file_formats/archi_file_reader'
+    autoload :ArchiFileWriter, 'archimate/file_formats/archi_file_writer'
   end
 
-  autoload :ArchiFileReader, 'archimate/archi_file_reader'
-  autoload :ArchiFileWriter, 'archimate/archi_file_writer'
-  autoload :Constants, 'archimate/constants'
-  autoload :Diff, 'archimate/diff'
   autoload :FileFormat, 'archimate/file_format'
   autoload :MaybeIO, 'archimate/maybe_io'
   autoload :OutputIO, 'archimate/output_io'

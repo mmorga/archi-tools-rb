@@ -6,11 +6,11 @@ module Archimate
 
       def self.merge(base_file, remote_file, local_file, merged_file, aio = Archimate::AIO.new(verbose: true))
         aio.debug "Reading base file: #{base_file}"
-        base = Archimate::ArchiFileReader.read(base_file)
+        base = Archimate.read(base_file)
         aio.debug "Reading local file: #{local_file}"
-        local = Archimate::ArchiFileReader.read(local_file)
+        local = Archimate.read(local_file)
         aio.debug "Reading remote file: #{remote_file}"
-        remote = Archimate::ArchiFileReader.read(remote_file)
+        remote = Archimate.read(remote_file)
         aio.debug "Merged file is #{merged_file}"
 
         Merge.new(base, local, remote, merged_file, aio).run_merge
