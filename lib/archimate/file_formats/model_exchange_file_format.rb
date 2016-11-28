@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Archimate
-  module Conversion
-    module DataModelExchangeFileFormat
+  module FileFormats
+    module ModelExchangeFileFormat
     end
   end
 end

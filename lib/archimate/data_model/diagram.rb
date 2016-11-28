@@ -6,7 +6,7 @@ module Archimate
 
       attribute :id, Strict::String
       attribute :name, Strict::String
-      attribute :viewpoint, Strict::String.optional # TODO: change to (int?) or make parser deal with this and make enum
+      attribute :viewpoint, Coercible::String.optional
       attribute :documentation, DocumentationList
       attribute :properties, PropertiesList
       attribute :children, Strict::Array.member(Child)
@@ -51,6 +51,12 @@ module Archimate
       def relationships
         children.each_with_object([]) do |i, a|
           a.concat(i.relationships)
+        end
+      end
+
+      def source_connections
+        children.each_with_object([]) do |i, a|
+          a.concat(i.all_source_connections)
         end
       end
 

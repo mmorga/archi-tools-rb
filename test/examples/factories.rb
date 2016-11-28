@@ -8,7 +8,8 @@ module Archimate
       def build_property(options = {})
         Archimate::DataModel::Property.new(
           key: options.fetch(:key, Faker::Company.buzzword),
-          value: options.fetch(:value, Faker::Company.buzzword)
+          value: options.fetch(:value, Faker::Company.buzzword),
+          lang: nil
         )
       end
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 module Archimate
-  module Conversion
+  module FileFormats
     module ArchiFileFormat
       application_folder_xpath = "/archimate:model/folder[@type='application']"
       business_folder_xpath = "/archimate:model/folder[@type='business']"

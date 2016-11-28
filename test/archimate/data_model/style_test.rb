@@ -14,7 +14,6 @@ module Archimate
         @text_position = 1
 
         @s1 = Style.new(
-          parent_id: build_id,
           text_alignment: @text_alignment,
           fill_color: @fill_color,
           line_color: @line_color,

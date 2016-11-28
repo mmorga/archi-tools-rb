@@ -7,18 +7,22 @@ module Archimate
       attribute :r, Coercible::Int.constrained(lt: 256, gt: -1)
       attribute :g, Coercible::Int.constrained(lt: 256, gt: -1)
       attribute :b, Coercible::Int.constrained(lt: 256, gt: -1)
-      attribute :a, Coercible::Int.constrained(lt: 101, gt: -1)
+      attribute :a, Coercible::Int.constrained(lt: 101, gt: -1).optional
 
       def self.rgba(str)
         return nil if str.nil?
         md = str.match(/#([\da-f]{2})([\da-f]{2})([\da-f]{2})([\da-f]{2})?/)
         return nil unless md
-        DataModel::Color.new(
+        new(
           r: md[1].to_i(16),
           g: md[2].to_i(16),
           b: md[3].to_i(16),
           a: md[4].nil? ? 100 : (md[4].to_i(16) / 256.0 * 100.0).to_i
         )
+      end
+
+      def self.black
+        new(r: 0, g: 0, b: 0, a: 100)
       end
 
       def to_s

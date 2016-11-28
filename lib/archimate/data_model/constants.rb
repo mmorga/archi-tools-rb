@@ -54,6 +54,15 @@ module Archimate
       ELEMENT_LAYER = LAYER_ELEMENTS.each_with_object({}) do |(layer, elements), el_layer_hash|
         elements.each_with_object(el_layer_hash) { |element, a| a[element] = layer }
       end
+
+      VIEWPOINTS = ["Total", "Actor Co-operation", "Application Behaviour",
+              "Application Co-operation", "Application Structure", "Application Usage",
+              "Business Function", "Business Process Co-operation", "Business Process",
+              "Business Product", "Implementation and Deployment", "Information Structure",
+              "Infrastructure Usage", "Infrastructure", "Layered", "Organisation",
+              "Service Realization", "Stakeholder", "Goal Realization", "Goal Contribution",
+              "Principles", "Requirements Realisation", "Motivation", "Project",
+              "Migration", "Implementation and Migration"].freeze
     end
   end
 end

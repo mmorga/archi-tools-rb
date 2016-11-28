@@ -137,6 +137,10 @@ module Archimate
       def test_at_for_item
         assert_equal @subject.elements[0].label, @subject.at("Model<#{@subject.id}>/elements/[0]/label")
       end
+
+      def test_property_keys
+        assert [], @subject.property_keys
+      end
     end
   end
 end

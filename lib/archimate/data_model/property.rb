@@ -6,10 +6,12 @@ module Archimate
 
       attribute :key, Strict::String
       attribute :value, Strict::String.optional
+      attribute :lang, Strict::String.default("en")
 
       def self.create(options = {})
         new_opts = {
-          value: nil
+          value: nil,
+          lang: "en"
         }.merge(options)
         Property.new(new_opts)
       end
@@ -17,12 +19,17 @@ module Archimate
       def clone
         Property.new(
           key: key.clone,
-          value: value&.clone
+          value: value&.clone,
+          lang: lang&.clone
         )
       end
 
       def to_s
         "Property(key: #{key}, value: #{value || 'no value'})"
+      end
+
+      def property_id
+        in_model.property_def_id(key)
       end
     end
 

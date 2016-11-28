@@ -4,7 +4,7 @@ module Archimate
     class Documentation < Dry::Struct
       include DataModel::With
 
-      attribute :lang, Strict::String.optional
+      attribute :lang, Strict::String.default("en")
       attribute :text, Strict::String
 
       def to_s

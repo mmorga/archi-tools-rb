@@ -14,7 +14,6 @@ module Archimate
 
       def test_create
         rel = Relationship.create(
-          parent_id: build_id,
           id: "abc123",
           type: "complicated",
           source: "src",

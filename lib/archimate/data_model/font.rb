@@ -4,8 +4,8 @@ module Archimate
     class Font < Dry::Struct
       include DataModel::With
 
-      attribute :name, Strict::String
-      attribute :size, Coercible::Float.constrained(gt: 0.0)
+      attribute :name, Strict::String.optional
+      attribute :size, Coercible::Float.constrained(gt: 0.0).optional
       attribute :style, Coercible::Int.optional
       attribute :font_data, Strict::String.optional
 
@@ -44,6 +44,19 @@ module Archimate
             1, font.name, font.size, font.style, "WINDOWS", 1, 0, 0, 0, 0, 0, 0,
             0, 0, 1, 0, 0, 0, 0, font.name
           ].map(&:to_s).join("|")
+      end
+
+      def style_string
+        case style
+        when 1
+          "italic"
+        when 2
+          "bold"
+        when 3
+          "bold|italic"
+        else
+          nil
+        end
       end
     end
 

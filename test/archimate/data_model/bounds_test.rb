@@ -5,9 +5,8 @@ module Archimate
   module DataModel
     class BoundsTest < Minitest::Test
       def setup
-        @parent_id = build_id
-        @b1 = build_bounds(parent_id: @parent_id, x: 0, y: 10, width: 500, height: 700)
-        @b2 = build_bounds(parent_id: @parent_id, x: 0, y: 10, width: 500, height: 700)
+        @b1 = build_bounds(x: 0, y: 10, width: 500, height: 700)
+        @b2 = build_bounds(x: 0, y: 10, width: 500, height: 700)
       end
 
       def test_new
@@ -50,7 +49,7 @@ module Archimate
       end
 
       def test_zero
-        assert_equal Bounds.new(parent_id: "", x: 0, y: 0, width: 0, height: 0), Bounds.zero
+        assert_equal Bounds.new(x: 0, y: 0, width: 0, height: 0), Bounds.zero
       end
     end
   end

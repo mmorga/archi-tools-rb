@@ -10,7 +10,7 @@ module Archimate
       attribute :height, Coercible::Float
 
       def self.zero
-        Archimate::DataModel::Bounds.new(parent_id: "", x: 0, y: 0, width: 0, height: 0)
+        Archimate::DataModel::Bounds.new(x: 0, y: 0, width: 0, height: 0)
       end
 
       def to_s

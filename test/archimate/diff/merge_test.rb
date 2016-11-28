@@ -62,8 +62,8 @@ module Archimate
       end
 
       def test_both_insert_element_documentation
-        doc1 = build_documentation_list(parent_id: base_el1)
-        doc2 = build_documentation_list(parent_id: base_el1)
+        doc1 = build_documentation_list
+        doc2 = build_documentation_list
         local_el = base_el1.with(documentation: doc1)
         remote_el = base_el1.with(documentation: doc2)
         local = base.insert_element(local_el)

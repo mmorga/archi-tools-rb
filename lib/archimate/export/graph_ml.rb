@@ -3,7 +3,7 @@
 require "set"
 
 module Archimate
-  module Conversion
+  module Export
     class GraphML
       attr_reader :model
 

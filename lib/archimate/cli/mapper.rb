@@ -2,15 +2,6 @@
 module Archimate
   module Cli
     class Mapper
-      VIEWPOINTS = ["Total", "Actor Co-operation", "Application Behaviour",
-                    "Application Co-operation", "Application Structure", "Application Usage",
-                    "Business Function", "Business Process Co-operation", "Business Process",
-                    "Business Product", "Implementation and Deployment", "Information Structure",
-                    "Infrastructure Usage", "Infrastructure", "Layered", "Organisation",
-                    "Service Realisation", "Stakeholder", "Goal Realization", "Goal Contribution",
-                    "Principles", "Requirements Realisation", "Motivation", "Project",
-                    "Migration", "Implementation and Migration"].freeze
-
       HEADERS = %w(id name viewpoint).freeze
       COL_DIVIDER = " | "
 
@@ -36,7 +27,7 @@ module Archimate
                    when "archimate:SketchModel"
                      "Sketch"
                    when "archimate:ArchimateDiagramModel"
-                     VIEWPOINTS[(row[2] || 0).to_i]
+                     DataModel::Constants::VIEWPOINTS[(row[2] || 0).to_i]
                    else
                      row[3]
                    end

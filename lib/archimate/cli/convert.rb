@@ -10,27 +10,20 @@ module Archimate
 
       def convert(infile, output, options)
         return unless output
+        model = Archimate.read(infile)
+        return if model.nil?
 
         case options["to"]
+        when "archi"
+          Archimate::FileFormats::ArchiFileWriter.new(model).write(output)
         when "meff2.1"
-          File.open(infile) do |f|
-            parser = Archimate::Conversion::ArchiToMeff.new(output)
-            Ox.sax_parse(parser, f)
-            @io.debug "Done parsing: elements with id count: #{parser.id_map.keys.size}"
-            # output.write Ox.dump(parser.doc)
-            parser.doc.close
-          end
-          # output.write(Archimate::Conversion.meff_from_archi(doc.doc).to_xml)
+          Archimate::FileFormats::ModelExchangeFileWriter.new(model).write(output)
         when "nquads"
-          model = Archimate.read(infile)
-          return if model.nil?
-          output.write(Archimate::Conversion::NQuads.new(model).to_nq)
+          output.write(Archimate::Export::NQuads.new(model).to_nq)
         when "graphml"
-          model = Archimate.read(infile)
-          return if model.nil?
-          output.write(Archimate::Conversion::GraphML.new(model).to_graphml)
+          output.write(Archimate::Export::GraphML.new(model).to_graphml)
         else
-          @io.error "Conversion to '#{to_format}' is not supported yet."
+          @io.error "Export to '#{options['to']}' is not supported yet."
         end
       end
     end

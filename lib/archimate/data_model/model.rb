@@ -16,6 +16,7 @@ module Archimate
         end
       end
 
+      # TODO: add metadata as in Model Exchange Format
       attribute :id, Strict::String
       attribute :name, Strict::String
       attribute :documentation, DocumentationList
@@ -27,7 +28,6 @@ module Archimate
 
       def self.create(options = {})
         new_opts = {
-          parent_id: nil,
           documentation: [],
           properties: [],
           elements: [],
@@ -170,6 +170,21 @@ module Archimate
 
       def elements_with_type(t)
         elements.select { |e| e.type == t }
+      end
+
+      def all_properties
+        @index_hash.values.each_with_object([]) do |i, a|
+          a.concat(i.properties) if i.respond_to?(:properties)
+        end
+      end
+
+      def property_keys
+        all_properties.map(&:key).uniq
+      end
+
+      # TODO: refactor to use property def structure instead of separate property objects
+      def property_def_id(key)
+        "propid-#{property_keys.index(key) + 1}"
       end
     end
   end

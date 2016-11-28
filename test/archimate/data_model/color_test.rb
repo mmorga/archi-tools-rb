@@ -50,6 +50,14 @@ module Archimate
 
         assert_equal @c2, subject
       end
+
+      def test_black
+        subject = Color.black
+        assert_equal 0, subject.r
+        assert_equal 0, subject.g
+        assert_equal 0, subject.b
+        assert_equal 100, subject.a
+      end
     end
   end
 end

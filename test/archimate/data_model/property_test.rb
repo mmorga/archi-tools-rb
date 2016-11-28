@@ -5,7 +5,7 @@ module Archimate
   module DataModel
     class PropertyTest < Minitest::Test
       def test_create
-        prop = Property.create(parent_id: build_id, key: "keymaster", value: "gatekeeper")
+        prop = Property.create(key: "keymaster", value: "gatekeeper")
         assert_equal "keymaster", prop.key
         assert_equal "gatekeeper", prop.value
       end

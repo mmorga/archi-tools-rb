@@ -76,6 +76,14 @@ module Archimate
       def element
         in_model.lookup(archimate_element)
       end
+
+      def all_source_connections
+        source_connections + children.each_with_object([]) { |i, a| a.concat(i.all_source_connections) }
+      end
+
+      def child_id_hash
+        children.each_with_object(id => self) { |i, a| a.merge!(i.child_id_hash) }
+      end
     end
 
     Dry::Types.register_class(Child)

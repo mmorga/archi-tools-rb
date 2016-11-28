@@ -2,19 +2,18 @@
 require 'test_helper'
 
 module Archimate
-  module Conversion
-    class NQuadsTest < Minitest::Test
-      def test_quads
+  module Export
+    class GraphMLTest < Minitest::Test
+      def test_graphml
         model = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_folders: 4)
         model.elements.first.properties << build_property << build_property
         model.elements.first.documentation << build_documentation << build_documentation
-        subject = NQuads.new(model)
+        subject = GraphML.new(model)
 
-        results = subject.to_nq
+        result = subject.to_graphml
 
-        model.elements.map(&:name).each do |e|
-          assert_match e, results
-        end
+        doc = Nokogiri::XML(result)
+        refute_nil doc
       end
     end
   end

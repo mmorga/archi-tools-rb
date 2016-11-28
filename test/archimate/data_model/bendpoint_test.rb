@@ -5,9 +5,8 @@ module Archimate
   module DataModel
     class BendpointTest < Minitest::Test
       def setup
-        @parent_id = build_id
-        @b1 = build_bendpoint(parent_id: @parent_id, start_x: 0, start_y: 10, end_x: 500, end_y: 700)
-        @b2 = build_bendpoint(parent_id: @parent_id, start_x: 0, start_y: 10, end_x: 500, end_y: 700)
+        @b1 = build_bendpoint(start_x: 0, start_y: 10, end_x: 500, end_y: 700)
+        @b2 = build_bendpoint(start_x: 0, start_y: 10, end_x: 500, end_y: 700)
       end
 
       def test_new

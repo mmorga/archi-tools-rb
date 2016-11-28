@@ -43,7 +43,7 @@
 #
 # Add in quads for properties
 module Archimate
-  module Conversion
+  module Export
     Quad = Struct.new(:subject, :predicate, :object) do
       def fmt_obj
         if object =~ /\s/

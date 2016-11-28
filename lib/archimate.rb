@@ -22,11 +22,9 @@ module Archimate
     autoload :Svger, 'archimate/cli/svger'
   end
 
-  module Conversion
-    autoload :ModelExchangeFileFormat, 'archimate/conversion/model_exchange_file_format'
-    autoload :ArchiToMeff, 'archimate/conversion/archi_to_meff'
-    autoload :NQuads, 'archimate/conversion/n_quads'
-    autoload :GraphML, 'archimate/conversion/graph_ml'
+  module Export
+    autoload :NQuads, 'archimate/export/n_quads'
+    autoload :GraphML, 'archimate/export/graph_ml'
   end
 
   module Diff
@@ -52,6 +50,10 @@ module Archimate
     autoload :ArchiFileFormat, 'archimate/file_formats/archi_file_format'
     autoload :ArchiFileReader, 'archimate/file_formats/archi_file_reader'
     autoload :ArchiFileWriter, 'archimate/file_formats/archi_file_writer'
+    autoload :ModelExchangeFileFormat, 'archimate/file_formats/model_exchange_file_format'
+    autoload :ModelExchangeFileReader, 'archimate/file_formats/model_exchange_file_reader'
+    autoload :ModelExchangeFileWriter, 'archimate/file_formats/model_exchange_file_writer'
+    autoload :Writer, 'archimate/file_formats/writer'
   end
 
   autoload :FileFormat, 'archimate/file_format'

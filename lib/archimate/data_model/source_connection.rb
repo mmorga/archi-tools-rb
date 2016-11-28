@@ -49,8 +49,13 @@ module Archimate
       end
 
       def to_s
-        s = in_model.lookup(source) unless source.nil?
-        t = in_model.lookup(target) unless target.nil?
+        if in_model
+          s = in_model.lookup(source) unless source.nil?
+          t = in_model.lookup(target) unless target.nil?
+        else
+          s = source
+          t = target
+        end
         "#{type_name} #{s.nil? ? 'nothing' : s} -> #{t.nil? ? 'nothing' : t}"
       end
     end

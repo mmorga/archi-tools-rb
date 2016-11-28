@@ -5,7 +5,7 @@ module Archimate
   module DataModel
     class ElementTest < Minitest::Test
       def test_create
-        el = Element.create(parent_id: build_id, id: "abc123", label: "Me")
+        el = Element.create(id: "abc123", label: "Me")
         assert_equal "Me", el.label
         assert_equal "abc123", el.id
         assert_nil el.type

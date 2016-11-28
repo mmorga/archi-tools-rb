@@ -2,7 +2,7 @@
 require 'test_helper'
 
 module Archimate
-  module Conversion
+  module FileFormats
     class ArchiFileFormatTest < Minitest::Test
       def test_constants
         assert_kind_of Hash, ArchiFileFormat::ELEMENT_TYPE_TO_PARENT_XPATH

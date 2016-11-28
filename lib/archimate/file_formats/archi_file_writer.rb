@@ -1,22 +1,15 @@
 # frozen_string_literal: true
 module Archimate
   module FileFormats
-    class ArchiFileWriter
+    class ArchiFileWriter < Writer
       TEXT_SUBSTITUTIONS = [
         ['&#13;', '&#xD;'],
         ['"', '&quot;'],
         ['&gt;', '>']
       ].freeze
 
-      attr_reader :model
-
-      def self.write(model, archifile)
-        writer = new(model)
-        writer.write(archifile)
-      end
-
       def initialize(model)
-        @model = model
+        super
         @version = "3.1.1"
       end
 
@@ -28,7 +21,11 @@ module Archimate
             end
           end
         end
-        doc_str
+        doc_str.gsub(
+          %r{<(/)?archimate:}, "<\\1"
+        ).gsub(
+          %r{<(/)?model}, "<\\1archimate:model"
+        )
       end
 
       def write(archifile_io)
@@ -37,50 +34,9 @@ module Archimate
         end
         archifile_io.write(
           process_text(
-            builder.to_xml.gsub(
-              %r{<(/)?archimate:}, "<\\1"
-            ).gsub(
-              %r{<(/)?model}, "<\\1archimate:model"
-            )
+            builder.to_xml
           )
         )
-      end
-
-      def serialize(xml, collection)
-        Array(collection).each do |item|
-          case item
-          when DataModel::Bendpoint
-            serialize_bendpoint(xml, item)
-          when DataModel::Bounds
-            serialize_bounds(xml, item)
-          when DataModel::Child
-            serialize_child(xml, item)
-          when DataModel::Color
-            serialize_color(xml, item)
-          when DataModel::Diagram
-            serialize_diagram(xml, item)
-          when DataModel::Documentation
-            serialize_documentation(xml, item)
-          when DataModel::Element
-            serialize_element(xml, item)
-          when DataModel::Folder
-            serialize_folder(xml, item)
-          when DataModel::Font
-            serialize_font(xml, item)
-          when DataModel::Model
-            serialize_model(xml, item)
-          when DataModel::Property
-            serialize_property(xml, item)
-          when DataModel::Relationship
-            serialize_relationship(xml, item)
-          when DataModel::SourceConnection
-            serialize_source_connection(xml, item)
-          when DataModel::Style
-            serialize_style(xml, item)
-          else
-            raise TypeError, "Unexpected item type #{item.class}"
-          end
-        end
       end
 
       def serialize_model(xml)
@@ -95,10 +51,6 @@ module Archimate
           serialize(xml, model.properties)
           model.documentation.each { |d| serialize_documentation(xml, d, "purpose") }
         end
-      end
-
-      def remove_nil_values(h)
-        h.delete_if { |_k, v| v.nil? }
       end
 
       def serialize_folder(xml, folder)
