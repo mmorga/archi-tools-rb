@@ -42,8 +42,10 @@ module Archimate
         # find_merged_duplicates
         aio.debug "Finding Conflicts"
         conflicts.find(@base_local_diffs, @base_remote_diffs)
-        aio.debug "Applying Diffs"
-        @merged = apply_diffs(base_remote_diffs + base_local_diffs, @merged)
+        remaining_diffs = conflicts.filter_diffs(base_remote_diffs + base_local_diffs)
+        aio.debug "Filtering out #{conflicts.size} conflicts - applying #{remaining_diffs.size}"
+        remaining_diffs = filter_path_conflicts(remaining_diffs)
+        @merged = apply_diffs(remaining_diffs, @merged)
       end
 
       def find_merged_duplicates
@@ -78,10 +80,7 @@ module Archimate
       # new model with the diffs applied.
       def apply_diffs(diffs, model)
         aio.debug "Applying #{diffs.size} diffs"
-        remaining_diffs = conflicts.filter_diffs(diffs)
-        aio.debug "Filtering out #{conflicts.size} conflicts - applying #{remaining_diffs.size}"
-        remaining_diffs = filter_path_conflicts(remaining_diffs)
-        remaining_diffs.sort.inject(model) { |a, e| apply_diff(a, e) }.compact
+        diffs.sort.inject(model) { |a, e| apply_diff(a, e) }.compact
       end
 
       def apply_diff(model, diff)

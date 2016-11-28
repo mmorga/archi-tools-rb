@@ -2,22 +2,18 @@
 module Archimate
   module FileFormats
     class ModelExchangeFileReader
-      def self.read(model_exchange_file)
-        new.read(File.read(model_exchange_file))
-      end
-
       def self.parse(model_exchange_io)
-        new.read(model_exchange_io)
+        new.parse(model_exchange_io)
       end
 
-      def read(model_exchange_io)
-        parse(Nokogiri::XML(model_exchange_io))
-      end
-
-      def parse(doc)
-        root = doc.root
+      def parse(model_exchange_io)
+        root = Nokogiri::XML(model_exchange_io).root
         return nil if root.nil?
         @property_defs = parse_property_defs(root)
+        parse_model(root)
+      end
+
+      def parse_model(root)
         DataModel::Model.new(
           index_hash: {},
           id: identifier_to_id(root["identifier"]),
@@ -32,14 +28,9 @@ module Archimate
       end
 
       def parse_property_defs(node)
-        res = {}
-        node.css(">propertydefs>propertydef").each do |pd|
-          identifier = pd["identifier"]
-          name = pd["name"]
-          type = pd["type"]
-          res[identifier] = { key: name, type: type }
+        node.css(">propertydefs>propertydef").each_with_object({}) do |i, a|
+          a[i["identifier"]] = { key: i["name"], type: i["type"] }
         end
-        res
       end
 
       def parse_name(node)
@@ -48,14 +39,14 @@ module Archimate
       end
 
       def parse_documentation(node, element_name = "documentation")
-        node.css(">#{element_name}").each_with_object([]) do |i, a|
-          a << DataModel::Documentation.new(text: i.content, lang: i.attr("lang"))
+        node.css(">#{element_name}").map do |i|
+          DataModel::Documentation.new(text: i.content, lang: i.attr("lang"))
         end
       end
 
       def parse_properties(node)
-        node.css("> properties > property").each_with_object([]) do |i, a|
-          a << parse_property(i)
+        node.css("> properties > property").map do |i|
+          parse_property(i)
         end
       end
 
@@ -86,7 +77,6 @@ module Archimate
       def parse_folders(nodes)
         nodes.map do |i|
           child_items = i.css(">item")
-          folder_items = child_items.reject { |ci| ci.has_attribute?("identifierref") }
           ref_items = child_items.select { |ci| ci.has_attribute?("identifierref") }
           DataModel::Folder.new(
             id: i.at_css(">label")&.content, # TODO: model exchange doesn't assign ids to folder items
@@ -95,13 +85,13 @@ module Archimate
             documentation: parse_documentation(i),
             properties: parse_properties(i),
             items: ref_items.map { |ri| identifier_to_id(ri["identifierref"]) },
-            folders: parse_folders(folder_items)
+            folders: parse_folders(child_items.reject { |ci| ci.has_attribute?("identifierref") })
           )
         end
       end
 
       def child_element_ids(node)
-        node.css(">element[id]").each_with_object([]) { |i, a| a << i.attr("id") }
+        node.css(">element[id]").map { |i| i.attr("id") }
       end
 
       def parse_relationships(model)
@@ -120,8 +110,6 @@ module Archimate
         end
       end
 
-      # <view identifier="id-4056" viewpoint="Layered">
-      #   <label xml:lang="en">Layered View</label>
       def parse_diagrams(model)
         model.css(">views>view").map do |i|
           children = parse_children(i)
@@ -144,13 +132,6 @@ module Archimate
         end
       end
 
-      # <node identifier="id-4096" x="20" y="510" w="710" h="120" type="group">
-      #   <label xml:lang="en">External Application Services</label>
-      #   <style>
-      #     <fillColor r="225" g="225" b="225" />
-      #     <lineColor r="92" g="92" b="92" />
-      #   </style>
-      #   <node identifier="id-4103" elementref="id-1220" x="284" y="553" w="133" h="60">
       def parse_children(node)
         node.css("> node").map do |i|
           DataModel::Child.new(
@@ -232,13 +213,6 @@ module Archimate
         )
       end
 
-      # <connection identifier="id-3754" relationshipref="id-1774" source="id-3739" target="id-3731">
-      #   <bendpoint x="581" y="208" />
-      #   <style>
-      #     <lineColor r="0" g="0" b="0" />
-      #     <font name="Arial" size="8" />
-      #   </style>
-      # </connection>
       def parse_source_connections(node)
         node.css("> connection").map do |i|
           DataModel::SourceConnection.new(
@@ -257,8 +231,8 @@ module Archimate
       end
 
       def parse_bendpoints(node)
-        node.css("bendpoint").each_with_object([]) do |i, a|
-          a << DataModel::Bendpoint.new(
+        node.css("bendpoint").map do |i|
+          DataModel::Bendpoint.new(
             start_x: i.attr("x"), start_y: i.attr("y"),
             end_x: nil, end_y: nil
           )
@@ -266,8 +240,7 @@ module Archimate
       end
 
       def identifier_to_id(str)
-        return nil if str.nil?
-        str.sub(/^id-/, "")
+        str.sub(/^id-/, "") unless str.nil?
       end
     end
   end
