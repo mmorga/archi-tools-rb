@@ -11,7 +11,7 @@ module Archimate
 
     def test_default_creation
       assert_equal $stdout, io.out
-      assert_equal $stdin, io.in
+      assert_equal $stdin, io.in_io
       assert_equal $stdin, io.uin
       assert_equal $stderr, io.err
       assert_equal $stderr, io.uout

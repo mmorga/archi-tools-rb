@@ -17,7 +17,7 @@ end
 
 module Archimate
   class AIO
-    attr_reader :in
+    attr_reader :in_io
     attr_reader :uin
     attr_reader :uout
     attr_reader :out
@@ -28,23 +28,15 @@ module Archimate
     attr_reader :output_dir
 
     def initialize(options = {})
-      opts = {
-        in: $stdin,
-        out: $stdout,
-        err: $stderr,
-        uin: $stdin,
-        uout: $stderr,
-        verbose: false,
-        force: false
-      }.merge(options)
-      @in = opts[:in]
-      @out = opts[:out]
-      @err = opts[:err]
-      @uin = opts[:uin]
-      @uout = opts[:uout]
-      @verbose = opts[:verbose]
-      @force = opts[:force]
-      @output_dir = opts[:output_dir] || Dir.pwd
+      @in_io = options.fetch(:in_io, $stdin)
+      @out = options.fetch(:output, $stdout)
+      @err = options.fetch(:err, $stderr)
+      @uin = options.fetch(:uin, $stdin)
+      @uout = options.fetch(:uout, $stderr)
+      @verbose = options.fetch(:verbose, false)
+      @force = options.fetch(:force, false)
+      @output_dir = options.fetch(:output_dir, Dir.pwd)
+      @model = options.fetch(:model, nil)
       @hl = HighLine.new(@uin, @uout)
       @progressbar = nil
     end

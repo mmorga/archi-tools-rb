@@ -3,8 +3,14 @@ module Archimate
   module FileFormats
     class ArchiFileReader
       def self.read(archifile)
-        reader = new
-        reader.read(File.read(archifile))
+        new.read(
+          case archifile
+          when IO
+            archifile
+          when String
+            File.read(archifile)
+          end
+        )
       end
 
       def self.parse(archi_string)
