@@ -161,13 +161,14 @@ module Archimate
       end
 
       def test_apply_diff_insert_element
-        m1 = build_model(with_elements: 3)
-        m2 = m1.insert_element(build_element)
+        base = build_model(with_elements: 3)
+        local = base.insert_element(build_element)
+        remote = base.clone
 
-        m3 = Merge.three_way(m1, m2, m1, aio).merged
+        merged = Merge.three_way(base, local, remote, aio).merged
 
-        assert_equal m2, m3
-        refute_equal m1, m3
+        assert_equal local, merged
+        refute_equal base, merged
       end
 
       def test_apply_diff_on_model_attributes

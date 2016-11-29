@@ -2,48 +2,30 @@
 module Archimate
   module Diff
     class Insert < Difference
-      attr_accessor :inserted
-      attr_accessor :to_model
+      using DataModel::DiffableArray
 
-      alias to inserted
-      alias model to_model
-
-      def initialize(path, to_model, inserted)
-        super(path)
-        @inserted = inserted
-        @to_model = to_model
-      end
-
-      def ==(other)
-        super &&
-          other.is_a?(Insert) &&
-          inserted == other.inserted
-      end
-
-      # def <=>(other)
-      #   case other
-      #   when Change
-      #     1
-      #   when Delete
-      #     -1
-      #   else
-      #     if self == other
-      #       0
-      #     else
-      #       other.path <=> path
-      #     end
-      #   end
-      # end
-
-      def diff_type
-        HighLine.color('INSERT:', :insert)
+      # Create a new Insert difference
+      #
+      # @param inserted_element [Archimate::DataModel::DiffableStruct] Element
+      #   that was inserted
+      # @param sub_path [str] Path under inserted_element for primitive values
+      def initialize(inserted_element, sub_path = "")
+        super(nil, inserted_element, sub_path.to_s)
       end
 
       def to_s
-        parent, remaining_path = describeable_parent(model)
-        s = "#{diff_type} in #{parent}"
-        s += " at #{HighLine.color(remaining_path, :path)}: #{inserted}" unless remaining_path.nil? || remaining_path.empty?
-        s
+        "#{diff_type} #{what(to_element)} into #{to}"
+      end
+
+      def apply(el)
+        puts path.pretty_inspect
+        el.insert(sub_path, to_value)
+      end
+
+      private
+
+      def diff_type
+        HighLine.color('INSERT:', :insert)
       end
     end
   end

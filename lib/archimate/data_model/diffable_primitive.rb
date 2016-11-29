@@ -3,9 +3,10 @@ module Archimate
   module DataModel
     module DiffablePrimitive
       module DiffablePrimitiveMethods
-        def diff(other)
-          return [Archimate::Diff::Delete.new("path_str", nil, self)] if other.nil?
-          return [Archimate::Diff::Change.new("path_str", nil, nil, self, other)] unless self == other
+        def diff(other, from_parent, to_parent, attribute)
+          return [Archimate::Diff::Delete.new(from_parent, attribute)] if other.nil?
+          raise TypeError, "Expected other #{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
+          return [Archimate::Diff::Change.new(from_parent, to_parent, attribute)] unless self == other
           []
         end
 
@@ -19,7 +20,7 @@ module Archimate
           self == other
         end
 
-        def primitive
+        def primitive?
           true
         end
       end

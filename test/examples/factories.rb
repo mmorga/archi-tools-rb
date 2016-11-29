@@ -78,11 +78,13 @@ module Archimate
         elements = options.fetch(:elements, [])
         relationships = options.fetch(:relationships, [])
         count = options.fetch(:with_diagrams, 0)
-        child_list = relationships.map do |rel|
-          [build_child(element: elements.find { |i| i.id == rel.source }, relationships: [rel]),
-           build_child(element: elements.find { |i| i.id == rel.target }, relationships: [])]
-        end.flatten
-        (1..count).map { build_diagram(children: child_list) }
+        (1..count).map do
+          child_list = relationships.map do |rel|
+            [build_child(element: elements.find { |i| i.id == rel.source }, relationships: [rel]),
+             build_child(element: elements.find { |i| i.id == rel.target }, relationships: [])]
+          end.flatten
+          build_diagram(children: child_list)
+        end
       end
 
       def build_diagram(options = {})
@@ -234,12 +236,7 @@ module Archimate
 
       def build_diff(options = {})
         model = options.fetch(:model, build_model)
-        to = options.fetch(:diff_to_value, Faker::Name.name)
-        Archimate::Diff::Insert.new(
-          options.fetch(:path, "Model<#{model.id}>/name"),
-          model,
-          to
-        )
+        Archimate::Diff::Insert.new(model, "name")
       end
 
       def random_relationship_type

@@ -5,6 +5,10 @@ module Archimate
       using DiffablePrimitive
       using DiffableArray
 
+      def primitive?
+        false
+      end
+
       def assign_parent(p)
         @parent = p
         to_h.keys.each do |k|
@@ -30,9 +34,17 @@ module Archimate
       end
 
       def diff(other)
+        return [Diff::Delete.new(self)] if other.nil?
         raise TypeError, "Expected other <#{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
-        to_h.keys.reduce([]) do |a, k|
-          a.concat(send(k).diff(other.send(k)))
+        struct_instance_variables.each_with_object([]) do |k, a|
+          val = send(k)
+          if val.nil?
+            a.concat([DataModel::Insert.new(other, k)]) unless other.send(k).nil?
+          elsif val.primitive?
+            a.concat(val.diff(other.send(k), self, other, k))
+          else
+            a.concat(val.diff(other.send(k)))
+          end
         end
       end
 
@@ -42,7 +54,7 @@ module Archimate
       end
 
       def struct_instance_variables
-        to_h.keys
+        self.class.schema.keys
       end
 
       def compact
@@ -70,6 +82,64 @@ module Archimate
         p = self
         result << p until (p = p.parent).nil?
         result
+      end
+
+      def path
+        [
+          parent&.path,
+          parent&.attribute_name(self)
+        ].compact.reject(&:empty?).join("/")
+      end
+
+      def attribute_name(v)
+        self.class.schema.keys.reduce do |a, e|
+          a = e if v.equal?(send(e))
+          a
+        end
+      end
+
+      def apply_diff(diff)
+        puts diff.pretty_inspect
+
+        # diff.apply(lookup(diff.effective_element.id))
+        diff.apply(lookup_in_this_model(diff.effective_element))
+      end
+
+      def lookup_in_this_model(remote_element)
+        if remote_element.respond_to?(:id)
+          lookup(remote_element.id)
+        elsif remote_element.is_a?(Array)
+          parent.send(remote_element.parent.attribute_name(remote_element))
+        else
+          raise TypeError, "Don't know how to look up #{remote_element.class} in #{self.class}"
+        end
+      end
+
+      def delete(o)
+        attrname = o.is_a?(String) ? o : attribute_name(o)
+        if !attrname.empty?
+          send(attrname + "=", nil)
+        else
+          parent.delete(self)
+        end
+      end
+
+      def insert(o, value)
+        attrname = o.is_a?(String) ? o : attribute_name(o)
+        if !attrname.empty?
+          send(sub_path + "=", value)
+        else
+          parent.insert(attrname, value)
+        end
+      end
+
+      def change(o, value)
+        attrname = o.is_a?(String) ? o : attribute_name(o)
+        if !attrname.empty?
+          send(sub_path + "=", value)
+        else
+          parent.change(attrname, value)
+        end
       end
     end
   end

@@ -22,11 +22,11 @@ module Archimate
         end
 
         def diff_conflicts(diff1, diff2)
-          rel = diff1.relationship
-          return false if rel.nil?
+          rel = diff1.effective_element
+          return false if rel.nil? || !rel.is_a?(DataModel::Relationship)
           rel_el_ids = [rel.source, rel.target]
-          return false if diff2.element_idx.nil?
-          rel_el_ids.include?(diff2.element.id)
+          return false if diff2.effective_element.nil?
+          rel_el_ids.include?(diff2.effective_element.id)
         end
       end
     end

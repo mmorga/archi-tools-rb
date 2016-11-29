@@ -4,36 +4,30 @@ require 'test_helper'
 module Archimate
   module Diff
     class DeleteTest < Minitest::Test
-      attr_accessor :model
-
       def setup
-        @model = build_model
+        @model = build_model(with_elements: 1)
+        @subject = Delete.new(@model, "name")
       end
 
       def test_delete
-        del = Delete.new("Model<#{model.id}>/name", model, "Something")
-        assert_equal "Something", del.deleted
-        assert_equal "Model<#{model.id}>/name", del.path
+        assert_equal @model, @subject.from_element
+        assert_equal "name", @subject.sub_path
       end
 
       def test_to_s
-        diff = Delete.new("Model<#{model.id}>/name", model, "old and busted")
-        assert_equal "DELETE: in Model<#{model.id}>[#{model.name}] at /name: old and busted", HighLine.uncolor(diff.to_s)
+        assert_equal(
+          HighLine.uncolor("DELETE: name from #{@model}"),
+          HighLine.uncolor(@subject.to_s)
+        )
       end
 
-      def test_fmt_to_s
-        diff = Delete.new("Model<#{model.id}>/name", model, "deleted")
-        assert_match "DELETE: ", HighLine.uncolor(diff.to_s)
-      end
+      def test_to_s_for_struct
+        @subject = Delete.new(@model.elements.first)
 
-      def test_diff_description_delete
-        diff = Delete.new("Model<#{model.id}>/name", model, "deleted")
-        assert_match "deleted", diff.to_s
-      end
-
-      def test_diagram_idx
-        diff = Delete.new("Model<abcd1234>/diagrams/[0]/children/[0]/source_connection/[0]", model, "old")
-        assert_equal 0, diff.diagram_idx, "Expected to find diagram idx for #{diff.path}"
+        assert_equal(
+          HighLine.uncolor("DELETE: #{@model.elements.first} from #{@model}"),
+          HighLine.uncolor(@subject.to_s)
+        )
       end
     end
   end

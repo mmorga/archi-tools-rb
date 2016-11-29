@@ -1,32 +1,27 @@
 # frozen_string_literal: true
 module Archimate
   module Diff
-    # Difference defines a change between two entities within a model
-    # * change kind (delete, insert, change)
-    # * path (reference to the path or attribute)
-    # * from (invalid for insert)
-    # * to (invalid for delete)
-    # TODO: I really need to have the from value - idx isn't enough to make sure when applying diffs
     class Difference
+      using DataModel::DiffableArray
+
       ARRAY_RE = Regexp.compile(/\[(\d+)\]/)
 
-      attr_accessor :path # TODO: path is accessed as a stack, consider changing from string to stack
+      attr_reader :from_element
+      attr_reader :to_element
+      attr_reader :sub_path
 
-      def initialize(path)
+      def initialize(from_element, to_element, sub_path)
         raise "Instantiating abstract Difference" if self.class == Difference
-        @path = path
-        yield self if block_given?
-      end
-
-      def with(options = {})
-        diff = dup
-        diff.path = options.fetch(:path, path)
-        diff
+        @from_element = from_element
+        @to_element = to_element
+        @sub_path = sub_path.nil? ? "" : sub_path.to_s
       end
 
       def ==(other)
-        return false unless other.is_a?(Difference)
-        @path == other.path
+        other.is_a?(self.class) &&
+          @from_element == other.from_element &&
+          @to_element == other.to_element &&
+          @sub_path == other.sub_path
       end
 
       # Difference sorting is based on the path.
@@ -43,7 +38,6 @@ module Archimate
 
         # a needs to be at least as long as b to get the zip behavior I want
         a.push(nil) while a.size < b.size
-        # a, b = [a, b].sort { |x, y| y.size <=> x.size }
         a.zip(b).each do |pa, pb|
           return -1 if pb.nil?
           return 1 if pa.nil?
@@ -53,113 +47,55 @@ module Archimate
         0
       end
 
+      def path
+        [
+          effective_element&.path,
+          sub_path
+        ].compact.reject(&:empty?).join("/")
+      end
+
       def path_to_array
-        path.split("/")[1..-1].map do |p|
+        path.split("/").map do |p|
           md = ARRAY_RE.match(p)
           md ? md[1].to_i : p
         end
       end
 
+      def effective_element
+        to_element || from_element
+      end
+
       def array?
-        path =~ /\[\d+\]$/
+        sub_path =~ /\[\d+\]$/
       end
 
       # Returns true if this diff is for a diagram (not a part within a diagram)
       def diagram?
-        path =~ %r{/diagrams/\[(\d+)\]$} ? true : false
-      end
-
-      def diagram_idx
-        m = path.match(%r{/diagrams/\[(\d+)\]/?})
-        m[1].to_i if m
+        item_type?(DataModel::Diagram)
       end
 
       def in_diagram?
-        path =~ %r{/diagrams/\[(\d+)\]/}
+        in_item_type?(DataModel::Diagram)
       end
 
       def element?
-        path =~ %r{/elements/\[(\d+)\]$} ? true : false
+        item_type?(DataModel::Element)
       end
 
       def in_element?
-        path =~ %r{/elements/\[(\d+)\]/} ? true : false
-      end
-
-      def element_idx
-        m = path.match(%r{/elements/\[(\d+)\]/?})
-        m[1].to_i if m
+        in_item_type?(DataModel::Element)
       end
 
       def in_folder?
-        path =~ %r{/folders/\[(\d+)\]/} ? true : false
+        in_item_type?(DataModel::Folder)
       end
 
       def relationship?
-        path =~ %r{/relationships/\[(\d+)\]$} ? true : false
+        item_type?(DataModel::Relationship)
       end
 
       def in_relationship?
-        path =~ %r{/relationships/\[(\d+)\]/} ? true : false
-      end
-
-      def relationship_idx
-        m = path.match(%r{/relationships/\[(\d+)\]/?})
-        m[1].to_i if m
-      end
-
-      def relationship
-        model.relationships[relationship_idx] if relationship?
-      end
-
-      def element
-        model.elements[element_idx] if element?
-      end
-
-      def element_and_remaining_path(model)
-        m = path.match(%r{/elements/\[(\d+)\](/?.*)$})
-        [model.elements[m[1].to_i], m[2]] if m
-      end
-
-      def folder_and_remaining_path(model)
-        re = Regexp.compile(%r{/folders/\[(\d+)\]})
-        folder_parts = path.split(re).reject(&:empty?)
-        folder_parts.shift # Throw away leading parts
-        remaining_path = folder_parts.pop
-        folder_parts = folder_parts.map(&:to_i)
-
-        folder = model
-        folder = folder.folders[folder_parts.shift] until folder_parts.empty?
-        [folder, remaining_path]
-      end
-
-      def relationship_and_remaining_path(model)
-        m = path.match(%r{/relationships/\[(\d+)\](/?.*)$})
-        [model.relationships[m[1].to_i], m[2]] if m
-      end
-
-      def diagram_and_remaining_path(model)
-        m = path.match(%r{/diagrams/\[(\d+)\](/?.*)$})
-        [model.diagrams[m[1].to_i], m[2]] if m
-      end
-
-      def model_and_remaining_path(model)
-        m = path.match(%r{^Model<[^\]]*>(/?.*)$})
-        [model, m[1]] if m
-      end
-
-      def describeable_parent(model)
-        if in_element?
-          element_and_remaining_path(model)
-        elsif in_folder?
-          folder_and_remaining_path(model)
-        elsif in_relationship?
-          relationship_and_remaining_path(model)
-        elsif in_diagram?
-          diagram_and_remaining_path(model)
-        else
-          model_and_remaining_path(model)
-        end
+        in_item_type?(DataModel::Relationship)
       end
 
       def delete?
@@ -172,6 +108,44 @@ module Archimate
 
       def insert?
         is_a?(Insert)
+      end
+
+      def to_value
+        sub_path.empty? ? to_element : to_element.send(:[], to_element.is_a?(Array) ? sub_path.to_i : sub_path)
+      end
+
+      private
+
+      # What was different
+      def what(el)
+        sub_path.empty? ? el.to_s : HighLine.color(sub_path, :path)
+      end
+
+      # Item the value was inserted into
+      def to
+        element_parent(to_element)
+      end
+
+      # Item the value was deleted from
+      def from
+        element_parent(from_element)
+      end
+
+      def element_parent(el)
+        if sub_path.empty?
+          p = el.parent
+          p.parent if p.is_a?(Array)
+        else
+          el
+        end
+      end
+
+      def item_type?(klass)
+        sub_path.empty? && effective_element&.is_a?(klass)
+      end
+
+      def in_item_type?(klass)
+        !sub_path.empty? && effective_element&.is_a?(klass)
       end
     end
   end

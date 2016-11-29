@@ -95,22 +95,22 @@ module Archimate
         progressbar = @aio.create_progressbar(total: diffs.size)
         diffs.sort.inject(model) do |model_a, diff|
           progressbar.increment
-          apply_diff(model_a, diff)
+          model_a.apply_diff(diff)
         end.compact
       end
 
-      def apply_diff(model, diff)
-        aio.debug("Applying #{diff.path}: #{diff}")
-        case diff
-        when Delete
-          model.delete_at(diff.path)
-        when Insert
-          model.insert_at(diff.path, diff.inserted)
-        when Change
-          model.set_at(diff.path, diff.to)
-        end
-        model
-      end
+      # def apply_diff(model, diff)
+      #   aio.debug("Applying #{diff.path}: #{diff}")
+      #   case diff
+      #   when Delete
+      #     model.delete_at(diff.path)
+      #   when Insert
+      #     model.insert_at(diff.path, diff.inserted)
+      #   when Change
+      #     model.set_at(diff.path, diff.to)
+      #   end
+      #   model
+      # end
     end
   end
 end

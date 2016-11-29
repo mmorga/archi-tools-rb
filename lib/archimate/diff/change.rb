@@ -2,50 +2,29 @@
 module Archimate
   module Diff
     class Change < Difference
-      attr_accessor :from_model
-      attr_accessor :to_model
-      attr_accessor :from
-      attr_accessor :to
+      using DataModel::DiffableArray
 
-      alias model to_model
-
-      def initialize(path, from_model, to_model, from, to)
-        super(path)
-        @from = from
-        @to = to
-        @from_model = from_model
-        @to_model = to_model
-      end
-
-      def ==(other)
-        super &&
-          other.is_a?(Change) &&
-          @from == other.from && @to == other.to
-      end
-
-      # def <=>(other)
-      #   case other
-      #   when Insert, Delete
-      #     -1
-      #   else
-      #     if self == other
-      #       0
-      #     else
-      #       path <=> other.path
-      #     end
-      #   end
-      # end
-
-      def diff_type
-        HighLine.color('CHANGE:', :change)
+      # Create a new Change difference
+      #
+      # @param from_element [Archimate::DataModel::DiffableStruct] Element that was changed
+      # @param to_element [Archimate::DataModel::DiffableStruct] Element that was changed to
+      # @param sub_path [str] Path under from_element/to_element for primitive values
+      def initialize(from_element, to_element, sub_path = "")
+        super
       end
 
       def to_s
-        parent, remaining_path = describeable_parent(from_model)
-        s = "#{diff_type} in #{parent}"
-        s += " at #{HighLine.color(remaining_path, :path)}" unless remaining_path.nil? || remaining_path.empty?
-        s += " #{from} -> #{to}"
-        s
+        "#{diff_type} #{what(to_element)} in #{from} to #{to_value}"
+      end
+
+      def apply(el)
+        el.change(sub_path, to_value)
+      end
+
+      private
+
+      def diff_type
+        HighLine.color('CHANGE:', :change)
       end
     end
   end

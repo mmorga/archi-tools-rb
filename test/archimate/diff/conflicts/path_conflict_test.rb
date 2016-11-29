@@ -24,10 +24,10 @@ module Archimate
           @element = @model.elements.first
           @relationship = @model.relationships.first
           @relationship2 = @model.relationships[1]
-          @diff_name = Archimate::Diff::Delete.new("Model<#{@model.id}>/name", @model, @model.name)
+          @diff_name = Archimate::Diff::Delete.new(@model, "name")
 
-          @diff1 = Archimate::Diff::Insert.new("Model<#{@model.id}>/relationships/#{@relationship.id}", @model, @relationship)
-          @diff2 = Archimate::Diff::Insert.new("Model<#{@model.id}>/relationships/#{@relationship.id}", @model, @relationship2)
+          @diff1 = Archimate::Diff::Insert.new(@relationship)
+          @diff2 = Archimate::Diff::Insert.new(@relationship2)
 
           @subject = PathConflict.new([@diff1, @diff_name], [@diff2])
         end

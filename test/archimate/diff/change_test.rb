@@ -9,27 +9,15 @@ module Archimate
 
       def setup
         @from_model = build_model
-        @to_model = build_model
-      end
-
-      def test_change
-        d = Change.new("Model<#{from_model.id}>/name", from_model, to_model, "from_val", "to_val")
-        assert_equal "Model<#{from_model.id}>/name", d.path
-        assert_equal "from_val", d.from
-        assert_equal "to_val", d.to
+        @to_model = @from_model.with(name: @from_model.name + "-changed")
+        @subject = Change.new(from_model, to_model, "name")
       end
 
       def test_to_s
-        diff = Change.new("Model<#{from_model.id}>/name", from_model, to_model, "old and busted", "new hotness")
-        assert_equal "CHANGE: in Model<#{from_model.id}>[#{from_model.name}] at /name old and busted -> new hotness", HighLine.uncolor(diff.to_s)
-      end
-
-      def test_fmt_kind
-        diff = Change.new("Model<#{from_model.id}>/name", from_model, to_model, "old and busted", "new hotness")
-        assert_match "CHANGE: ", HighLine.uncolor(diff.to_s)
-      end
-
-      def test_sort
+        assert_equal(
+          HighLine.uncolor("CHANGE: name in #{@from_model} to #{@to_model.name}"),
+          HighLine.uncolor(@subject.to_s)
+        )
       end
     end
   end

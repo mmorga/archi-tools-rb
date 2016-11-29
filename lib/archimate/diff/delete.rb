@@ -2,50 +2,28 @@
 module Archimate
   module Diff
     class Delete < Difference
-      attr_accessor :deleted
-      attr_accessor :from_model
+      using DataModel::DiffableArray
 
-      alias from deleted
-      alias model from_model
-
-      def initialize(path, from_model, val)
-        super(path)
-        @from_model = from_model
-        @deleted = val
-      end
-
-      def ==(other)
-        super &&
-          other.is_a?(Delete) &&
-          deleted == other.deleted
-      end
-
-      # def <=>(other)
-      #   case other
-      #   when Insert, Change
-      #     1
-      #   else
-      #     if self == other
-      #       0
-      #     else
-      #       other.path <=> path
-      #     end
-      #   end
-      # end
-
-      def diff_type
-        HighLine.color('DELETE:', :delete)
+      # Create a new Delete difference
+      #
+      # @param deleted_element [Archimate::DataModel::DiffableStruct] Element that was deleted
+      # @param sub_path [str] Path under deleted_element for primitive values
+      def initialize(deleted_element, sub_path = "")
+        super(deleted_element, nil, sub_path)
       end
 
       def to_s
-        parent, remaining_path = describeable_parent(from_model)
-        s = "#{diff_type} in #{parent}"
-        s += " at #{HighLine.color(remaining_path, :path)}: #{from}" unless remaining_path.nil? || remaining_path.empty?
-        s
+        "#{diff_type} #{what(from_element)} from #{from}"
       end
 
-      def to
-        nil
+      def apply(el)
+        el.delete(sub_path)
+      end
+
+      private
+
+      def diff_type
+        HighLine.color('DELETE:', :delete)
       end
     end
   end

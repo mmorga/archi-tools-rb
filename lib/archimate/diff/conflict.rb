@@ -19,7 +19,8 @@ module Archimate
       end
 
       def ==(other)
-        base_local_diffs == other.base_local_diffs &&
+        other.is_a?(self.class) &&
+          base_local_diffs == other.base_local_diffs &&
           base_remote_diffs == other.base_remote_diffs &&
           reason == other.reason
       end
