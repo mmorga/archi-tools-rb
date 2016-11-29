@@ -2,7 +2,10 @@
 module Archimate
   module DataModel
     class Font < Dry::Struct
-      include DataModel::With
+      include With
+      include DiffableStruct
+
+      constructor_type :schema
 
       attribute :name, Strict::String.optional
       attribute :size, Coercible::Float.constrained(gt: 0.0).optional
@@ -54,13 +57,10 @@ module Archimate
           "bold"
         when 3
           "bold|italic"
-        else
-          nil
         end
       end
     end
 
     Dry::Types.register_class(Font)
-    OptionalFont = Font.optional
   end
 end

@@ -60,7 +60,7 @@ module Archimate
       end
 
       def test_operator_eqleql_false
-        refute @f1 == Folder.create(id: "234", name: "Sales", type: "Business")
+        refute @f1 == Folder.new(id: "234", name: "Sales", type: "Business")
       end
 
       def test_to_s

@@ -2,7 +2,10 @@
 module Archimate
   module DataModel
     class Color < Dry::Struct
-      include DataModel::With
+      include With
+      include DiffableStruct
+
+      constructor_type :schema
 
       attribute :r, Coercible::Int.constrained(lt: 256, gt: -1)
       attribute :g, Coercible::Int.constrained(lt: 256, gt: -1)
@@ -41,8 +44,5 @@ module Archimate
     end
 
     Dry::Types.register_class(Color)
-    OptionalColor = Color.optional
-
-    # TODO: create functions to format and convert
   end
 end

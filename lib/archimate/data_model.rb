@@ -6,6 +6,9 @@ module Archimate
     Coercible = Archimate::DataModel::Coercible
     Strict = Archimate::DataModel::Strict
 
+    require 'archimate/data_model/diffable_primitive'
+    require 'archimate/data_model/diffable_array'
+    require 'archimate/data_model/diffable_struct'
     require 'archimate/data_model/constants'
     require 'archimate/data_model/with'
     require 'archimate/data_model/color'

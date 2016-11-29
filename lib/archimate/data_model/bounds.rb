@@ -2,7 +2,10 @@
 module Archimate
   module DataModel
     class Bounds < Dry::Struct
-      include DataModel::With
+      include With
+      include DiffableStruct
+
+      constructor_type :schema
 
       attribute :x, Coercible::Float.optional
       attribute :y, Coercible::Float.optional
@@ -19,6 +22,5 @@ module Archimate
     end
 
     Dry::Types.register_class(Bounds)
-    OptionalBounds = Bounds.optional
   end
 end

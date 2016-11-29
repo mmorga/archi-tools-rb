@@ -4,13 +4,6 @@ require 'test_helper'
 module Archimate
   module DataModel
     class ElementTest < Minitest::Test
-      def test_create
-        el = Element.create(id: "abc123", label: "Me")
-        assert_equal "Me", el.label
-        assert_equal "abc123", el.id
-        assert_nil el.type
-      end
-
       def test_to_s
         el = build_element(id: "abc123", type: "DataObject", label: "Thing")
         assert_equal "DataObject<abc123>[Thing]", HighLine.uncolor(el.to_s)

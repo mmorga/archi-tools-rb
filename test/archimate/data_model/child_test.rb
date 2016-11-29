@@ -26,8 +26,8 @@ module Archimate
         assert_equal @model.diagrams[0].children[0], @subject
       end
 
-      def test_create
-        child = Child.create(id: "abc123", type: "Sagitarius")
+      def test_new_defaults
+        child = Child.new(id: "abc123", type: "Sagitarius")
         assert_equal "abc123", child.id
         assert_equal "Sagitarius", child.type
         [:id, :type, :model, :name,

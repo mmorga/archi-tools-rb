@@ -12,8 +12,8 @@ module Archimate
         assert_equal docs, rel.documentation
       end
 
-      def test_create
-        rel = Relationship.create(
+      def test_new_with_defaults
+        rel = Relationship.new(
           id: "abc123",
           type: "complicated",
           source: "src",

@@ -24,7 +24,6 @@ module Archimate
 
       def parse(doc)
         DataModel::Model.new(
-          index_hash: {},
           id: doc.root["id"],
           name: doc.root["name"],
           documentation: parse_documentation(doc.root, "purpose"),
@@ -38,13 +37,13 @@ module Archimate
 
       def parse_documentation(node, element_name = "documentation")
         node.css(">#{element_name}").each_with_object([]) do |i, a|
-          a << DataModel::Documentation.new(text: i.content, lang: i.attr("lang"))
+          a << DataModel::Documentation.new(text: i.content)
         end
       end
 
       def parse_properties(node)
         node.css(">property").each_with_object([]) do |i, a|
-          a << DataModel::Property.create(key: i["key"], value: i["value"]) unless i["key"].nil?
+          a << DataModel::Property.new(key: i["key"], value: i["value"]) unless i["key"].nil?
         end
       end
 

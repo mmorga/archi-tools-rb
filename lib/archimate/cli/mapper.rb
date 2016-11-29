@@ -15,8 +15,8 @@ module Archimate
       def header_row(widths, headers)
         titles = []
         widths.each_with_index { |w, i| titles << "%-#{w}s" % headers[i] }
-        @output.puts titles.map { |t| t.capitalize.bold.blue }.join(COL_DIVIDER.light_black)
-        @output.puts widths.map { |w| "-" * w }.join("-+-").light_black
+        @output.puts titles.map { |t| HighLine.color(t.capitalize, [:bold, :blue]) }.join(HighLine.color(COL_DIVIDER, :light_black))
+        @output.puts HighLine.color(widths.map { |w| "-" * w }.join("-+-"), :light_black)
       end
 
       def process_diagrams(diagrams)
@@ -31,7 +31,7 @@ module Archimate
                    else
                      row[3]
                    end
-          row[0] = "#{row[0]}.png".underline
+          row[0] = HighLine.color("#{row[0]}.png", :underline)
           row
         end
       end
@@ -50,7 +50,7 @@ module Archimate
         diagrams.sort { |a, b| a[1] <=> b[1] }.each do |m|
           row = []
           m.slice(0, widths.size).each_with_index { |c, i| row << "%-#{widths[i]}s" % c }
-          @output.puts row.join(COL_DIVIDER.light_black)
+          @output.puts row.join(HighLine.color(COL_DIVIDER, :light_black))
         end
       end
 
@@ -70,7 +70,7 @@ module Archimate
         folder_paths.keys.sort.each do |folder_name|
           diagrams = folder_paths[folder_name].items.map { |i| model.lookup(i) }.select { |i| i.is_a?(DataModel::Diagram) }
           next if diagrams.empty?
-          @output.puts(format("%-#{adjusted_widths}s", folder_name).bold.green.on_light_black)
+          @output.puts(HighLine.color(format("%-#{adjusted_widths}s", folder_name), [:bold, :green, :on_light_black]))
           output_diagrams(process_diagrams(diagrams), widths)
         end
 

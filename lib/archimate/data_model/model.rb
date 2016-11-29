@@ -4,7 +4,10 @@ require "set"
 module Archimate
   module DataModel
     class Model < Dry::Struct
-      include DataModel::With
+      include With
+      include DiffableStruct
+
+      ARRAY_RE = Regexp.compile(/\[(\d+)\]/)
 
       Cmds = Struct.new(:array_func, :attribute_func) do
         def call(node, child, value)
@@ -16,35 +19,17 @@ module Archimate
         end
       end
 
+      constructor_type :schema
+
       # TODO: add metadata as in Model Exchange Format
       attribute :id, Strict::String
       attribute :name, Strict::String
       attribute :documentation, DocumentationList
       attribute :properties, PropertiesList
-      attribute :elements, Strict::Array.member(Element)
-      attribute :folders, Strict::Array.member(Folder)
-      attribute :relationships, Strict::Array.member(Relationship)
-      attribute :diagrams, Strict::Array.member(Diagram)
-
-      def self.create(options = {})
-        new_opts = {
-          documentation: [],
-          properties: [],
-          elements: [],
-          folders: [],
-          relationships: [],
-          diagrams: []
-        }.merge(options)
-        Model.new(new_opts)
-      end
-
-      def flat_folder_hash
-        ffh = {}
-        folders.each do |f|
-          f.walk_struct(inst_proc: ->(n) { ffh[n.id] = n })
-        end
-        ffh
-      end
+      attribute :elements, Strict::Array.member(Element).default([])
+      attribute :folders, Strict::Array.member(Folder).default([])
+      attribute :relationships, Strict::Array.member(Relationship).default([])
+      attribute :diagrams, Strict::Array.member(Diagram).default([])
 
       def initialize(attributes)
         super
@@ -58,7 +43,19 @@ module Archimate
           ->(node, idx, _val) { node[idx] },
           ->(node, idx, _val) { node.send(idx.to_sym) }
         )
-        @array_re = Regexp.compile(/\[(\d+)\]/)
+      end
+
+      def clone
+        Model.new(
+          id: id.clone,
+          name: name.clone,
+          documentation: documentation.map(&:clone),
+          properties: properties.map(&:clone),
+          elements: elements.map(&:clone),
+          folders: folders.map(&:clone),
+          relationships: relationships.map(&:clone),
+          diagrams: diagrams.map(&:clone)
+        )
       end
 
       def lookup(id)
@@ -75,6 +72,14 @@ module Archimate
       def rebuild_index
         @index_hash = {}
         walk_struct(inst_proc: -> (n) { register(n) })
+      end
+
+      def flat_folder_hash
+        ffh = {}
+        folders.each do |f|
+          f.walk_struct(inst_proc: ->(n) { ffh[n.id] = n })
+        end
+        ffh
       end
 
       def delete_at(path)
@@ -96,7 +101,7 @@ module Archimate
       # TODO: the [1..-1] gets rid of the initial model description (is it still needed at all?)
       def path_str_to_array(path_str)
         path_str.split("/")[1..-1].map do |p|
-          md = @array_re.match(p)
+          md = ARRAY_RE.match(p)
           md ? md[1].to_i : p
         end
       end
@@ -115,21 +120,8 @@ module Archimate
         cmds.call(node, child, value)
       end
 
-      def clone
-        Model.new(
-          id: id.clone,
-          name: name.clone,
-          documentation: documentation.map(&:clone),
-          properties: properties.map(&:clone),
-          elements: elements.map(&:clone),
-          folders: folders.map(&:clone),
-          relationships: relationships.map(&:clone),
-          diagrams: diagrams.map(&:clone)
-        )
-      end
-
       def to_s
-        "#{'Model'.cyan}<#{id}>[#{name.white.underline}]"
+        "#{AIO.data_model('Model')}<#{id}>[#{HighLine.color(name, [:white, :underline])}]"
       end
 
       # returns a copy of self with element added

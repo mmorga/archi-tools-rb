@@ -2,19 +2,14 @@
 module Archimate
   module DataModel
     class Property < Dry::Struct
-      include DataModel::With
+      include With
+      include DiffableStruct
+
+      constructor_type :schema
 
       attribute :key, Strict::String
       attribute :value, Strict::String.optional
       attribute :lang, Strict::String.default("en")
-
-      def self.create(options = {})
-        new_opts = {
-          value: nil,
-          lang: "en"
-        }.merge(options)
-        Property.new(new_opts)
-      end
 
       def clone
         Property.new(
@@ -34,6 +29,6 @@ module Archimate
     end
 
     Dry::Types.register_class(Property)
-    PropertiesList = Strict::Array.member(Property)
+    PropertiesList = Strict::Array.member(Property).default([])
   end
 end

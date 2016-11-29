@@ -28,16 +28,10 @@ module Archimate
         aio.debug "Starting merging"
         merge = Archimate::Diff::Merge.three_way(base, local, remote, aio)
         aio.debug "Done merging"
-        aio.debug merge.conflicts
-        result = merge.merged
-        # TODO: Resolve manual conflicts
-        conflicts.each do |conflict|
-          diffs = aio.resolve_conflict(conflict)
-          result = merge.apply_diffs(diffs, result)
-        end
+        aio.debug merge.conflicts # TODO: there should be no conflicts here
 
         File.open(merged_file, "w") do |f|
-          Archimate::ArchiFileWriter.write(result, f)
+          Archimate::ArchiFileWriter.write(merge.merged, f)
         end
       end
     end

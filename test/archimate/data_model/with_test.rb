@@ -13,7 +13,7 @@ module Archimate
       def test_with
         m2 = model.with(name: model.name + "-changed")
         refute_equal model, m2
-        model.struct_instance_variables.reject { |a| a == :name }.map(&:to_sym).each do |a|
+        model.to_h.keys.reject { |a| a == :name }.map(&:to_sym).each do |a|
           assert_equal model.send(a), m2.send(a)
         end
       end
@@ -23,7 +23,7 @@ module Archimate
       end
 
       def test_parent
-        model.elements.each { |e| assert_equal model, e.parent }
+        model.elements.each { |e| assert_equal model.elements, e.parent }
       end
 
       def test_assign_model
@@ -55,23 +55,14 @@ module Archimate
         validate_in_model(@model)
       end
 
-      def test_struct_instance_variables
-        assert_equal Model.schema.keys, model.struct_instance_variables
-      end
+      def test_diff_with_changed_name
+        m1 = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_folders: 4)
+        m2 = m1.with(name: "#{m1.name}-changed")
 
-      def test_struct_instance_variable_hash
-        expected = {
-          id: model.id,
-          name: model.name,
-          documentation: model.documentation,
-          properties: model.properties,
-          elements: model.elements,
-          folders: model.folders,
-          relationships: model.relationships,
-          diagrams: model.diagrams
-        }
+        diffs = m1.diff(m2)
 
-        assert_equal expected, model.struct_instance_variable_hash
+        assert_equal 1, diffs.size
+        assert diffs.first.change?
       end
 
       private
@@ -82,7 +73,7 @@ module Archimate
           assert_equal(
             @model.id, node.in_model&.id, "node #{node.class} in_model #{node.in_model.id} != #{@model.id}"
           ) unless node.is_a?(Model)
-          node.struct_instance_variable_values.each { |a| validate_in_model(a) }
+          node.to_h.values.each { |a| validate_in_model(a) }
         when Array
           node.each { |c| validate_in_model(c) }
         end

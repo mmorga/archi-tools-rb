@@ -2,14 +2,17 @@
 module Archimate
   module DataModel
     class Style < Dry::Struct
-      include DataModel::With
+      include With
+      include DiffableStruct
+
+      constructor_type :schema
 
       attribute :text_alignment, Coercible::Int.optional
-      attribute :fill_color, OptionalColor
-      attribute :line_color, OptionalColor
-      attribute :font_color, OptionalColor
+      attribute :fill_color, Color.optional
+      attribute :line_color, Color.optional
+      attribute :font_color, Color.optional
       attribute :line_width, Coercible::Int.optional
-      attribute :font, OptionalFont
+      attribute :font, Font.optional
       attribute :text_position, Coercible::Int.optional
 
       def clone
@@ -25,12 +28,11 @@ module Archimate
       end
 
       def to_s
-        attr_name_vals = struct_instance_variable_hash.map { |a, v| "#{a}: #{v}" }.join(", ")
+        attr_name_vals = to_h.keys.map { |k| "#{k}: #{send(k)}" }.join(", ")
         "Style(#{attr_name_vals})"
       end
     end
 
     Dry::Types.register_class(Style)
-    OptionalStyle = Style.optional
   end
 end

@@ -42,7 +42,7 @@ module Archimate
       def to_s
         parent, remaining_path = describeable_parent(model)
         s = "#{diff_type} in #{parent}"
-        s += " at #{remaining_path.light_blue}: #{inserted}" unless remaining_path.nil? || remaining_path.empty?
+        s += " at #{HighLine.color(remaining_path, :path)}: #{inserted}" unless remaining_path.nil? || remaining_path.empty?
         s
       end
     end

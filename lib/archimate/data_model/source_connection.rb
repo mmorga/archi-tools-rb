@@ -2,7 +2,10 @@
 module Archimate
   module DataModel
     class SourceConnection < Dry::Struct
-      include DataModel::With
+      include With
+      include DiffableStruct
+
+      constructor_type :schema
 
       attribute :id, Strict::String
       attribute :source, Strict::String
@@ -13,21 +16,7 @@ module Archimate
       attribute :bendpoints, BendpointList
       attribute :documentation, DocumentationList
       attribute :properties, PropertiesList
-      attribute :style, OptionalStyle
-
-      def self.create(options = {})
-        new_opts = {
-          relationship: nil,
-          name: nil,
-          bendpoints: [],
-          documentation: [],
-          properties: [],
-          style: nil,
-          type: nil
-
-        }.merge(options)
-        SourceConnection.new(new_opts)
-      end
+      attribute :style, Style.optional
 
       def clone
         SourceConnection.new(
@@ -45,7 +34,7 @@ module Archimate
       end
 
       def type_name
-        "#{'SourceConnection'.blue}[#{(@name || '').white.underline}]".on_light_magenta
+        HighLine.color("#{AIO.data_model('SourceConnection')}[#{HighLine.color(@name || '', [:white, :underline])}]", :on_light_magenta)
       end
 
       def to_s
@@ -60,6 +49,6 @@ module Archimate
       end
     end
     Dry::Types.register_class(SourceConnection)
-    SourceConnectionList = Strict::Array.member("archimate.data_model.source_connection")
+    SourceConnectionList = Strict::Array.member("archimate.data_model.source_connection").default([])
   end
 end

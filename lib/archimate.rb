@@ -7,8 +7,6 @@ require "archimate/version"
 require 'archimate/data_model'
 require 'archimate/aio'
 
-HighLine.colorize_strings
-
 module Archimate
   module Cli
     autoload :Archi, 'archimate/cli/archi'
@@ -67,8 +65,8 @@ module Archimate
     Nokogiri::XML::Document.new(xml_str)
   end
 
-  def self.diff(local, remote)
-    Diff::Context.new(local, remote, local, remote).diffs
+  def self.diff(base, remote)
+    base.diff(remote)
   end
 
   # Reads the given file and returns the Archimate model

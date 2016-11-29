@@ -38,14 +38,14 @@ module Archimate
       def test_model_elements
         assert_equal 120, model.elements.size
         assert_equal(
-          DataModel::Element.create(
+          DataModel::Element.new(
             id: "1544",
             type: "BusinessInterface",
             label: "mail"
           ), model.elements.first
         )
         assert_equal(
-          DataModel::Element.create(
+          DataModel::Element.new(
             id: "3db08b5c",
             type: "Principle",
             label: "Infrastructure Principle"
@@ -56,7 +56,7 @@ module Archimate
       def test_model_relationships
         assert_equal 178, model.relationships.size
         assert_equal(
-          DataModel::Relationship.create(
+          DataModel::Relationship.new(
             id: "693",
             source: "564",
             target: "674",
@@ -65,7 +65,7 @@ module Archimate
           ), model.relationships.first
         )
         assert_equal(
-          DataModel::Relationship.create(
+          DataModel::Relationship.new(
             id: "dd9c00de",
             source: "1101",
             target: "1882",

@@ -2,7 +2,10 @@
 module Archimate
   module DataModel
     class Element < Dry::Struct
-      include DataModel::With
+      include With
+      include DiffableStruct
+
+      constructor_type :schema
 
       attribute :id, Strict::String
       attribute :type, Strict::String.optional
@@ -11,16 +14,6 @@ module Archimate
       attribute :properties, PropertiesList
 
       alias name label
-
-      def self.create(options = {})
-        new_opts = {
-          type: nil,
-          label: nil,
-          documentation: [],
-          properties: []
-        }.merge(options)
-        Element.new(new_opts)
-      end
 
       def clone
         Element.new(
@@ -33,7 +26,7 @@ module Archimate
       end
 
       def to_s
-        AIO.layer_color(layer, "#{type.light_black}<#{id}>[#{label}]")
+        AIO.layer_color(layer, "#{type}<#{id}>[#{label}]")
       end
 
       def layer

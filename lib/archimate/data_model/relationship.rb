@@ -2,7 +2,10 @@
 module Archimate
   module DataModel
     class Relationship < Dry::Struct
-      include DataModel::With
+      include With
+      include DiffableStruct
+
+      constructor_type :schema
 
       attribute :id, Strict::String
       attribute :type, Strict::String
@@ -12,16 +15,6 @@ module Archimate
       attribute :name, Strict::String.optional
       attribute :documentation, DocumentationList
       attribute :properties, PropertiesList
-
-      def self.create(options = {})
-        new_opts = {
-          name: nil,
-          documentation: [],
-          properties: [],
-          access_type: nil
-        }.merge(options)
-        Relationship.new(new_opts)
-      end
 
       def clone
         Relationship.new(
@@ -37,7 +30,10 @@ module Archimate
       end
 
       def to_s
-        "#{type.black}<#{id}>[#{(name || '').black.underline}]".on_light_magenta + " #{source} -> #{target}"
+        HighLine.color(
+          "#{AIO.data_model(type)}<#{id}>[#{HighLine.color(name || '', [:black, :underline])}]",
+          :on_light_magenta
+        ) + " #{source} -> #{target}"
       end
 
       def element_reference

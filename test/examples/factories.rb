@@ -113,7 +113,7 @@ module Archimate
           :source_connections,
           relationships.map { |rel| build_source_connection(for_relationship: rel) }
         )
-        Archimate::DataModel::Child.create(
+        Archimate::DataModel::Child.new(
           id: options.fetch(:id, build_id),
           type: "archimate:DiagramObject",
           name: options[:name],
@@ -129,7 +129,7 @@ module Archimate
       def build_source_connection(options = {})
         relationship = options.fetch(:for_relationship, nil)
 
-        Archimate::DataModel::SourceConnection.create(
+        Archimate::DataModel::SourceConnection.new(
           id: options.fetch(:id, build_id),
           name: options.fetch(:name, Faker::Company.catch_phrase),
           type: options.fetch(:type, random_element_type),

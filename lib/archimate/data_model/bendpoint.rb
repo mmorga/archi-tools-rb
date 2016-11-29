@@ -2,7 +2,10 @@
 module Archimate
   module DataModel
     class Bendpoint < Dry::Struct
-      include DataModel::With
+      include With
+      include DiffableStruct
+
+      constructor_type :schema
 
       attribute :start_x, Coercible::Float.optional
       attribute :start_y, Coercible::Float.optional
@@ -15,6 +18,6 @@ module Archimate
     end
 
     Dry::Types.register_class(Bendpoint)
-    BendpointList = Strict::Array.member(Bendpoint)
+    BendpointList = Strict::Array.member(Bendpoint).default([])
   end
 end

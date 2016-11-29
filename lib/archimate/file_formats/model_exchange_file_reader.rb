@@ -7,7 +7,7 @@ module Archimate
       end
 
       def parse(model_exchange_io)
-        root = Nokogiri::XML(model_exchange_io).root
+        root = Nokogiri::XML(model_exchange_io)&.root
         return nil if root.nil?
         @property_defs = parse_property_defs(root)
         parse_model(root)
@@ -54,7 +54,7 @@ module Archimate
         value_node = node.at_css("value")
         lang = value_node.nil? ? "en" : value_node["xml:lang"]
         value = value_node&.content
-        DataModel::Property.create(
+        DataModel::Property.new(
           key: @property_defs[node["identifierref"]][:key],
           value: value,
           lang: lang

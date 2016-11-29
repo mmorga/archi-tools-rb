@@ -2,30 +2,20 @@
 module Archimate
   module DataModel
     class Diagram < Dry::Struct
-      include DataModel::With
+      include With
+      include DiffableStruct
+
+      constructor_type :schema
 
       attribute :id, Strict::String
       attribute :name, Strict::String
       attribute :viewpoint, Coercible::String.optional
       attribute :documentation, DocumentationList
       attribute :properties, PropertiesList
-      attribute :children, Strict::Array.member(Child)
+      attribute :children, Strict::Array.member(Child).default([])
       attribute :connection_router_type, Coercible::Int.optional # TODO: fill this in, should be an enum
       attribute :type, Strict::String.optional
       attribute :background, Coercible::Int.optional
-
-      def self.create(options = {})
-        new_opts = {
-          documentation: [],
-          properties: [],
-          children: [],
-          viewpoint: nil,
-          connection_router_type: nil,
-          type: nil,
-          background: nil
-        }.merge(options)
-        Diagram.new(new_opts)
-      end
 
       def clone
         Diagram.new(
@@ -61,7 +51,7 @@ module Archimate
       end
 
       def to_s
-        "#{'Diagram'.cyan}<#{id}>[#{name.white.underline}]"
+        "#{AIO.data_model('Diagram')}<#{id}>[#{HighLine.color(name, [:white, :underline])}]"
       end
     end
     Dry::Types.register_class(Diagram)

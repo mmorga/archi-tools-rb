@@ -10,14 +10,6 @@ module Archimate
         @subject = build_model(with_relationships: 2, with_diagrams: 2, with_elements: ELEMENT_COUNT, with_folders: 4)
       end
 
-      def test_create
-        expected = build_documentation_list(count: 2)
-        model = Model.create(id: "123", name: "my model", documentation: expected)
-        assert_equal "123", model.id
-        assert_equal "my model", model.name
-        assert_equal expected, model.documentation
-      end
-
       def test_build_model
         assert_equal 4, @subject.elements.size
         assert_equal 2, @subject.relationships.size

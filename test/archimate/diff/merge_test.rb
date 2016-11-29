@@ -25,7 +25,7 @@ module Archimate
       attr_reader :base_rel2
 
       def setup
-        @aio = Archimate::AIO.new(uout: StringIO.new, verbose: false)
+        @aio = Archimate::AIO.new(uout: StringIO.new, verbose: false, interactive: false)
         @base = build_model(with_relationships: 2, with_diagrams: 1)
         @base_el1 = base.elements.first
         @base_el2 = base.elements.last

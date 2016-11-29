@@ -6,26 +6,18 @@ module Archimate
     # this is representated as items. In the Archi file format, this is
     # represented as folders.
     class Folder < Dry::Struct
-      include DataModel::With
+      include With
+      include DiffableStruct
+
+      constructor_type :schema
 
       attribute :id, Strict::String
       attribute :name, Strict::String
       attribute :type, Strict::String.optional
-      attribute :items, Strict::Array.member(Strict::String)
+      attribute :items, Strict::Array.member(Strict::String).default([])
       attribute :documentation, DocumentationList
       attribute :properties, PropertiesList
-      attribute :folders, Strict::Array.member(Folder)
-
-      def self.create(options = {})
-        new_opts = {
-          type: nil,
-          items: [],
-          documentation: [],
-          properties: [],
-          folders: []
-        }.merge(options)
-        Folder.new(new_opts)
-      end
+      attribute :folders, Strict::Array.member(Folder).default([])
 
       def clone
         Folder.new(
@@ -49,7 +41,7 @@ module Archimate
       end
 
       def to_s
-        "#{'Folder'.cyan}<#{id}>[#{name.white.underline}]"
+        "#{AIO.data_model('Folder')}<#{id}>[#{HighLine.color(name, [:white, :underline])}]"
       end
     end
     Dry::Types.register_class(Folder)

@@ -16,6 +16,7 @@ module Archimate
       def_delegator :@conflicts, :size
       def_delegator :@conflicts, :first
       def_delegator :@conflicts, :map
+      def_delegator :@conflicts, :each
 
       def initialize(aio)
         @aio = aio
@@ -26,17 +27,11 @@ module Archimate
       end
 
       def add_conflicts(conflict)
-        conflict_ary = Array(conflict)
-        # TODO: remove this - it's for testing/debug only
-        raise TypeError, "Must be a Conflict was a '#{conflict.class}'" unless conflict_ary.all? { |i| i.is_a?(Archimate::Diff::Conflict) }
-        # TODO: remove this block - it's for debug only
-        conflict_ary.each { |c| raise ArgumentError, "Trying to add a duplicate conflict #{c} into #{self}" if conflicts.include?(c) }
-        conflicts.concat(conflict_ary)
+        conflicts.concat(Array(conflict))
         self
       end
 
       def diffs
-        raise TypeError, "Conflicts must contain only Conflict instances" unless conflicts.all? { |i| i.is_a?(Conflict) }
         conflicts.map(&:diffs).flatten
       end
 

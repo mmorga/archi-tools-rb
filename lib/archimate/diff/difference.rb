@@ -8,12 +8,13 @@ module Archimate
     # * to (invalid for delete)
     # TODO: I really need to have the from value - idx isn't enough to make sure when applying diffs
     class Difference
+      ARRAY_RE = Regexp.compile(/\[(\d+)\]/)
+
       attr_accessor :path # TODO: path is accessed as a stack, consider changing from string to stack
 
       def initialize(path)
         raise "Instantiating abstract Difference" if self.class == Difference
         @path = path
-        @array_re = Regexp.compile(/\[(\d+)\]/)
         yield self if block_given?
       end
 
@@ -54,7 +55,7 @@ module Archimate
 
       def path_to_array
         path.split("/")[1..-1].map do |p|
-          md = @array_re.match(p)
+          md = ARRAY_RE.match(p)
           md ? md[1].to_i : p
         end
       end

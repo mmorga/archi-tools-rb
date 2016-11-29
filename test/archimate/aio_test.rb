@@ -14,7 +14,7 @@ module Archimate
       assert_equal $stdin, io.in_io
       assert_equal $stdin, io.uin
       assert_equal $stderr, io.err
-      assert_equal $stderr, io.uout
+      assert_equal $stdout, io.uout
     end
 
     def test_verbose

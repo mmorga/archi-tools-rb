@@ -2,7 +2,10 @@
 module Archimate
   module DataModel
     class Child < Dry::Struct
-      include DataModel::With
+      include With
+      include DiffableStruct
+
+      constructor_type :schema
 
       attribute :id, Strict::String
       attribute :type, Strict::String.optional
@@ -11,32 +14,13 @@ module Archimate
       attribute :content, Strict::String.optional
       attribute :target_connections, Strict::String.optional # TODO: this is a list encoded in a string
       attribute :archimate_element, Strict::String.optional
-      attribute :bounds, OptionalBounds
-      attribute :children, Strict::Array.member(Child)
+      attribute :bounds, Bounds.optional
+      attribute :children, Strict::Array.member(Child).default([])
       attribute :source_connections, SourceConnectionList
       attribute :documentation, DocumentationList
       attribute :properties, PropertiesList
-      attribute :style, OptionalStyle
+      attribute :style, Style.optional
       attribute :child_type, Coercible::Int.optional
-
-      def self.create(options = {})
-        new_opts = {
-          type: nil,
-          model: nil,
-          name: nil,
-          content: nil,
-          target_connections: nil,
-          archimate_element: nil,
-          bounds: nil,
-          children: [],
-          source_connections: [],
-          documentation: [],
-          properties: [],
-          style: nil,
-          child_type: nil
-        }.merge(options)
-        Child.new(new_opts)
-      end
 
       def clone
         Child.new(

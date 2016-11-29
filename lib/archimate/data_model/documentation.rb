@@ -2,7 +2,10 @@
 module Archimate
   module DataModel
     class Documentation < Dry::Struct
-      include DataModel::With
+      include With
+      include DiffableStruct
+
+      constructor_type :schema
 
       attribute :lang, Strict::String.default("en")
       attribute :text, Strict::String
@@ -13,6 +16,6 @@ module Archimate
     end
 
     Dry::Types.register_class(Documentation)
-    DocumentationList = Strict::Array.member(Documentation)
+    DocumentationList = Strict::Array.member(Documentation).default([])
   end
 end

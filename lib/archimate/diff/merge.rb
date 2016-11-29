@@ -36,16 +36,28 @@ module Archimate
       def three_way
         aio.debug "Computing base:local diffs"
         @base_local_diffs = Archimate.diff(base, local)
+
         aio.debug "Computing base:remote diffs"
         @base_remote_diffs = Archimate.diff(base, remote)
+
         # aio.debug "Identify merged duplicates"
         # find_merged_duplicates
+
         aio.debug "Finding Conflicts"
         conflicts.find(@base_local_diffs, @base_remote_diffs)
+
+        aio.debug "Filtering out #{conflicts.size} conflicts"
         remaining_diffs = conflicts.filter_diffs(base_remote_diffs + base_local_diffs)
-        aio.debug "Filtering out #{conflicts.size} conflicts - applying #{remaining_diffs.size}"
-        remaining_diffs = filter_path_conflicts(remaining_diffs)
+        # remaining_diffs = filter_path_conflicts(remaining_diffs)
+
+        conflicts.each do |conflict|
+          remaining_diffs.concat(aio.resolve_conflict(conflict))
+          # @merged = apply_diffs(diffs, @merged)
+        end
+
         @merged = apply_diffs(remaining_diffs, @merged)
+
+        @merged
       end
 
       def find_merged_duplicates
@@ -80,7 +92,11 @@ module Archimate
       # new model with the diffs applied.
       def apply_diffs(diffs, model)
         aio.debug "Applying #{diffs.size} diffs"
-        diffs.sort.inject(model) { |a, e| apply_diff(a, e) }.compact
+        progressbar = @aio.create_progressbar(total: diffs.size)
+        diffs.sort.inject(model) do |model_a, diff|
+          progressbar.increment
+          apply_diff(model_a, diff)
+        end.compact
       end
 
       def apply_diff(model, diff)
