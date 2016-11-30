@@ -23,7 +23,7 @@ module Archimate
 
         def diff_conflicts(diff1, diff2)
           return false if diff1.nil? || diff2.nil?
-          diff2.effective_element.include?(diff1.effective_element.id)
+          diff2.effective_element.include?(diff1.effective_element)
         end
       end
     end

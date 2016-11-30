@@ -45,7 +45,7 @@ module Archimate
         )
       end
 
-      def test_diff_with_delete
+      def test_diff_with_delete_primitive
         other = @subject - ["orange"]
         result = @subject.diff(other)
 
@@ -53,6 +53,38 @@ module Archimate
           [Diff::Delete.new(@subject, "1")],
           result
         )
+      end
+
+      def test_diff_with_delete_and_apply
+        base = build_model(with_elements: 3)
+        merged = base.clone
+        deleted_element = base.elements[1]
+        local = base.with(elements: base.elements - [deleted_element])
+        assert_equal local.elements.size, base.elements.size - 1
+
+        result = base.diff(local)
+
+        assert_equal([Diff::Delete.new(base.elements, 1)], result)
+        assert_equal deleted_element.parent, result[0].effective_element
+
+        merged.apply_diff(result[0])
+        assert_equal local, merged
+      end
+
+      def test_diff_with_insert_and_apply
+        base = build_model(with_elements: 3)
+        merged = base.clone
+        inserted_element = build_element
+        local = base.with(elements: base.elements + [inserted_element])
+        assert_equal local.elements.size, base.elements.size + 1
+
+        result = base.diff(local)
+
+        assert_equal([Diff::Insert.new(local.elements, 3)], result)
+        assert_equal inserted_element.parent, result[0].effective_element
+
+        merged.apply_diff(result[0])
+        assert_equal local, merged
       end
 
       def test_diff_with_primitive_change
@@ -97,6 +129,38 @@ module Archimate
 
       def test_primitive
         refute @subject.primitive?
+      end
+
+      def test_delete
+        element_to_delete = @model.elements[1]
+        subject = @model.clone
+        subject.elements.delete("1", subject.elements[1])
+
+        assert_includes @model.elements, element_to_delete
+        refute_includes subject.elements, element_to_delete
+      end
+
+      def test_insert
+        subject = @model.clone
+        element_to_insert = build_element
+
+        subject.elements.insert("3", element_to_insert)
+
+        refute_includes @model.elements, element_to_insert
+        assert_includes subject.elements, element_to_insert
+        assert_equal 3, subject.elements.index(element_to_insert)
+      end
+
+      def test_change
+        subject = @model.clone
+        element_to_change = @model.elements[1]
+        changed_element = element_to_change.with(label: element_to_change.label + "-changed")
+
+        subject.elements.change("1", element_to_change, changed_element)
+
+        refute_includes @model.elements, changed_element
+        assert_includes subject.elements, changed_element
+        assert_equal 1, subject.elements.index(changed_element)
       end
     end
   end

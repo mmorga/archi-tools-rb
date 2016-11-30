@@ -18,8 +18,8 @@ module Archimate
       end
 
       def apply(el)
-        puts path.pretty_inspect
-        el.insert(sub_path, to_value)
+        idx = el.is_a?(Array) ? sub_path.to_i : sub_path
+        el[idx] = to_value
       end
 
       private

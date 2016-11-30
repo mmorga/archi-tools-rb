@@ -99,9 +99,6 @@ module Archimate
       end
 
       def apply_diff(diff)
-        puts diff.pretty_inspect
-
-        # diff.apply(lookup(diff.effective_element.id))
         diff.apply(lookup_in_this_model(diff.effective_element))
       end
 
@@ -109,37 +106,35 @@ module Archimate
         if remote_element.respond_to?(:id)
           lookup(remote_element.id)
         elsif remote_element.is_a?(Array)
-          parent.send(remote_element.parent.attribute_name(remote_element))
+          send(remote_element.parent.attribute_name(remote_element))
         else
           raise TypeError, "Don't know how to look up #{remote_element.class} in #{self.class}"
         end
       end
 
-      def delete(o)
-        attrname = o.is_a?(String) ? o : attribute_name(o)
-        if !attrname.empty?
-          send(attrname + "=", nil)
-        else
-          parent.delete(self)
-        end
+      def delete(attrname, _value)
+        raise(
+          ArgumentError,
+          "attrname was blank must be one of: #{self.class.schema.keys.map(&:to_s).join(',')}"
+        ) if attrname.nil? || attrname.empty?
+        instance_variable_set("@#{attrname}".to_sym, nil)
+        self
       end
 
-      def insert(o, value)
-        attrname = o.is_a?(String) ? o : attribute_name(o)
-        if !attrname.empty?
-          send(sub_path + "=", value)
-        else
-          parent.insert(attrname, value)
-        end
+      def insert(attrname, value)
+        raise(
+          ArgumentError,
+          "attrname was blank must be one of: #{self.class.schema.keys.map(&:to_s).join(',')}"
+        ) if attrname.nil? || attrname.empty?
+        instance_variable_set("@#{attrname}".to_sym, value)
       end
 
-      def change(o, value)
-        attrname = o.is_a?(String) ? o : attribute_name(o)
-        if !attrname.empty?
-          send(sub_path + "=", value)
-        else
-          parent.change(attrname, value)
-        end
+      def change(attrname, value)
+        raise(
+          ArgumentError,
+          "attrname was blank must be one of: #{self.class.schema.keys.map(&:to_s).join(',')}"
+        ) if attrname.nil? || attrname.empty?
+        instance_variable_set("@#{attrname}".to_sym, value)
       end
     end
   end

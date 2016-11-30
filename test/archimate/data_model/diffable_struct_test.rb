@@ -31,6 +31,39 @@ module Archimate
           @base.diff(nil)
         )
       end
+
+      def test_primitive
+        refute @base.primitive?
+      end
+
+      def test_delete
+        subject = @base.clone.delete("name", @base.name)
+
+        refute @base.name.nil?
+        assert subject.name.nil?
+      end
+
+      def test_insert
+        base = build_bounds(x: nil)
+        subject = base.clone
+        assert_nil subject.x
+
+        subject.insert("x", 3.14)
+
+        assert base.x.nil?
+        assert_equal 3.14, subject.x
+      end
+
+      def test_change
+        base = build_bounds(x: nil)
+        subject = base.clone
+        assert_nil subject.x
+
+        subject.change("x", 3.14)
+
+        assert base.x.nil?
+        assert_equal 3.14, subject.x
+      end
     end
   end
 end

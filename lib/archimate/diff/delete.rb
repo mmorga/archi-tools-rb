@@ -17,7 +17,7 @@ module Archimate
       end
 
       def apply(el)
-        el.delete(sub_path)
+        el.delete(sub_path, from_value)
       end
 
       private

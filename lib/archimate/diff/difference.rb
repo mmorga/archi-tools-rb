@@ -111,7 +111,13 @@ module Archimate
       end
 
       def to_value
-        sub_path.empty? ? to_element : to_element.send(:[], to_element.is_a?(Array) ? sub_path.to_i : sub_path)
+        return to_element if sub_path.empty?
+        to_element.send(:[], to_element.is_a?(Array) ? sub_path.to_i : sub_path)
+      end
+
+      def from_value
+        return from_element if sub_path.empty?
+        from_element.send(:[], from_element.is_a?(Array) ? sub_path.to_i : sub_path)
       end
 
       private

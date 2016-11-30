@@ -29,6 +29,14 @@ module Archimate
           HighLine.uncolor(@subject.to_s)
         )
       end
+
+      def test_apply
+        target = @model.clone
+
+        @subject.apply(target)
+
+        assert_nil target.name
+      end
     end
   end
 end
