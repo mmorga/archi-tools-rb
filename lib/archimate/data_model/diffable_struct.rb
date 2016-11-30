@@ -129,12 +129,12 @@ module Archimate
         instance_variable_set("@#{attrname}".to_sym, value)
       end
 
-      def change(attrname, value)
+      def change(attrname, _from_value, to_value)
         raise(
           ArgumentError,
           "attrname was blank must be one of: #{self.class.schema.keys.map(&:to_s).join(',')}"
         ) if attrname.nil? || attrname.empty?
-        instance_variable_set("@#{attrname}".to_sym, value)
+        instance_variable_set("@#{attrname}".to_sym, to_value)
       end
     end
   end

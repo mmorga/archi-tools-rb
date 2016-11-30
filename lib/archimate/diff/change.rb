@@ -18,7 +18,7 @@ module Archimate
       end
 
       def apply(el)
-        el.change(sub_path, to_value)
+        el.change(sub_path, from_value, to_value)
       end
 
       private

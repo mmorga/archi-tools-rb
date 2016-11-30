@@ -55,13 +55,12 @@ module Archimate
       end
 
       def test_change
-        base = build_bounds(x: nil)
+        base = build_bounds(x: 1.0)
         subject = base.clone
-        assert_nil subject.x
 
-        subject.change("x", 3.14)
+        subject.change("x", 1.0, 3.14)
 
-        assert base.x.nil?
+        assert_equal 1.0, base.x
         assert_equal 3.14, subject.x
       end
     end
