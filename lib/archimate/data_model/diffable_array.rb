@@ -8,70 +8,49 @@ module Archimate
         using DiffablePrimitive
 
         def diff(other)
-          return [Diff::Delete.new(self)] if other.nil?
+          return [Diff::Delete.new(Archimate.node_reference(self))] if other.nil?
           raise TypeError, "Expected other #{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
           return [] if other.empty? || self == other
-          deleted = self - other
           inserted_or_changed = other - self
           []
-            .concat(deleted.map { |n| Diff::Delete.new(self, index(n)) })
+            .concat(
+              deleted_items(other)
+                .map { |n| Diff::Delete.new(Archimate.node_reference(self, n)) }
+            )
             .concat(
               inserted_or_changed
                 .select { |r| none? { |l| l.match(r) } }
-                .map { |n| Diff::Insert.new(other, other.index(n)) }
+                .map { |n| Diff::Insert.new(Archimate.node_reference(other, n)) }
             )
             .concat(
               inserted_or_changed
                 .select { |r| any? { |l| l.match(r) } }
-                .map { |n| Diff::Change.new(self, other, other.index(n)) }
+                .map do |n|
+                  Diff::Change.new(
+                    Archimate.node_reference(other, n),
+                    Archimate.node_reference(self, n)
+                  )
+                end
             )
         end
 
-        # This is an excellent example of my coding style age 19 in 1989.
-        # def diff_are_you_cray_cray?(other)
-        #   diff_list = []
-        #   base_idx = 0
-        #   local_idx = 0
-        #   while base_idx < size || local_idx < other.size
-        #     if base_idx >= size
-        #       until local_idx >= other.size
-        #         diff_list << Diff::Insert.new(other[local_idx])
-        #         local_idx += 1
-        #       end
-        #     elsif local_idx >= other.size
-        #       until base_idx >= size
-        #         diff_list << Diff::Delete.new(self[base_idx])
-        #         base_idx += 1
-        #       end
-        #     elsif self[base_idx] == other[local_idx]
-        #       base_idx += 1
-        #       local_idx += 1
-        #     elsif self[base_idx].match(other[local_idx])
-        #       self[base_idx].diff(other[local_idx])
-        #       base_idx += 1
-        #       local_idx += 1
-        #     elsif other[local_idx + 1..-1].any? { |i| self[base_idx].match(i) }
-        #       diff_list << Diff::Insert.new(other[local_idx])
-        #       local_idx += 1
-        #     else
-        #       diff_list << Diff::Delete.new(self[base_idx])
-        #       base_idx += 1
-        #     end
-        #   end
-        #   diff_list.flatten
-        # end
+        def deleted_items(other)
+          id_lookup = -> (x) { x.respond_to?(:id) ? x.id : x }
+          deleted_ids = map(&id_lookup) - other.map(&id_lookup)
+          deleted_ids.map { |id| at(index { |item| item.id == id }) }
+        end
 
-        def assign_model(m)
-          @in_model = m
-          each { |i| i.assign_model(m) }
+        def assign_model(model)
+          @in_model = model
+          each { |item| item.assign_model(model) }
         end
 
         def in_model
           @in_model if defined?(@in_model)
         end
 
-        def assign_parent(p)
-          @parent = p
+        def assign_parent(par)
+          @parent = par
           each { |i| i.assign_parent(self) }
         end
 
@@ -79,19 +58,28 @@ module Archimate
           @parent if defined?(@parent)
         end
 
+        def build_index(hash_index = {})
+          hash_index[object_id] = self
+          reduce(hash_index) { |a, e| e.build_index(a) }
+        end
+
         def match(other)
           self == other
         end
 
-        def path
+        def path(options = {})
           [
-            parent&.path,
-            parent&.attribute_name(self)
+            parent&.path(options),
+            parent&.attribute_name(self, options)
           ].compact.reject(&:empty?).join("/")
         end
 
-        def attribute_name(child)
-          find_index(child).to_s
+        def attribute_name(child, options = {})
+          if child.is_a?(IdentifiedNode) && options.fetch(:force_array_index, :id) == :id
+            child.id
+          else
+            find_index(child)
+          end
         end
 
         def primitive?
@@ -99,21 +87,50 @@ module Archimate
         end
 
         def delete(idx, value)
-          raise(ArgumentError, "idx was blank") if idx.nil? || idx.empty?
+          raise(ArgumentError, "idx was blank") if idx.nil?
           super(value)
           self
         end
 
         def insert(idx, value)
-          raise(ArgumentError, "idx was blank") if idx.nil? || idx.empty?
-          super(idx.to_i, value)
+          ary_idx =
+            case value
+            when IdentifiedNode
+              find_index { |item| item.id == value.id } || size
+            else
+              idx.to_i
+            end
+          super(ary_idx, value)
           self
         end
 
         def change(idx, from_value, to_value)
-          raise(ArgumentError, "idx was blank") if idx.nil? || idx.empty?
-          self[index(from_value)] = to_value
+          raise(ArgumentError, "idx was blank") if idx.nil?
+          ary_idx =
+            case to_value
+            when IdentifiedNode
+              find_index { |item| item.id == from_value.id }
+            else
+              index(from_value)
+            end
+          self[ary_idx] = to_value
           self
+        end
+
+        def clone
+          map(&:clone)
+        end
+
+        # TODO: this duplicates the same method in ArchimateNode look for opportunity to refactor into common module.
+        def ancestors
+          result = [self]
+          p = self
+          result << p until (p = p.parent).nil?
+          result
+        end
+
+        def to_s
+          "#{parent}/#{parent.attribute_name(self)}"
         end
       end
     end

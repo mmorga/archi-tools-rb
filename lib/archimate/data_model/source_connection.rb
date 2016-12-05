@@ -1,21 +1,12 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class SourceConnection < Dry::Struct
-      include With
-      include DiffableStruct
-
-      constructor_type :schema
-
-      attribute :id, Strict::String
+    class SourceConnection < IdentifiedNode
+      attribute :name, Strict::String.optional
       attribute :source, Strict::String
       attribute :target, Strict::String
       attribute :relationship, Strict::String.optional
-      attribute :name, Strict::String.optional
-      attribute :type, Strict::String.optional
       attribute :bendpoints, BendpointList
-      attribute :documentation, DocumentationList
-      attribute :properties, PropertiesList
       attribute :style, Style.optional
 
       def clone

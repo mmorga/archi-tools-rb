@@ -13,12 +13,6 @@ module Archimate
             assert klass.public_instance_methods.include?(method), "Expected #{klass} to have a method #{method}"
           end
         end
-
-        [DataModel::With].each do |mod|
-          define_method("test_#{klass.to_s.split('::').last.downcase}_includes_#{mod}") do
-            assert klass.ancestors.include?(mod), "Expected #{klass} to include module #{mod}"
-          end
-        end
       end
     end
   end

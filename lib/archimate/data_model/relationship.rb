@@ -1,20 +1,11 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Relationship < Dry::Struct
-      include With
-      include DiffableStruct
-
-      constructor_type :schema
-
-      attribute :id, Strict::String
-      attribute :type, Strict::String
+    class Relationship < IdentifiedNode
+      attribute :name, Strict::String.optional
       attribute :source, Strict::String
       attribute :target, Strict::String
-      attribute :access_type, Coercible::Int.optional
-      attribute :name, Strict::String.optional
-      attribute :documentation, DocumentationList
-      attribute :properties, PropertiesList
+      attribute :access_type, Coercible::Int.optional # TODO: turn this into an enum
 
       def clone
         Relationship.new(

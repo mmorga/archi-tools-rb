@@ -13,6 +13,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    byebug (9.0.6)
     coderay (1.1.1)
     concurrent-ruby (1.0.2)
     docile (1.1.5)
@@ -95,6 +96,9 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-byebug (3.4.1)
+      byebug (~> 9.0)
+      pry (~> 0.10)
     rake (11.3.0)
     rb-fsevent (0.9.7)
     rb-inotify (0.9.7)
@@ -131,6 +135,7 @@ DEPENDENCIES
   minitest-matchers
   minitest-profile
   pry
+  pry-byebug
   rake
   ruby-prof
   ruby_gntp

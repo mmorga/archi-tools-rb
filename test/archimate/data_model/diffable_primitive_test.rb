@@ -25,10 +25,10 @@ module Archimate
       end
 
       def test_assign_parent
-        @subject.assign_model(@model)
+        @subject.assign_parent(@model)
       end
 
-      def test_assign_parent
+      def test_match
         assert @subject.match("sample")
         refute @subject.match("sam")
       end
@@ -43,14 +43,14 @@ module Archimate
 
       def test_diff_delete
         assert_equal(
-          [Diff::Delete.new(@model, "name")],
+          [Diff::Delete.new(Archimate.node_reference(@model, "name"))],
           @subject.diff(nil, @model, @model, "name")
         )
       end
 
       def test_diff_change
         assert_equal(
-          [Diff::Change.new(@model, @model, "name")],
+          [Diff::Change.new(Archimate.node_reference(@model, "name"), Archimate.node_reference(@model, "name"))],
           @subject.diff("primal", @model, @model, "name")
         )
       end

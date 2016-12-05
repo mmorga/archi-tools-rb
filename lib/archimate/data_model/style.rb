@@ -1,19 +1,14 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Style < Dry::Struct
-      include With
-      include DiffableStruct
-
-      constructor_type :schema
-
-      attribute :text_alignment, Coercible::Int.optional
+    class Style < NonIdentifiedNode
+      attribute :text_alignment, Coercible::Int.optional # TODO: make this an enum
       attribute :fill_color, Color.optional
       attribute :line_color, Color.optional
-      attribute :font_color, Color.optional
+      attribute :font_color, Color.optional # TODO: move this to font
       attribute :line_width, Coercible::Int.optional
       attribute :font, Font.optional
-      attribute :text_position, Coercible::Int.optional
+      attribute :text_position, Coercible::Int.optional # TODO: make this an enum
 
       def clone
         Style.new(

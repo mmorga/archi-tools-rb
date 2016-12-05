@@ -6,12 +6,7 @@ module Archimate
     class DeleteTest < Minitest::Test
       def setup
         @model = build_model(with_elements: 1)
-        @subject = Delete.new(@model, "name")
-      end
-
-      def test_delete
-        assert_equal @model, @subject.from_element
-        assert_equal "name", @subject.sub_path
+        @subject = Delete.new(Archimate.node_reference(@model, "name"))
       end
 
       def test_to_s
@@ -21,11 +16,11 @@ module Archimate
         )
       end
 
-      def test_to_s_for_struct
-        @subject = Delete.new(@model.elements.first)
+      def test_to_s_for_array
+        @subject = Delete.new(Archimate.node_reference(@model.elements.first))
 
         assert_equal(
-          HighLine.uncolor("DELETE: #{@model.elements.first} from #{@model}"),
+          HighLine.uncolor("DELETE: #{@model.elements.first} from #{@model}/elements"),
           HighLine.uncolor(@subject.to_s)
         )
       end
@@ -36,6 +31,18 @@ module Archimate
         @subject.apply(target)
 
         assert_nil target.name
+      end
+
+      def test_apply_for_array
+        target = @model.clone
+        deleted_element = @model.elements.first
+        subject = Delete.new(Archimate.node_reference(deleted_element))
+        refute_empty target.elements
+
+        subject.apply(target)
+
+        assert_empty target.elements
+        refute_empty @model.elements
       end
     end
   end

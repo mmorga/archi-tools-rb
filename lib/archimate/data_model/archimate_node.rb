@@ -1,18 +1,29 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    module DiffableStruct
+    class ArchimateNode < Dry::Struct
       using DiffablePrimitive
       using DiffableArray
+
+      constructor_type :schema
+
+      def with(options = {})
+        self.class.new(
+          struct_instance_variables
+            .each_with_object({}) { |i, a| a[i] = send(i) }
+            .merge(options)
+            .each_with_object({}) { |(k, v), a| a[k] = v.clone }
+        )
+      end
 
       def primitive?
         false
       end
 
-      def assign_parent(p)
-        @parent = p
-        to_h.keys.each do |k|
-          send(k).assign_parent(self)
+      def assign_parent(par)
+        @parent = par
+        struct_instance_variables.each do |attrname|
+          send(attrname).assign_parent(self)
         end
       end
 
@@ -21,20 +32,23 @@ module Archimate
       end
 
       def assign_model(model)
-        walk_struct(
-          inst_proc: lambda do |n|
-            n.instance_variable_set(:@in_model, model)
-            model.register(n)
-          end
-        )
+        @in_model = model unless is_a?(Model)
+        struct_instance_variables.each do |attrname|
+          send(attrname).assign_model(model)
+        end
       end
 
       def in_model
         @in_model if defined?(@in_model)
       end
 
+      def build_index(hash_index = {})
+        hash_index[id] = self
+        struct_instance_variables.reduce(hash_index) { |a, e| send(e).build_index(a) }
+      end
+
       def diff(other)
-        return [Diff::Delete.new(self)] if other.nil?
+        return [Diff::Delete.new(Archimate.node_reference(self))] if other.nil?
         raise TypeError, "Expected other <#{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
         struct_instance_variables.each_with_object([]) do |k, a|
           val = send(k)
@@ -49,32 +63,7 @@ module Archimate
       end
 
       def match(other)
-        is_a?(other.class) &&
-          ((respond_to?(:id) && id == other.id) || self == other)
-      end
-
-      def struct_instance_variables
-        self.class.schema.keys
-      end
-
-      def compact
-        walk_struct(array_proc: ->(n) { n.compact! })
-        self
-      end
-
-      # Recursively walk this model and all of it's children calling the passed
-      # proc for each instance
-      def walk_struct(inst_proc: -> (_n) {}, array_proc: -> (_n) {})
-        inst_proc.call(self)
-        to_h.keys.map { |k| send(k) }.each do |val|
-          case val
-          when Dry::Struct
-            val.walk_struct(inst_proc: inst_proc, array_proc: array_proc)
-          when Array
-            array_proc.call(val)
-            val.each { |i| i.walk_struct(inst_proc: inst_proc, array_proc: array_proc) if i.is_a?(Dry::Struct) }
-          end
-        end
+        self == other
       end
 
       def ancestors
@@ -84,31 +73,26 @@ module Archimate
         result
       end
 
-      def path
+      def path(options = {})
         [
-          parent&.path,
-          parent&.attribute_name(self)
-        ].compact.reject(&:empty?).join("/")
+          parent&.path(options),
+          parent&.attribute_name(self, options)
+        ].compact.map(&:to_s).reject(&:empty?).join("/")
       end
 
-      def attribute_name(v)
+      def struct_instance_variables
+        self.class.schema.keys
+      end
+
+      def compact
+        struct_instance_variables.each { |attrname| send(attrname).compact }
+        self
+      end
+
+      def attribute_name(v, _options = {})
         self.class.schema.keys.reduce do |a, e|
           a = e if v.equal?(send(e))
           a
-        end
-      end
-
-      def apply_diff(diff)
-        diff.apply(lookup_in_this_model(diff.effective_element))
-      end
-
-      def lookup_in_this_model(remote_element)
-        if remote_element.respond_to?(:id)
-          lookup(remote_element.id)
-        elsif remote_element.is_a?(Array)
-          send(remote_element.parent.attribute_name(remote_element))
-        else
-          raise TypeError, "Don't know how to look up #{remote_element.class} in #{self.class}"
         end
       end
 
@@ -125,8 +109,9 @@ module Archimate
         raise(
           ArgumentError,
           "attrname was blank must be one of: #{self.class.schema.keys.map(&:to_s).join(',')}"
-        ) if attrname.nil? || attrname.empty?
+        ) if attrname.nil? #  || attrname.empty?
         instance_variable_set("@#{attrname}".to_sym, value)
+        self
       end
 
       def change(attrname, _from_value, to_value)
@@ -135,6 +120,7 @@ module Archimate
           "attrname was blank must be one of: #{self.class.schema.keys.map(&:to_s).join(',')}"
         ) if attrname.nil? || attrname.empty?
         instance_variable_set("@#{attrname}".to_sym, to_value)
+        self
       end
     end
   end

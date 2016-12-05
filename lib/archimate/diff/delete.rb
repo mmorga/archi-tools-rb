@@ -2,22 +2,25 @@
 module Archimate
   module Diff
     class Delete < Difference
+      using DataModel::DiffablePrimitive
       using DataModel::DiffableArray
 
       # Create a new Delete difference
       #
-      # @param deleted_element [Archimate::DataModel::DiffableStruct] Element that was deleted
-      # @param sub_path [str] Path under deleted_element for primitive values
-      def initialize(deleted_element, sub_path = "")
-        super(deleted_element, nil, sub_path)
+      # @param target [ArchimateNodeReference] Element that was deleted
+      def initialize(target)
+        super
       end
 
       def to_s
-        "#{diff_type} #{what(from_element)} from #{from}"
+        # Note - the explicit to_s is required to access the DiffableArray
+        #        implementation if the parent is an Array.
+        "#{diff_type} #{target} from #{target.parent.to_s}"
       end
 
       def apply(el)
-        el.delete(sub_path, from_value)
+        target.delete(el)
+        el
       end
 
       private

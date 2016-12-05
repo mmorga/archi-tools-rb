@@ -1,12 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Property < Dry::Struct
-      include With
-      include DiffableStruct
-
-      constructor_type :schema
-
+    class Property < NonIdentifiedNode
       attribute :key, Strict::String
       attribute :value, Strict::String.optional
       attribute :lang, Strict::String.default("en")

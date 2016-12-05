@@ -1,12 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Color < Dry::Struct
-      include With
-      include DiffableStruct
-
-      constructor_type :schema
-
+    class Color < NonIdentifiedNode
       attribute :r, Coercible::Int.constrained(lt: 256, gt: -1)
       attribute :g, Coercible::Int.constrained(lt: 256, gt: -1)
       attribute :b, Coercible::Int.constrained(lt: 256, gt: -1)

@@ -12,13 +12,6 @@ module Archimate
         @subject = %w(apple orange banana)
       end
 
-      def test_diff_on_nil
-        assert_equal(
-          [Diff::Delete.new(@subject)],
-          @subject.diff(nil)
-        )
-      end
-
       def test_diff_on_non_array_error_state
         assert_raises(TypeError) { @subject.diff(42) }
       end
@@ -34,14 +27,16 @@ module Archimate
       def test_diff_with_insert
         other = @subject + ["peach"]
         result = @subject.diff(other)
+        node_ref = Archimate.node_reference(other, "peach")
 
+        assert_kind_of Diff::ArchimateArrayPrimitiveReference, node_ref
         assert_equal(
-          [Diff::Insert.new(other, "3")],
+          [Diff::Insert.new(node_ref)],
           result
         )
         assert_equal(
           "peach",
-          result[0].to_value
+          result[0].target.value
         )
       end
 
@@ -50,7 +45,7 @@ module Archimate
         result = @subject.diff(other)
 
         assert_equal(
-          [Diff::Delete.new(@subject, "1")],
+          [Diff::Delete.new(Archimate.node_reference(@subject, @subject[1]))],
           result
         )
       end
@@ -64,26 +59,25 @@ module Archimate
 
         result = base.diff(local)
 
-        assert_equal([Diff::Delete.new(base.elements, 1)], result)
-        assert_equal deleted_element.parent, result[0].effective_element
+        assert_equal([Diff::Delete.new(Archimate.node_reference(deleted_element))], result)
+        assert_equal deleted_element.parent, result[0].target.parent
 
-        merged.apply_diff(result[0])
+        merged = result[0].apply(merged)
+
         assert_equal local, merged
       end
 
       def test_diff_with_insert_and_apply
         base = build_model(with_elements: 3)
-        merged = base.clone
         inserted_element = build_element
         local = base.with(elements: base.elements + [inserted_element])
-        assert_equal local.elements.size, base.elements.size + 1
 
         result = base.diff(local)
 
-        assert_equal([Diff::Insert.new(local.elements, 3)], result)
-        assert_equal inserted_element.parent, result[0].effective_element
+        assert_equal([Diff::Insert.new(Archimate.node_reference(inserted_element))], result)
 
-        merged.apply_diff(result[0])
+        merged = result[0].apply(base.clone)
+
         assert_equal local, merged
       end
 
@@ -92,8 +86,8 @@ module Archimate
         result = @subject.diff(other)
 
         assert_equal(
-          [Diff::Delete.new(@subject, "1"),
-           Diff::Insert.new(other, "2")],
+          [Diff::Delete.new(Archimate.node_reference(@subject, @subject[1])),
+           Diff::Insert.new(Archimate.node_reference(other, other[2]))],
           result
         )
       end
@@ -118,13 +112,13 @@ module Archimate
 
       def test_path
         assert_equal "elements", @model.elements.path
-        assert_equal "elements/0", @model.elements.first.path
-        assert_equal "elements/2", @model.elements.last.path
+        assert_equal "elements/#{@model.elements.first.id}", @model.elements.first.path
+        assert_equal "elements/#{@model.elements.last.id}", @model.elements.last.path
       end
 
       def test_attribute_name
-        assert_equal "0", @model.elements.attribute_name(@model.elements[0])
-        assert_equal "2", @model.elements.attribute_name(@model.elements[2])
+        assert_equal @model.elements[0].id, @model.elements.attribute_name(@model.elements[0])
+        assert_equal @model.elements[2].id, @model.elements.attribute_name(@model.elements[2])
       end
 
       def test_primitive
@@ -144,7 +138,7 @@ module Archimate
         subject = @model.clone
         element_to_insert = build_element
 
-        subject.elements.insert("3", element_to_insert)
+        subject.elements.insert(element_to_insert.id, element_to_insert)
 
         refute_includes @model.elements, element_to_insert
         assert_includes subject.elements, element_to_insert
@@ -161,6 +155,29 @@ module Archimate
         refute_includes @model.elements, changed_element
         assert_includes subject.elements, changed_element
         assert_equal 1, subject.elements.index(changed_element)
+      end
+
+      def test_independent_changes_element
+        base = build_model(with_relationships: 2, with_diagrams: 1)
+        base_el1 = base.elements.first
+        base_el2 = base.elements.last
+        local_el = base_el1.with(label: "#{base_el1.label}-local")
+        remote_el = base_el2.with(label: "#{base_el2.label}-remote")
+        local = base.with(elements: base.elements.map { |el| el.id == local_el.id ? local_el : el })
+        remote = base.with(elements: base.elements.map { |el| el.id == remote_el.id ? remote_el : el })
+
+        base_local = base.diff(local)
+
+        assert_equal(
+          [Diff::Change.new(
+            Archimate.node_reference(local_el), Archimate.node_reference(base_el1)
+          )],
+          base_local
+        )
+        assert_equal 1, base_local.size
+
+        base_remote = base.diff(remote)
+        assert_equal 1, base_remote.size
       end
     end
   end

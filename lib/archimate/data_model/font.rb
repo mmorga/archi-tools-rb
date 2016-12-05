@@ -1,15 +1,10 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Font < Dry::Struct
-      include With
-      include DiffableStruct
-
-      constructor_type :schema
-
+    class Font < NonIdentifiedNode
       attribute :name, Strict::String.optional
       attribute :size, Coercible::Float.constrained(gt: 0.0).optional
-      attribute :style, Coercible::Int.optional
+      attribute :style, Coercible::Int.optional # TODO: make this an enum
       attribute :font_data, Strict::String.optional
 
       # Archi font strings look like this:

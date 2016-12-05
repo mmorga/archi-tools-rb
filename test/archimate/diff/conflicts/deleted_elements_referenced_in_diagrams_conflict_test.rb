@@ -23,10 +23,10 @@ module Archimate
 
           @element = @model.elements.first
           @diagram = @model.diagrams.first
-          @diff_name = Archimate::Diff::Delete.new(@model, "name")
-          @diff1 = Archimate::Diff::Delete.new(@model.elements[0])
-          @diff2 = Archimate::Diff::Insert.new(@model.diagrams[0], "name")
-          @diff3 = Archimate::Diff::Delete.new(@model.diagrams[0].children[0])
+          @diff_name = Archimate::Diff::Delete.new(Archimate.node_reference(@model, "name"))
+          @diff1 = Archimate::Diff::Delete.new(Archimate.node_reference(@model.elements[0]))
+          @diff2 = Archimate::Diff::Insert.new(Archimate.node_reference(@model.diagrams[0], "name"))
+          @diff3 = Archimate::Diff::Delete.new(Archimate.node_reference(@model.diagrams[0].children[0]))
           @subject = DeletedElementsReferencedInDiagramsConflict.new([@diff_name, @diff1], [@diff3])
         end
 

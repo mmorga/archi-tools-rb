@@ -26,6 +26,10 @@ module Archimate
   end
 
   module Diff
+    autoload :ArchimateArrayPrimitiveReference, 'archimate/diff/archimate_array_primitive_reference'
+    autoload :ArchimateIdentifiedNodeReference, 'archimate/diff/archimate_identified_node_reference'
+    autoload :ArchimateNodeAttributeReference, 'archimate/diff/archimate_node_attribute_reference'
+    autoload :ArchimateNodeReference, 'archimate/diff/archimate_node_reference'
     autoload :Change, 'archimate/diff/change'
     autoload :Conflict, 'archimate/diff/conflict'
     autoload :Conflicts, 'archimate/diff/conflicts'
@@ -83,5 +87,37 @@ module Archimate
   # @return Archimate::DataModel::Model of ArchiMate model in the file
   def self.parse(filename)
     FileFormat.parse(filename)
+  end
+
+  using DataModel::DiffablePrimitive
+  using DataModel::DiffableArray
+
+  # Produces a NodeReference instance for the given parameters
+  def self.node_reference(node, child_node = nil)
+    case node
+    when DataModel::IdentifiedNode
+      if child_node.nil?
+        Diff::ArchimateIdentifiedNodeReference.new(node)
+      else
+        Diff::ArchimateNodeAttributeReference.new(node, child_node)
+      end
+    when Array
+      case child_node
+      when String, Fixnum, Float
+        Diff::ArchimateArrayPrimitiveReference.new(node, child_node)
+      when DataModel::IdentifiedNode, DataModel::NonIdentifiedNode
+        node_reference(node_reference(child_node).lookup_in_model(node.in_model))
+      else
+        Diff::ArchimateNodeReference.new(node)
+      end
+    when DataModel::ArchimateNode
+      if child_node.nil?
+        Diff::ArchimateNodeReference.new(node)
+      else
+        Diff::ArchimateNodeAttributeReference.new(node, child_node)
+      end
+    else
+      raise TypeError, "Expected node #{node.class} to be ArchimateNode, IdentifiedNode, or Array"
+    end
   end
 end

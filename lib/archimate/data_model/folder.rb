@@ -5,18 +5,9 @@ module Archimate
     # and diagrams. In the Archimate standard file export model exchange format,
     # this is representated as items. In the Archi file format, this is
     # represented as folders.
-    class Folder < Dry::Struct
-      include With
-      include DiffableStruct
-
-      constructor_type :schema
-
-      attribute :id, Strict::String
+    class Folder < IdentifiedNode
       attribute :name, Strict::String
-      attribute :type, Strict::String.optional
       attribute :items, Strict::Array.member(Strict::String).default([])
-      attribute :documentation, DocumentationList
-      attribute :properties, PropertiesList
       attribute :folders, Strict::Array.member(Folder).default([])
 
       def clone
@@ -29,15 +20,6 @@ module Archimate
           properties: properties.map(&:clone),
           folders: folders.map(&:clone)
         )
-      end
-
-      def find_folder(folder_id)
-        return self if id == folder_id
-        folders.each do |f|
-          found_folder = f.find_folder(folder_id)
-          return found_folder unless found_folder.nil?
-        end
-        nil
       end
 
       def to_s

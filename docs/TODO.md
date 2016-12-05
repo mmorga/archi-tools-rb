@@ -6,21 +6,15 @@
 * [ ] Scorecard lint
 * [ ] CLI DSL
 * [ ] Add a super strict mode to note when reader finds unexpected content
-* [ ] Make a format agnostic file reader (which delegates to appropriate file type readers)
 * [ ] Consider breaking this into a number of gems (for example: base lib, diff/merge, other cmdline tools)
 * [ ] Archi file could have ids that conflict (i.e. 2 relationships with same id - this is bad!!! Was it a bad merge or something worse)
 * [ ] make classes for each element and relationship type?
 * [ ] Convert all CLIs to use AIO - merge with OutputIO and MaybeIO (maybe)
 * [ ] Figure out how to make rmagick optional and/or remove rmagick dependency
-* [ ] Decide between ox and nokogiri and eliminate the alternate
-* [ ] Refactor merge to pull apply diffs out
 * [ ] Data model items that reference something else by id should have the actual object available - not just the id
 * [ ] Implement check for de-duplicated merges
-* [ ] See what can be done about performance
-  - Reading file 11-12 secs
-  - deleted relationships referenced in diagrams is slow
-* [ ] Refactor to better OO design where necessary (see all about names below)
 * Convert support for
+  - [ ] Neo4j CSV
   - [ ] Rdf
   - [ ] Gremlin
   - [X] N-Quad
@@ -42,31 +36,19 @@
 * [X] Clean up TODOs
 * [x] Experiment with Ox, Oga, Sax-Machine for better performance on convert
 * [x] Map conversion between archi and archimate diagram formats
+* [X] Write a common clone for dry-struct classes
+* [X] Make a format agnostic file reader (which delegates to appropriate file type readers)
+* [X] Decide between ox and nokogiri and eliminate the alternate
+* [X] See what can be done about performance
+  - Reading file 11-12 secs
+  - deleted relationships referenced in diagrams is slow
+* [X] Refactor to better OO design where necessary (see all about names below)
+* [X] Refactor merge to pull apply diffs out
 
 ## Other tool ideas
 
 * Tool to query for dependencies
 * Tool to assign/validate/enforce metadata
-
-# All about names
-
-Merge in an OO way.
-
-Load the candidate documents which could be different type/version files into standard model
-
-```ruby
-base = LoadDocument.load("base.archimate")
-local = LoadDocument.load("local.archimate")
-remote = LoadDocument.load("remote.archimate")
-
-merged_document, conflicts = base.merge(local, remote) # three way merge?
-```
-
-Merger might be the right name for the object?
-
-```ruby
-patch_set, unresolved_conflicts = conflicts.resolve(review)
-```
 
 ## My Classes
 

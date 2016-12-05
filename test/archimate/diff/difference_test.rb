@@ -14,36 +14,36 @@ module Archimate
       def test_diagram?
         [model.diagrams[0],
          model.diagrams[1]].each do |entity|
-          diff = Change.new(entity, entity)
+          diff = Change.new(Archimate.node_reference(entity), Archimate.node_reference(entity))
           assert diff.diagram?
         end
       end
 
       def test_diagram_fail_cases
         [model.elements.first].each do |entity|
-          diff = Change.new(entity, entity, "label")
+          diff = Change.new(Archimate.node_reference(entity, "label"), Archimate.node_reference(entity, "label"))
           refute diff.diagram?
         end
       end
 
       def test_in_diagram?
         [model.diagrams[1]].each do |entity|
-          diff = Change.new(entity, entity, "name")
+          diff = Change.new(Archimate.node_reference(entity, "name"), Archimate.node_reference(entity, "name"))
           assert diff.in_diagram?
         end
       end
 
       def test_in_diagram_fail_cases
         [model.elements.first].each do |entity|
-          diff = Change.new(entity, entity, "label")
+          diff = Change.new(Archimate.node_reference(entity, "label"), Archimate.node_reference(entity, "label"))
           refute diff.in_diagram?
         end
       end
 
       def test_change
         folder = model.folders.first
-        change_diff = Change.new(folder, folder, name)
-        insert_diff = Insert.new(build_child)
+        change_diff = Change.new(Archimate.node_reference(folder, "name"), Archimate.node_reference(folder, "name"))
+        insert_diff = Insert.new(Archimate.node_reference(build_child))
 
         assert change_diff.change?
         refute change_diff.insert?
@@ -130,8 +130,8 @@ module Archimate
 
       def test_sort_bounds_attributes
         bounds = model.diagrams.first.children.first.bounds
-        d1 = Delete.new(bounds, "x")
-        d2 = Delete.new(bounds, "width")
+        d1 = Delete.new(Archimate.node_reference(bounds, "x"))
+        d2 = Delete.new(Archimate.node_reference(bounds, "width"))
         expected = [d2, d1]
 
         assert_equal expected, [d1, d2].sort
@@ -139,8 +139,8 @@ module Archimate
       end
 
       def test_sort_elements_index
-        d1 = Delete.new(model.elements.last, "label")
-        d2 = Delete.new(model.elements.first, "label")
+        d1 = Delete.new(Archimate.node_reference(model.elements.last, "label"))
+        d2 = Delete.new(Archimate.node_reference(model.elements.first, "label"))
         expected = [d2, d1]
 
         assert_equal expected, [d1, d2].sort
@@ -148,16 +148,16 @@ module Archimate
       end
 
       def test_path
-        d1 = Delete.new(model, "name")
+        d1 = Delete.new(Archimate.node_reference(model, "name"))
 
         assert_equal("name", d1.path)
       end
 
       def test_bounds_path
         bounds = model.diagrams.first.children.first.bounds
-        d1 = Delete.new(bounds, "x")
+        d1 = Delete.new(Archimate.node_reference(bounds, "x"))
 
-        assert_equal("diagrams/0/children/0/bounds/x", d1.path)
+        assert_equal("diagrams/#{model.diagrams.first.id}/children/#{model.diagrams.first.children.first.id}/bounds/x", d1.path)
       end
 
       def test_attribute_name

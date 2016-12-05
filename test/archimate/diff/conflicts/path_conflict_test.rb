@@ -24,16 +24,30 @@ module Archimate
           @element = @model.elements.first
           @relationship = @model.relationships.first
           @relationship2 = @model.relationships[1]
-          @diff_name = Archimate::Diff::Delete.new(@model, "name")
+          @diff_name = Archimate::Diff::Delete.new(Archimate.node_reference(@model, "name"))
 
-          @diff1 = Archimate::Diff::Insert.new(@relationship)
-          @diff2 = Archimate::Diff::Insert.new(@relationship2)
+          @diff1 = Archimate::Diff::Insert.new(Archimate.node_reference(@relationship))
+          @diff2 = Archimate::Diff::Insert.new(Archimate.node_reference(@relationship2))
 
           @subject = PathConflict.new([@diff1, @diff_name], [@diff2])
         end
 
-        def test_conflict
-          assert @subject.diff_conflicts(@diff1, @diff2)
+        def test_two_inserted_elements_with_diff_ids_shouldnt_conflict
+          refute @subject.diff_conflicts(@diff1, @diff2)
+        end
+
+        def test_two_inserts_same_path
+          local = @model.with(relationships: [build_relationship.with(id: @relationship.id)])
+          diff2 = Archimate::Diff::Insert.new(
+            Archimate.node_reference(
+              local.relationships.first
+            )
+          )
+          puts "diff1: #{@diff1.path}"
+          puts "diff2: #{diff2.path}"
+
+          refute_equal @diff1, diff2
+          assert @subject.diff_conflicts(@diff1, diff2)
         end
       end
     end

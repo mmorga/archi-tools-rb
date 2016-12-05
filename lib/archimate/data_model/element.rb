@@ -1,17 +1,8 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Element < Dry::Struct
-      include With
-      include DiffableStruct
-
-      constructor_type :schema
-
-      attribute :id, Strict::String
-      attribute :type, Strict::String.optional
+    class Element < IdentifiedNode
       attribute :label, Strict::String.optional
-      attribute :documentation, DocumentationList
-      attribute :properties, PropertiesList
 
       alias name label
 
@@ -30,9 +21,10 @@ module Archimate
       end
 
       def layer
-        Constants::ELEMENT_LAYER.fetch(@type, "None")
+        Constants::ELEMENT_LAYER.fetch(type, "None")
       end
 
+      # TODO move to dynamic method creation
       def composed_by
         in_model.relationships.select { |r|
           r.type == "CompositionRelationship" && r.target == id
@@ -41,6 +33,7 @@ module Archimate
         }
       end
 
+      # TODO move to dynamic method creation
       def composes
         in_model.relationships.select { |r|
           r.type == "CompositionRelationship" && r.source == id

@@ -1,21 +1,12 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Diagram < Dry::Struct
-      include With
-      include DiffableStruct
-
-      constructor_type :schema
-
-      attribute :id, Strict::String
+    class Diagram < IdentifiedNode
       attribute :name, Strict::String
       attribute :viewpoint, Coercible::String.optional
-      attribute :documentation, DocumentationList
-      attribute :properties, PropertiesList
       attribute :children, Strict::Array.member(Child).default([])
       attribute :connection_router_type, Coercible::Int.optional # TODO: fill this in, should be an enum
-      attribute :type, Strict::String.optional
-      attribute :background, Coercible::Int.optional
+      attribute :background, Coercible::Int.optional # value of 0 on Archi Sketch Model
 
       def clone
         Diagram.new(

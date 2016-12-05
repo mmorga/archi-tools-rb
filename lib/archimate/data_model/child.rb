@@ -1,14 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Child < Dry::Struct
-      include With
-      include DiffableStruct
-
-      constructor_type :schema
-
-      attribute :id, Strict::String
-      attribute :type, Strict::String.optional
+    class Child < IdentifiedNode
       attribute :model, Strict::String.optional
       attribute :name, Strict::String.optional
       attribute :content, Strict::String.optional
@@ -17,8 +10,6 @@ module Archimate
       attribute :bounds, Bounds.optional
       attribute :children, Strict::Array.member(Child).default([])
       attribute :source_connections, SourceConnectionList
-      attribute :documentation, DocumentationList
-      attribute :properties, PropertiesList
       attribute :style, Style.optional
       attribute :child_type, Coercible::Int.optional
 

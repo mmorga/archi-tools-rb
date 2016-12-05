@@ -3,25 +3,55 @@ module Archimate
   module Diff
     class Difference
       using DataModel::DiffableArray
+      extend Forwardable
 
       ARRAY_RE = Regexp.compile(/\[(\d+)\]/)
 
-      attr_reader :from_element
-      attr_reader :to_element
+      attr_reader :target
+      attr_reader :changed_from
       attr_reader :sub_path
 
-      def initialize(from_element, to_element, sub_path)
+      def_delegator :@target, :array?
+      def_delegator :@target, :diagram?
+      def_delegator :@target, :in_diagram?
+      def_delegator :@target, :element?
+      def_delegator :@target, :in_element?
+      def_delegator :@target, :in_folder?
+      def_delegator :@target, :relationship?
+      def_delegator :@target, :in_relationship?
+      def_delegator :@target, :path
+
+      # Re-thinking.
+      #
+      # Requirements:
+      #
+      # 1. User friendly display of what is different in context
+      # 2. Able to apply the diff to another model (which was based on the "base" of the diff)
+      #
+      # Delete:                         example
+      #   ArchimateNode                 child.bounds
+      #   ArchimateNode, attribute      model, "name"
+      #   DiffableArray, ArchimateNode  model.elements, element
+      #   bendpoint attributes under source_connection
+      #                                 documentation
+      #                                 properties
+      #                                 child/style/fill_color
+      #                                 child/style/font/name
+      #
+      # @param target [Dry::Struct with id attribute] the element operated on (why is array treated as a special case?)
+      # @param changed_from [same class as target] (optional) for change this is the previous value
+      # def initialize(changed_from, target)
+      def initialize(target, changed_from = nil)
+        raise TypeError, "Expected target to be an ArchimateNodeReference" unless target.is_a?(ArchimateNodeReference)
         raise "Instantiating abstract Difference" if self.class == Difference
-        @from_element = from_element
-        @to_element = to_element
-        @sub_path = sub_path.nil? ? "" : sub_path.to_s
+        @target = target
+        @changed_from = changed_from
       end
 
       def ==(other)
         other.is_a?(self.class) &&
-          @from_element == other.from_element &&
-          @to_element == other.to_element &&
-          @sub_path == other.sub_path
+          @target == other.target &&
+          @changed_from == other.changed_from
       end
 
       # Difference sorting is based on the path.
@@ -47,57 +77,6 @@ module Archimate
         0
       end
 
-      def path
-        [
-          effective_element&.path,
-          sub_path
-        ].compact.reject(&:empty?).join("/")
-      end
-
-      def path_to_array
-        path.split("/").map do |p|
-          md = ARRAY_RE.match(p)
-          md ? md[1].to_i : p
-        end
-      end
-
-      def effective_element
-        to_element || from_element
-      end
-
-      def array?
-        sub_path =~ /\[\d+\]$/
-      end
-
-      # Returns true if this diff is for a diagram (not a part within a diagram)
-      def diagram?
-        item_type?(DataModel::Diagram)
-      end
-
-      def in_diagram?
-        in_item_type?(DataModel::Diagram)
-      end
-
-      def element?
-        item_type?(DataModel::Element)
-      end
-
-      def in_element?
-        in_item_type?(DataModel::Element)
-      end
-
-      def in_folder?
-        in_item_type?(DataModel::Folder)
-      end
-
-      def relationship?
-        item_type?(DataModel::Relationship)
-      end
-
-      def in_relationship?
-        in_item_type?(DataModel::Relationship)
-      end
-
       def delete?
         is_a?(Delete)
       end
@@ -110,48 +89,11 @@ module Archimate
         is_a?(Insert)
       end
 
-      def to_value
-        return to_element if sub_path.empty?
-        to_element.send(:[], to_element.is_a?(Array) ? sub_path.to_i : sub_path)
-      end
-
-      def from_value
-        return from_element if sub_path.empty?
-        from_element.send(:[], from_element.is_a?(Array) ? sub_path.to_i : sub_path)
-      end
-
-      private
-
-      # What was different
-      def what(el)
-        sub_path.empty? ? el.to_s : HighLine.color(sub_path, :path)
-      end
-
-      # Item the value was inserted into
-      def to
-        element_parent(to_element)
-      end
-
-      # Item the value was deleted from
-      def from
-        element_parent(from_element)
-      end
-
-      def element_parent(el)
-        if sub_path.empty?
-          p = el.parent
-          p.parent if p.is_a?(Array)
-        else
-          el
+      def path_to_array
+        path(force_array_index: :index).split("/").map do |p|
+          md = ARRAY_RE.match(p)
+          md ? md[1].to_i : p
         end
-      end
-
-      def item_type?(klass)
-        sub_path.empty? && effective_element&.is_a?(klass)
-      end
-
-      def in_item_type?(klass)
-        !sub_path.empty? && effective_element&.is_a?(klass)
       end
     end
   end

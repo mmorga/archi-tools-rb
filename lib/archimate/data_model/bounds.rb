@@ -1,12 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Bounds < Dry::Struct
-      include With
-      include DiffableStruct
-
-      constructor_type :schema
-
+    class Bounds < NonIdentifiedNode
       attribute :x, Coercible::Float.optional
       attribute :y, Coercible::Float.optional
       attribute :width, Coercible::Float

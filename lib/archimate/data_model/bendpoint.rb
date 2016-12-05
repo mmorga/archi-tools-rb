@@ -1,12 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Bendpoint < Dry::Struct
-      include With
-      include DiffableStruct
-
-      constructor_type :schema
-
+    class Bendpoint < NonIdentifiedNode
       attribute :start_x, Coercible::Float.optional
       attribute :start_y, Coercible::Float.optional
       attribute :end_x, Coercible::Float.optional

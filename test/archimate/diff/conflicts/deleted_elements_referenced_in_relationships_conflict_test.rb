@@ -23,9 +23,9 @@ module Archimate
 
           @element = @model.elements.first
           @relationship = @model.relationships.first
-          @diff_name = Archimate::Diff::Delete.new(@model, "name")
-          @diff1 = Archimate::Diff::Insert.new(@relationship)
-          @diff2 = Archimate::Diff::Delete.new(@element)
+          @diff_name = Archimate::Diff::Delete.new(Archimate.node_reference(@model, "name"))
+          @diff1 = Archimate::Diff::Insert.new(Archimate.node_reference(@relationship))
+          @diff2 = Archimate::Diff::Delete.new(Archimate.node_reference(@element))
           @subject = DeletedElementsReferencedInRelationshipsConflict.new([@diff_name, @diff1], [])
         end
 

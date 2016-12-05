@@ -18,12 +18,24 @@ module Archimate
       def_delegator :@conflicts, :map
       def_delegator :@conflicts, :each
 
-      def initialize(aio)
+      def initialize(base_local_diffs, base_remote_diffs, aio)
+        @base_local_diffs = base_local_diffs
+        @base_remote_diffs = base_remote_diffs
         @aio = aio
         @conflicts = []
-        @cwhere = {}
-        @base_local_diffs = []
-        @base_remote_diffs = []
+      end
+
+      def resolve
+        conflicts.find
+
+        aio.debug "Filtering out #{conflicts.size} conflicts from #{base_local_diffs.size + base_remote_diffs.size} diffs"
+        remaining_diffs = filter_diffs(base_remote_diffs + base_local_diffs)
+
+        aio.debug "Remaining diffs #{remaining_diffs.size}"
+
+        conflicts.each_with_object(remaining_diffs) do |conflict, diffs|
+          diffs.concat(aio.resolve_conflict(conflict))
+        end
       end
 
       def add_conflicts(conflict)
@@ -51,9 +63,7 @@ module Archimate
                                        .map { |k| Conflicts.const_get(k) }
       end
 
-      def find(base_local_diffs, base_remote_diffs)
-        @base_local_diffs = base_local_diffs
-        @base_remote_diffs = base_remote_diffs
+      def find
         conflict_finders.each do |cf_class|
           cf = cf_class.new(base_local_diffs, base_remote_diffs)
           aio.debug cf.describe

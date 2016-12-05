@@ -4,9 +4,14 @@ module Archimate
     module DiffablePrimitive
       module DiffablePrimitiveMethods
         def diff(other, from_parent, to_parent, attribute)
-          return [Archimate::Diff::Delete.new(from_parent, attribute)] if other.nil?
+          return [Archimate::Diff::Delete.new(
+            Archimate.node_reference(from_parent, attribute)
+          )] if other.nil?
           raise TypeError, "Expected other #{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
-          return [Archimate::Diff::Change.new(from_parent, to_parent, attribute)] unless self == other
+          return [Archimate::Diff::Change.new(
+            Archimate.node_reference(from_parent, attribute),
+            Archimate.node_reference(to_parent, attribute)
+          )] unless self == other
           []
         end
 
@@ -20,8 +25,24 @@ module Archimate
           self == other
         end
 
+        def build_index(index_hash)
+          index_hash
+        end
+
         def primitive?
           true
+        end
+
+        def id
+          self
+        end
+
+        def clone
+          self
+        end
+
+        def compact
+          self
         end
       end
 

@@ -14,7 +14,7 @@ module Archimate
       end
 
       def build_documentation_list(options = {})
-        count = options.fetch(:count, 1)
+        count = options.fetch(:with_documentation, 1)
         options.fetch(
           :documentation_list,
           (1..count).map { build_documentation(options.fetch(:documentation_opts, {})) }
@@ -46,7 +46,7 @@ module Archimate
         Archimate::DataModel::Model.new(
           id: model_id,
           name: options.fetch(:name, Faker::Company.name),
-          documentation: options.fetch(:documentation, []),
+          documentation: build_documentation_list(options),
           properties: options.fetch(:properties, []),
           elements: elements,
           folders: folders,
@@ -236,7 +236,7 @@ module Archimate
 
       def build_diff(options = {})
         model = options.fetch(:model, build_model)
-        Archimate::Diff::Insert.new(model, "name")
+        Archimate::Diff::Insert.new(Archimate.node_reference(model, "name"))
       end
 
       def random_relationship_type
