@@ -3,6 +3,9 @@ module Archimate
   module Diff
     class Conflicts
       class DeletedItemsReferencedConflict < BaseConflict
+        using DataModel::DiffableArray
+        using DataModel::DiffablePrimitive
+
         def describe
           "Deleted items in one change set are referenced in the other change set"
         end

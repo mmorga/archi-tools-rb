@@ -92,6 +92,26 @@ module Archimate
         )
       end
 
+      def test_deleted_items
+        deleted_diagram = build_diagram
+        base = [deleted_diagram]
+        local = []
+
+        assert_equal [deleted_diagram], base.deleted_items(local)
+      end
+
+      def test_diff_with_delete_of_diagram
+        base = build_model(with_diagrams: 1)
+        local = base.with(diagrams: [])
+        assert_equal 1, base.diagrams.size
+        assert_empty local.diagrams
+
+        diffs = base.diff(local)
+
+        assert_equal 1, diffs.size
+        assert_equal [Diff::Delete.new(Archimate.node_reference(base.diagrams.first))], diffs
+      end
+
       def test_assign_model
         assert_nil @subject.in_model
         @subject.assign_model(@model)
@@ -170,7 +190,8 @@ module Archimate
 
         assert_equal(
           [Diff::Change.new(
-            Archimate.node_reference(local_el), Archimate.node_reference(base_el1)
+            Archimate.node_reference(local.elements.first, "label"),
+            Archimate.node_reference(base.elements.first, "label")
           )],
           base_local
         )

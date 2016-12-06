@@ -47,6 +47,26 @@ module Archimate
           refute_equal @diff1, diff2
           assert @subject.diff_conflicts(@diff1, diff2)
         end
+
+        def test_two_inserted_documentation_nodes_should_not_conflict
+          assert_empty @model.elements.first.documentation
+          local = @model.with(
+            elements: @model.elements
+              .map { |el| el.id == @model.elements.first.id ? el.with(documentation: [build_documentation]) : el }
+          )
+          remote = @model.with(
+            elements: @model.elements
+              .map { |el| el.id == @model.elements.first.id ? el.with(documentation: [build_documentation]) : el }
+          )
+
+          diffs1 = @model.diff(local)
+          diffs2 = @model.diff(remote)
+
+          assert_equal 1, diffs1.size
+          assert_equal 1, diffs2.size
+
+          refute @subject.diff_conflicts(diffs1[0], diffs2[0])
+        end
       end
     end
   end

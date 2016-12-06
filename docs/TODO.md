@@ -81,3 +81,35 @@
 "SpecialisationRelationship"
 "InfluenceRelationship"
 
+---
+
+# attributes that are references to other nodes in the model
+
+For any of these inserted or changed...
+
+* Property.key (only after PropertyDefs is introduced)
+  - Property referenced deleted key
+* Child.target_connections -> Array of SourceConnection ids
+  - SourceConnection.id deleted
+* Child.archimate_element -> Element.id
+  - Element.id deleted
+* Folder.items -> Array of IdentifiedNode
+  - *.id deleted
+* Relationship.source -> Element.id
+  - Element.id deleted
+* Relationship.target -> Element.id
+  - Element.id deleted
+* SourceConnection.source -> Child.id
+  - Child.id deleted
+* SourceConnection.target -> Child.id
+  - Child.id deleted
+* SourceConnection.relationship -> Relationship.id
+  - Relationship.id deleted
+
+Presents a conflict
+
+# Conflicts
+
+1. path is same
+2. a.delete IdentifiedNode & b.adds/changes reference to IdentifieNode (as shown above)
+3. a.deletes a node and b.insert/change a node under that node's path

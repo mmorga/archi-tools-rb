@@ -24,12 +24,12 @@ module Archimate
         Archimate.node_reference(archimate_node).lookup_in_model(model)[attribute]
       end
 
-      def delete(el)
-        el.instance_variable_set("@#{@attribute}".to_sym, nil)
+      def delete(to_model)
+        lookup_parent_in_model(to_model).instance_variable_set("@#{@attribute}".to_sym, nil)
       end
 
-      def change(el)
-        el.instance_variable_set("@#{@attribute}".to_sym, value)
+      def change(to_model)
+        lookup_parent_in_model(to_model).instance_variable_set("@#{@attribute}".to_sym, value)
       end
 
       def insert(to_model)

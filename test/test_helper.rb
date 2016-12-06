@@ -12,6 +12,7 @@ if ENV['TEST_ENV'] != 'guard'
   puts "required simplecov"
 end
 
+require 'pry-byebug'
 require 'minitest/autorun'
 require 'minitest/color'
 require 'minitest/profile'

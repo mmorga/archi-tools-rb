@@ -53,7 +53,7 @@ module Archimate
         struct_instance_variables.each_with_object([]) do |k, a|
           val = self[k]
           if val.nil?
-            a.concat([DataModel::Insert.new(other, k)]) unless other[k].nil?
+            a.concat([Diff::Insert.new(Archimate.node_reference(other, k))]) unless other[k].nil?
           elsif val.primitive?
             a.concat(val.diff(other[k], self, other, k))
           else

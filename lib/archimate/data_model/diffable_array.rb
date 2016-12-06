@@ -10,7 +10,7 @@ module Archimate
         def diff(other)
           return [Diff::Delete.new(Archimate.node_reference(self))] if other.nil?
           raise TypeError, "Expected other #{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
-          return [] if other.empty? || self == other
+          return [] if self == other
           inserted_or_changed = other - self
           []
             .concat(
@@ -26,11 +26,18 @@ module Archimate
               inserted_or_changed
                 .select { |r| any? { |l| l.match(r) } }
                 .map do |n|
-                  Diff::Change.new(
-                    Archimate.node_reference(other, n),
-                    Archimate.node_reference(self, n)
-                  )
-                end
+                  if n.primitive?
+                    # Ok the problem here is we don't know if n is from self or other
+                    idx = find_index(n) || other.find_index(n)
+                    Diff::Change.new(
+                      Archimate.node_reference(other, idx),
+                      Archimate.node_reference(self, idx)
+                    )
+                  else
+                    # Don't know if n is from self or other
+                    find { |el| el.id == n.id }.diff(other.find { |el| el.id == n.id })
+                  end
+                end.flatten
             )
         end
 
@@ -137,6 +144,10 @@ module Archimate
           reduce([]) do |a, e|
             a.concat(e.referenced_identified_nodes)
           end
+        end
+
+        def find_by_id(an_id)
+          find { |el| el.id == an_id }
         end
       end
     end

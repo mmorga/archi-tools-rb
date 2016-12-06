@@ -9,8 +9,8 @@ module Archimate
           )] if other.nil?
           raise TypeError, "Expected other #{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
           return [Archimate::Diff::Change.new(
-            Archimate.node_reference(from_parent, attribute),
-            Archimate.node_reference(to_parent, attribute)
+            Archimate.node_reference(to_parent, attribute),
+            Archimate.node_reference(from_parent, attribute)
           )] unless self == other
           []
         end

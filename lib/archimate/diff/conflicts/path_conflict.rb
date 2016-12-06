@@ -22,20 +22,26 @@ module Archimate
           a.path == b.path && a != b
         end
 
+        # I'm in conflict if:
+        # 1. ld and rd are both changes to the same path (but not the same change)
+        # 2. one is a change, the other a delete and changed_from is the same
+        # 3. both are inserts of the different identifyable nodes with the same id
+        #
+        # If I'm not an identifyable node and my parent is an array, then two inserts are ok
         def in_conflict?(local_diff, remote_diff)
-          if !(local_diff.array? && remote_diff.array?)
+          return true if
+            local_diff.target.parent.is_a?(Array) &&
+            local_diff.target.value.is_a?(DataModel::IdentifiedNode) &&
+            local_diff.target.value.id == remote_diff.target.value.id
+
+          case [local_diff, remote_diff].map { |d| d.class.name.split('::').last }.sort
+          when %w(Change Change)
+            local_diff.changed_from.value == remote_diff.changed_from.value &&
+              local_diff.target.value != remote_diff.target.value
+          when %w(Change Delete)
             true
           else
-            case [local_diff, remote_diff].map { |d| d.class.name.split('::').last }.sort
-            when %w(Change Change)
-              # TODO: if froms same and tos diff then conflict if froms diff then 2 sep changes else 1 change
-              local_diff.from == remote_diff.from && local_diff.to != remote_diff.to
-            when %w(Change Delete)
-              # TODO: if c.from d.from same then conflict else 1 c and 1 d
-              local_diff.from == remote_diff.from
-            else
-              false
-            end
+            false
           end
         end
       end

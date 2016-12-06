@@ -17,6 +17,8 @@ module Archimate
     # Need to also consider - want to guarantee that final merge is in good state.
     # What if local or remote (or base for that matter) isn't?
     class MergeTest < Minitest::Test
+      using DataModel::DiffableArray
+
       attr_reader :aio
       attr_reader :base
       attr_reader :base_el1
@@ -40,31 +42,27 @@ module Archimate
         local = base.with(elements: base.elements.map { |el| el.id == local_el.id ? local_el : el })
         remote = base.with(elements: base.elements.map { |el| el.id == remote_el.id ? remote_el : el })
 
-        assert_includes local.elements, local_el
-        refute_includes remote.elements, local_el
-
-        refute_includes local.elements, remote_el
-        assert_includes remote.elements, remote_el
 
         merged, conflicts = @subject.three_way(base, local, remote)
 
         assert_empty conflicts
-        assert_includes merged.elements, remote_el
-        assert_includes merged.elements, local_el
+        assert_includes merged.elements, remote.elements.find_by_id(remote_el.id)
+        assert_includes merged.elements, local.elements.find_by_id(local_el.id)
         refute_equal base, merged
       end
 
       def test_independent_changes_element_documentation
+        assert_empty base_el1.documentation
         local_el = base_el1.with(documentation: build_documentation_list)
         remote_el = base_el2.with(documentation: build_documentation_list)
-        local = base.with(elements: base.elements + [local_el])
-        remote = base.with(elements: base.elements + [remote_el])
+        local = base.with(elements: base.elements.map { |el| el.id == local_el.id ? local_el : el })
+        remote = base.with(elements: base.elements.map { |el| el.id == remote_el.id ? remote_el : el })
 
         merged, conflicts = @subject.three_way(base, local, remote)
 
         assert_empty conflicts
-        assert_includes merged.elements, local_el
-        assert_includes merged.elements, remote_el
+        refute_empty merged.elements.find_by_id(local_el.id).documentation
+        refute_empty merged.elements.find_by_id(remote_el.id).documentation
         refute_equal base, merged
       end
 
@@ -88,14 +86,14 @@ module Archimate
         local_rel = base.relationships.first.with(name: "#{base.relationships.first.name}-local")
         remote_rel = base.relationships.last.with(name: "#{base.relationships.last.name}-remote")
         assert base.relationships.size > 1
-        local = base.with(relationships: base.relationships + [local_rel])
-        remote = base.with(relationships: base.relationships + [remote_rel])
+        local = base.with(relationships: base.relationships.map { |rel| rel.id == local_rel.id ? local_rel : rel })
+        remote = base.with(relationships: base.relationships.map { |rel| rel.id == remote_rel.id ? remote_rel : rel })
 
         merged, conflicts = @subject.three_way(base, local, remote)
 
         assert_empty conflicts
-        assert_includes merged.relationships, local_rel
-        assert_includes merged.relationships, remote_rel
+        assert_equal merged.relationships.find_by_id(local_rel.id).name, local_rel.name
+        assert_equal merged.relationships.find_by_id(remote_rel.id).name, remote_rel.name
         refute_equal base, merged
       end
 
@@ -109,8 +107,8 @@ module Archimate
         merged, conflicts = @subject.three_way(base, local, remote)
 
         expected = Conflict.new(
-          Change.new(Archimate.node_reference(local_el), Archimate.node_reference(base_el1)),
-          Change.new(Archimate.node_reference(remote_el), Archimate.node_reference(base_el1)),
+          Change.new(Archimate.node_reference(local_el, "label"), Archimate.node_reference(base_el1, "label")),
+          Change.new(Archimate.node_reference(remote_el, "label"), Archimate.node_reference(base_el1, "label")),
           "Differences in one change set conflict with changes in other change set at the same path"
         )
         assert_equal expected, conflicts.first
@@ -118,17 +116,18 @@ module Archimate
       end
 
       def test_local_remote_duplicate_change_no_conflict
-        local_el = base_el1.with(label: "#{base_el1.label}-same")
-        remote_el = base_el1.with(label: "#{base_el1.label}-same")
-        base_elements = base.elements.reject { |i| i == base_el1 }
-        local = base.with(elements: Array(local_el) + base_elements)
-        remote = base.with(elements: Array(remote_el) + base_elements)
+        local = base.with(
+          elements:
+            base.elements.map { |el| el.id == base_el1.id ? base_el1.with(label: "#{base_el1.label}-same") : el }
+        )
+        remote = local.clone
 
         merged, conflicts = @subject.three_way(base, local, remote)
 
         assert_empty conflicts
-        assert_equal local_el, merged.elements.first
-        assert_equal remote_el, merged.elements.first
+        assert_equal local.elements.find_by_id(base_el1.id), merged.elements.find_by_id(base_el1.id)
+        assert_equal local, merged
+        assert_equal remote, merged
       end
 
       def test_insert_in_remote
@@ -136,7 +135,7 @@ module Archimate
         iel = build_element
         remote = base.with(elements: base.elements + [iel])
 
-        merged, conflicts = @subject.three_way(base, local, remote)
+        merged, _conflicts = @subject.three_way(base, local, remote)
 
         assert_equal remote, merged
         refute_equal base, merged
@@ -172,7 +171,7 @@ module Archimate
         local = base.with(elements: base.elements + [build_element])
         remote = base.clone
 
-        merged, conflicts = @subject.three_way(base, local, remote)
+        merged, _conflicts = @subject.three_way(base, local, remote)
 
         assert_equal local, merged
         refute_equal base, merged
@@ -192,7 +191,7 @@ module Archimate
         local = Archimate::DataModel::Model.new(base.to_h)
         remote = Archimate::DataModel::Model.new(base.to_h)
 
-        merged, conflicts = @subject.three_way(base, local, remote)
+        merged, _conflicts = @subject.three_way(base, local, remote)
 
         assert_equal base, merged
         assert_equal local, merged
@@ -203,17 +202,30 @@ module Archimate
       # a remote where the same diagram has been deleted
       # expect that the conflicts set includes the two differences
       def test_find_diagram_delete_update_conflicts
-        diagram = base.diagrams.first
-        remote = base.with(diagrams: [])
-        child = diagram.children.first
-        updated_child = child.with(name: child.name.to_s + "-modified")
         local = base.with(
-          diagrams: [
-            diagram.with(children: [updated_child])
-          ]
+          diagrams:
+            base.diagrams.map do |diagram|
+              if diagram == base.diagrams.first
+                diagram.with(
+                  children:
+                    diagram.children.map do |child|
+                      if child == diagram.children.first
+                        child.with(name: child.name.to_s + "-modified")
+                      else
+                        child
+                      end
+                    end
+                )
+              else
+                diagram
+              end
+            end
         )
 
+        remote = base.with(diagrams: base.diagrams.reject { |diagram| diagram == base.diagrams.first })
+
         merged, conflicts = @subject.three_way(base, local, remote)
+
         refute_empty conflicts
         assert_equal base, merged
       end
