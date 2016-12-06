@@ -11,14 +11,6 @@ module Archimate
       attr_reader :changed_from
       attr_reader :sub_path
 
-      def_delegator :@target, :array?
-      def_delegator :@target, :diagram?
-      def_delegator :@target, :in_diagram?
-      def_delegator :@target, :element?
-      def_delegator :@target, :in_element?
-      def_delegator :@target, :in_folder?
-      def_delegator :@target, :relationship?
-      def_delegator :@target, :in_relationship?
       def_delegator :@target, :path
 
       # Re-thinking.
@@ -78,15 +70,15 @@ module Archimate
       end
 
       def delete?
-        is_a?(Delete)
+        false
       end
 
       def change?
-        is_a?(Change)
+        false
       end
 
       def insert?
-        is_a?(Insert)
+        false
       end
 
       def path_to_array

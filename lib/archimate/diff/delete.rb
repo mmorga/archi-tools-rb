@@ -23,6 +23,10 @@ module Archimate
         el
       end
 
+      def delete?
+        true
+      end
+
       private
 
       def diff_type

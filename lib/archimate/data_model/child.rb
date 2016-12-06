@@ -32,12 +32,6 @@ module Archimate
         )
       end
 
-      def element_references
-        children.each_with_object([archimate_element]) do |i, a|
-          a.concat(i.element_references)
-        end
-      end
-
       def relationships
         children.each_with_object(source_connections.map(&:relationship).compact) do |i, a|
           a.concat(i.relationships)

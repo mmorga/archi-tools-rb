@@ -191,7 +191,6 @@ module Archimate
           next unless target
           src_offset = pos_element(source)
           target_offset = pos_element(target)
-          # TODO: implement ancestors in DataModel::Element
           next if source&.ancestors&.include?(target)
           next if target&.ancestors&.include?(source)
           rel = src_conn.relationship || ""

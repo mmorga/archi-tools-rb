@@ -19,18 +19,6 @@ module Archimate
         model.lookup(@archimate_node.id)
       end
 
-      def delete(to_model)
-        lookup_parent_in_model(to_model).delete(@archimate_node.id, @archimate_node)
-      end
-
-      def insert(to_model)
-        lookup_parent_in_model(to_model).insert(@archimate_node.parent.attribute_name(@archimate_node), @archimate_node)
-      end
-
-      def change(to_model)
-        lookup_parent_in_model(to_model).insert(@archimate_node.parent.attribute_name(@archimate_node), @archimate_node)
-      end
-
       def to_s
         @archimate_node.to_s
       end

@@ -11,35 +11,6 @@ module Archimate
         @to_model = build_model
       end
 
-      def test_diagram?
-        [model.diagrams[0],
-         model.diagrams[1]].each do |entity|
-          diff = Change.new(Archimate.node_reference(entity), Archimate.node_reference(entity))
-          assert diff.diagram?
-        end
-      end
-
-      def test_diagram_fail_cases
-        [model.elements.first].each do |entity|
-          diff = Change.new(Archimate.node_reference(entity, "label"), Archimate.node_reference(entity, "label"))
-          refute diff.diagram?
-        end
-      end
-
-      def test_in_diagram?
-        [model.diagrams[1]].each do |entity|
-          diff = Change.new(Archimate.node_reference(entity, "name"), Archimate.node_reference(entity, "name"))
-          assert diff.in_diagram?
-        end
-      end
-
-      def test_in_diagram_fail_cases
-        [model.elements.first].each do |entity|
-          diff = Change.new(Archimate.node_reference(entity, "label"), Archimate.node_reference(entity, "label"))
-          refute diff.in_diagram?
-        end
-      end
-
       def test_change
         folder = model.folders.first
         change_diff = Change.new(Archimate.node_reference(folder, "name"), Archimate.node_reference(folder, "name"))

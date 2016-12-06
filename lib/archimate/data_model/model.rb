@@ -39,16 +39,8 @@ module Archimate
         @index_hash[id]
       end
 
-      def register(node)
-        @index_hash[node.id] = node
-      end
-
       def find_by_class(klass)
         @index_hash.values.select { |item| item.is_a?(klass) }
-      end
-
-      def find_by_value(val)
-        @index_hash.values.select { |item| val == item }
       end
 
       def to_s

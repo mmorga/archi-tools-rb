@@ -25,6 +25,10 @@ module Archimate
         to_model
       end
 
+      def insert?
+        true
+      end
+
       private
 
       def diff_type

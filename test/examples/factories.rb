@@ -98,8 +98,7 @@ module Archimate
           children: children,
           connection_router_type: nil,
           type: options.fetch(:type, nil),
-          background: options.fetch(:background, nil),
-          element_references: children.map(&:element_references).flatten
+          background: options.fetch(:background, nil)
         )
       end
 

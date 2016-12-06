@@ -22,12 +22,6 @@ module Archimate
         )
       end
 
-      def element_references
-        children.each_with_object([]) do |i, a|
-          a.concat(i.element_references)
-        end
-      end
-
       # Return the relationship id for all source_connections in this diagram
       def relationships
         children.each_with_object([]) do |i, a|

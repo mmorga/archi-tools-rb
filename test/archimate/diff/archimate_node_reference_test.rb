@@ -27,10 +27,6 @@ module Archimate
         refute_equal doc1, doc2
       end
 
-      def test_reference_class
-        assert_kind_of(DataModel::Model, @model)
-      end
-
       def test_lookup_in_model
         assert_same @other, Archimate.node_reference(@model).lookup_in_model(@other)
       end

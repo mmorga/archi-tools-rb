@@ -50,13 +50,6 @@ module Archimate
         refute_empty @subject.relationships
       end
 
-      def test_element_references
-        expected = []
-        expected << @subject.archimate_element
-        expected.concat(@subject.children.map(&:archimate_element))
-        assert_equal expected, @subject.element_references
-      end
-
       def test_child_element
         assert_equal @element, @subject.element
       end
