@@ -45,7 +45,7 @@ module Archimate
       end
 
       def value
-        @archimate_node.send(@attribute)
+        @archimate_node[@attribute]
       end
 
       def path(options = {})

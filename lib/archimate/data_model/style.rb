@@ -23,7 +23,7 @@ module Archimate
       end
 
       def to_s
-        attr_name_vals = to_h.keys.map { |k| "#{k}: #{send(k)}" }.join(", ")
+        attr_name_vals = struct_instance_variables.map { |k| "#{k}: #{self[k]}" }.join(", ")
         "Style(#{attr_name_vals})"
       end
     end

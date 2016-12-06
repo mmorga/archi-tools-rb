@@ -69,14 +69,13 @@ module Archimate
         assert_equal "complicated<abc123>[] src -> tar", HighLine.uncolor(rel.to_s)
       end
 
-      def test_element_reference
-        rel = build_relationship(
-          id: "abc123",
-          type: "complicated",
-          source: "src",
-          target: "tar"
+      def test_referenced_identified_nodes
+        subject = build_relationship(
+          source: "a",
+          target: "b"
         )
-        assert_equal %w(src tar), rel.element_reference
+
+        assert_equal %w(a b), subject.referenced_identified_nodes.sort
       end
     end
   end

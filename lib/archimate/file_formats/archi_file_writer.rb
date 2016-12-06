@@ -145,7 +145,7 @@ module Archimate
               "name" => child.name
             }.merge(
               style_hash.merge(
-                "targetConnections" => child.target_connections,
+                "targetConnections" => child.target_connections.empty? ? nil : child.target_connections.join(" "),
                 "fillColor" => fill_color,
                 "model" => child.model,
                 "archimateElement" => child.archimate_element,

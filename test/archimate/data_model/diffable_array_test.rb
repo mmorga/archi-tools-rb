@@ -179,6 +179,24 @@ module Archimate
         base_remote = base.diff(remote)
         assert_equal 1, base_remote.size
       end
+
+      def test_referenced_identified_nodes
+        subject = [
+          build_source_connection(
+            source: "a",
+            target: "b",
+            relationship: "c"
+          )
+        ]
+
+        assert_equal %w(a b c), subject.referenced_identified_nodes.sort
+      end
+
+      def test_referenced_identified_nodes_on_primitive_array
+        subject = %w(apple cherry banana)
+
+        assert_empty subject.referenced_identified_nodes
+      end
     end
   end
 end

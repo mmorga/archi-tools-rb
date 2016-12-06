@@ -44,6 +44,10 @@ module Archimate
         def compact
           self
         end
+
+        def referenced_identified_nodes
+          []
+        end
       end
 
       refine String do

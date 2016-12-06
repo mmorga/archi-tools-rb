@@ -132,6 +132,12 @@ module Archimate
         def to_s
           "#{parent}/#{parent.attribute_name(self)}"
         end
+
+        def referenced_identified_nodes
+          reduce([]) do |a, e|
+            a.concat(e.referenced_identified_nodes)
+          end
+        end
       end
     end
   end

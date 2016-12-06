@@ -71,8 +71,8 @@ module Archimate
       def test_with
         m2 = @base.with(name: @base.name + "-changed")
         refute_equal @base, m2
-        @base.to_h.keys.reject { |a| a == :name }.map(&:to_sym).each do |a|
-          assert_equal @base.send(a), m2.send(a)
+        @base.struct_instance_variables.reject { |a| a == :name }.each do |a|
+          assert_equal @base[a], m2[a]
         end
       end
 
@@ -132,6 +132,22 @@ module Archimate
           assert_same m1.elements, el.parent
           assert_same m1, el.in_model
         end
+      end
+
+      def test_insert_diff_on_documentation
+        base = build_model(with_relationships: 2, with_diagrams: 1)
+        base_el1 = base.elements.first
+        doc1 = build_documentation_list
+        doc2 = build_documentation_list
+        local_el = base_el1.with(documentation: doc1)
+        remote_el = base_el1.with(documentation: doc2)
+        local = base.with(elements: base.elements.map { |el| el.id == local_el.id ? local_el : el })
+        remote = base.with(elements: base.elements.map { |el| el.id == remote_el.id ? remote_el : el })
+
+        assert_equal(
+          [Diff::Insert.new(Archimate.node_reference(local.elements.first.documentation.first))],
+          base.diff(local)
+        )
       end
 
       private

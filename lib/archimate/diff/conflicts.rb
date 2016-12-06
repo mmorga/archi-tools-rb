@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 require 'forwardable'
+require 'archimate/diff/conflicts/base_conflict'
+require 'archimate/diff/conflicts/deleted_items_child_updated_conflict'
+require 'archimate/diff/conflicts/deleted_items_referenced_conflict'
+require 'archimate/diff/conflicts/path_conflict'
 
 module Archimate
   module Diff
@@ -23,10 +27,11 @@ module Archimate
         @base_remote_diffs = base_remote_diffs
         @aio = aio
         @conflicts = []
+        @conflict_finders = [PathConflict, DeletedItemsChildUpdatedConflict, DeletedItemsReferencedConflict]
       end
 
       def resolve
-        conflicts.find
+        find
 
         aio.debug "Filtering out #{conflicts.size} conflicts from #{base_local_diffs.size + base_remote_diffs.size} diffs"
         remaining_diffs = filter_diffs(base_remote_diffs + base_local_diffs)
@@ -56,15 +61,8 @@ module Archimate
         "Conflicts:\n\n#{conflicts.map(&:to_s).join("\n\n")}\n"
       end
 
-      def conflict_finders
-        @conflict_finders ||= Conflicts.constants
-                                       .select { |k| Conflicts.const_get(k).is_a? Class }
-                                       .reject { |k| k == :BaseConflict || k =~ /Test$/ }
-                                       .map { |k| Conflicts.const_get(k) }
-      end
-
       def find
-        conflict_finders.each do |cf_class|
+        @conflict_finders.each do |cf_class|
           cf = cf_class.new(base_local_diffs, base_remote_diffs)
           aio.debug cf.describe
           add_conflicts(cf.conflicts)

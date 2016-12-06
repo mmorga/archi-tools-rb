@@ -25,6 +25,12 @@ module Archimate
       def to_s
         "#{AIO.data_model('Folder')}<#{id}>[#{HighLine.color(name, [:white, :underline])}]"
       end
+
+      def referenced_identified_nodes
+        folders.reduce(items) do |a, e|
+          a.concat(e.referenced_identified_nodes)
+        end
+      end
     end
     Dry::Types.register_class(Folder)
   end

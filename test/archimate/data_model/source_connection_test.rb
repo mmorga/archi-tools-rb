@@ -42,6 +42,16 @@ module Archimate
         @subject = build_source_connection
         assert_match("[#{subject.name}]", HighLine.uncolor(subject.to_s))
       end
+
+      def test_referenced_identified_nodes
+        subject = build_source_connection(
+          source: "a",
+          target: "b",
+          relationship: "c"
+        )
+
+        assert_equal %w(a b c), subject.referenced_identified_nodes.sort
+      end
     end
   end
 end

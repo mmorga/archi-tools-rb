@@ -139,7 +139,7 @@ module Archimate
             type: i["type"],
             model: nil,
             name: i.at_css(">label")&.content,
-            target_connections: nil, # "targetConnections",
+            target_connections: [], # TODO: needed? "targetConnections",
             archimate_element: identifier_to_id(i["elementref"]),
             bounds: parse_bounds(i),
             children: parse_children(i),

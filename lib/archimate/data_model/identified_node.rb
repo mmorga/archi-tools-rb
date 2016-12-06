@@ -10,6 +10,10 @@ module Archimate
       def match(other)
         is_a?(other.class) && (id == other.id)
       end
+
+      def identified_nodes
+        super([id])
+      end
     end
   end
 end

@@ -60,6 +60,45 @@ module Archimate
       def test_child_element
         assert_equal @element, @subject.element
       end
+
+      def test_source_connections
+        assert_kind_of Array, @subject.target_connections
+        source_connections = @model.find_by_class(SourceConnection)
+        assert source_connections.size.positive?
+        children = @model.find_by_class(Child)
+        assert children.size.positive?
+
+        children.each do |child|
+          # assert child.source_connections.size > 0
+          assert child.source_connections.all? do |source_connection_id|
+            puts "Checking a source connection"
+            assert_kind_of String, source_connection_id
+            assert_kind_of SourceConnection, @model.lookup(source_connection_id)
+          end
+        end
+      end
+
+      def test_referenced_identified_nodes
+        subject = build_child(
+          target_connections: %w(a b c),
+          archimate_element: "d",
+          children: [
+            build_child(
+              target_connections: %w(e),
+              archimate_element: "f",
+              source_connections: [
+                build_source_connection(
+                  source: "g",
+                  target: "h",
+                  relationship: "i"
+                )
+              ]
+            )
+          ]
+        )
+
+        assert_equal %w(a b c d e f g h i), subject.referenced_identified_nodes.sort
+      end
     end
   end
 end

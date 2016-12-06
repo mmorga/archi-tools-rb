@@ -113,26 +113,28 @@ module Archimate
 
       def parse_children(node)
         node.css("> child").each_with_object([]) do |child_node, a|
-          child_hash = {
-            id: "id",
-            type: "xsi:type",
-            model: "model",
-            name: "name",
-            target_connections: "targetConnections",
-            archimate_element: "archimateElement"
-          }.each_with_object({}) do |(hash_attr, node_attr), a2|
-            a2[hash_attr] = child_node.attr(node_attr) # if child_node.attributes.include?(node_attr)
-          end
-          child_hash[:bounds] = parse_bounds(child_node)
-          child_hash[:children] = parse_children(child_node)
-          child_hash[:source_connections] = parse_source_connections(child_node)
-          child_hash[:documentation] = parse_documentation(child_node)
-          child_hash[:properties] = parse_properties(child_node)
-          child_hash[:style] = parse_style(child_node)
-          child_hash[:content] = child_node.at_css("> content")&.text
-          child_hash[:child_type] = child_node.attr("type")
-          a << DataModel::Child.new(child_hash)
+          a << DataModel::Child.new({
+            id: child_node.attr("id"),
+            type: child_node.attr("xsi:type"),
+            model: child_node.attr("model"),
+            name: child_node.attr("name"),
+            target_connections: parse_target_connections(child_node.attr("targetConnections")),
+            archimate_element: child_node.attr("archimateElement"),
+            bounds: parse_bounds(child_node),
+            children: parse_children(child_node),
+            source_connections: parse_source_connections(child_node),
+            documentation: parse_documentation(child_node),
+            properties: parse_properties(child_node),
+            style: parse_style(child_node),
+            content: child_node.at_css("> content")&.text,
+            child_type: child_node.attr("type")
+          })
         end
+      end
+
+      def parse_target_connections(str)
+        return [] if str.nil?
+        str.split(" ")
       end
 
       def parse_style(style)

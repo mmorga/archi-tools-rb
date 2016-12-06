@@ -65,6 +65,59 @@ module Archimate
         assert_equal [@subject], @subject.find_by_class(Model)
         assert_equal @subject.elements, @subject.find_by_class(Element)
       end
+
+      def test_referenced_identified_nodes
+        subject = build_model(
+          folders: [
+            build_folder(
+              folders: [
+                build_folder(
+                  folders: [
+                    build_folder(
+                      folders: [],
+                      items: %w(a b c)
+                    )
+                  ],
+                  items: %w(d e f)
+                ),
+                build_folder(folders: [], items: %w(g h i))
+              ],
+              items: %w(j k)
+            )
+          ],
+          relationships: [
+            build_relationship(
+              source: "l",
+              target: "m"
+            )
+          ],
+          diagrams: [
+            build_diagram(
+              children: [
+                build_child(
+                  target_connections: %w(n o),
+                  archimate_element: "p",
+                  children: [
+                    build_child(
+                      target_connections: %w(q r),
+                      archimate_element: "s"
+                    )
+                  ],
+                  source_connections: [
+                    build_source_connection(
+                      source: "t",
+                      target: "u",
+                      relationship: "v"
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+        )
+
+        assert_equal %w(a b c d e f g h i j k l m n o p q r s t u v), subject.referenced_identified_nodes.sort
+      end
     end
   end
 end

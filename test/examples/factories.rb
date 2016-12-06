@@ -23,7 +23,7 @@ module Archimate
 
       def build_documentation(options = {})
         Archimate::DataModel::Documentation.new(
-          text: options.fetch(:text, Faker::ChuckNorris.fact),
+          text: options.fetch(:text, "##{random(1, 1_000_000)} #{Faker::ChuckNorris.fact}"),
           lang: options.fetch(:lang, nil)
         )
       end
@@ -110,7 +110,7 @@ module Archimate
       def build_child(options = {})
         node_element = options.fetch(:element, build_element)
         relationships = options.fetch(:relationships, {})
-        with_children = options.delete(:with_children)
+        with_children = build_children(count: options.delete(:with_children) || 0)
         source_connections = options.fetch(
           :source_connections,
           relationships.map { |rel| build_source_connection(for_relationship: rel) }
@@ -119,10 +119,11 @@ module Archimate
           id: options.fetch(:id, build_id),
           type: "archimate:DiagramObject",
           name: options[:name],
-          children: build_children(count: with_children || 0),
-          archimate_element: node_element.id,
+          children: options.fetch(:children, with_children),
+          archimate_element: options.fetch(:archimate_element, node_element.id),
           bounds: build_bounds,
           source_connections: source_connections,
+          target_connections: options.fetch(:target_connections, source_connections.map(&:target)),
           style: build_style,
           child_type: options.fetch(:child_type, nil)
         )

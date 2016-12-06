@@ -38,6 +38,10 @@ module Archimate
         end
         "#{type_name} #{s.nil? ? 'nothing' : s} -> #{t.nil? ? 'nothing' : t}"
       end
+
+      def referenced_identified_nodes
+        [@source, @target, @relationship].compact
+      end
     end
     Dry::Types.register_class(SourceConnection)
     SourceConnectionList = Strict::Array.member("archimate.data_model.source_connection").default([])

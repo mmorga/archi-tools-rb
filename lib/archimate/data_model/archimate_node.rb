@@ -10,7 +10,7 @@ module Archimate
       def with(options = {})
         self.class.new(
           struct_instance_variables
-            .each_with_object({}) { |i, a| a[i] = send(i) }
+            .each_with_object({}) { |i, a| a[i] = self[i] }
             .merge(options)
             .each_with_object({}) { |(k, v), a| a[k] = v.clone }
         )
@@ -23,7 +23,7 @@ module Archimate
       def assign_parent(par)
         @parent = par
         struct_instance_variables.each do |attrname|
-          send(attrname).assign_parent(self)
+          self[attrname].assign_parent(self)
         end
       end
 
@@ -34,7 +34,7 @@ module Archimate
       def assign_model(model)
         @in_model = model unless is_a?(Model)
         struct_instance_variables.each do |attrname|
-          send(attrname).assign_model(model)
+          self[attrname].assign_model(model)
         end
       end
 
@@ -44,20 +44,20 @@ module Archimate
 
       def build_index(hash_index = {})
         hash_index[id] = self
-        struct_instance_variables.reduce(hash_index) { |a, e| send(e).build_index(a) }
+        struct_instance_variables.reduce(hash_index) { |a, e| self[e].build_index(a) }
       end
 
       def diff(other)
         return [Diff::Delete.new(Archimate.node_reference(self))] if other.nil?
         raise TypeError, "Expected other <#{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
         struct_instance_variables.each_with_object([]) do |k, a|
-          val = send(k)
+          val = self[k]
           if val.nil?
-            a.concat([DataModel::Insert.new(other, k)]) unless other.send(k).nil?
+            a.concat([DataModel::Insert.new(other, k)]) unless other[k].nil?
           elsif val.primitive?
-            a.concat(val.diff(other.send(k), self, other, k))
+            a.concat(val.diff(other[k], self, other, k))
           else
-            a.concat(val.diff(other.send(k)))
+            a.concat(val.diff(other[k]))
           end
         end
       end
@@ -85,13 +85,13 @@ module Archimate
       end
 
       def compact
-        struct_instance_variables.each { |attrname| send(attrname).compact }
+        struct_instance_variables.each { |attrname| self[attrname].compact }
         self
       end
 
       def attribute_name(v, _options = {})
-        self.class.schema.keys.reduce do |a, e|
-          a = e if v.equal?(send(e))
+        struct_instance_variables.reduce do |a, e|
+          a = e if v.equal?(self[e])
           a
         end
       end
@@ -99,7 +99,7 @@ module Archimate
       def delete(attrname, _value)
         raise(
           ArgumentError,
-          "attrname was blank must be one of: #{self.class.schema.keys.map(&:to_s).join(',')}"
+          "attrname was blank must be one of: #{struct_instance_variables.map(&:to_s).join(',')}"
         ) if attrname.nil? || attrname.empty?
         instance_variable_set("@#{attrname}".to_sym, nil)
         self
@@ -108,7 +108,7 @@ module Archimate
       def insert(attrname, value)
         raise(
           ArgumentError,
-          "attrname was blank must be one of: #{self.class.schema.keys.map(&:to_s).join(',')}"
+          "attrname was blank must be one of: #{struct_instance_variables.map(&:to_s).join(',')}"
         ) if attrname.nil? #  || attrname.empty?
         instance_variable_set("@#{attrname}".to_sym, value)
         self
@@ -117,10 +117,22 @@ module Archimate
       def change(attrname, _from_value, to_value)
         raise(
           ArgumentError,
-          "attrname was blank must be one of: #{self.class.schema.keys.map(&:to_s).join(',')}"
+          "attrname was blank must be one of: #{struct_instance_variables.map(&:to_s).join(',')}"
         ) if attrname.nil? || attrname.empty?
         instance_variable_set("@#{attrname}".to_sym, to_value)
         self
+      end
+
+      def referenced_identified_nodes
+        struct_instance_variables.reduce([]) do |a, e|
+          a.concat(self[e].referenced_identified_nodes)
+        end
+      end
+
+      def identified_nodes(starting_ary = [])
+        struct_instance_variables.reduce(starting_ary) do |a, e|
+          a.concat(self[e].referenced_identified_nodes)
+        end
       end
     end
   end

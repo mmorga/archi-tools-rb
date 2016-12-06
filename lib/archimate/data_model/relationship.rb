@@ -27,8 +27,8 @@ module Archimate
         ) + " #{source} -> #{target}"
       end
 
-      def element_reference
-        [@source, @target]
+      def referenced_identified_nodes
+        [@source, @target].compact
       end
     end
     Dry::Types.register_class(Relationship)

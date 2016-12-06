@@ -5,7 +5,7 @@ module Archimate
       attribute :model, Strict::String.optional
       attribute :name, Strict::String.optional
       attribute :content, Strict::String.optional
-      attribute :target_connections, Strict::String.optional # TODO: this is a list encoded in a string
+      attribute :target_connections, Strict::Array.member(Strict::String).default([])
       attribute :archimate_element, Strict::String.optional
       attribute :bounds, Bounds.optional
       attribute :children, Strict::Array.member(Child).default([])
@@ -58,6 +58,14 @@ module Archimate
 
       def child_id_hash
         children.each_with_object(id => self) { |i, a| a.merge!(i.child_id_hash) }
+      end
+
+      def referenced_identified_nodes
+        (children + source_connections).reduce(
+          (target_connections + [archimate_element]).compact
+        ) do |a, e|
+          a.concat(e.referenced_identified_nodes)
+        end
       end
     end
 

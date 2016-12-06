@@ -43,8 +43,6 @@ module Archimate
               local.relationships.first
             )
           )
-          puts "diff1: #{@diff1.path}"
-          puts "diff2: #{diff2.path}"
 
           refute_equal @diff1, diff2
           assert @subject.diff_conflicts(@diff1, diff2)

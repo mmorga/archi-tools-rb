@@ -85,24 +85,6 @@ module Archimate
         "propid-#{property_keys.index(key) + 1}"
       end
 
-      # TODO: this adds no value, move directly to Difference
-      # def apply_diff(diff)
-      #   el = diff.target
-      #   l_el = lookup_in_this_model(el)
-      #   raise TypeError, "effective element #{el.class} != lookup element #{l_el.class}" unless l_el.is_a?(el.class)
-      #   diff.apply(l_el)
-      # end
-
-      # def lookup_in_this_model(remote_element)
-      #   if remote_element.respond_to?(:id)
-      #     lookup(remote_element.id)
-      #   elsif remote_element.is_a?(Array)
-      #     send(remote_element.parent.attribute_name(remote_element))
-      #   else
-      #     raise TypeError, "Don't know how to look up #{remote_element.class} in #{self.class}"
-      #   end
-      # end
-
       private
 
       def rebuild_index
