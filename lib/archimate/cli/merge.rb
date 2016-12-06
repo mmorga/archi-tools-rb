@@ -22,16 +22,18 @@ module Archimate
         @remote = remote
         @merged_file = merged_file
         @aio = aio
+        @merge = Archimate::Diff::Merge.new(@aio)
       end
 
       def run_merge
         aio.debug "Starting merging"
-        merge = Archimate::Diff::Merge.three_way(base, local, remote, aio)
+        merged, conflicts = @merge.three_way(base, local, remote)
         aio.debug "Done merging"
-        aio.debug merge.conflicts # TODO: there should be no conflicts here
+        aio.debug conflicts # TODO: there should be no conflicts here
 
         File.open(merged_file, "w") do |f|
-          Archimate::ArchiFileWriter.write(merge.merged, f)
+          # TODO: this should be controlled by the options and the defaulted to the read format
+          Archimate::FileFormats::ArchiFileWriter.write(merged, f)
         end
       end
     end

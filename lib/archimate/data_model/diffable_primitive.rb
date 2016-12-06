@@ -48,6 +48,10 @@ module Archimate
         def referenced_identified_nodes
           []
         end
+
+        def identified_nodes
+          []
+        end
       end
 
       refine String do

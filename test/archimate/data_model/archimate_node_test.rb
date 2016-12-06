@@ -71,9 +71,14 @@ module Archimate
       def test_with
         m2 = @base.with(name: @base.name + "-changed")
         refute_equal @base, m2
-        @base.struct_instance_variables.reject { |a| a == :name }.each do |a|
-          assert_equal @base[a], m2[a]
-        end
+        assert_equal @base[:id], m2[:id]
+        assert_equal @base[:documentation], m2[:documentation]
+        assert_equal @base[:properties], m2[:properties]
+        assert_nil m2[:type]
+        assert_equal @base[:elements], m2[:elements]
+        assert_equal @base[:folders], m2[:folders]
+        assert_equal @base[:relationships], m2[:relationships]
+        assert_equal @base[:diagrams], m2[:diagrams]
       end
 
       def test_in_model

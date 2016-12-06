@@ -33,6 +33,8 @@ module Archimate
           progressbar.increment
           diff.apply(model_a)
         end.compact
+      ensure
+        progressbar&.finish
       end
 
       # # TODO: not currently used

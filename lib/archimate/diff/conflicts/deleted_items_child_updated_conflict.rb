@@ -17,7 +17,7 @@ module Archimate
 
         # TODO: This is simple, but might be slow.
         def diff_conflicts(diff1, diff2)
-          diff2.path.start_with?(diff1.path)
+          diff2.path.start_with?(diff1.path) && diff2.path.size > diff1.path.size
         end
       end
     end

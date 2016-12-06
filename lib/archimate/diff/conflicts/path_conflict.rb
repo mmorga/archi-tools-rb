@@ -3,7 +3,7 @@ module Archimate
   module Diff
     class Conflicts
       class PathConflict < BaseConflict
-        def initialize(base_local_diffs, base_remote_diffs)
+        def initialize(base_local_diffs, base_remote_diffs, aio)
           super
           @associative = true
         end

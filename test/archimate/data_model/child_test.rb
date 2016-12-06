@@ -46,10 +46,6 @@ module Archimate
         assert_match("[#{@subject.name}]", @subject.to_s)
       end
 
-      def test_relationships
-        refute_empty @subject.relationships
-      end
-
       def test_child_element
         assert_equal @element, @subject.element
       end

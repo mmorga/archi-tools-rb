@@ -6,6 +6,7 @@ module Archimate
       extend Forwardable
 
       ARRAY_RE = Regexp.compile(/\[(\d+)\]/)
+      PATH_ROOT_SORT_ORDER = %w(elements relationships diagrams folders).freeze
 
       attr_reader :target
       attr_reader :changed_from
@@ -51,22 +52,24 @@ module Archimate
       # Array entries are sorted by numeric order
       # Others are sorted alphabetically
       def <=>(other)
-        top_order = %w(elements relationships diagrams folders)
         a = path_to_array
         b = other.path_to_array
 
-        res = top_order.index(a.shift) <=> top_order.index(b.shift)
+        part_a = a.shift
+        part_b = b.shift
+        res = PATH_ROOT_SORT_ORDER.index(part_a) <=> PATH_ROOT_SORT_ORDER.index(part_b)
         return res unless res.zero?
 
-        # a needs to be at least as long as b to get the zip behavior I want
-        a.push(nil) while a.size < b.size
-        a.zip(b).each do |pa, pb|
-          return -1 if pb.nil?
-          return 1 if pa.nil?
-          res = pa <=> pb
-          return res unless res.zero?
+        until a.empty? || b.empty?
+          part_a = a.shift
+          part_b = b.shift
+
+          return part_a <=> part_b unless (part_a <=> part_b).zero?
         end
-        0
+
+        return -1 if a.empty?
+        return 1 if b.empty?
+        part_a <=> part_b
       end
 
       def delete?

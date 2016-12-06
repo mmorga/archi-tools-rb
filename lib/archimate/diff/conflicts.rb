@@ -11,7 +11,6 @@ module Archimate
     class Conflicts
       extend Forwardable
 
-      attr_reader :conflicts
       attr_reader :aio
       attr_reader :base_local_diffs
       attr_reader :base_remote_diffs
@@ -26,47 +25,50 @@ module Archimate
         @base_local_diffs = base_local_diffs
         @base_remote_diffs = base_remote_diffs
         @aio = aio
-        @conflicts = []
         @conflict_finders = [PathConflict, DeletedItemsChildUpdatedConflict, DeletedItemsReferencedConflict]
+        @conflicts = nil
+        @conflicting_diffs = nil
+        @unconflicted_diffs = nil
       end
 
+      # TODO: refactor this method elsewhere
       def resolve
-        find
-
         aio.debug "Filtering out #{conflicts.size} conflicts from #{base_local_diffs.size + base_remote_diffs.size} diffs"
-        remaining_diffs = filter_diffs(base_remote_diffs + base_local_diffs)
 
-        aio.debug "Remaining diffs #{remaining_diffs.size}"
+        aio.debug "Remaining diffs #{unconflicted_diffs.size}"
 
-        conflicts.each_with_object(remaining_diffs) do |conflict, diffs|
+        conflicts.each_with_object(unconflicted_diffs) do |conflict, diffs|
           diffs.concat(aio.resolve_conflict(conflict))
         end
       end
 
-      def add_conflicts(conflict)
-        conflicts.concat(Array(conflict))
-        self
+      def conflicts
+        @conflicts ||= find_conflicts
       end
 
-      def diffs
-        conflicts.map(&:diffs).flatten
+      def conflicting_diffs
+        @conflicting_diffs ||= conflicts.map(&:diffs).flatten
       end
 
-      def filter_diffs(diff_list)
-        conflict_diffs = diffs
-        diff_list.reject { |diff| conflict_diffs.include?(diff) }
+      def unconflicted_diffs
+        @unconflicted_diffs ||=
+          (base_remote_diffs + base_local_diffs) - conflicting_diffs
       end
 
       def to_s
         "Conflicts:\n\n#{conflicts.map(&:to_s).join("\n\n")}\n"
       end
 
-      def find
+      private
+
+      def find_conflicts
+        @conflicts = []
         @conflict_finders.each do |cf_class|
-          cf = cf_class.new(base_local_diffs, base_remote_diffs)
+          cf = cf_class.new(base_local_diffs, base_remote_diffs, aio)
           aio.debug cf.describe
-          add_conflicts(cf.conflicts)
+          @conflicts.concat(cf.conflicts)
         end
+        @conflicts
       end
     end
   end

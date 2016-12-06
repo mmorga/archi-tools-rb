@@ -32,12 +32,6 @@ module Archimate
         )
       end
 
-      def relationships
-        children.each_with_object(source_connections.map(&:relationship).compact) do |i, a|
-          a.concat(i.relationships)
-        end
-      end
-
       def to_s
         "Child[#{name || ''}](#{in_model.lookup(archimate_element) if archimate_element && in_model})"
       end

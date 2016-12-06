@@ -5,10 +5,12 @@ module Archimate
       attr_reader :base_local_diffs
       attr_reader :base_remote_diffs
       attr_reader :reason
+      attr_reader :diffs
 
       def initialize(base_local_diffs, base_remote_diffs, reason)
         @base_local_diffs = Array(base_local_diffs)
         @base_remote_diffs = Array(base_remote_diffs)
+        @diffs = @base_local_diffs + @base_remote_diffs
         @reason = reason
       end
 
@@ -23,10 +25,6 @@ module Archimate
           base_local_diffs == other.base_local_diffs &&
           base_remote_diffs == other.base_remote_diffs &&
           reason == other.reason
-      end
-
-      def diffs
-        base_local_diffs + base_remote_diffs
       end
     end
   end

@@ -32,6 +32,9 @@ module Archimate
   class FakeProgressBar
     def increment
     end
+
+    def finish
+    end
   end
 
   class AIO
@@ -77,8 +80,8 @@ module Archimate
     #   @model ||= Archimate.read(in_io)
     # end
 
-    def create_progressbar(options = {})
-      interactive ? ProgressBar.new(options) : FakeProgressBar.new
+    def create_progressbar(total: 100, title: "ArchiMate!")
+      interactive ? ProgressBar.create(total: total, title: title, throttle_rate: 0.5) : FakeProgressBar.new
     end
 
     def error(msg)

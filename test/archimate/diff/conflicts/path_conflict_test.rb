@@ -6,6 +6,7 @@ module Archimate
     class Conflicts
       class PathConflictTest < Minitest::Test
         def setup
+          @aio = Archimate::AIO.new(verbose: false, interactive: false)
           elements = build_element_list(with_elements: 2)
           relationships = build_relationship_list(
             with_relationships: 2,
@@ -29,7 +30,7 @@ module Archimate
           @diff1 = Archimate::Diff::Insert.new(Archimate.node_reference(@relationship))
           @diff2 = Archimate::Diff::Insert.new(Archimate.node_reference(@relationship2))
 
-          @subject = PathConflict.new([@diff1, @diff_name], [@diff2])
+          @subject = PathConflict.new([@diff1, @diff_name], [@diff2], @aio)
         end
 
         def test_two_inserted_elements_with_diff_ids_shouldnt_conflict

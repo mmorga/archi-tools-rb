@@ -15,7 +15,7 @@ module Archimate
 
       def test_to_s
         assert_equal(
-          HighLine.uncolor("CHANGE: name in #{@from_model} to #{@to_model.name}"),
+          HighLine.uncolor("CHANGE: #{@from_model} name changed to #{@to_model.name}"),
           HighLine.uncolor(@subject.to_s)
         )
       end

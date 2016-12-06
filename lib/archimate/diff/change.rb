@@ -6,21 +6,25 @@ module Archimate
 
       # Create a new Change difference
       #
-      # @param from_element [Archimate::DataModel::ArchimateNode] Element that was changed
-      # @param to_element [Archimate::DataModel::ArchimateNode] Element that was changed to
-      # @param sub_path [str] Path under from_element/to_element for primitive values
-      def initialize(to_element, from_element)
-        super(to_element, from_element)
+      # @param target [Archimate::Diff::ArchimateNodeReference] reference to
+      #   ArchimateNode that was changed
+      # @param changed_from [Archimate::Diff::ArchimateNodeReference] Element
+      #   that was changed
+      def initialize(target, changed_from)
+        super(target, changed_from)
       end
 
       def to_s
         # Note - the explicit to_s is required to access the DiffableArray
         #        implementation if the parent is an Array.
-        "#{diff_type} #{target} in #{changed_from.parent.to_s} to #{target.value}"
+        "#{diff_type} #{changed_from.parent.to_s} #{HighLine.color(target.to_s, :change)} changed to #{target.value}"
       end
 
       def apply(to_model)
-        throw TypeError, "Expected a Archimate::DataModel::Model, was a #{to_model.class}" unless to_model.is_a?(DataModel::Model)
+        throw(
+          TypeError,
+          "Expected a Archimate::DataModel::Model, was a #{to_model.class}"
+        ) unless to_model.is_a?(DataModel::Model)
         target.change(to_model)
         to_model
       end

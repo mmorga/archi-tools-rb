@@ -42,7 +42,6 @@ module Archimate
         local = base.with(elements: base.elements.map { |el| el.id == local_el.id ? local_el : el })
         remote = base.with(elements: base.elements.map { |el| el.id == remote_el.id ? remote_el : el })
 
-
         merged, conflicts = @subject.three_way(base, local, remote)
 
         assert_empty conflicts
@@ -238,41 +237,18 @@ module Archimate
 
         # update diagram that references child
         remote = base.with(
-          diagrams: base.diagrams.map do |i|
-            diagram.id == i.id ? i.with(name: "I wuz renamed") : i
-          end
+          diagrams: base.diagrams + [
+            build_diagram(
+              children:
+                [build_child(archimate_element: child.archimate_element)]
+            )
+          ]
         )
 
         # delete element from local
         local = base.with(
           elements: base.elements.reject { |e| e.id == child.archimate_element }
         )
-
-        merged, conflicts = @subject.three_way(base, local, remote)
-
-        refute_empty conflicts.map(&:to_s)
-        assert_equal base, merged
-      end
-
-      # delete: relationship (ok - if source & target also deleted & not referenced by remaining diagrams)
-      def test_delete_relationship_when_still_referenced_in_remaining_diagrams
-        diagram = base.diagrams.first
-        relationship_id = diagram.relationships.first
-        # update diagram that references child
-        remote = base.with(
-          diagrams: base.diagrams.map do |i|
-            diagram.id == i.id ? i.with(name: "I wuz renamed") : i
-          end
-        )
-        refute_equal base, remote
-        refute_equal base.diagrams.first, remote.diagrams.first
-        refute_equal base.diagrams.first.name, remote.diagrams.first.name
-        # delete relationship from local
-        local = base.with(
-          relationships: base.relationships.reject { |r| r.id == relationship_id }
-        )
-        assert_includes base.relationships.map(&:id), relationship_id
-        refute_includes local.relationships.map(&:id), relationship_id
 
         merged, conflicts = @subject.three_way(base, local, remote)
 

@@ -6,7 +6,8 @@ module Archimate
     class Conflicts
       class BaseConflictTest < Minitest::Test
         def setup
-          @subject = BaseConflict.new([], [])
+          @aio = Archimate::AIO.new(verbose: false, interactive: false)
+          @subject = BaseConflict.new([], [], @aio)
         end
 
         def test_default_filters

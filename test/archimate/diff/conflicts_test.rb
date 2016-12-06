@@ -5,9 +5,10 @@ module Archimate
   module Diff
     class ConflictsTest < Minitest::Test
       def test_new
-        subject = Conflicts.new([], [], AIO.new)
+        @aio = Archimate::AIO.new(verbose: false, interactive: false)
+        subject = Conflicts.new([], [], @aio)
 
-        assert_empty subject.diffs
+        assert_empty subject.conflicting_diffs
         assert_equal "Conflicts:\n\n\n", subject.to_s
       end
     end

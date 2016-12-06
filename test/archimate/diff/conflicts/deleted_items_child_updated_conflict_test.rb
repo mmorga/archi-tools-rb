@@ -6,6 +6,7 @@ module Archimate
     class Conflicts
       class DeletedItemsChildUpdatedConflictTest < Minitest::Test
         def setup
+          @aio = Archimate::AIO.new(verbose: false, interactive: false)
           @model = build_model(
             elements: [
               build_element(
@@ -18,7 +19,7 @@ module Archimate
 
           @diff1 = Diff::Delete.new(Archimate.node_reference(@model.elements.first))
           @diff2 = Diff::Insert.new(Archimate.node_reference(@model.elements.first.documentation[0]))
-          @subject = DeletedItemsChildUpdatedConflict.new([@diff1], [@diff2])
+          @subject = DeletedItemsChildUpdatedConflict.new([@diff1], [@diff2], @aio)
         end
 
         def test_describe
@@ -37,6 +38,10 @@ module Archimate
 
         def test_element_deleted_referenced_in_relationship
           assert @subject.diff_conflicts(@diff1, @diff2)
+        end
+
+        def test_diffs_at_same_path_shouldnt_conflict
+          refute @subject.diff_conflicts(@diff1, @diff1)
         end
       end
     end
