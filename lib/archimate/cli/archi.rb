@@ -84,18 +84,29 @@ module Archimate
              desc: "File type to convert to. Options are: " \
                    "'meff2.1' for Open Group Model Exchange File Format for ArchiMate 2.1 " \
                    "'archi' for Archi http://archimatetool.com/ file format " \
-                   "'nquads' for RDF 1.1 N-Quads format https://www.w3.org/TR/n-quads/",
+                   "'nquads' for RDF 1.1 N-Quads format https://www.w3.org/TR/n-quads/" \
+                   "'graphml' for GraphML" \
+                   "'csv' for CSV files (one file per element/relationship type",
              enum: Archimate::Cli::Convert::SUPPORTED_FORMATS
       option :output,
              aliases: :o,
              desc: "Write output to FILE instead of stdout."
+      option :outputdir,
+             aliases: :d,
+             desc: "Write output to DIRECTORY."
       option :force,
              aliases: :f,
              type: :boolean,
              desc: "Force overwriting of existing output file"
       def convert(archifile)
         Archimate::OutputIO.new(options) do |output|
-          Archimate::Cli::Convert.new.convert(archifile, output, options)
+          aio = Archimate::AIO.new(
+            model: Archimate.read(archifile),
+            output_dir: options.fetch("outputdir", Dir.pwd),
+            force: options.fetch("force", false),
+            output_io: output
+          )
+          Archimate::Cli::Convert.new(aio).convert(options[:to])
         end
       end
     end

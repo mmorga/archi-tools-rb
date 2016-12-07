@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require "nokogiri"
+
 module Archimate
   module FileFormats
     class ArchiFileWriter < Writer
@@ -128,8 +130,8 @@ module Archimate
           "font" => style&.font&.to_archi_font,
           "fontColor" => style&.font_color&.to_rgba,
           "lineColor" => style&.line_color&.to_rgba,
-          "lineWidth" => style&.line_width,
-          "textAlignment" => style&.text_alignment,
+          "lineWidth" => style&.line_width&.to_s,
+          "textAlignment" => style&.text_alignment&.to_s,
           "textPosition" => style&.text_position
         }
       end

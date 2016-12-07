@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require "nokogiri"
+
 module Archimate
   module FileFormats
     class ModelExchangeFileReader

@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require "nokogiri"
 require "highline"
 require "dry-types"
 require "dry-struct"

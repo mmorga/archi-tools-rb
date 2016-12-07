@@ -10,11 +10,10 @@ module Archimate
     end
 
     def test_default_creation
-      assert_equal $stdout, io.out
-      assert_equal $stdin, io.in_io
-      assert_equal $stdin, io.uin
-      assert_equal $stderr, io.err
-      assert_equal $stdout, io.uout
+      assert_equal $stdout, io.output_io
+      assert_equal $stdin, io.input_io
+      assert_equal $stdin, io.user_input_io
+      assert_equal $stdout, io.messages_io
     end
 
     def test_verbose
@@ -26,27 +25,27 @@ module Archimate
     end
 
     def test_error
-      ioe = AIO.new(uout: StringIO.new)
+      ioe = AIO.new(messages_io: StringIO.new)
       ioe.error "We want the funk"
-      assert_equal "Error: We want the funk\n", HighLine.uncolor(ioe.uout.string)
+      assert_equal "Error: We want the funk\n", HighLine.uncolor(ioe.messages_io.string)
     end
 
     def test_warning
-      ioe = AIO.new(uout: StringIO.new)
+      ioe = AIO.new(messages_io: StringIO.new)
       ioe.warning "We want the funk"
-      assert_equal "Warning: We want the funk\n", HighLine.uncolor(ioe.uout.string)
+      assert_equal "Warning: We want the funk\n", HighLine.uncolor(ioe.messages_io.string)
     end
 
     def test_info
-      ioe = AIO.new(uout: StringIO.new)
+      ioe = AIO.new(messages_io: StringIO.new)
       ioe.info "We want the funk"
-      assert_equal "We want the funk\n", HighLine.uncolor(ioe.uout.string)
+      assert_equal "We want the funk\n", HighLine.uncolor(ioe.messages_io.string)
     end
 
     def test_debug
-      ioe = AIO.new(uout: StringIO.new, verbose: true)
+      ioe = AIO.new(messages_io: StringIO.new, verbose: true)
       ioe.debug "Give us the funk"
-      assert_match(/Debug: .+ Give us the funk\n/, HighLine.uncolor(ioe.uout.string))
+      assert_match(/Debug: .+ Give us the funk\n/, HighLine.uncolor(ioe.messages_io.string))
     end
   end
 end

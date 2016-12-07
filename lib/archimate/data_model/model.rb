@@ -6,6 +6,7 @@ module Archimate
     class Model < IdentifiedNode
       ARRAY_RE = Regexp.compile(/\[(\d+)\]/)
 
+      # TODO: add original file name and file format
       # TODO: add metadata & property_defs as in Model Exchange Format
       attribute :name, Strict::String
       attribute :elements, Strict::Array.member(Element).default([])

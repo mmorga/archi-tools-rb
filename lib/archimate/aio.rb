@@ -38,46 +38,54 @@ module Archimate
   end
 
   class AIO
-    attr_reader :in_io
-    attr_reader :uin
-    attr_reader :uout
-    attr_reader :out
-    attr_reader :err
+    attr_reader :input_io
+    attr_reader :user_input_io
+    attr_reader :messages_io
+    attr_reader :output_dir
+    attr_reader :output_io
     attr_reader :verbose
     attr_reader :force
-    attr_reader :progressbar
-    attr_reader :output_dir
     attr_reader :interactive
+    attr_reader :model
 
-    def initialize(options = {})
-      @in_io = options.fetch(:in_io, $stdin)
-      @out = options.fetch(:output, $stdout)
-      @err = options.fetch(:err, $stderr)
-      @uin = options.fetch(:uin, $stdin)
-      @uout = options.fetch(:uout, $stdout) # $stderr)
-      @interactive = options.fetch(:interactive, true)
-      @verbose = options.fetch(:verbose, false)
-      @force = options.fetch(:force, false)
-      @output_dir = options.fetch(:output_dir, Dir.pwd)
-      @model = options.fetch(:model, nil)
-      @hl = HighLine.new(@uin, @uout)
+    def initialize(
+      input_io: $stdin,
+      output_io: $stdout,
+      user_input_io: $stdin,
+      messages_io: $stdout,
+      interactive: true,
+      verbose: false,
+      force: false,
+      output_dir: Dir.pwd,
+      model: nil
+    )
+      @input_io = input_io
+      @output_io = output_io
+      @user_input_io = user_input_io
+      @messages_io = messages_io
+      @interactive = interactive
+      @verbose = verbose
+      @force = force
+      @output_dir = output_dir
+      @model = model
+      @hl = HighLine.new(@user_input_io, @messages_io)
     end
 
     # def with_output(&_block)
-    #   if out.is_a?(String)
-    #     if !force && File.exist?(out)
-    #       return unless HighLine.new.agree("File #{out} exists. Overwrite?")
+    #   if output_io.is_a?(String)
+    #     if !force && File.exist?(output_io)
+    #       return unless HighLine.new.agree("File #{output_io} exists. Overwrite?")
     #     end
-    #     File.open(out, "w") do |io|
+    #     File.open(output_io, "w") do |io|
     #       yield io
     #     end
     #   else
-    #     yield out
+    #     yield output_io
     #   end
     # end
 
     # def model
-    #   @model ||= Archimate.read(in_io)
+    #   @model ||= Archimate.read(input_io)
     # end
 
     def create_progressbar(total: 100, title: "ArchiMate!")

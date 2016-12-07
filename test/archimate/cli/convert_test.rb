@@ -5,7 +5,12 @@ module Archimate
   module Cli
     class ConvertTest < Minitest::Test
       def setup
-        @subject = Convert.new(AIO.new)
+        @output_io = StringIO.new
+        @aio = AIO.new(
+          model: ARCHISURANCE_MODEL,
+          output_io: @output_io
+        )
+        @subject = Convert.new(@aio)
       end
 
       def test_io_attribute
@@ -13,14 +18,13 @@ module Archimate
       end
 
       def test_with_graphml
-        result_io = StringIO.new
         expected = <<-END
 <?xml version="1.0" encoding="UTF-8"?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
         END
-        @subject.convert(ARCHISURANCE_FILE, result_io, "to" => "graphml")
+        @subject.convert("graphml")
 
-        assert result_io.string.start_with?(expected)
+        assert @output_io.string.start_with?(expected)
       end
     end
   end
