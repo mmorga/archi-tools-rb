@@ -131,7 +131,7 @@ module Archimate
 
       def identified_nodes(starting_ary = [])
         struct_instance_variables.reduce(starting_ary) do |a, e|
-          a.concat(self[e].referenced_identified_nodes)
+          a.concat(self[e].identified_nodes)
         end
       end
     end

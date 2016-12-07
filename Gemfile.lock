@@ -107,7 +107,6 @@ GEM
     ruby-prof (0.16.2)
     ruby-progressbar (1.8.1)
     ruby_dep (1.5.0)
-    ruby_gntp (0.3.4)
     shellany (0.0.1)
     simplecov (0.12.0)
       docile (~> 1.1.0)
@@ -138,7 +137,6 @@ DEPENDENCIES
   pry-byebug
   rake
   ruby-prof
-  ruby_gntp
   simplecov
   yard
 

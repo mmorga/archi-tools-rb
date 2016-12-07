@@ -54,13 +54,6 @@ module Archimate
   autoload :MaybeIO, 'archimate/maybe_io'
   autoload :OutputIO, 'archimate/output_io'
 
-  # Creates a new generic xml document given an optional string source
-  #
-  # @param xml_str Optional string of xml to parse as initial document
-  def self.new_xml_doc(xml_str = nil)
-    Nokogiri::XML::Document.new(xml_str)
-  end
-
   def self.diff(base, remote)
     base.diff(remote)
   end

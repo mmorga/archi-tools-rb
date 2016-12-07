@@ -17,7 +17,7 @@ module Archimate
         @model = model
         @output = output
         @options = options
-        @trash = Archimate.new_xml_doc("<deleted></deleted>")
+        @trash = Nokogiri::XML::Document.new("<deleted></deleted>")
         @model_set = nil
       end
 

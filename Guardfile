@@ -26,8 +26,6 @@ guard :minitest, all_after_pass: true do
   watch(%r{^lib/archimate.rb$}) { 'test' }
 end
 
-notification :gntp
-
 guard 'ctags-bundler', src_path: %w(lib test), stdlib: true do
   watch(%r{^(lib|test)/.*\.rb$})
   watch('Gemfile.lock')
