@@ -22,6 +22,8 @@ module Archimate
   module Export
     autoload :NQuads, 'archimate/export/n_quads'
     autoload :GraphML, 'archimate/export/graph_ml'
+    autoload :CSVExport, 'archimate/export/csv_export'
+    autoload :Cypher, 'archimate/export/cypher'
   end
 
   module Diff

@@ -2,7 +2,7 @@
 module Archimate
   module Cli
     class Convert
-      SUPPORTED_FORMATS = %w(meff2.1 archi nquads graphml csv).freeze
+      SUPPORTED_FORMATS = %w(meff2.1 archi nquads graphml csv cypher).freeze
 
       def initialize(io = AIO.new)
         @io = io
@@ -25,6 +25,8 @@ module Archimate
           output.write(Archimate::Export::GraphML.new(model).to_graphml)
         when "csv"
           Archimate::Export::CSVExport.new(model).to_csv(output_dir: @io.output_dir)
+        when "cypher"
+          Archimate::Export::Cypher.new(@io).to_cypher(@io.model)
         else
           @io.error "Export to '#{export_format}' is not supported yet."
         end
