@@ -11,40 +11,65 @@ module Archimate
           return [Diff::Delete.new(Archimate.node_reference(self))] if other.nil?
           raise TypeError, "Expected other #{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
           return [] if self == other
-          inserted_or_changed = other - self
-          []
-            .concat(
-              deleted_items(other)
-                .map { |n| Diff::Delete.new(Archimate.node_reference(self, n)) }
-            )
-            .concat(
-              inserted_or_changed
-                .select { |r| none? { |l| l.match(r) } }
-                .map { |n| Diff::Insert.new(Archimate.node_reference(other, n)) }
-            )
-            .concat(
-              inserted_or_changed
-                .select { |r| any? { |l| l.match(r) } }
-                .map do |n|
-                  if n.primitive?
-                    # Ok the problem here is we don't know if n is from self or other
-                    idx = find_index(n) || other.find_index(n)
-                    Diff::Change.new(
-                      Archimate.node_reference(other, idx),
-                      Archimate.node_reference(self, idx)
-                    )
-                  else
-                    # Don't know if n is from self or other
-                    find { |el| el.id == n.id }.diff(other.find { |el| el.id == n.id })
-                  end
-                end.flatten
-            )
+
+          result = []
+          my_idx = 0
+          other_idx = 0
+
+          while my_idx < size
+            if at(my_idx) == other[other_idx]
+              my_idx += 1
+              other_idx += 1
+              next
+            elsif at(my_idx).id == other[other_idx].id
+              result.concat(at(my_idx).diff(other[other_idx]))
+              my_idx += 1
+              other_idx += 1
+            elsif other[other_idx + 1..-1]&.smart_include?(at(my_idx))
+              if self[my_idx + 1..-1].smart_include?(other[other_idx])
+                # TODO: Handle a move diff here other[other_idx] was moved elsewhere
+              else
+                result << Diff::Insert.new(Archimate.node_reference(other, other[other_idx]))
+              end
+              other_idx += 1
+            else
+              if other_idx >= other.size || self[my_idx + 1..-1].smart_include?(other[other_idx])
+                result << Diff::Delete.new(Archimate.node_reference(self, self[my_idx]))
+                my_idx += 1
+              else
+                result.concat(diff_items(my_idx, other, other_idx))
+                my_idx += 1
+                other_idx += 1
+              end
+            end
+          end
+
+          while other_idx < other.size
+            result << Diff::Insert.new(Archimate.node_reference(other, other[other_idx]))
+            other_idx += 1
+          end
+
+          result
         end
 
-        def deleted_items(other)
-          id_lookup = -> (x) { x.respond_to?(:id) ? x.id : x }
-          deleted_ids = map(&id_lookup) - other.map(&id_lookup)
-          deleted_ids.map { |id| at(index { |item| item.id == id }) }
+        def diff_items(my_idx, other, other_idx)
+          if self[my_idx].primitive?
+            Diff::Change.new(
+              Archimate.node_reference(other, other_idx),
+              Archimate.node_reference(self, my_idx)
+            )
+          else
+            self[my_idx].diff(other[other_idx])
+          end
+        end
+
+        def smart_include?(val)
+          case val
+          when IdentifiedNode
+            any? { |item| item.id == val.id }
+          else
+            include?(val)
+          end
         end
 
         def assign_model(model)

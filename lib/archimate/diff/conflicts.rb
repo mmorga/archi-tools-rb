@@ -32,12 +32,20 @@ module Archimate
       end
 
       # TODO: refactor this method elsewhere
+      # resolve iterates through the set of conflicting diffs asking the user
+      # (if running interactively) and return the set of diffs that can be applied.
+      #
+      # To keep diffs reasonably human readable in logs, the local diffs should
+      # be applied first followed by the remote diffs.
       def resolve
         aio.debug "Filtering out #{conflicts.size} conflicts from #{base_local_diffs.size + base_remote_diffs.size} diffs"
 
         aio.debug "Remaining diffs #{unconflicted_diffs.size}"
 
         conflicts.each_with_object(unconflicted_diffs) do |conflict, diffs|
+          # TODO: this will result in diffs being out of order from their
+          # original order. diffs should be flagged as conflicted and
+          # this method should instead remove the conflicted flag.
           diffs.concat(aio.resolve_conflict(conflict))
         end
       end
@@ -52,7 +60,7 @@ module Archimate
 
       def unconflicted_diffs
         @unconflicted_diffs ||=
-          (base_remote_diffs + base_local_diffs) - conflicting_diffs
+          (base_local_diffs + base_remote_diffs) - conflicting_diffs
       end
 
       def to_s

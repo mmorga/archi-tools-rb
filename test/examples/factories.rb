@@ -88,14 +88,13 @@ module Archimate
       end
 
       def build_diagram(options = {})
-        children = options.fetch(:children, build_children)
         Archimate::DataModel::Diagram.new(
           id: options.fetch(:id, build_id),
           name: options.fetch(:name, Faker::Commerce.product_name),
           viewpoint: options.fetch(:viewpoint, nil),
           documentation: options.fetch(:documentation, build_documentation_list),
           properties: options.fetch(:properties, []),
-          children: children,
+          children: options.fetch(:children, build_children),
           connection_router_type: nil,
           type: options.fetch(:type, nil),
           background: options.fetch(:background, nil)
@@ -137,7 +136,8 @@ module Archimate
           type: options.fetch(:type, random_element_type),
           source: options.fetch(:source, relationship&.source || build_id),
           target: options.fetch(:target, relationship&.target || build_id),
-          relationship: options.fetch(:relationship, relationship&.id || build_id)
+          relationship: options.fetch(:relationship, relationship&.id || build_id),
+          bendpoints: options.fetch(:bendpoints, [])
         )
       end
 

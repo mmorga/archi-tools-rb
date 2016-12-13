@@ -291,6 +291,20 @@ module Archimate
         refute_equal base, merged
         assert_equal local, merged
       end
+
+      def test_merge_order_of_elements
+        local_elements = build_element_list(with_elements: 2)
+        remote_elements = build_element_list(with_elements: 2)
+        base = build_model(with_elements: 3)
+        local = base.with(elements: base.elements + local_elements)
+        remote = base.with(elements: base.elements + remote_elements)
+        expected_elements = base.elements + local_elements + remote_elements
+
+        merged, conflicts = @subject.three_way(base, local, remote)
+
+        assert_empty conflicts
+        assert_equal expected_elements, merged.elements
+      end
     end
   end
 end

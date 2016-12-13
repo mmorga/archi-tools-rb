@@ -1,6 +1,10 @@
 # TODO
 
-* [ ] Add Split file feature
+* [ ] Add a summary diff - elements added/changed/deleted, diagrams
+* [ ] In Change.to_s - deref args that point to other elements (like archimate_element)
+* [ ] In Diagram children diffs - make to_s reference the parent diagram
+* [ ] Array diffs on non-id'd diffable elements should detect changes rather than delete/insert
+* [ ] Add Split file feature (extract say a diagram or set of elements)
 * [ ] Merge unrelated files (this is the intent of Merger)
 * [ ] Stats (elements, relationships, diagrams)
 * [ ] Scorecard lint
@@ -17,6 +21,7 @@
   - [ ] Neo4j CSV
   - [ ] Rdf
   - [ ] Gremlin
+  - [X] Cypher
   - [X] N-Quad
   - [X] GraphML
 * [X] figure out a better parent mechanism - it's really not fully cooked

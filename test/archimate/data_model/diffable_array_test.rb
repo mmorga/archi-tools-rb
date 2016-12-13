@@ -92,24 +92,35 @@ module Archimate
         )
       end
 
-      def test_deleted_items
-        deleted_diagram = build_diagram
-        base = [deleted_diagram]
-        local = []
-
-        assert_equal [deleted_diagram], base.deleted_items(local)
-      end
-
       def test_diff_with_delete_of_diagram
         base = build_model(with_diagrams: 1)
         local = base.with(diagrams: [])
-        assert_equal 1, base.diagrams.size
-        assert_empty local.diagrams
 
         diffs = base.diff(local)
 
         assert_equal 1, diffs.size
         assert_equal [Diff::Delete.new(Archimate.node_reference(base.diagrams.first))], diffs
+      end
+
+      def test_diff_change_of_non_identified_node
+        base, local = build_model_with_bendpoints_diffs
+        bendpoints = base.diagrams[0].children[0].source_connections[0].bendpoints
+        changed_bendpoint = bendpoints[1].with(start_x: bendpoints[1].start_x + 10)
+
+        diffs = base.diff(local)
+
+        assert_equal(
+          [
+            Diff::Change.new(
+              Archimate.node_reference(changed_bendpoint, "start_x"),
+              Archimate.node_reference(bendpoints[1], "start_x")
+            )
+          ], diffs
+        )
+      end
+
+      def xtest_diff_change_of_primitive
+        fail "write me"
       end
 
       def test_assign_model
@@ -165,7 +176,7 @@ module Archimate
         assert_equal 3, subject.elements.index(element_to_insert)
       end
 
-      def test_change
+      def test_change_with_identified_node
         subject = @model.clone
         element_to_change = @model.elements[1]
         changed_element = element_to_change.with(label: element_to_change.label + "-changed")
@@ -217,6 +228,46 @@ module Archimate
         subject = %w(apple cherry banana)
 
         assert_empty subject.referenced_identified_nodes
+      end
+
+      def build_model_with_bendpoints_diffs
+        base = build_model(
+          diagrams: [
+            build_diagram(
+              children: [
+                build_child(
+                  source_connections: [
+                    build_source_connection(
+                      bendpoints: (1..3).map { build_bendpoint }
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+        )
+        bendpoints = base.diagrams[0].children[0].source_connections[0].bendpoints
+        changed_bendpoint = bendpoints[1].with(start_x: bendpoints[1].start_x + 10)
+        local = base.with(
+          diagrams: [
+            base.diagrams[0].with(
+              children: [
+                base.diagrams[0].children[0].with(
+                  source_connections: [
+                    base.diagrams[0].children[0].source_connections[0].with(
+                      bendpoints: [
+                        bendpoints[0],
+                        changed_bendpoint,
+                        bendpoints[2]
+                      ]
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+        )
+        [base, local]
       end
     end
   end
