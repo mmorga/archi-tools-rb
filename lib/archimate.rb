@@ -16,6 +16,7 @@ module Archimate
     autoload :Mapper, 'archimate/cli/mapper'
     autoload :Merge, 'archimate/cli/merge'
     autoload :Merger, 'archimate/cli/merger'
+    autoload :Stats, 'archimate/cli/stats'
     autoload :Svger, 'archimate/cli/svger'
   end
 

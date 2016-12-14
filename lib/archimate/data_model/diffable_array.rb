@@ -53,13 +53,25 @@ module Archimate
         end
 
         def diff_items(my_idx, other, other_idx)
-          if self[my_idx].primitive?
-            Diff::Change.new(
-              Archimate.node_reference(other, other_idx),
-              Archimate.node_reference(self, my_idx)
-            )
-          else
+          case self[my_idx]
+          when IdentifiedNode
+            if self[my_idx].id == other[other_idx].id
+              self[my_idx].diff(other[other_idx])
+            else
+              [
+                Diff::Delete.new(Archimate.node_reference(self, self[my_idx])),
+                Diff::Insert.new(Archimate.node_reference(other, other[other_idx]))
+              ]
+            end
+          when ArchimateNode
             self[my_idx].diff(other[other_idx])
+          else
+            [
+              Diff::Change.new(
+                Archimate.node_reference(other, other_idx),
+                Archimate.node_reference(self, my_idx)
+              )
+            ]
           end
         end
 

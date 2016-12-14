@@ -1,29 +1,30 @@
 # TODO
 
+* [ ] Conflicts can happen on the same diff 2x. How to handle this?
 * [ ] Add a summary diff - elements added/changed/deleted, diagrams
-* [ ] In Change.to_s - deref args that point to other elements (like archimate_element)
+* [ ] In `Change.to_s` - deref args that point to other elements (like archimate_element)
 * [ ] In Diagram children diffs - make to_s reference the parent diagram
 * [ ] Array diffs on non-id'd diffable elements should detect changes rather than delete/insert
 * [ ] Add Split file feature (extract say a diagram or set of elements)
 * [ ] Merge unrelated files (this is the intent of Merger)
-* [ ] Stats (elements, relationships, diagrams)
 * [ ] Scorecard lint
 * [ ] CLI DSL
 * [ ] Add a super strict mode to note when reader finds unexpected content
 * [ ] Consider breaking this into a number of gems (for example: base lib, diff/merge, other cmdline tools)
 * [ ] Archi file could have ids that conflict (i.e. 2 relationships with same id - this is bad!!! Was it a bad merge or something worse)
-* [ ] make classes for each element and relationship type?
+* [ ] Consider making classes for each element and relationship type?
 * [ ] Convert all CLIs to use AIO - merge with OutputIO and MaybeIO (maybe)
 * [ ] Figure out how to make rmagick optional and/or remove rmagick dependency
 * [ ] Data model items that reference something else by id should have the actual object available - not just the id
 * [ ] Implement check for de-duplicated merges
 * Convert support for
-  - [ ] Neo4j CSV
   - [ ] Rdf
   - [ ] Gremlin
+  - [X] Neo4j CSV
   - [X] Cypher
   - [X] N-Quad
   - [X] GraphML
+* [X] Stats (elements, relationships, diagrams)
 * [X] figure out a better parent mechanism - it's really not fully cooked
 * [X] remove parent_id from dry::struct objects - then can use class schema instead of comparison attributes
 * [x] Not handling sketch diagram model in archi

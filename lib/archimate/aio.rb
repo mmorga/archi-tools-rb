@@ -3,7 +3,7 @@ require "ruby-progressbar"
 require "highline"
 
 HighLine.color_scheme = HighLine::ColorScheme.new do |cs|
-  cs[:headline]                       = [:bold, :yellow, :on_black]
+  cs[:headline]                       = [:underline, :bold, :yellow, :on_black]
   cs[:horizontal_line]                = [:bold, :white]
   cs[:even_row]                       = [:green]
   cs[:odd_row]                        = [:magenta]
@@ -13,18 +13,18 @@ HighLine.color_scheme = HighLine::ColorScheme.new do |cs|
   cs[:insert]                         = [:bold, :green]
   cs[:change]                         = [:bold, :yellow]
   cs[:delete]                         = [:bold, :red]
-  cs[:Business]                       = [:black, :on_yellow]
+  cs[:Business]                       = [:black, :on_light_yellow]
   cs[:Application]                    = [:black, :on_light_blue]
   cs[:Technology]                     = [:black, :on_light_green]
-  cs[:Motivation]                     = [:white, :on_blue]
-  cs[:"Implementation and Migration"] = [:white, :on_green]
-  cs[:Connectors]                     = [:white, :on_black]
-  cs[:unknown_layer]                  = [:black, :on_red]
+  cs[:Motivation]                     = [:black, :on_light_magenta]
+  cs[:"Implementation and Migration"] = [:black, :on_light_red]
+  cs[:Connectors]                     = [:black, :on_light_gray]
+  cs[:unknown_layer]                  = [:black, :on_gray]
   cs[:Model]                          = [:cyan]
   cs[:SourceConnection]               = [:blue]
   cs[:Folder]                         = [:cyan]
-  cs[:Relationship]                   = [:black]
-  cs[:Diagram]                        = [:cyan]
+  cs[:Relationship]                   = [:black, :on_light_gray]
+  cs[:Diagram]                        = [:black, :on_cyan]
   cs[:path]                           = [:light_blue]
 end
 
@@ -109,7 +109,7 @@ module Archimate
     end
 
     def puts(msg)
-      @hl.say(msg)
+      @messages_io.puts msg
     end
 
     def resolve_conflict(conflict)

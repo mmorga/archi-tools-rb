@@ -4,6 +4,15 @@ module Archimate
     require "thor"
 
     class Archi < Thor
+      desc "stats ARCHIFILE", "Show some statistics about the model"
+      def stats(archifile)
+        Archimate::Cli::Stats.new(
+          Archimate::AIO.new(
+            model: Archimate.read(archifile)
+          )
+        ).statistics
+      end
+
       desc "map ARCHIFILE", "EXPERIMENTAL: Produce a map of diagram links to a diagram"
       option :output,
              aliases: :o,
