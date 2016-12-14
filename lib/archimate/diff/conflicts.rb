@@ -47,6 +47,8 @@ module Archimate
           # original order. diffs should be flagged as conflicted and
           # this method should instead remove the conflicted flag.
           diffs.concat(aio.resolve_conflict(conflict))
+          # TODO: if the conflict is resolved, it should be removed from the
+          # @conflicts array.
         end
       end
 

@@ -112,6 +112,7 @@ module Archimate
       @messages_io.puts msg
     end
 
+    # TODO: this implementation has much to be written
     def resolve_conflict(conflict)
       return [] unless interactive
       choice = @hl.choose do |menu|
@@ -119,12 +120,11 @@ module Archimate
 
         menu.choice(:local, text: conflict.base_local_diffs.map(&:to_s).join("\n\t\t"))
         menu.choice(:remote, text: conflict.base_remote_diffs.map(&:to_s).join("\n\t\t"))
-        menu.choice(:neither, help: "Don't choose either set of diffs")
-        menu.choice(:edit, help: "Edit the diffs (coming soon)")
-        menu.choice(:quit, help: "I'm in over my head. Just stop!")
+        # menu.choice(:neither, help: "Don't choose either set of diffs")
+        # menu.choice(:edit, help: "Edit the diffs (coming soon)")
+        # menu.choice(:quit, help: "I'm in over my head. Just stop!")
         menu.select_by = :index_or_name
       end
-      puts choice.inspect
       case choice
       when :local
         conflict.base_local_diffs

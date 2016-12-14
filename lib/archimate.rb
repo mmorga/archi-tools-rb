@@ -12,6 +12,7 @@ module Archimate
     autoload :Cleanup, 'archimate/cli/cleanup'
     autoload :Convert, 'archimate/cli/convert'
     autoload :Diff, 'archimate/cli/diff'
+    autoload :DiffSummary, 'archimate/cli/diff_summary'
     autoload :Duper, 'archimate/cli/duper'
     autoload :Mapper, 'archimate/cli/mapper'
     autoload :Merge, 'archimate/cli/merge'
