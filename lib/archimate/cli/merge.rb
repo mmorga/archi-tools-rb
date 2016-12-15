@@ -33,6 +33,7 @@ module Archimate
 
         File.open(merged_file, "w") do |f|
           # TODO: this should be controlled by the options and the defaulted to the read format
+          aio.debug "Serializing"
           Archimate::FileFormats::ArchiFileWriter.write(merged, f)
         end
       end

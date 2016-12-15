@@ -28,7 +28,7 @@ module Archimate
       # new model with the diffs applied.
       def apply_diffs(diffs, model)
         aio.debug "Applying #{diffs.size} diffs"
-        progressbar = @aio.create_progressbar(total: diffs.size)
+        progressbar = @aio.create_progressbar(total: diffs.size, title: "Applying diffs")
         diffs.inject(model) do |model_a, diff|
           progressbar.increment
           diff.apply(model_a)

@@ -22,7 +22,7 @@ module Archimate
         end
 
         def conflicts
-          progressbar = @aio.create_progressbar(total: diff_iterations.size)
+          progressbar = @aio.create_progressbar(total: diff_iterations.size, title: "Analyzing Conflicts")
           diff_iterations.each_with_object([]) do |(md1, md2), a|
             progressbar.increment
             a.concat(

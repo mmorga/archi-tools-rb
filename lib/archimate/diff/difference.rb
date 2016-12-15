@@ -11,7 +11,6 @@ module Archimate
 
       attr_reader :target
       attr_reader :changed_from
-      attr_reader :sub_path
 
       def_delegator :@target, :path
 
