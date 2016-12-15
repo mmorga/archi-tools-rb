@@ -4,6 +4,9 @@ require 'forwardable'
 module Archimate
   module Cli
     class DiffSummary
+      using DataModel::DiffableArray
+      using DataModel::DiffablePrimitive
+
       DIFF_KINDS = %w(Delete Change Insert).freeze
 
       extend Forwardable
@@ -16,9 +19,9 @@ module Archimate
       def self.diff(local_file, remote_file, options = { verbose: true })
         aio = AIO.new(options)
         aio.debug "Reading #{local_file}"
-        local = Archimate.read(local_file)
+        local = Archimate.read(local_file, aio)
         aio.debug "Reading #{remote_file}"
-        remote = Archimate.read(remote_file)
+        remote = Archimate.read(remote_file, aio)
 
         my_diff = DiffSummary.new(local, remote, aio)
         my_diff.diff
@@ -49,10 +52,24 @@ module Archimate
 
       def summarize(title, diffs)
         return if diffs.nil? || diffs.empty?
-        by_kind = diffs.group_by(&:kind)
+        by_kind = diffs_by_kind(diffs)
+
         puts color(title)
         DIFF_KINDS.each do |kind|
           puts format("  #{color(kind)}: #{by_kind[kind]&.size}") if by_kind.key?(kind)
+        end
+      end
+
+      def diffs_by_kind(diffs)
+        diffs
+          .group_by(&:summary_element)
+          .each_with_object(Hash.new { |hash, key| hash[key] = [] }) do |(summary_element, element_diffs), a|
+          top_level_diff = element_diffs.find { |diff| summary_element == diff.target.value }
+          if top_level_diff
+            a[top_level_diff.kind] << summary_element
+          else
+            a["Change"] << summary_element
+          end
         end
       end
 
@@ -72,10 +89,10 @@ module Archimate
         return if diffs.nil? || diffs.empty?
         puts HighLine.color("Diagrams", :headline)
 
-        by_kind = diagram_diffs_by_kind(diffs)
+        by_kind = diffs_by_kind(diffs)
         %w(Delete Change Insert).each do |kind|
           next unless by_kind.key?(kind)
-          diagram_names = by_kind[kind]
+          diagram_names = by_kind[kind].map(&:name)
           puts "  #{color(kind)}"
           # TODO: make this magic number an option
           diagram_names[0..14].each { |diagram_name| puts "    #{diagram_name}" }
@@ -85,19 +102,6 @@ module Archimate
 
       def color(kind)
         HighLine.color(kind, kind)
-      end
-
-      def diagram_diffs_by_kind(diffs)
-        diffs
-          .group_by(&:summary_element)
-          .each_with_object(Hash.new { |hash, key| hash[key] = [] }) do |(diagram, diagram_diffs), a|
-          top_level_diff = diagram_diffs.find { |diff| diagram == diff.target.value }
-          if top_level_diff
-            a[top_level_diff.kind] << diagram.name
-          else
-            a["Change"] << diagram.name
-          end
-        end
       end
     end
   end
