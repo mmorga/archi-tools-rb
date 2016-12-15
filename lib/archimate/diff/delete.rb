@@ -27,6 +27,10 @@ module Archimate
         true
       end
 
+      def kind
+        "Delete"
+      end
+
       private
 
       def diff_type

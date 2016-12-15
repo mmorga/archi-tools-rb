@@ -13,7 +13,6 @@
 * [ ] Consider breaking this into a number of gems (for example: base lib, diff/merge, other cmdline tools)
 * [ ] Archi file could have ids that conflict (i.e. 2 relationships with same id - this is bad!!! Was it a bad merge or something worse)
 * [ ] Consider making classes for each element and relationship type?
-* [ ] Convert all CLIs to use AIO - merge with OutputIO and MaybeIO (maybe)
 * [ ] Figure out how to make rmagick optional and/or remove rmagick dependency
 * [ ] Data model items that reference something else by id should have the actual object available - not just the id
 * [ ] Implement check for de-duplicated merges
@@ -24,6 +23,7 @@
   - [X] Cypher
   - [X] N-Quad
   - [X] GraphML
+* [X] Convert all CLIs to use AIO - merge with OutputIO and MaybeIO (maybe)
 * [X] Stats (elements, relationships, diagrams)
 * [X] figure out a better parent mechanism - it's really not fully cooked
 * [X] remove parent_id from dry::struct objects - then can use class schema instead of comparison attributes

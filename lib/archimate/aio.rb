@@ -42,11 +42,9 @@ module Archimate
     attr_reader :user_input_io
     attr_reader :messages_io
     attr_reader :output_dir
-    attr_reader :output_io
     attr_reader :verbose
     attr_reader :force
     attr_reader :interactive
-    attr_reader :model
 
     def initialize(
       input_io: $stdin,
@@ -84,9 +82,9 @@ module Archimate
     #   end
     # end
 
-    # def model
-    #   @model ||= Archimate.read(input_io)
-    # end
+    def model
+      @model ||= Archimate.read(input_io, self)
+    end
 
     def create_progressbar(total: 100, title: "ArchiMate!")
       interactive ? ProgressBar.create(total: total, title: title, throttle_rate: 0.5) : FakeProgressBar.new
@@ -110,6 +108,17 @@ module Archimate
 
     def puts(msg)
       @messages_io.puts msg
+    end
+
+    def output_io
+      if @output_io.is_a?(String)
+        if !force && File.exist?(@output_io)
+          # TODO: This needs to be handled with more grace
+          return nil unless @hl.agree("File #{@output_io} exists. Overwrite?")
+        end
+        @output_io = File.open(@output_io, "w")
+      end
+      @output_io
     end
 
     # TODO: this implementation has much to be written

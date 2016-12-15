@@ -4,13 +4,12 @@ require "highline"
 module Archimate
   module Cli
     class Duper
-      def initialize(model, output_io, mergeall = false, force = false)
-        @output = output_io
+      def initialize(aio, mergeall = false)
+        @output = aio.output_io
         @cli = HighLine.new
-        @model = model
+        @model = aio.model
         @skipall = false
         @mergeall = mergeall
-        @force = force
       end
 
       def get_dupe_list

@@ -7,7 +7,10 @@ module Archimate
       def test_initialize
         model = build_model
         output_io = StringIO.new
-        mapper = Mapper.new(model, output_io)
+        aio = AIO.new(model: model, output_io: output_io)
+
+        mapper = Mapper.new(aio)
+
         assert_equal model, mapper.model
         assert_equal output_io, mapper.instance_variable_get(:@output)
       end

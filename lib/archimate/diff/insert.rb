@@ -29,6 +29,10 @@ module Archimate
         true
       end
 
+      def kind
+        "Insert"
+      end
+
       private
 
       def diff_type

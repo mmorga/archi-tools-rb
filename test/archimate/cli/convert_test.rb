@@ -8,7 +8,8 @@ module Archimate
         @output_io = StringIO.new
         @aio = AIO.new(
           model: ARCHISURANCE_MODEL,
-          output_io: @output_io
+          output_io: @output_io,
+          interactive: false
         )
         @subject = Convert.new(@aio)
       end

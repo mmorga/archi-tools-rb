@@ -22,7 +22,8 @@ module Archimate
             "map",
             File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'),
             "-o",
-            @test_file
+            @test_file,
+            "-n"
           ]
         )
       end
@@ -43,13 +44,13 @@ module Archimate
       # TODO: make this actually test something
       def test_svg
         Dir.mktmpdir do |dir|
-          Archi.start(["svg", "-o", dir, File.join(TEST_EXAMPLES_FOLDER, 'base.archimate')])
+          Archi.start(["svg", "-o", dir, File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'), "-n"])
         end
       end
 
       # TODO: make this actually test something
       def test_dupes
-        Archi.start(%w(dupes --output /dev/null --force) << File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'))
+        Archi.start(%w(dupes --output /dev/null --force --noninteractive) << File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'))
       end
 
       # TODO: make this actually test something
@@ -62,7 +63,8 @@ module Archimate
             "-o",
             @test_file,
             "-r",
-            removed_items
+            removed_items,
+            "--noninteractive"
           ]
         )
       ensure
@@ -79,7 +81,8 @@ module Archimate
             "-o",
             @test_file,
             "-m",
-            "-f"
+            "-f",
+            "-n"
           ]
         )
       end
@@ -94,7 +97,8 @@ module Archimate
             File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'),
             "-o",
             @test_file,
-            "-f"
+            "-f",
+            "--noninteractive"
           ]
         )
       end
@@ -109,7 +113,8 @@ module Archimate
             File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'),
             "-o",
             @test_file,
-            "-f"
+            "-f",
+            "--noninteractive"
           ]
         )
       end

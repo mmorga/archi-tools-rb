@@ -55,7 +55,6 @@ module Archimate
 
   autoload :FileFormat, 'archimate/file_format'
   autoload :MaybeIO, 'archimate/maybe_io'
-  autoload :OutputIO, 'archimate/output_io'
 
   def self.diff(base, remote)
     base.diff(remote)
@@ -65,16 +64,16 @@ module Archimate
   #
   # @param filename File name of the file to read
   # @return Archimate::DataModel::Model of ArchiMate model in the file
-  def self.read(filename)
-    FileFormat.read(filename)
+  def self.read(filename, aio)
+    FileFormat.read(filename, aio)
   end
 
   # Reads the given file and returns the Archimate model
   #
   # @param filename File name of the file to read
   # @return Archimate::DataModel::Model of ArchiMate model in the file
-  def self.parse(filename)
-    FileFormat.parse(filename)
+  def self.parse(filename, aio)
+    FileFormat.parse(filename, aio)
   end
 
   using DataModel::DiffablePrimitive

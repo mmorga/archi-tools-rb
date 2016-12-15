@@ -3,6 +3,7 @@ module Archimate
   module Diff
     class Difference
       using DataModel::DiffableArray
+      using DataModel::DiffablePrimitive
       extend Forwardable
 
       ARRAY_RE = Regexp.compile(/\[(\d+)\]/)
@@ -89,6 +90,13 @@ module Archimate
           md = ARRAY_RE.match(p)
           md ? md[1].to_i : p
         end
+      end
+
+      def summary_element
+        summary_elements = [DataModel::Element, DataModel::Folder, DataModel::Relationship, DataModel::Diagram, DataModel::Model]
+        se = target.value.primitive? ? target.parent : target.value
+        se = se.parent while summary_elements.none? { |c| se.is_a?(c) }
+        se
       end
     end
   end

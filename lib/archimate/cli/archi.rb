@@ -5,22 +5,37 @@ module Archimate
 
     class Archi < Thor
       desc "stats ARCHIFILE", "Show some statistics about the model"
+      option :noninteractive,
+             aliases: :n,
+             type: :boolean,
+             default: false,
+             desc: "Don't provide interactive feedback"
       def stats(archifile)
         Archimate::Cli::Stats.new(
           Archimate::AIO.new(
-            model: Archimate.read(archifile)
+            input_io: archifile,
+            interactive: !options.fetch("noninteractive", false)
           )
         ).statistics
       end
 
-      desc "map ARCHIFILE", "EXPERIMENTAL: Produce a map of diagram links to a diagram"
+      desc "map ARCHIFILE", "Produce a map of diagram links to a diagram"
       option :output,
              aliases: :o,
              desc: "Write output to FILE instead of stdout."
+      option :noninteractive,
+             aliases: :n,
+             type: :boolean,
+             default: false,
+             desc: "Don't provide interactive feedback"
       def map(archifile)
-        Archimate::OutputIO.new(options) do |output|
-          Archimate::Cli::Mapper.new(Archimate.read(archifile), output).map
-        end
+        Archimate::Cli::Mapper.new(
+          Archimate::AIO.new(
+            input_io: archifile,
+            output_io: options.fetch("output", $stdout),
+            interactive: !options.fetch("noninteractive", false)
+          )
+        ).map
       end
 
       desc "merge ARCHIFILE1 ARCHIFILE2", "EXPERIMENTAL: Merge two archimate files"
@@ -36,8 +51,19 @@ module Archimate
              aliases: :o,
              required: true,
              desc: "Write output to OUTPUTDIR"
+      option :noninteractive,
+             aliases: :n,
+             type: :boolean,
+             default: false,
+             desc: "Don't provide interactive feedback"
       def svg(archifile)
-        Archimate::Cli::Svger.export_svgs(archifile, Archimate::AIO.new(output_dir: options.fetch("output", Dir.pwd)))
+        Archimate::Cli::Svger.export_svgs(
+          archifile, 
+          Archimate::AIO.new(
+            output_dir: options.fetch("output", Dir.pwd),
+            interactive: !options.fetch("noninteractive", false)
+          )
+        )
       end
 
       desc "dupes ARCHIFILE", "List all duplicate elements in Archi file"
@@ -48,10 +74,20 @@ module Archimate
              aliases: :f,
              type: :boolean,
              desc: "Force overwriting of existing output file"
+      option :noninteractive,
+             aliases: :n,
+             type: :boolean,
+             default: false,
+             desc: "Don't provide interactive feedback"
       def dupes(archifile)
-        Archimate::OutputIO.new(options) do |output|
-          Archimate::Cli::Duper.new(Archimate.read(archifile), output).list_dupes
-        end
+        Archimate::Cli::Duper.new(
+          Archimate::AIO.new(
+            input_io: archifile,
+            output_io: options.fetch("output", $stdout),
+            force: options.fetch("force", false),
+            interactive: !options.fetch("noninteractive", false)
+          )
+        ).list_dupes
       end
 
       desc "clean ARCHIFILE", "Clean up unreferenced elements and relations"
@@ -61,6 +97,11 @@ module Archimate
       option :saveremoved,
              aliases: :r,
              desc: "Write removed elements into FILE"
+      option :noninteractive,
+             aliases: :n,
+             type: :boolean,
+             default: false,
+             desc: "Don't provide interactive feedback"
       def clean(archifile)
         outfile = options.key?(:output) ? options[:output] : archifile
         Archimate::MaybeIO.new(options.fetch(:saveremoved, nil)) do |removed_element_io|
@@ -72,6 +113,7 @@ module Archimate
       option :mergeall,
              aliases: :m,
              type: :boolean,
+             default: false,
              desc: "Merges all duplicates without asking"
       option :output,
              aliases: :o,
@@ -79,11 +121,23 @@ module Archimate
       option :force,
              aliases: :f,
              type: :boolean,
+             default: false,
              desc: "Force overwriting of existing output file"
+      option :noninteractive,
+             aliases: :n,
+             type: :boolean,
+             default: false,
+             desc: "Don't provide interactive feedback"
       def dedupe(archifile)
-        Archimate::OutputIO.new(options, archifile) do |output|
-          Archimate::Cli::Duper.new(Archimate.read(archifile), output, options[:mergeall], options[:force]).merge
-        end
+        Archimate::Cli::Duper.new(
+          AIO.new(
+            input_io: archifile,
+            output_io: options.fetch("output", archifile),
+            force: options[:force],
+            interactive: !options[:noninteractive]
+          ),
+          options[:mergeall]
+        ).merge
       end
 
       desc "convert ARCHIFILE", "Convert the incoming file to the desired type"
@@ -107,16 +161,21 @@ module Archimate
              aliases: :f,
              type: :boolean,
              desc: "Force overwriting of existing output file"
+      option :noninteractive,
+             aliases: :n,
+             type: :boolean,
+             default: false,
+             desc: "Don't provide interactive feedback"
       def convert(archifile)
-        Archimate::OutputIO.new(options) do |output|
-          aio = Archimate::AIO.new(
-            model: Archimate.read(archifile),
+        Archimate::Cli::Convert.new(
+          Archimate::AIO.new(
+            input_io: archifile,
             output_dir: options.fetch("outputdir", Dir.pwd),
             force: options.fetch("force", false),
-            output_io: output
+            output_io: options.fetch("output", $stdout),
+            interactive: !options.fetch("noninteractive", false)
           )
-          Archimate::Cli::Convert.new(aio).convert(options[:to])
-        end
+        ).convert(options[:to])
       end
     end
   end

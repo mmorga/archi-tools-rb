@@ -33,6 +33,10 @@ module Archimate
         true
       end
 
+      def kind
+        "Change"
+      end
+
       private
 
       def diff_type

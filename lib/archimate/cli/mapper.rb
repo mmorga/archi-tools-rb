@@ -7,9 +7,10 @@ module Archimate
 
       attr_reader :model
 
-      def initialize(model, output_io)
-        @model = model
-        @output = output_io
+      def initialize(aio)
+        @aio = aio
+        @model = aio.model
+        @output = aio.output_io
       end
 
       def header_row(widths, headers)
