@@ -7,30 +7,33 @@ module Archimate
       attr_reader :subject
 
       def setup
-        @src_el = build_element
-        @target_el = build_element
-        @rel = build_relationship(source: @src_el.id, target: @src_el.id)
-        @subject = build_source_connection(
-          id: "abc123",
-          type: "three",
-          name: "test_name",
-          source: "source",
-          target: "target",
-          relationship: "complicated"
-        )
+        src_el = build_element
+        target_el = build_element
         @model = build_model(
-          elements: [@src_el, @target_el],
-          relationships: [@rel],
+          elements: [src_el, target_el],
+          relationships: [
+            build_relationship(source: src_el.id, target: src_el.id)
+          ],
           diagrams: [
             build_diagram(
               children: [
                 build_child(
-                  source_connections: [@subject]
+                  source_connections: [
+                    build_source_connection(
+                      id: "abc123",
+                      type: "three",
+                      name: "test_name",
+                      source: src_el.id,
+                      target: target_el.id,
+                      relationship: "complicated"
+                    )
+                  ]
                 )
               ]
             )
           ]
         )
+        @subject = @model.diagrams[0].children[0].source_connections[0]
       end
 
       def test_to_s

@@ -9,12 +9,12 @@ module Archimate
         @model = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 3, with_folders: 4)
         @target = @model.folders.first.items.first
         refute_nil @target
-        @subject = ArchimateArrayPrimitiveReference.new(@model.folders.first.items, @target)
+        @subject = ArchimateArrayPrimitiveReference.new(@model.folders.first.items, @model.folders.first.items.find_index(@target))
         @other = @model.clone
       end
 
       def test_eql_eql
-        assert_equal Archimate.node_reference(@model.folders.first.items, @target), @subject
+        assert_equal Archimate.node_reference(@model.folders.first.items, 0), @subject
       end
 
       def test_value

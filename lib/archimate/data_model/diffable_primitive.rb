@@ -34,14 +34,14 @@ module Archimate
         end
 
         def id
-          self
+          object_id
         end
 
         def clone
           self
         end
 
-        def compact
+        def compact!
           self
         end
 

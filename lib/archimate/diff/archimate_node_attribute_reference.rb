@@ -6,7 +6,14 @@ module Archimate
       attr_reader :attribute
 
       def initialize(archimate_node, attribute)
-        raise TypeError, "Attribute should be a sym or string" unless attribute.is_a?(String) || attribute.is_a?(Symbol)
+        raise(
+          TypeError,
+          "archimate_node must be an ArchimateNode, was #{archimate_node.class}"
+        ) unless archimate_node.is_a?(DataModel::ArchimateNode)
+        raise(
+          TypeError,
+          "Attribute should be a sym or string"
+        ) unless attribute.is_a?(String) || attribute.is_a?(Symbol)
         raise(
           ArgumentError,
           "Attribute #{attribute} invalid for class #{archimate_node.class}"

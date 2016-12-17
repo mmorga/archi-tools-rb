@@ -29,23 +29,21 @@ module Archimate
               if self[my_idx + 1..-1].smart_include?(other[other_idx])
                 # TODO: Handle a move diff here other[other_idx] was moved elsewhere
               else
-                result << Diff::Insert.new(Archimate.node_reference(other, other[other_idx]))
+                result << Diff::Insert.new(Archimate.node_reference(other, other_idx))
               end
               other_idx += 1
+            elsif other_idx >= other.size || self[my_idx + 1..-1].smart_include?(other[other_idx])
+              result << Diff::Delete.new(Archimate.node_reference(self, my_idx))
+              my_idx += 1
             else
-              if other_idx >= other.size || self[my_idx + 1..-1].smart_include?(other[other_idx])
-                result << Diff::Delete.new(Archimate.node_reference(self, self[my_idx]))
-                my_idx += 1
-              else
-                result.concat(diff_items(my_idx, other, other_idx))
-                my_idx += 1
-                other_idx += 1
-              end
+              result.concat(diff_items(my_idx, other, other_idx))
+              my_idx += 1
+              other_idx += 1
             end
           end
 
           while other_idx < other.size
-            result << Diff::Insert.new(Archimate.node_reference(other, other[other_idx]))
+            result << Diff::Insert.new(Archimate.node_reference(other, other_idx))
             other_idx += 1
           end
 
@@ -59,8 +57,8 @@ module Archimate
               self[my_idx].diff(other[other_idx])
             else
               [
-                Diff::Delete.new(Archimate.node_reference(self, self[my_idx])),
-                Diff::Insert.new(Archimate.node_reference(other, other[other_idx]))
+                Diff::Delete.new(Archimate.node_reference(self, my_idx)),
+                Diff::Insert.new(Archimate.node_reference(other, other_idx))
               ]
             end
           when ArchimateNode
@@ -102,9 +100,13 @@ module Archimate
           @parent if defined?(@parent)
         end
 
+        def id
+          object_id
+        end
+
         def build_index(hash_index = {})
-          hash_index[object_id] = self
-          reduce(hash_index) { |a, e| e.build_index(a) }
+          hash_index[id] = self
+          each_with_object(hash_index) { |i, a| i.primitive? ? a[i.object_id] = i : i.build_index(a) }
         end
 
         def match(other)
@@ -131,12 +133,19 @@ module Archimate
         end
 
         def delete(idx, value)
-          raise(ArgumentError, "idx was blank") if idx.nil?
+          raise(ArgumentError, "value #{value} was not found in array") unless include?(value)
           super(value)
           self
         end
 
         def insert(idx, value)
+          raise(
+            ArgumentError, "Invalid index #{idx.inspect} given for Array size #{size}"
+          ) unless idx =~ /[0-9a-f]{8}/ || ((idx.is_a?(Fixnum) || idx =~ /\d+/) && idx.to_i >= 0 && idx.to_i <= size)
+          raise(
+            ArgumentError, "Invalid value type #{value.class}"
+          ) unless value.is_a?(ArchimateNode) || (value.is_a?(String) && value =~ /^[0-9a-f]{8}$/)
+
           ary_idx =
             case value
             when IdentifiedNode
@@ -150,6 +159,10 @@ module Archimate
 
         def change(idx, from_value, to_value)
           raise(ArgumentError, "idx was blank") if idx.nil?
+          raise(ArgumentError, "Invalid index #{idx.inspect} given for Array size #{size}") if idx.negative? || idx >= size
+          raise(
+            ArgumentError, "Invalid to_value type #{to_value.class}"
+          ) unless to_value.is_a?(ArchimateNode) || (to_value.is_a?(String) && to_value =~ /^[0-9a-f]{8}$/)
           ary_idx =
             case to_value
             when IdentifiedNode

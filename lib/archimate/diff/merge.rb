@@ -32,7 +32,7 @@ module Archimate
         diffs.inject(model) do |model_a, diff|
           progressbar.increment
           diff.apply(model_a)
-        end.compact
+        end.compact!
       ensure
         progressbar&.finish
       end

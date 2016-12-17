@@ -4,6 +4,9 @@ require "nokogiri"
 module Archimate
   module FileFormats
     class ArchiFileWriter < Writer
+      using DataModel::DiffableArray
+      using DataModel::DiffablePrimitive
+
       TEXT_SUBSTITUTIONS = [
         ['&#13;', '&#xD;'],
         ['"', '&quot;'],
@@ -75,7 +78,9 @@ module Archimate
       end
 
       def serialize_item(xml, item)
-        serialize(xml, model.lookup(item))
+        item_instance = model.lookup(item)
+        $stderr.puts "serialize_item item `#{item.inspect}` could not found." if item_instance.nil?
+        serialize(xml, item_instance)
       end
 
       def serialize_element(xml, element)

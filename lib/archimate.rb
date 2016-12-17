@@ -89,13 +89,23 @@ module Archimate
         Diff::ArchimateNodeAttributeReference.new(node, child_node)
       end
     when Array
-      case child_node
-      when String, Fixnum, Float
-        Diff::ArchimateArrayPrimitiveReference.new(node, child_node)
-      when DataModel::IdentifiedNode, DataModel::NonIdentifiedNode
-        node_reference(node_reference(child_node).lookup_in_model(node.in_model))
+      return Diff::ArchimateNodeReference.new(node) if child_node.nil?
+      raise(
+        TypeError,
+        "child_node must be a Fixnum if node is an Array"
+      ) unless child_node.is_a?(Fixnum)
+      raise(
+        ArgumentError,
+        "child_node index is out of range of node array"
+      ) unless child_node >= 0 && child_node < node.size
+      child_value = node[child_node]
+      case child_value
+      when DataModel::IdentifiedNode
+        Diff::ArchimateIdentifiedNodeReference.new(child_value)
+      when DataModel::ArchimateNode
+        Diff::ArchimateNodeReference.new(child_value)
       else
-        Diff::ArchimateNodeReference.new(node)
+        Diff::ArchimateArrayPrimitiveReference.new(node, child_node)
       end
     when DataModel::ArchimateNode
       if child_node.nil?

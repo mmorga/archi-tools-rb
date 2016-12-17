@@ -84,8 +84,8 @@ module Archimate
         self.class.schema.keys
       end
 
-      def compact
-        struct_instance_variables.each { |attrname| self[attrname].compact }
+      def compact!
+        struct_instance_variables.each { |attrname| self[attrname].compact! }
         self
       end
 
@@ -96,11 +96,12 @@ module Archimate
         end
       end
 
-      def delete(attrname, _value)
+      def delete(attrname, value)
         raise(
           ArgumentError,
           "attrname was blank must be one of: #{struct_instance_variables.map(&:to_s).join(',')}"
         ) if attrname.nil? || attrname.empty?
+        in_model&.deregister(value)
         instance_variable_set("@#{attrname}".to_sym, nil)
         self
       end
@@ -110,15 +111,22 @@ module Archimate
           ArgumentError,
           "attrname was blank must be one of: #{struct_instance_variables.map(&:to_s).join(',')}"
         ) if attrname.nil? #  || attrname.empty?
+        # value = value.clone
+        in_model&.register(value, self)
+
         instance_variable_set("@#{attrname}".to_sym, value)
         self
       end
 
-      def change(attrname, _from_value, to_value)
+      def change(attrname, from_value, to_value)
         raise(
           ArgumentError,
           "attrname was blank must be one of: #{struct_instance_variables.map(&:to_s).join(',')}"
         ) if attrname.nil? || attrname.empty?
+        # value = to_value.clone
+        in_model&.deregister(from_value)
+        in_model&.register(to_value, self)
+
         instance_variable_set("@#{attrname}".to_sym, to_value)
         self
       end

@@ -9,6 +9,10 @@ module Archimate
       attr_reader :archimate_node
 
       def initialize(archimate_node)
+        raise(
+          TypeError,
+          "archimate_node must be an ArchimateNode or Array, was #{archimate_node.class}"
+        ) unless archimate_node.is_a?(DataModel::ArchimateNode) || archimate_node.is_a?(Array)
         @archimate_node = archimate_node
       end
 
@@ -25,16 +29,41 @@ module Archimate
         @archimate_node
       end
 
+      def array_insert_index(parent_in_to_model)
+        idx = parent.find_index(value)
+        while idx.positive?
+          idx -= 1
+          previous_value = parent[idx]
+          to_index = parent_in_to_model.find_index(previous_value)
+          if to_index
+            idx = to_index + 1
+            break
+          end
+        end
+        idx
+      end
+
       def insert(to_model)
-        lookup_parent_in_model(to_model).insert(parent.attribute_name(value), value)
+        parent_in_to_model = lookup_parent_in_model(to_model)
+        if parent_in_to_model.is_a?(Array)
+          idx = array_insert_index(parent_in_to_model)
+        else
+          idx = parent.attribute_name(value)
+        end
+        parent_in_to_model.insert(idx, value)
       end
 
       def delete(to_model)
-        lookup_parent_in_model(to_model).delete(parent.attribute_name(value), value)
+        parent_in_to_model = lookup_parent_in_model(to_model)
+        if parent_in_to_model.is_a?(Array)
+          parent_in_to_model.delete(parent.attribute_name(value), value)
+        else
+          parent_in_to_model.delete(parent.attribute_name(value), value)
+        end
       end
 
       def change(to_model)
-        lookup_parent_in_model(to_model).insert(parent.attribute_name(value), value)
+        insert(to_model)
       end
 
       def lookup_in_model(model)

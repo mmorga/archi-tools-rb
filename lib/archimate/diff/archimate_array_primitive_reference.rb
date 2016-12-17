@@ -5,21 +5,35 @@ module Archimate
     class ArchimateArrayPrimitiveReference < ArchimateNodeReference
       using DataModel::DiffablePrimitive
 
-      attr_reader :primitive
+      attr_reader :array_index
 
-      def initialize(ary, primitive)
-        raise TypeError unless ary.is_a?(Array)
-        raise TypeError unless primitive.primitive?
-        super(ary)
-        @primitive = primitive
+      def initialize(array, array_index)
+        raise(
+          TypeError,
+          "array argument must be an Array, was #{array.class}"
+        ) unless array.is_a?(Array)
+        raise(
+          TypeError,
+          "array_index argument must be a Fixnum, was #{array_index.class} #{array_index.inspect}"
+        ) unless array_index.is_a?(Fixnum)
+        raise(
+          ArgumentError,
+          "array_index argument a valid index for array #{array_index.inspect}"
+        ) unless array_index >= 0 && array_index < array.size
+        raise(
+          TypeError,
+          "expected reference to be a primitive value, was #{array[array_index].class}"
+        ) unless array[array_index].primitive?
+        super(array)
+        @array_index = array_index
       end
 
       def ==(other)
-        super && primitive == other.primitive
+        super && array_index == other.array_index
       end
 
       def value
-        primitive
+        archimate_node[array_index]
       end
 
       def parent
@@ -29,7 +43,7 @@ module Archimate
       def lookup_in_model(model)
         raise TypeError unless model.is_a?(DataModel::Model)
         parent_in_model = Archimate.node_reference(parent).lookup_in_model(model)
-        parent_in_model[parent_in_model.find_index(primitive)] # [parent_in_model.attribute_name(self)]
+        parent_in_model[parent_in_model.find_index(value)]
       end
     end
   end

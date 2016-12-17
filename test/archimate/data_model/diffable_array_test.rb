@@ -27,7 +27,7 @@ module Archimate
       def test_diff_with_insert
         other = @subject + ["peach"]
         result = @subject.diff(other)
-        node_ref = Archimate.node_reference(other, "peach")
+        node_ref = Archimate.node_reference(other, other.find_index("peach"))
 
         assert_kind_of Diff::ArchimateArrayPrimitiveReference, node_ref
         assert_equal(
@@ -45,7 +45,7 @@ module Archimate
         result = @subject.diff(other)
 
         assert_equal(
-          [Diff::Delete.new(Archimate.node_reference(@subject, @subject[1]))],
+          [Diff::Delete.new(Archimate.node_reference(@subject, 1))],
           result
         )
       end
@@ -55,7 +55,6 @@ module Archimate
         merged = base.clone
         deleted_element = base.elements[1]
         local = base.with(elements: base.elements - [deleted_element])
-        assert_equal local.elements.size, base.elements.size - 1
 
         result = base.diff(local)
 
@@ -86,8 +85,8 @@ module Archimate
         result = @subject.diff(other)
 
         assert_equal(
-          [Diff::Delete.new(Archimate.node_reference(@subject, @subject[1])),
-           Diff::Insert.new(Archimate.node_reference(other, other[2]))],
+          [Diff::Delete.new(Archimate.node_reference(@subject, 1)),
+           Diff::Insert.new(Archimate.node_reference(other, 2))],
           result
         )
       end
@@ -181,7 +180,7 @@ module Archimate
         element_to_change = @model.elements[1]
         changed_element = element_to_change.with(label: element_to_change.label + "-changed")
 
-        subject.elements.change("1", element_to_change, changed_element)
+        subject.elements.change(1, element_to_change, changed_element)
 
         refute_includes @model.elements, changed_element
         assert_includes subject.elements, changed_element

@@ -4,6 +4,9 @@ module Archimate
   module DataModel
     # Model is the top level parent of an ArchiMate model.
     class Model < IdentifiedNode
+      using DataModel::DiffableArray
+      using DataModel::DiffablePrimitive
+
       ARRAY_RE = Regexp.compile(/\[(\d+)\]/)
 
       # TODO: add original file name and file format
@@ -36,8 +39,18 @@ module Archimate
       end
 
       def lookup(id)
-        rebuild_index unless @index_hash.include?(id)
+        rebuild_index(id) unless @index_hash.include?(id)
         @index_hash[id]
+      end
+
+      def register(node, parent)
+        node.assign_model(self)
+        node.assign_parent(parent)
+        @index_hash[node.id] = node
+      end
+
+      def deregister(node)
+        @index_hash.delete(node.id)
       end
 
       def find_by_class(klass)
@@ -80,7 +93,11 @@ module Archimate
 
       private
 
-      def rebuild_index
+      def rebuild_index(missing_id = :model_creation_event)
+        puts(
+          "\nrebuild_index for missing id <#{missing_id.inspect}>, was called:\n" \
+          "    #{Thread.current.backtrace[0..5].map(&:to_s).join("\n    ")}"
+        ) unless missing_id == :model_creation_event
         @index_hash = build_index
       end
     end
