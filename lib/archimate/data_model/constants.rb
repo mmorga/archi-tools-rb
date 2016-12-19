@@ -4,7 +4,7 @@ module Archimate
     # The Constants module contains constants for ArchiMate standards
     # TODO: This should be namespaced for the ArchiMate version in effect
     module Constants
-      ELEMENTS = %w(BuinessActor BusinessCollaboration BusinessEvent BusinessFunction
+      ELEMENTS = %w(BusinessActor BusinessCollaboration BusinessEvent BusinessFunction
                     BusinessInteraction BusinessInterface BusinessObject BusinessProcess
                     BusinessRole BusinessService Contract Location Meaning Value Product
                     Representation ApplicationCollaboration ApplicationComponent
