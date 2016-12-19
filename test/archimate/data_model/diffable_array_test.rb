@@ -268,6 +268,18 @@ module Archimate
         )
         [base, local]
       end
+
+      def test_order_change_false_deletion_case
+        local = @model.with(
+          elements: [
+            @model.elements[0],
+            @model.elements[2],
+            @model.elements[1]
+          ]
+        )
+
+        assert_empty @model.diff(local)
+      end
     end
   end
 end

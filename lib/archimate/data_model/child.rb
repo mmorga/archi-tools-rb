@@ -13,25 +13,6 @@ module Archimate
       attribute :style, Style.optional
       attribute :child_type, Coercible::Int.optional
 
-      def clone
-        Child.new(
-          id: id.clone,
-          type: type&.clone,
-          model: model&.clone,
-          name: name&.clone,
-          content: content&.clone,
-          target_connections: target_connections&.clone,
-          archimate_element: archimate_element&.clone,
-          bounds: bounds&.clone,
-          children: children.map(&:clone),
-          source_connections: source_connections.map(&:clone),
-          documentation: documentation.map(&:clone),
-          properties: properties.map(&:clone),
-          style: style&.clone,
-          child_type: child_type
-        )
-      end
-
       def to_s
         "Child[#{name || ''}](#{in_model.lookup(archimate_element) if archimate_element && in_model})"
       end

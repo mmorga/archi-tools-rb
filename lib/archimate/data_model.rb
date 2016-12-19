@@ -22,8 +22,8 @@ module Archimate
     require 'archimate/data_model/source_connection'
     require 'archimate/data_model/child'
     require 'archimate/data_model/diagram'
-    require 'archimate/data_model/element'
     require 'archimate/data_model/folder'
+    require 'archimate/data_model/element'
     require 'archimate/data_model/relationship'
     require 'archimate/data_model/model'
   end

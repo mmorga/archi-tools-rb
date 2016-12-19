@@ -118,6 +118,195 @@ module Archimate
 
         assert_equal %w(a b c d e f g h i j k l m n o p q r s t u v), subject.referenced_identified_nodes.sort
       end
+
+      def test_find_in_folders_with_no_folders
+        subject = @subject.with(folders: [])
+        index_hash = subject.instance_variable_get(:@index_hash)
+        index_hash.values.each do |item|
+          refute subject.find_in_folders(item)
+        end
+      end
+
+      def test_find_in_folders
+        subject = @subject.with(
+          folders: [
+            build_folder(
+              name: "Elements",
+              items: @subject.elements[0..1].map(&:id),
+              folders: [
+                build_folder(
+                  name: "Elements",
+                  items: @subject.elements[2..-1].map(&:id)
+                )
+              ]
+            ),
+            build_folder(
+              name: "Relationships",
+              items: @subject.relationships.map(&:id)
+            ),
+            build_folder(
+              name: "Diagrams",
+              items: @subject.diagrams.map(&:id)
+            )
+          ]
+        )
+
+        subject.elements.each do |el|
+          assert_equal "Elements", subject.find_in_folders(el).name
+        end
+        subject.relationships.each do |el|
+          assert_equal "Relationships", subject.find_in_folders(el).name
+        end
+        subject.diagrams.each do |el|
+          assert_equal "Diagrams", subject.find_in_folders(el).name
+        end
+      end
+
+      def test_default_folder_for_with_no_initial_folders
+        folder = @subject.default_folder_for(build_element(type: "BusinessActor"))
+        assert_equal "Business", folder.name
+
+        folder = @subject.default_folder_for(build_element(type: "ApplicationComponent"))
+        assert_equal "Application", folder.name
+
+        folder = @subject.default_folder_for(build_element(type: "Node"))
+        assert_equal "Technology", folder.name
+
+        folder = @subject.default_folder_for(build_element(type: "Goal"))
+        assert_equal "Motivation", folder.name
+
+        folder = @subject.default_folder_for(build_element(type: "Gap"))
+        assert_equal "Implementation & Migration", folder.name
+
+        folder = @subject.default_folder_for(build_element(type: "Junction"))
+        assert_equal "Connectors", folder.name
+
+        folder = @subject.default_folder_for(build_relationship)
+        assert_equal "Relations", folder.name
+
+        folder = @subject.default_folder_for(build_diagram)
+        assert_equal "Views", folder.name
+      end
+
+      def test_default_folder_for_with_initial_folders_by_type
+        subject = @subject.with(
+          folders: [
+            build_folder(type: "business"),
+            build_folder(type: "application"),
+            build_folder(type: "technology"),
+            build_folder(type: "motivation"),
+            build_folder(type: "implementation_migration"),
+            build_folder(type: "connectors"),
+            build_folder(type: "relations"),
+            build_folder(type: "diagrams")
+          ]
+        )
+        folder = subject.default_folder_for(build_element(type: "BusinessActor"))
+        assert_equal "business", folder.type
+
+        folder = subject.default_folder_for(build_element(type: "ApplicationComponent"))
+        assert_equal "application", folder.type
+
+        folder = subject.default_folder_for(build_element(type: "Node"))
+        assert_equal "technology", folder.type
+
+        folder = subject.default_folder_for(build_element(type: "Goal"))
+        assert_equal "motivation", folder.type
+
+        folder = subject.default_folder_for(build_element(type: "Gap"))
+        assert_equal "implementation_migration", folder.type
+
+        folder = subject.default_folder_for(build_element(type: "Junction"))
+        assert_equal "connectors", folder.type
+
+        folder = subject.default_folder_for(build_relationship)
+        assert_equal "relations", folder.type
+
+        folder = subject.default_folder_for(build_diagram)
+        assert_equal "diagrams", folder.type
+      end
+
+      def test_default_folder_for_with_initial_folders_by_name
+        subject = @subject.with(
+          folders: [
+            build_folder(name: "Business"),
+            build_folder(name: "Application"),
+            build_folder(name: "Technology"),
+            build_folder(name: "Motivation"),
+            build_folder(name: "Implementation & Migration"),
+            build_folder(name: "Connectors"),
+            build_folder(name: "Relations"),
+            build_folder(name: "Diagrams")
+          ]
+        )
+        folder = subject.default_folder_for(build_element(type: "BusinessActor"))
+        assert_equal "Business", folder.name
+
+        folder = subject.default_folder_for(build_element(type: "ApplicationComponent"))
+        assert_equal "Application", folder.name
+
+        folder = subject.default_folder_for(build_element(type: "Node"))
+        assert_equal "Technology", folder.name
+
+        folder = subject.default_folder_for(build_element(type: "Goal"))
+        assert_equal "Motivation", folder.name
+
+        folder = subject.default_folder_for(build_element(type: "Gap"))
+        assert_equal "Implementation & Migration", folder.name
+
+        folder = subject.default_folder_for(build_element(type: "Junction"))
+        assert_equal "Connectors", folder.name
+
+        folder = subject.default_folder_for(build_relationship)
+        assert_equal "Relations", folder.name
+
+        folder = subject.default_folder_for(build_diagram)
+        assert_equal "Views", folder.name
+      end
+
+      def test_make_unique_id
+        assert_match /^[a-f0-9]{8}$/, @subject.make_unique_id
+      end
+
+      def test_element_move_folders
+        base = build_model(
+          elements: [
+            build_element(id: "1234abcd")
+          ],
+          folders: [
+            build_folder(
+              id: "ffff1111",
+              name: "Business",
+              type: "business",
+              folders: [
+                build_folder(
+                  id: "ffff2222",
+                  name: "Red Shirt Folder",
+                  items: ["1234abcd"]
+                )
+              ]
+            )
+          ]
+        )
+        local = base.with(
+          folders: [
+            base.folders[0].with(
+              items: ["1234abcd"],
+              folders: []
+            )
+          ]
+        )
+
+        result = base.diff(local)
+
+        assert_equal(
+          [
+            Diff::Insert.new(Archimate.node_reference(local.folders[0].items, 0)),
+            Diff::Delete.new(Archimate.node_reference(base.folders[0].folders[0]))
+          ],
+          result
+        )
+      end
     end
   end
 end

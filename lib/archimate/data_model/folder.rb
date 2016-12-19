@@ -10,18 +10,6 @@ module Archimate
       attribute :items, Strict::Array.member(Strict::String).default([])
       attribute :folders, Strict::Array.member(Folder).default([])
 
-      def clone
-        Folder.new(
-          id: id.clone,
-          name: name.clone,
-          type: type&.clone,
-          items: items.map(&:clone),
-          documentation: documentation.map(&:clone),
-          properties: properties.map(&:clone),
-          folders: folders.map(&:clone)
-        )
-      end
-
       def to_s
         "#{AIO.data_model('Folder')}<#{id}>[#{HighLine.color(name, [:white, :underline])}]"
       end

@@ -183,7 +183,7 @@ module Archimate
         Archimate::DataModel::Folder.new(
           id: options.fetch(:id, build_id),
           name: options.fetch(:name, Faker::Commerce.department),
-          type: options.fetch(:type, random_relationship_type),
+          type: options.fetch(:type, nil),
           documentation: options.fetch(:documentation, []),
           properties: options.fetch(:properties, []),
           items: options.fetch(:items, []),

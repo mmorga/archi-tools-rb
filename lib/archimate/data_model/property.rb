@@ -6,14 +6,6 @@ module Archimate
       attribute :value, Strict::String.optional
       attribute :lang, Strict::String.default("en")
 
-      def clone
-        Property.new(
-          key: key.clone,
-          value: value&.clone,
-          lang: lang&.clone
-        )
-      end
-
       def to_s
         "Property(key: #{key}, value: #{value || 'no value'})"
       end

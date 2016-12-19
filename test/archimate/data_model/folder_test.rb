@@ -27,7 +27,7 @@ module Archimate
       end
 
       def test_build_folder
-        f = build_folder
+        f = build_folder(type: "testtype")
         [:id, :name, :type].each do |sym|
           assert_instance_of String, f[sym]
           refute_empty f[sym]

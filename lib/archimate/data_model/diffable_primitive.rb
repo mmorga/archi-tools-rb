@@ -41,6 +41,10 @@ module Archimate
           self
         end
 
+        def dup
+          self
+        end
+
         def compact!
           self
         end

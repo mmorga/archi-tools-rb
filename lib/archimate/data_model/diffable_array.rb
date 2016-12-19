@@ -27,7 +27,10 @@ module Archimate
               other_idx += 1
             elsif other[other_idx + 1..-1]&.smart_include?(at(my_idx))
               if self[my_idx + 1..-1].smart_include?(other[other_idx])
-                # TODO: Handle a move diff here other[other_idx] was moved elsewhere
+                result << Diff::Change.new(
+                  Archimate.node_reference(other, other_idx),
+                  Archimate.node_reference(self, find_index(other[other_idx]))
+                )
               else
                 result << Diff::Insert.new(Archimate.node_reference(other, other_idx))
               end
@@ -176,6 +179,10 @@ module Archimate
 
         def clone
           map(&:clone)
+        end
+
+        def dup
+          map(&:dup)
         end
 
         # TODO: this duplicates the same method in ArchimateNode look for opportunity to refactor into common module.

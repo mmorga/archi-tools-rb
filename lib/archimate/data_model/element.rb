@@ -3,18 +3,9 @@ module Archimate
   module DataModel
     class Element < IdentifiedNode
       attribute :label, Strict::String.optional
+      attribute :folder_id, Strict::String.optional
 
       alias name label
-
-      def clone
-        Element.new(
-          id: id.clone,
-          type: type&.clone,
-          label: label&.clone,
-          documentation: documentation.map(&:clone),
-          properties: properties.map(&:clone)
-        )
-      end
 
       def to_s
         AIO.layer_color(layer, "#{type}<#{id}>[#{label}]")

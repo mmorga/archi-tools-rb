@@ -23,15 +23,6 @@ module Archimate
         )
       end
 
-      def clone
-        Font.new(
-          name: name.clone,
-          size: size,
-          style: style,
-          font_data: font_data&.clone
-        )
-      end
-
       def to_s
         "Font(name: #{name}, size: #{size}, style: #{style})"
       end

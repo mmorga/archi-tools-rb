@@ -9,21 +9,6 @@ module Archimate
       attribute :bendpoints, BendpointList
       attribute :style, Style.optional
 
-      def clone
-        SourceConnection.new(
-          id: id.clone,
-          source: source.clone,
-          target: target.clone,
-          relationship: relationship&.clone,
-          name: name&.clone,
-          type: type&.clone,
-          bendpoints: bendpoints.map(&:clone),
-          documentation: documentation.map(&:clone),
-          properties: properties.map(&:clone),
-          style: style&.clone
-        )
-      end
-
       def type_name
         HighLine.color("#{AIO.data_model('SourceConnection')}[#{HighLine.color(@name || '', [:white, :underline])}]", :on_light_magenta)
       end

@@ -8,20 +8,6 @@ module Archimate
       attribute :connection_router_type, Coercible::Int.optional # TODO: fill this in, should be an enum
       attribute :background, Coercible::Int.optional # value of 0 on Archi Sketch Model
 
-      def clone
-        Diagram.new(
-          id: id.clone,
-          name: name.clone,
-          viewpoint: viewpoint&.clone,
-          documentation: documentation.map(&:clone),
-          properties: properties.map(&:clone),
-          children: children.map(&:clone),
-          connection_router_type: connection_router_type,
-          type: type&.clone,
-          background: background
-        )
-      end
-
       def source_connections
         children.each_with_object([]) do |i, a|
           a.concat(i.all_source_connections)

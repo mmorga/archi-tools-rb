@@ -12,7 +12,28 @@ module Archimate
           struct_instance_variables
             .each_with_object({}) { |i, a| a[i] = self[i] }
             .merge(options)
-            .each_with_object({}) { |(k, v), a| a[k] = v.clone }
+            .each_with_object({}) { |(k, v), a| a[k] = v.dup }
+        )
+      end
+
+      # Note: my clone method does one non-idiomatic thing - it does not clone the
+      # frozen state. TODO: respeect the frozen state of the clone'd object.
+      def clone
+        self.class.new(
+          struct_instance_variables
+            .each_with_object({}) do |i, a|
+              a[i] = self[i].primitive? ? self[i] : self[i].clone
+            end
+        )
+      end
+
+      # Makes a copy of the archimate node which is not frozen
+      def dup
+        self.class.new(
+          struct_instance_variables
+            .each_with_object({}) do |i, a|
+              a[i] = self[i].primitive? ? self[i] : self[i].dup
+            end
         )
       end
 
