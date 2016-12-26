@@ -270,15 +270,48 @@ module Archimate
       end
 
       def test_order_change_false_deletion_case
+        added_element = build_element
         local = @model.with(
           elements: [
             @model.elements[0],
             @model.elements[2],
-            @model.elements[1]
+            @model.elements[1],
+            added_element
           ]
         )
 
-        assert_empty @model.diff(local)
+        assert_equal(
+          [
+            Diff::Change.new(
+              Archimate.node_reference(local.elements, 2),
+              Archimate.node_reference(@model.elements, 1)
+            ),
+            Diff::Insert.new(
+              Archimate.node_reference(local.elements, 3)
+            )
+          ],
+          @model.diff(local)
+        )
+      end
+
+      def test_order_change_false_deletion_case_with_primitives
+        local = [
+          @subject[0],
+          @subject[2],
+          @subject[1]
+        ]
+
+        result = @subject.diff(local)
+
+        assert_equal(
+          [
+            Diff::Change.new(
+              Archimate.node_reference(local, 2),
+              Archimate.node_reference(@subject, 1)
+            )
+          ],
+          result
+        )
       end
     end
   end

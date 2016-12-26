@@ -83,12 +83,12 @@ module Archimate
       # diagrams are all present in the model's folders. If an item is missing
       # then move it into the default top-level element for the item type.
       def organize
-        # []
-        #   .concat(elements)
-        #   .concat(relationships)
-        #   .concat(diagrams).each do |item|
-        #     default_folder_for(item).items << item.id if find_in_folders(item).nil?
-        #   end
+        []
+          .concat(elements)
+          .concat(relationships)
+          .concat(diagrams).each do |item|
+            default_folder_for(item).items << item.id if find_in_folders(item).nil?
+          end
         self
       end
 

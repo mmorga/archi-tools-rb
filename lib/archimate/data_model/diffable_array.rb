@@ -16,26 +16,32 @@ module Archimate
           my_idx = 0
           other_idx = 0
 
-          while my_idx < size
+          while my_idx < size && other_idx < other.size
             if at(my_idx) == other[other_idx]
+              # Objects are equal
               my_idx += 1
               other_idx += 1
-              next
             elsif at(my_idx).id == other[other_idx].id
+              # Objects have the same id
               result.concat(at(my_idx).diff(other[other_idx]))
               my_idx += 1
               other_idx += 1
-            elsif other[other_idx + 1..-1]&.smart_include?(at(my_idx))
-              if self[my_idx + 1..-1].smart_include?(other[other_idx])
+            elsif other.after(other_idx).smart_include?(at(my_idx))
+              # Current item (on my side) is in the rest of the other array
+              if after(my_idx).smart_include?(other[other_idx])
+                # Current other item is in the rest of my array
+                # This means that My Current Item moved to another place in other array
                 result << Diff::Change.new(
-                  Archimate.node_reference(other, other_idx),
-                  Archimate.node_reference(self, find_index(other[other_idx]))
+                  Archimate.node_reference(other, other.smart_find(self[my_idx])),
+                  Archimate.node_reference(self, my_idx)
                 )
+                my_idx += 1
               else
+                # Other current item was inserted
                 result << Diff::Insert.new(Archimate.node_reference(other, other_idx))
               end
               other_idx += 1
-            elsif other_idx >= other.size || self[my_idx + 1..-1].smart_include?(other[other_idx])
+            elsif after(my_idx).smart_include?(other[other_idx]) && !other.smart_include?(at(my_idx))
               result << Diff::Delete.new(Archimate.node_reference(self, my_idx))
               my_idx += 1
             else
@@ -45,12 +51,18 @@ module Archimate
             end
           end
 
-          while other_idx < other.size
-            result << Diff::Insert.new(Archimate.node_reference(other, other_idx))
-            other_idx += 1
-          end
+          result.concat(
+            (my_idx..size - 1).map do |idx|
+              puts "Marking deleted at 2" if at(my_idx).is_a?(DataModel::Element) && at(my_idx).id == "194cdb62"
+              Diff::Delete.new(Archimate.node_reference(self, idx)) unless other.smart_include?(at(idx))
+            end
+          ) if my_idx <= size
 
-          result
+          result.concat(
+            (other_idx..other.size - 1).map { |idx| Diff::Insert.new(Archimate.node_reference(other, idx)) }
+          ) if other_idx <= other.size
+
+          result.compact
         end
 
         def diff_items(my_idx, other, other_idx)
@@ -58,21 +70,31 @@ module Archimate
           when IdentifiedNode
             if self[my_idx].id == other[other_idx].id
               self[my_idx].diff(other[other_idx])
-            else
+            elsif !other[0..other_idx - 1].smart_include?(self[my_idx])
               [
                 Diff::Delete.new(Archimate.node_reference(self, my_idx)),
                 Diff::Insert.new(Archimate.node_reference(other, other_idx))
               ]
+            else
+              []
             end
           when ArchimateNode
             self[my_idx].diff(other[other_idx])
           else
-            [
-              Diff::Change.new(
-                Archimate.node_reference(other, other_idx),
-                Archimate.node_reference(self, my_idx)
-              )
-            ]
+            if after(my_idx).smart_include?(other[other_idx])
+              [
+                Diff::Delete.new(Archimate.node_reference(self, my_idx))
+              ]
+            elsif !other[0..other_idx - 1].smart_include?(self[my_idx])
+              [
+                Diff::Change.new(
+                  Archimate.node_reference(other, other_idx),
+                  Archimate.node_reference(self, my_idx)
+                )
+              ]
+            else
+              []
+            end
           end
         end
 
@@ -127,7 +149,7 @@ module Archimate
           if child.is_a?(IdentifiedNode) && options.fetch(:force_array_index, :id) == :id
             child.id
           else
-            find_index(child)
+            smart_find(child)
           end
         end
 
@@ -152,7 +174,7 @@ module Archimate
           ary_idx =
             case value
             when IdentifiedNode
-              find_index { |item| item.id == value.id } || size
+              smart_find(value) || size
             else
               idx.to_i
             end
@@ -166,14 +188,7 @@ module Archimate
           raise(
             ArgumentError, "Invalid to_value type #{to_value.class}"
           ) unless to_value.is_a?(ArchimateNode) || (to_value.is_a?(String) && to_value =~ /^[0-9a-f]{8}$/)
-          ary_idx =
-            case to_value
-            when IdentifiedNode
-              find_index { |item| item.id == from_value.id }
-            else
-              index(from_value)
-            end
-          self[ary_idx] = to_value
+          self[smart_find(from_value)] = to_value
           self
         end
 
@@ -194,7 +209,7 @@ module Archimate
         end
 
         def to_s
-          "#{parent}/#{parent.attribute_name(self)}"
+          "#{parent}/#{parent&.attribute_name(self)}"
         end
 
         def referenced_identified_nodes
@@ -205,6 +220,20 @@ module Archimate
 
         def find_by_id(an_id)
           find { |el| el.id == an_id }
+        end
+
+        def smart_find(val = nil)
+          case val
+          when IdentifiedNode
+            find_index { |item| item.id == val.id }
+          else
+            find_index(val)
+          end
+        end
+
+        def after(idx)
+          return [] if idx >= size - 1
+          self[idx + 1..-1]
         end
       end
     end
