@@ -23,12 +23,20 @@ module Archimate
         assert_same @other, Archimate.node_reference(@model).lookup_in_model(@other)
       end
 
+      def test_lookup_in_model_for_model_name_attribute
+        assert_same @other.name, @subject.lookup_in_model(@other)
+      end
+
+      def test_lookup_in_model_for_bounds
+        assert_same @other_bounds, ArchimateNodeAttributeReference.new(@bounds.parent, "bounds").lookup_in_model(@other)
+      end
+
       def test_parent
         assert_same @model, @subject.parent
       end
 
       def test_to_s
-        assert_equal "name", @subject.to_s
+        assert_equal @model.name, @subject.to_s
       end
 
       def test_value

@@ -69,17 +69,30 @@ module Archimate
       end
 
       def diff(other)
-        return [Diff::Delete.new(Archimate.node_reference(self))] if other.nil?
+        raise ArgumentError, "other expected to be not nil" if other.nil?
         raise TypeError, "Expected other <#{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
         struct_instance_variables.each_with_object([]) do |k, a|
           val = self[k]
           if val.nil?
-            a.concat([Diff::Insert.new(Archimate.node_reference(other, k))]) unless other[k].nil?
+            a.concat([Diff::Insert.new(Diff::ArchimateNodeAttributeReference.new(other, k))]) unless other[k].nil?
           elsif val.primitive?
             a.concat(val.diff(other[k], self, other, k))
           else
             a.concat(val.diff(other[k]))
           end
+        end
+      end
+
+      def patch(a_diff)
+        case a_diff
+        when Diff::Delete
+          # TODO: maybe an issue here is that my diffs are poorly formed
+          # diff should be of the form: something that responds to parent and an attribute name or index or "after"
+          parent.delete(parent.attribute_name(self), self)
+        when Diff::Insert, Diff::Change
+
+        when Diff::Move
+          raise ArgumentError, "Move is an invalid patch to apply to #{self.class}"
         end
       end
 

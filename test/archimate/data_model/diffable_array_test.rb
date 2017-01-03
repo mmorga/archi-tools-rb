@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+#243 frozen_string_literal: true
 require 'test_helper'
 
 module Archimate
@@ -16,40 +16,6 @@ module Archimate
         assert_raises(TypeError) { @subject.diff(42) }
       end
 
-      def test_diff_on_empty
-        assert_empty [].diff([])
-      end
-
-      def test_diff_with_all_same
-        assert_empty @subject.diff(@subject)
-      end
-
-      def test_diff_with_insert
-        other = @subject + ["peach"]
-        result = @subject.diff(other)
-        node_ref = Archimate.node_reference(other, other.find_index("peach"))
-
-        assert_kind_of Diff::ArchimateArrayPrimitiveReference, node_ref
-        assert_equal(
-          [Diff::Insert.new(node_ref)],
-          result
-        )
-        assert_equal(
-          "peach",
-          result[0].target.value
-        )
-      end
-
-      def test_diff_with_delete_primitive
-        other = @subject - ["orange"]
-        result = @subject.diff(other)
-
-        assert_equal(
-          [Diff::Delete.new(Archimate.node_reference(@subject, 1))],
-          result
-        )
-      end
-
       def test_diff_with_delete_and_apply
         base = build_model(with_elements: 3)
         merged = base.clone
@@ -58,12 +24,12 @@ module Archimate
 
         result = base.diff(local)
 
-        assert_equal([Diff::Delete.new(Archimate.node_reference(deleted_element))], result)
-        assert_equal deleted_element.parent, result[0].target.parent
+        assert_equal([Diff::Delete.new(Archimate.node_reference(base.elements, base.elements.index(deleted_element)))], result)
+        # assert_equal deleted_element.parent, result[0].target.parent
 
         merged = result[0].apply(merged)
 
-        assert_equal local, merged
+        assert_equal local.to_h, merged.to_h
       end
 
       def test_diff_with_insert_and_apply
@@ -73,22 +39,21 @@ module Archimate
 
         result = base.diff(local)
 
-        assert_equal([Diff::Insert.new(Archimate.node_reference(inserted_element))], result)
+        assert_equal(
+          [
+            Diff::Insert.new(
+              Archimate.node_reference(
+                local.elements,
+                local.elements.find_index { |item| item.id == inserted_element.id }
+              )
+            )
+          ],
+          result
+        )
 
         merged = result[0].apply(base.clone)
 
         assert_equal local, merged
-      end
-
-      def test_diff_with_primitive_change
-        other = @subject + ["peach"] - ["orange"]
-        result = @subject.diff(other)
-
-        assert_equal(
-          [Diff::Delete.new(Archimate.node_reference(@subject, 1)),
-           Diff::Insert.new(Archimate.node_reference(other, 2))],
-          result
-        )
       end
 
       def test_diff_with_delete_of_diagram
@@ -98,7 +63,7 @@ module Archimate
         diffs = base.diff(local)
 
         assert_equal 1, diffs.size
-        assert_equal [Diff::Delete.new(Archimate.node_reference(base.diagrams.first))], diffs
+        assert_equal [Diff::Delete.new(Archimate.node_reference(base.diagrams, 0))], diffs
       end
 
       def test_diff_change_of_non_identified_node
@@ -118,10 +83,6 @@ module Archimate
         )
       end
 
-      def xtest_diff_change_of_primitive
-        fail "write me"
-      end
-
       def test_assign_model
         assert_nil @subject.in_model
         @subject.assign_model(@model)
@@ -132,12 +93,6 @@ module Archimate
         assert_nil @subject.parent
         @subject.assign_parent(@model)
         assert_equal @model, @subject.parent
-      end
-
-      def test_match
-        assert @subject.match(@subject)
-        refute @subject.match([])
-        refute @subject.match(%w(chevy ford toyota))
       end
 
       def test_path
@@ -269,6 +224,106 @@ module Archimate
         [base, local]
       end
 
+      def test_empty_array_diff
+        base = []
+        local = []
+
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_empty result
+        assert_equal local, merged
+      end
+
+      def test_same_array_diff
+        base = %w(a b c)
+        local = %w(a b c)
+
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_empty result
+        assert_equal local, merged
+      end
+
+      # a, b, c -> z, a, b, c
+      def test_initial_insert_diff
+        base = %w(a b c)
+        local = %w(z a b c)
+
+        expected = [Diff::Insert.new(Archimate.node_reference(local, 0))]
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_equal expected, result
+        assert_equal local, merged
+      end
+
+      # a, b, c -> b, c
+      def test_initial_delete_diff
+        base = %w(a b c)
+        local = %w(b c)
+
+        expected = [Diff::Delete.new(Archimate.node_reference(base, 0))]
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_equal expected, result
+        assert_equal local, merged
+      end
+
+      # a, b, c -> a, c
+      def test_diff_with_internal_delete
+        base = %w(a b c)
+        local = %w(a c)
+
+        expected = [Diff::Delete.new(Archimate.node_reference(base, 1))]
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_equal expected, result
+        assert_equal local, merged
+      end
+
+      # a, b, c -> a, c, b
+      def test_reorder_diff
+        base = %w(a b c)
+        local = %w(a c b)
+
+        assert_equal(
+          [
+            Diff::Move.new(
+              Archimate.node_reference(local, 1),
+              Archimate.node_reference(base, 2)
+            )
+          ],
+          base.diff(local)
+        )
+      end
+
+      def test_order_change_false_deletion_case
+        base = %w(a b c)
+        local = %w(a c b d)
+
+        assert_equal(
+          [
+            Diff::Move.new(
+              Archimate.node_reference(local, 1),
+              Archimate.node_reference(base, 2)
+            ),
+            Diff::Insert.new(
+              Archimate.node_reference(local, 3)
+            )
+          ],
+          base.diff(local)
+        )
+      end
+
       def test_order_change_false_deletion_case
         added_element = build_element
         local = @model.with(
@@ -282,9 +337,9 @@ module Archimate
 
         assert_equal(
           [
-            Diff::Change.new(
-              Archimate.node_reference(local.elements, 2),
-              Archimate.node_reference(@model.elements, 1)
+            Diff::Move.new(
+              Archimate.node_reference(local.elements, 1),
+              Archimate.node_reference(@model.elements, 2)
             ),
             Diff::Insert.new(
               Archimate.node_reference(local.elements, 3)
@@ -294,23 +349,143 @@ module Archimate
         )
       end
 
-      def test_order_change_false_deletion_case_with_primitives
-        local = [
-          @subject[0],
-          @subject[2],
-          @subject[1]
-        ]
-
-        result = @subject.diff(local)
+      # a, b, c -> a, b', c
+      def test_changed_value
+        base = %w(a b c)
+        local = %w(a bp c)
 
         assert_equal(
           [
             Diff::Change.new(
-              Archimate.node_reference(local, 2),
-              Archimate.node_reference(@subject, 1)
+              Archimate.node_reference(local, 1),
+              Archimate.node_reference(base, 1)
             )
           ],
+          base.diff(local)
+        )
+      end
+
+      # a, b, c -> z, c, b'
+      def test_changed_value_and_move_with_change
+        base = %w(a b c)
+        local = %w(z c bp)
+
+        assert_equal(
+          [
+            Diff::Change.new(
+              Archimate.node_reference(local, 0),
+              Archimate.node_reference(base, 0)
+            ),
+            Diff::Delete.new(Archimate.node_reference(base, 1)),
+            Diff::Insert.new(Archimate.node_reference(local, 2))
+          ],
+          base.diff(local)
+        )
+      end
+
+      # a, b, c -> a, b, c, d
+      def test_insert_at_end_diff
+        base = %w(a b c)
+        local = %w(a b c d)
+
+        assert_equal(
+          [Diff::Insert.new(Archimate.node_reference(local, 3))],
+          base.diff(local)
+        )
+      end
+
+      # a, b, c -> a, b
+      def test_delete_at_end_diff
+        base = %w(a b c)
+        local = %w(a b)
+
+        assert_equal(
+          [Diff::Delete.new(Archimate.node_reference(base, 2))],
+          base.diff(local)
+        )
+      end
+
+      # a, b, c -> a, z, c
+      def test_changed_value_duplicate_case
+        base = %w(a b c)
+        local = %w(a z c)
+
+        assert_equal(
+          [
+            Diff::Change.new(
+              Archimate.node_reference(local, 1),
+              Archimate.node_reference(base, 1)
+            )
+          ],
+          base.diff(local)
+        )
+      end
+
+      # a, b, c -> a, z, b, c
+      def test_insert_in_middle_diff
+        base = %w(a b c)
+        local = %w(a z b c)
+
+        assert_equal(
+          [Diff::Insert.new(Archimate.node_reference(local, 1))],
+          base.diff(local)
+        )
+      end
+
+      # a, b, c -> a, z, b', c
+      def test_insert_with_change_in_middle_diff
+        base = %w(a b c)
+        local = %w(a z bp c)
+
+        assert_equal(
+          [
+            Diff::Change.new(
+              Archimate.node_reference(local, 1),
+              Archimate.node_reference(base, 1)
+            ),
+            Diff::Insert.new(Archimate.node_reference(local, 2))
+          ],
+          base.diff(local)
+        )
+      end
+
+      def test_diff_with_delete_and_ending_insert
+        base = %w(a b c)
+        local = %w(a c d)
+
+        result = base.diff(local)
+
+        assert_equal(
+          [Diff::Delete.new(Archimate.node_reference(base, 1)),
+           Diff::Insert.new(Archimate.node_reference(local, 2))],
           result
+        )
+      end
+
+      # a, b, c -> c, x, b, y, z, a
+      def xtest_reverse_order_with_inserts_diff
+        base = %w(a b c)
+        local = %w(c, x, b, y, z, a)
+
+        assert_equal(
+          [
+            Diff::Change.new(
+              Archimate.node_reference(local, 0),
+              Archimate.node_reference(base, 2)
+            ),
+            Diff::Insert.new(Archimate.node_reference(local, 1)),
+            Diff::Change.new(
+              Archimate.node_reference(local, 2),
+              Archimate.node_reference(base, 1)
+            ),
+            Diff::Insert.new(Archimate.node_reference(local, 3)),
+            Diff::Insert.new(Archimate.node_reference(local, 4)),
+            Diff::Change.new(
+              Archimate.node_reference(local, 5),
+              Archimate.node_reference(base, 0)
+            )
+          ],
+          base.diff(local)
         )
       end
     end

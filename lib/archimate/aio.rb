@@ -12,6 +12,7 @@ HighLine.color_scheme = HighLine::ColorScheme.new do |cs|
   cs[:debug]                          = [:gray]
   cs[:insert]                         = [:bold, :green]
   cs[:change]                         = [:bold, :yellow]
+  cs[:move]                           = [:bold, :yellow]
   cs[:delete]                         = [:bold, :red]
   cs[:Business]                       = [:black, :on_light_yellow]
   cs[:Application]                    = [:black, :on_light_blue]

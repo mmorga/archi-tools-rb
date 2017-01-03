@@ -12,7 +12,7 @@ module Archimate
         ) unless archimate_node.is_a?(DataModel::ArchimateNode)
         raise(
           TypeError,
-          "Attribute should be a sym or string"
+          "Node #{archimate_node.class} attribute should be a sym or string, was a #{attribute.class} value #{attribute.inspect}"
         ) unless attribute.is_a?(String) || attribute.is_a?(Symbol)
         raise(
           ArgumentError,
@@ -27,16 +27,15 @@ module Archimate
       end
 
       def lookup_in_model(model)
-        raise TypeError unless model.is_a?(DataModel::Model)
-        Archimate.node_reference(archimate_node).lookup_in_model(model)[attribute]
+        recurse_lookup_in_model(archimate_node, model)[attribute]
       end
 
-      def parent
-        @archimate_node
+      def attribute_index
+        attribute
       end
 
       def to_s
-        @attribute
+        value.to_s
       end
 
       def value

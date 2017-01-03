@@ -9,6 +9,10 @@ module Archimate
       ARRAY_RE = Regexp.compile(/\[(\d+)\]/)
       PATH_ROOT_SORT_ORDER = %w(elements relationships diagrams folders).freeze
 
+      # delete: something responds to parent, child attribute (which is thing deleted - and could be sym for archimate nodes or index for array), value
+      # insert: something responds to parent, child attribute (or index), value, after value (to help with inserts)
+      # change: something responds to parent, child attribute (or index), value, changed from value
+      # move: something responds to parent, child index, value, after value) move after a particular value
       attr_reader :target
       attr_reader :changed_from
 
@@ -51,6 +55,7 @@ module Archimate
       # Top level components are sorted in this order: (elements, relationships, diagrams, folders)
       # Array entries are sorted by numeric order
       # Others are sorted alphabetically
+      # TODO: this isn't complete
       def <=>(other)
         a = path_to_array
         b = other.path_to_array
@@ -81,6 +86,10 @@ module Archimate
       end
 
       def insert?
+        false
+      end
+
+      def move?
         false
       end
 

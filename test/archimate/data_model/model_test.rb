@@ -302,7 +302,7 @@ module Archimate
         assert_equal(
           [
             Diff::Insert.new(Archimate.node_reference(local.folders[0].items, 0)),
-            Diff::Delete.new(Archimate.node_reference(base.folders[0].folders[0]))
+            Diff::Delete.new(Archimate.node_reference(base.folders[0].folders, 0))
           ],
           result
         )

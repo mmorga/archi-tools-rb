@@ -8,93 +8,91 @@ module Archimate
         using DiffablePrimitive
 
         def diff(other)
-          return [Diff::Delete.new(Archimate.node_reference(self))] if other.nil?
           raise TypeError, "Expected other #{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
-          return [] if self == other
 
           result = []
-          my_idx = 0
-          other_idx = 0
+          remaining_content = Array.new(self) # TODO: I want a copy of the array, not a deep clone
+          other_enum = other.each_with_index
 
-          while my_idx < size && other_idx < other.size
-            if at(my_idx) == other[other_idx]
-              # Objects are equal
-              my_idx += 1
-              other_idx += 1
-            elsif at(my_idx).id == other[other_idx].id
-              # Objects have the same id
-              result.concat(at(my_idx).diff(other[other_idx]))
-              my_idx += 1
-              other_idx += 1
-            elsif other.after(other_idx).smart_include?(at(my_idx))
-              # Current item (on my side) is in the rest of the other array
-              if after(my_idx).smart_include?(other[other_idx])
-                # Current other item is in the rest of my array
-                # This means that My Current Item moved to another place in other array
-                result << Diff::Change.new(
-                  Archimate.node_reference(other, other.smart_find(self[my_idx])),
-                  Archimate.node_reference(self, my_idx)
-                )
-                my_idx += 1
-              else
-                # Other current item was inserted
-                result << Diff::Insert.new(Archimate.node_reference(other, other_idx))
-              end
-              other_idx += 1
-            elsif after(my_idx).smart_include?(other[other_idx]) && !other.smart_include?(at(my_idx))
-              result << Diff::Delete.new(Archimate.node_reference(self, my_idx))
-              my_idx += 1
+          loop do
+            if items_are_equal?(other_enum.peek[0], remaining_content[0])
+              other_enum.next
+              remaining_content.shift
+            elsif items_are_changed?(other, other_enum, remaining_content)
+              result.concat(compute_item_changes(other, other_enum, self, remaining_content[0]))
+              remaining_content.shift
+              other_enum.next
+            elsif !remaining_content.empty? && !other.include?(remaining_content[0])
+              result << Diff::Delete.new(Diff::ArchimateNodeReference.for_node(self, find_index(remaining_content[0])))
+              remaining_content.shift
+            elsif !include?(other_enum.peek[0])
+              result << Diff::Insert.new(Diff::ArchimateNodeReference.for_node(other, other_enum.next[1]))
+            elsif include?(other_enum.peek[0])
+              result << Diff::Move.new(
+                Diff::ArchimateNodeReference.for_node(other, other_enum.peek[1]),
+                Diff::ArchimateNodeReference.for_node(self, find_index(other_enum.peek[0]))
+              )
+              remaining_content.delete(other_enum.next[1], other_enum.next[0])
             else
-              result.concat(diff_items(my_idx, other, other_idx))
-              my_idx += 1
-              other_idx += 1
+              raise "Unhandled diff case for remaining_content: #{remaining_content} and #{other_enum.peek[1]}"
             end
           end
 
           result.concat(
-            (my_idx..size - 1).map do |idx|
-              puts "Marking deleted at 2" if at(my_idx).is_a?(DataModel::Element) && at(my_idx).id == "194cdb62"
-              Diff::Delete.new(Archimate.node_reference(self, idx)) unless other.smart_include?(at(idx))
-            end
-          ) if my_idx <= size
-
-          result.concat(
-            (other_idx..other.size - 1).map { |idx| Diff::Insert.new(Archimate.node_reference(other, idx)) }
-          ) if other_idx <= other.size
-
-          result.compact
+            remaining_content
+              .reject { |item| other.include?(item) }
+              .map do |item|
+                Diff::Delete.new(Diff::ArchimateNodeReference.for_node(self, find_index(item)))
+              end
+          )
         end
 
-        def diff_items(my_idx, other, other_idx)
-          case self[my_idx]
-          when IdentifiedNode
-            if self[my_idx].id == other[other_idx].id
-              self[my_idx].diff(other[other_idx])
-            elsif !other[0..other_idx - 1].smart_include?(self[my_idx])
-              [
-                Diff::Delete.new(Archimate.node_reference(self, my_idx)),
-                Diff::Insert.new(Archimate.node_reference(other, other_idx))
-              ]
+        def patch(diffs)
+          # TODO: Beware, order of diffs could break patching at the moment.
+          Array(diffs).each do |diff|
+            case diff
+            when Diff::Delete
+              delete(diff.target.array_index, diff.target.value)
+            when Diff::Insert
+              insert(diff.target.array_index, diff.target.value)
+            when Diff::Change
+              change(diff.target.array_index, diff.changed_from.value, diff.target.value)
+            when Diff::Move
+              move(diff.target.array_index, diff.target.value)
             else
-              []
+              raise "Unexpected diff type: #{diff.class}"
             end
-          when ArchimateNode
-            self[my_idx].diff(other[other_idx])
+          end
+          self
+        end
+
+        def items_are_equal?(a, b)
+          a == b
+        end
+
+        def items_are_changed?(other, other_enum, remaining)
+          !remaining.empty? &&
+            case remaining[0]
+            when DataModel::IdentifiedNode
+              remaining[0].id == other_enum.peek[0].id
+            when String, DataModel::ArchimateNode
+              !other.include?(remaining[0]) && !include?(other_enum.peek[0])
+            else
+              raise "Unhandled type for #{remaining[0].class}"
+            end
+        end
+
+        def compute_item_changes(other, other_enum, myself, my_item)
+          case my_item
+          when DataModel::ArchimateNode
+            my_item.diff(other_enum.peek[0])
           else
-            if after(my_idx).smart_include?(other[other_idx])
-              [
-                Diff::Delete.new(Archimate.node_reference(self, my_idx))
-              ]
-            elsif !other[0..other_idx - 1].smart_include?(self[my_idx])
-              [
-                Diff::Change.new(
-                  Archimate.node_reference(other, other_idx),
-                  Archimate.node_reference(self, my_idx)
-                )
-              ]
-            else
-              []
-            end
+            [
+              Diff::Change.new(
+                Diff::ArchimateNodeReference.for_node(other, other_enum.peek[1]),
+                Diff::ArchimateNodeReference.for_node(self, find_index(my_item))
+              )
+            ]
           end
         end
 
@@ -169,7 +167,7 @@ module Archimate
           ) unless idx =~ /[0-9a-f]{8}/ || ((idx.is_a?(Fixnum) || idx =~ /\d+/) && idx.to_i >= 0 && idx.to_i <= size)
           raise(
             ArgumentError, "Invalid value type #{value.class}"
-          ) unless value.is_a?(ArchimateNode) || (value.is_a?(String) && value =~ /^[0-9a-f]{8}$/)
+          ) unless value.is_a?(ArchimateNode) || value.is_a?(String) # && value =~ /^[0-9a-f]{8}$/)
 
           ary_idx =
             case value

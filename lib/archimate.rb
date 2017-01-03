@@ -29,8 +29,8 @@ module Archimate
   end
 
   module Diff
-    autoload :ArchimateArrayPrimitiveReference, 'archimate/diff/archimate_array_primitive_reference'
     autoload :ArchimateIdentifiedNodeReference, 'archimate/diff/archimate_identified_node_reference'
+    autoload :ArchimateArrayReference, 'archimate/diff/archimate_array_reference'
     autoload :ArchimateNodeAttributeReference, 'archimate/diff/archimate_node_attribute_reference'
     autoload :ArchimateNodeReference, 'archimate/diff/archimate_node_reference'
     autoload :Change, 'archimate/diff/change'
@@ -41,6 +41,7 @@ module Archimate
     autoload :Difference, 'archimate/diff/difference'
     autoload :Insert, 'archimate/diff/insert'
     autoload :Merge, 'archimate/diff/merge'
+    autoload :Move, 'archimate/diff/move'
   end
 
   module FileFormats
@@ -81,40 +82,19 @@ module Archimate
 
   # Produces a NodeReference instance for the given parameters
   def self.node_reference(node, child_node = nil)
-    case node
-    when DataModel::IdentifiedNode
-      if child_node.nil?
-        Diff::ArchimateIdentifiedNodeReference.new(node)
-      else
-        Diff::ArchimateNodeAttributeReference.new(node, child_node)
-      end
-    when Array
-      return Diff::ArchimateNodeReference.new(node) if child_node.nil?
-      raise(
-        TypeError,
-        "child_node must be a Fixnum if node is an Array"
-      ) unless child_node.is_a?(Fixnum)
-      raise(
-        ArgumentError,
-        "child_node index is out of range of node array"
-      ) unless child_node >= 0 && child_node < node.size
-      child_value = node[child_node]
-      case child_value
-      when DataModel::IdentifiedNode
-        Diff::ArchimateIdentifiedNodeReference.new(child_value)
+    return Diff::ArchimateIdentifiedNodeReference.new(node) if child_node.nil? && node.is_a?(DataModel::Model)
+
+    if child_node.nil? && !node.is_a?(DataModel::Model)
+      case node.parent
       when DataModel::ArchimateNode
-        Diff::ArchimateNodeReference.new(child_value)
+        Diff::ArchimateNodeReference.for_node(node.parent, node.parent.attribute_name(node))
+      when Array, DataModel::BaseArray
+        Diff::ArchimateNodeReference.for_node(node.parent, node.parent.index(node))
       else
-        Diff::ArchimateArrayPrimitiveReference.new(node, child_node)
-      end
-    when DataModel::ArchimateNode
-      if child_node.nil?
-        Diff::ArchimateNodeReference.new(node)
-      else
-        Diff::ArchimateNodeAttributeReference.new(node, child_node)
+        raise "Whoops! was a #{node.parent.class}"
       end
     else
-      raise TypeError, "Expected node #{node.class} to be ArchimateNode, IdentifiedNode, or Array"
+      Diff::ArchimateNodeReference.for_node(node, child_node)
     end
   end
 end

@@ -28,11 +28,6 @@ module Archimate
         @subject.assign_parent(@model)
       end
 
-      def test_match
-        assert @subject.match("sample")
-        refute @subject.match("sam")
-      end
-
       def test_primitive
         assert @subject.primitive?
       end

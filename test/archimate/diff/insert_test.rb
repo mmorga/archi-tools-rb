@@ -8,7 +8,7 @@ module Archimate
 
       def setup
         @model = build_model(with_elements: 1)
-        @subject = Insert.new(Archimate.node_reference(@model, "name"))
+        @subject = Insert.new(ArchimateNodeAttributeReference.new(@model, "name"))
       end
 
       def test_to_s
@@ -19,7 +19,7 @@ module Archimate
       end
 
       def test_to_s_for_struct
-        @subject = Insert.new(Archimate.node_reference(@model.elements.first))
+        @subject = Insert.new(ArchimateArrayReference.new(@model.elements, 0))
 
         assert_equal(
           HighLine.uncolor("INSERT: #{@model.elements.first} into #{@model}/elements"),
@@ -40,7 +40,7 @@ module Archimate
         inserted_element = build_element
         local = base.with(elements: base.elements + [inserted_element])
         inserted_element = local.lookup(inserted_element.id)
-        subject = Insert.new(Archimate.node_reference(inserted_element))
+        subject = Insert.new(Archimate.node_reference(local.elements, local.elements.index(inserted_element)))
         assert_equal local, inserted_element.in_model
         assert_same local.elements, inserted_element.parent
 

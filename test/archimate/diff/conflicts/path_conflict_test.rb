@@ -27,8 +27,8 @@ module Archimate
           @relationship2 = @model.relationships[1]
           @diff_name = Archimate::Diff::Delete.new(Archimate.node_reference(@model, "name"))
 
-          @diff1 = Archimate::Diff::Insert.new(Archimate.node_reference(@relationship))
-          @diff2 = Archimate::Diff::Insert.new(Archimate.node_reference(@relationship2))
+          @diff1 = Archimate::Diff::Insert.new(Archimate.node_reference(@model.relationships, 0))
+          @diff2 = Archimate::Diff::Insert.new(Archimate.node_reference(@model.relationships, 1))
 
           @subject = PathConflict.new([@diff1, @diff_name], [@diff2], @aio)
         end
@@ -40,9 +40,7 @@ module Archimate
         def test_two_inserts_same_path
           local = @model.with(relationships: [build_relationship.with(id: @relationship.id)])
           diff2 = Archimate::Diff::Insert.new(
-            Archimate.node_reference(
-              local.relationships.first
-            )
+            Archimate.node_reference(local.relationships, 0)
           )
 
           refute_equal @diff1, diff2

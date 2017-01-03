@@ -9,13 +9,13 @@ module Archimate
       def setup
         @model = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 3, with_folders: 4, with_documentation: 2)
         @bounds = @model.find_by_class(DataModel::Bounds).first
-        @subject = ArchimateNodeReference.new(@bounds)
+        @subject = ArchimateNodeAttributeReference.new(@bounds.parent, "bounds")
         @other = @model.clone
         @other_bounds = @other.find_by_class(DataModel::Bounds).first
       end
 
       def test_initialize
-        assert_same @bounds, @subject.archimate_node
+        assert_same @bounds, @subject.value
       end
 
       def test_equality
@@ -37,9 +37,9 @@ module Archimate
 
       def test_lookup_in_model_documentation
         assert_same @other, Archimate.node_reference(@model).lookup_in_model(@other)
-        assert_same @other.documentation, Archimate.node_reference(@model.documentation).lookup_in_model(@other)
-        assert_same @other.documentation[0], Archimate.node_reference(@model.documentation[0]).lookup_in_model(@other)
-        assert_same @other.documentation[1], Archimate.node_reference(@model.documentation[1]).lookup_in_model(@other)
+        assert_same @other.documentation, Archimate.node_reference(@model, :documentation).lookup_in_model(@other)
+        assert_same @other.documentation[0], Archimate.node_reference(@model.documentation, 0).lookup_in_model(@other)
+        assert_same @other.documentation[1], Archimate.node_reference(@model.documentation, 1).lookup_in_model(@other)
       end
 
       def test_lookup_in_model_for_bounds
@@ -51,9 +51,9 @@ module Archimate
       end
 
       def test_lookup_parent_in_model_for_documentation
-        subject = Archimate.node_reference(@model.documentation[1])
+        subject = Archimate.node_reference(@model.documentation, 1)
         assert_same @other.documentation[1], subject.lookup_in_model(@other)
-        assert_equal ArchimateNodeReference, subject.class
+        assert_equal ArchimateArrayReference, subject.class
         assert_same(
           @other.documentation,
           subject.lookup_parent_in_model(@other)

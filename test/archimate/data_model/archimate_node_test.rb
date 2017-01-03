@@ -29,13 +29,6 @@ module Archimate
         )
       end
 
-      def test_diff_on_insert
-        assert_equal(
-          [Diff::Delete.new(Archimate.node_reference(@base))],
-          @base.diff(nil)
-        )
-      end
-
       def test_primitive
         refute @base.primitive?
       end
@@ -150,12 +143,12 @@ module Archimate
         remote = base.with(elements: base.elements.map { |el| el.id == remote_el.id ? remote_el : el })
 
         assert_equal(
-          [Diff::Insert.new(Archimate.node_reference(local.elements.first.documentation.first))],
+          [Diff::Insert.new(Archimate.node_reference(local.elements.first.documentation, 0))],
           base.diff(local)
         )
 
         assert_equal(
-          [Diff::Insert.new(Archimate.node_reference(remote.elements.first.documentation.first))],
+          [Diff::Insert.new(Archimate.node_reference(remote.elements.first.documentation, 0))],
           base.diff(remote)
         )
       end
