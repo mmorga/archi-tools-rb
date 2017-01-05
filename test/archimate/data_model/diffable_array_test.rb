@@ -83,15 +83,15 @@ module Archimate
         )
       end
 
-      def test_assign_model
+      def test_model_assignment
         assert_nil @subject.in_model
-        @subject.assign_model(@model)
+        @subject.in_model = @model
         assert_equal @model, @subject.in_model
       end
 
-      def test_assign_parent
+      def test_parent_assignment
         assert_nil @subject.parent
-        @subject.assign_parent(@model)
+        @subject.parent = @model
         assert_equal @model, @subject.parent
       end
 
@@ -102,8 +102,8 @@ module Archimate
       end
 
       def test_attribute_name
-        assert_equal @model.elements[0].id, @model.elements.attribute_name(@model.elements[0])
-        assert_equal @model.elements[2].id, @model.elements.attribute_name(@model.elements[2])
+        assert_equal 0, @model.elements[0].parent_attribute_name
+        assert_equal 2, @model.elements[2].parent_attribute_name
       end
 
       def test_primitive
@@ -295,36 +295,42 @@ module Archimate
         base = %w(a b c)
         local = %w(a c b)
 
-        assert_equal(
-          [
-            Diff::Move.new(
-              Archimate.node_reference(local, 1),
-              Archimate.node_reference(base, 2)
-            )
-          ],
-          base.diff(local)
-        )
+        expected = [
+          Diff::Move.new(
+            Archimate.node_reference(local, 1),
+            Archimate.node_reference(base, 2)
+          )
+        ]
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_equal expected, result
+        assert_equal local, merged
       end
 
       def test_order_change_false_deletion_case
         base = %w(a b c)
         local = %w(a c b d)
 
-        assert_equal(
-          [
-            Diff::Move.new(
-              Archimate.node_reference(local, 1),
-              Archimate.node_reference(base, 2)
-            ),
-            Diff::Insert.new(
-              Archimate.node_reference(local, 3)
-            )
-          ],
-          base.diff(local)
-        )
+        expected = [
+          Diff::Move.new(
+            Archimate.node_reference(local, 1),
+            Archimate.node_reference(base, 2)
+          ),
+          Diff::Insert.new(
+            Archimate.node_reference(local, 3)
+          )
+        ]
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_equal expected, result
+        assert_equal local, merged
       end
 
-      def test_order_change_false_deletion_case
+      def test_order_change_false_deletion_case_with_elements
         added_element = build_element
         local = @model.with(
           elements: [
@@ -354,15 +360,18 @@ module Archimate
         base = %w(a b c)
         local = %w(a bp c)
 
-        assert_equal(
-          [
-            Diff::Change.new(
-              Archimate.node_reference(local, 1),
-              Archimate.node_reference(base, 1)
-            )
-          ],
-          base.diff(local)
-        )
+        expected =[
+          Diff::Change.new(
+            Archimate.node_reference(local, 1),
+            Archimate.node_reference(base, 1)
+          )
+        ]
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_equal expected, result
+        assert_equal local, merged
       end
 
       # a, b, c -> z, c, b'
@@ -370,17 +379,20 @@ module Archimate
         base = %w(a b c)
         local = %w(z c bp)
 
-        assert_equal(
-          [
-            Diff::Change.new(
-              Archimate.node_reference(local, 0),
-              Archimate.node_reference(base, 0)
-            ),
-            Diff::Delete.new(Archimate.node_reference(base, 1)),
-            Diff::Insert.new(Archimate.node_reference(local, 2))
-          ],
-          base.diff(local)
-        )
+        expected = [
+          Diff::Change.new(
+            Archimate.node_reference(local, 0),
+            Archimate.node_reference(base, 0)
+          ),
+          Diff::Delete.new(Archimate.node_reference(base, 1)),
+          Diff::Insert.new(Archimate.node_reference(local, 2))
+        ]
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_equal expected, result
+        assert_equal local, merged
       end
 
       # a, b, c -> a, b, c, d
@@ -388,10 +400,13 @@ module Archimate
         base = %w(a b c)
         local = %w(a b c d)
 
-        assert_equal(
-          [Diff::Insert.new(Archimate.node_reference(local, 3))],
-          base.diff(local)
-        )
+        expected = [Diff::Insert.new(Archimate.node_reference(local, 3))]
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_equal expected, result
+        assert_equal local, merged
       end
 
       # a, b, c -> a, b
@@ -399,10 +414,13 @@ module Archimate
         base = %w(a b c)
         local = %w(a b)
 
-        assert_equal(
-          [Diff::Delete.new(Archimate.node_reference(base, 2))],
-          base.diff(local)
-        )
+        expected = [Diff::Delete.new(Archimate.node_reference(base, 2))]
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_equal expected, result
+        assert_equal local, merged
       end
 
       # a, b, c -> a, z, c
@@ -410,15 +428,18 @@ module Archimate
         base = %w(a b c)
         local = %w(a z c)
 
-        assert_equal(
-          [
-            Diff::Change.new(
-              Archimate.node_reference(local, 1),
-              Archimate.node_reference(base, 1)
-            )
-          ],
-          base.diff(local)
-        )
+        expected = [
+          Diff::Change.new(
+            Archimate.node_reference(local, 1),
+            Archimate.node_reference(base, 1)
+          )
+        ]
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_equal expected, result
+        assert_equal local, merged
       end
 
       # a, b, c -> a, z, b, c
@@ -426,10 +447,13 @@ module Archimate
         base = %w(a b c)
         local = %w(a z b c)
 
-        assert_equal(
-          [Diff::Insert.new(Archimate.node_reference(local, 1))],
-          base.diff(local)
-        )
+        expected = [Diff::Insert.new(Archimate.node_reference(local, 1))]
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_equal expected, result
+        assert_equal local, merged
       end
 
       # a, b, c -> a, z, b', c
@@ -437,16 +461,19 @@ module Archimate
         base = %w(a b c)
         local = %w(a z bp c)
 
-        assert_equal(
-          [
-            Diff::Change.new(
-              Archimate.node_reference(local, 1),
-              Archimate.node_reference(base, 1)
-            ),
-            Diff::Insert.new(Archimate.node_reference(local, 2))
-          ],
-          base.diff(local)
-        )
+        expected = [
+          Diff::Change.new(
+            Archimate.node_reference(local, 1),
+            Archimate.node_reference(base, 1)
+          ),
+          Diff::Insert.new(Archimate.node_reference(local, 2))
+        ]
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_equal expected, result
+        assert_equal local, merged
       end
 
       def test_diff_with_delete_and_ending_insert
@@ -455,38 +482,42 @@ module Archimate
 
         result = base.diff(local)
 
-        assert_equal(
-          [Diff::Delete.new(Archimate.node_reference(base, 1)),
-           Diff::Insert.new(Archimate.node_reference(local, 2))],
-          result
-        )
+        expected = [
+          Diff::Delete.new(Archimate.node_reference(base, 1)),
+          Diff::Insert.new(Archimate.node_reference(local, 2))
+        ]
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_equal expected, result
+        assert_equal local, merged
       end
 
       # a, b, c -> c, x, b, y, z, a
-      def xtest_reverse_order_with_inserts_diff
+      def test_reverse_order_with_inserts_diff
         base = %w(a b c)
-        local = %w(c, x, b, y, z, a)
+        local = %w(c x b y z a)
 
-        assert_equal(
-          [
-            Diff::Change.new(
-              Archimate.node_reference(local, 0),
-              Archimate.node_reference(base, 2)
-            ),
-            Diff::Insert.new(Archimate.node_reference(local, 1)),
-            Diff::Change.new(
-              Archimate.node_reference(local, 2),
-              Archimate.node_reference(base, 1)
-            ),
-            Diff::Insert.new(Archimate.node_reference(local, 3)),
-            Diff::Insert.new(Archimate.node_reference(local, 4)),
-            Diff::Change.new(
-              Archimate.node_reference(local, 5),
-              Archimate.node_reference(base, 0)
-            )
-          ],
-          base.diff(local)
-        )
+        expected = [
+          Diff::Move.new(
+            Archimate.node_reference(local, 0),
+            Archimate.node_reference(base, 2)
+          ),
+          Diff::Insert.new(Archimate.node_reference(local, 1)),
+          Diff::Move.new(
+            Archimate.node_reference(local, 2),
+            Archimate.node_reference(base, 1)
+          ),
+          Diff::Insert.new(Archimate.node_reference(local, 3)),
+          Diff::Insert.new(Archimate.node_reference(local, 4))
+        ]
+        result = base.diff(local)
+        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
+        merged = base.clone.patch(result)
+
+        assert_equal expected, result
+        assert_equal local, merged
       end
     end
   end

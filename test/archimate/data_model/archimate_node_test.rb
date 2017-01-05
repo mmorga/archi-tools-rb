@@ -82,7 +82,7 @@ module Archimate
         @base.elements.each { |e| assert_equal @base.elements, e.parent }
       end
 
-      def test_assign_model
+      def test_model_assignment
         @src_el = build_element
         @target_el = build_element
         @rel = build_relationship(source: @src_el.id, target: @src_el.id)
@@ -150,6 +150,22 @@ module Archimate
         assert_equal(
           [Diff::Insert.new(Archimate.node_reference(remote.elements.first.documentation, 0))],
           base.diff(remote)
+        )
+      end
+
+      def test_parent_attribute_name
+        assert_equal "elements", @base.elements.parent_attribute_name.to_s
+      end
+
+      def test_path
+        assert_equal "", @base.path
+        assert_equal "elements", @base.elements.path
+        assert_equal "elements/#{@base.elements[0].id}", @base.elements[0].path
+        assert_equal(
+          "diagrams/#{@base.diagrams[0].id}" \
+          "/children/#{@base.diagrams[0].children[0].id}" \
+          "/bounds",
+          @base.diagrams[0].children[0].bounds.path
         )
       end
 

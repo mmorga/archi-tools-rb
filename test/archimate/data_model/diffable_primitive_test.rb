@@ -20,12 +20,16 @@ module Archimate
         @subject = "sample"
       end
 
-      def test_assign_model
-        @subject.assign_model(@model)
+      def test_model_assignment
+        @subject.in_model = @model
       end
 
-      def test_assign_parent
-        @subject.assign_parent(@model)
+      def test_parent_assignment
+        @subject.parent = @model
+      end
+
+      def test_parent_attribute_name_assignment
+        @subject.parent_attribute_name = :@name
       end
 
       def test_primitive

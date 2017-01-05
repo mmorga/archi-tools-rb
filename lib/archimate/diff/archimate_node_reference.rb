@@ -75,70 +75,24 @@ module Archimate
         value.to_s
       end
 
-      def value
-        @archimate_node
-      end
-
-      def array_insert_index(parent_in_to_model)
-        idx = parent.find_index(value)
-        while idx.positive?
-          idx -= 1
-          previous_value = parent[idx]
-          to_index = parent_in_to_model.find_index(previous_value)
-          if to_index
-            idx = to_index + 1
-            break
-          end
-        end
-        idx
-      end
-
-      def insert(to_model)
-        parent_in_to_model = lookup_parent_in_model(to_model)
-        if parent_in_to_model.is_a?(Array)
-          idx = array_insert_index(parent_in_to_model)
-        else
-          idx = parent.attribute_name(value)
-        end
-        puts "inserting idx #{idx.class} #{idx.inspect} into #{parent_in_to_model.class}"
-        parent_in_to_model.insert(idx, value)
-      end
-
-      def delete(to_model)
-        parent_in_to_model = lookup_parent_in_model(to_model)
-        if parent_in_to_model.is_a?(Array)
-          parent_in_to_model.delete(parent.attribute_name(value), value)
-        else
-          parent_in_to_model.delete(parent.attribute_name(value), value)
-        end
-      end
-
-      def change(to_model)
-        insert(to_model)
-      end
-
-      def move(to_model)
-        raise "Implement me"
-      end
-
       def lookup_in_model(model)
         recurse_lookup_in_model(archimate_node, model)
       end
 
-      def attribute_index
-        raise "Not implemented"
-      end
-
       def recurse_lookup_in_model(node, model)
-        return nil if model.nil?
-        raise TypeError unless model.is_a?(DataModel::Model)
-        return model if archimate_node.is_a?(DataModel::Model)
-        return model.lookup(node.id) if node.is_a?(DataModel::IdentifiedNode)
-        recurse_lookup_in_model(node.parent, model)[node.parent.attribute_name(value)]
+        raise TypeError, "node argument must be ArchimateNode or Array, was a #{node.class}" unless node.is_a?(Array) || node.is_a?(DataModel::ArchimateNode)
+        raise TypeError, "model argument must be a Model, was a #{model.class}" unless model.is_a?(DataModel::Model)
+        if node.is_a?(DataModel::Model)
+          return model
+        elsif node.is_a?(DataModel::IdentifiedNode)
+          return model.lookup(node.id)
+        else
+          recurse_lookup_in_model(node.parent, model)[node.parent_attribute_name]
+        end
       end
 
       def lookup_parent_in_model(model)
-        recurse_lookup_in_model(archimate_node.parent, model)
+        recurse_lookup_in_model(parent, model)
       end
 
       def parent

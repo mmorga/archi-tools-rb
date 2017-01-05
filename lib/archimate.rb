@@ -87,7 +87,7 @@ module Archimate
     if child_node.nil? && !node.is_a?(DataModel::Model)
       case node.parent
       when DataModel::ArchimateNode
-        Diff::ArchimateNodeReference.for_node(node.parent, node.parent.attribute_name(node))
+        Diff::ArchimateNodeReference.for_node(node.parent, node.parent.parent_attribute_name)
       when Array, DataModel::BaseArray
         Diff::ArchimateNodeReference.for_node(node.parent, node.parent.index(node))
       else

@@ -265,7 +265,7 @@ module Archimate
       end
 
       def test_make_unique_id
-        assert_match /^[a-f0-9]{8}$/, @subject.make_unique_id
+        assert_match(/^[a-f0-9]{8}$/, @subject.make_unique_id)
       end
 
       def test_element_move_folders

@@ -20,15 +20,19 @@ module Archimate
         # the Model this is being applied to has a different id than the
         # model of the attribute this reference refers to.
         return model if archimate_node.is_a?(DataModel::Model)
-        model.lookup(@archimate_node.id)
+        model.lookup(archimate_node.id)
       end
 
       def to_s
-        @archimate_node.to_s
+        archimate_node.to_s
       end
 
       def value
-        @archimate_node
+        archimate_node
+      end
+
+      def parent
+        archimate_node.parent
       end
     end
   end

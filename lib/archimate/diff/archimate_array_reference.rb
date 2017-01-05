@@ -22,7 +22,6 @@ module Archimate
           "array_index argument a valid index for array #{array_index.inspect}"
         ) unless array_index >= 0 && array_index < array.size
         super(array)
-        puts path
         @array_index = array_index
       end
 
@@ -38,45 +37,38 @@ module Archimate
         value.to_s
       end
 
-      # def lookup_in_model(model)
-      #   lookup_parent_in_model(model)[parent.attribute_name(archimate_node)]
-      # end
       def lookup_in_model(model)
-        return nil if model.nil?
-        raise TypeError unless model.is_a?(DataModel::Model)
-        mp = lookup_parent_in_model(model)
-        mp[mp.find_index(value)]
+        result = lookup_parent_in_model(model)
+        raise TypeError, "result was #{result.class} expected Array" unless result.is_a?(Array)
+        result[array_index]
       end
 
-
-      def attribute_index
-        array_index
-      end
-
-      def lookup_parent_in_model(model)
-        return nil if model.nil?
-        raise TypeError unless model.is_a?(DataModel::Model)
-        ArchimateNodeAttributeReference.new(
-          archimate_node.parent,
-          archimate_node.parent.attribute_name(archimate_node)
-        ).lookup_in_model(model)
+      def path(options = {})
+        [
+          super,
+          case value
+          when DataModel::IdentifiedNode
+            value.id
+          else
+            array_index
+          end
+        ].map(&:to_s).reject(&:empty?).join("/")
       end
 
       def insert(to_model)
-        lookup_in_model(to_model).insert(array_index, value)
+        lookup_parent_in_model(to_model).insert(array_index, value)
       end
 
       def delete(to_model)
-        lookup_in_model(to_model).delete(array_index, value)
+        lookup_parent_in_model(to_model).delete(array_index, value)
       end
 
       def change(to_model)
-        lookup_in_model(to_model)[array_index] = value
+        lookup_parent_in_model(to_model)[array_index] = value
       end
 
       def move(to_model)
-        ary = lookup_in_model(to_model)
-        raise "Implement me"
+        lookup_parent_in_model(to_model).move(array_index, value)
       end
     end
   end

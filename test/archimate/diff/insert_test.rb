@@ -13,7 +13,7 @@ module Archimate
 
       def test_to_s
         assert_equal(
-          HighLine.uncolor("INSERT: name into #{@model}"),
+          HighLine.uncolor("INSERT: #{@subject.target} into #{@model}"),
           HighLine.uncolor(@subject.to_s)
         )
       end

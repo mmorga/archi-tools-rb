@@ -38,6 +38,9 @@ module Archimate
       def test_lookup_in_model_documentation
         assert_same @other, Archimate.node_reference(@model).lookup_in_model(@other)
         assert_same @other.documentation, Archimate.node_reference(@model, :documentation).lookup_in_model(@other)
+        assert_equal 2, @other.documentation.size
+        refute_nil @other.documentation[0]
+        refute_nil @other.documentation[1]
         assert_same @other.documentation[0], Archimate.node_reference(@model.documentation, 0).lookup_in_model(@other)
         assert_same @other.documentation[1], Archimate.node_reference(@model.documentation, 1).lookup_in_model(@other)
       end
@@ -52,8 +55,8 @@ module Archimate
 
       def test_lookup_parent_in_model_for_documentation
         subject = Archimate.node_reference(@model.documentation, 1)
+
         assert_same @other.documentation[1], subject.lookup_in_model(@other)
-        assert_equal ArchimateArrayReference, subject.class
         assert_same(
           @other.documentation,
           subject.lookup_parent_in_model(@other)
@@ -65,7 +68,7 @@ module Archimate
       end
 
       def test_to_s
-        assert_equal @bounds.to_s, @subject.to_s
+        assert_equal "bounds", @subject.to_s
       end
 
       def test_value

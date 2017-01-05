@@ -3,22 +3,26 @@ module Archimate
   module DataModel
     module DiffablePrimitive
       module DiffablePrimitiveMethods
-        def diff(other, from_parent, to_parent, attribute)
+        def diff(other, from_parent, to_parent, attribute, from_attribute = nil)
+          from_attribute = attribute if from_attribute.nil?
           return [Archimate::Diff::Delete.new(
             Archimate.node_reference(from_parent, attribute)
           )] if other.nil?
           raise TypeError, "Expected other #{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
           return [Archimate::Diff::Change.new(
             Archimate.node_reference(to_parent, attribute),
-            Archimate.node_reference(from_parent, attribute)
+            Archimate.node_reference(from_parent, from_attribute)
           )] unless self == other
           []
         end
 
-        def assign_model(_m)
+        def in_model=(_m)
         end
 
-        def assign_parent(_p)
+        def parent=(_p)
+        end
+
+        def parent_attribute_name=(_attr_name)
         end
 
         def match(other)

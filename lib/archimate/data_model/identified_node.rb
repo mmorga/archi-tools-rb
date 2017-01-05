@@ -14,6 +14,13 @@ module Archimate
       def identified_nodes
         super([id])
       end
+
+      private
+
+      def find_my_index
+        id
+      end
+
     end
   end
 end

@@ -7,6 +7,8 @@ module Archimate
 
       constructor_type :schema
 
+      attr_writer :parent_attribute_name
+
       def with(options = {})
         self.class.new(
           struct_instance_variables
@@ -41,10 +43,10 @@ module Archimate
         false
       end
 
-      def assign_parent(par)
+      def parent=(par)
         @parent = par
         struct_instance_variables.each do |attrname|
-          self[attrname].assign_parent(self)
+          self[attrname].parent = self
         end
       end
 
@@ -52,11 +54,14 @@ module Archimate
         @parent if defined?(@parent)
       end
 
-      def assign_model(model)
+      def parent_attribute_name
+        return @parent_attribute_name if defined?(@parent_attribute_name)
+        parent.find_index(self) if parent&.is_a?(Array)
+      end
+
+      def in_model=(model)
         @in_model = model unless is_a?(Model)
-        struct_instance_variables.each do |attrname|
-          self[attrname].assign_model(model)
-        end
+        struct_instance_variables.each { |attrname| self[attrname].in_model = model }
       end
 
       def in_model
@@ -65,7 +70,10 @@ module Archimate
 
       def build_index(hash_index = {})
         hash_index[id] = self
-        struct_instance_variables.reduce(hash_index) { |a, e| self[e].build_index(a) }
+        struct_instance_variables.reduce(hash_index) do |a, e|
+          self[e].parent_attribute_name = e
+          self[e].build_index(a)
+        end
       end
 
       def diff(other)
@@ -88,7 +96,7 @@ module Archimate
         when Diff::Delete
           # TODO: maybe an issue here is that my diffs are poorly formed
           # diff should be of the form: something that responds to parent and an attribute name or index or "after"
-          parent.delete(parent.attribute_name(self), self)
+          parent.delete(parent_attribute_name, self)
         when Diff::Insert, Diff::Change
 
         when Diff::Move
@@ -110,7 +118,7 @@ module Archimate
       def path(options = {})
         [
           parent&.path(options),
-          parent&.attribute_name(self, options)
+          path_identifier
         ].compact.map(&:to_s).reject(&:empty?).join("/")
       end
 
@@ -121,13 +129,6 @@ module Archimate
       def compact!
         struct_instance_variables.each { |attrname| self[attrname].compact! }
         self
-      end
-
-      def attribute_name(v, _options = {})
-        struct_instance_variables.reduce do |a, e|
-          a = e if v.equal?(self[e])
-          a
-        end
       end
 
       def delete(attrname, value)
@@ -175,6 +176,21 @@ module Archimate
         struct_instance_variables.reduce(starting_ary) do |a, e|
           a.concat(self[e].identified_nodes)
         end
+      end
+
+      private
+
+      def path_identifier
+        case parent
+        when Array
+          find_my_index
+        else
+          parent_attribute_name
+        end
+      end
+
+      def find_my_index
+        parent.find_index(self)
       end
     end
   end

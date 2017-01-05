@@ -7,6 +7,8 @@ module Archimate
       refine Array do
         using DiffablePrimitive
 
+        attr_writer :parent_attribute_name
+
         def diff(other)
           raise TypeError, "Expected other #{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
 
@@ -22,19 +24,22 @@ module Archimate
               result.concat(compute_item_changes(other, other_enum, self, remaining_content[0]))
               remaining_content.shift
               other_enum.next
-            elsif !remaining_content.empty? && !other.include?(remaining_content[0])
-              result << Diff::Delete.new(Diff::ArchimateNodeReference.for_node(self, find_index(remaining_content[0])))
+            elsif !remaining_content.empty? && !other.smart_include?(remaining_content[0])
+              result << Diff::Delete.new(Diff::ArchimateNodeReference.for_node(self, smart_find(remaining_content[0])))
               remaining_content.shift
-            elsif !include?(other_enum.peek[0])
+            elsif !smart_include?(other_enum.peek[0])
               result << Diff::Insert.new(Diff::ArchimateNodeReference.for_node(other, other_enum.next[1]))
-            elsif include?(other_enum.peek[0])
+            elsif smart_include?(other_enum.peek[0])
               result << Diff::Move.new(
                 Diff::ArchimateNodeReference.for_node(other, other_enum.peek[1]),
-                Diff::ArchimateNodeReference.for_node(self, find_index(other_enum.peek[0]))
+                Diff::ArchimateNodeReference.for_node(self, smart_find(other_enum.peek[0]))
               )
-              remaining_content.delete(other_enum.next[1], other_enum.next[0])
+              remaining_item = remaining_content.smart_find(other_enum.peek[0])
+              result.concat(compute_item_changes(other, other_enum, self, remaining_content[remaining_item]))
+              remaining_content.delete(remaining_item, remaining_content[remaining_item]) if remaining_content.smart_include?(other_enum.peek[0])
+              other_enum.next
             else
-              raise "Unhandled diff case for remaining_content: #{remaining_content} and #{other_enum.peek[1]}"
+              raise "Unhandled diff case for remaining_content: #{remaining_content[0]} and #{other_enum.peek[0]}"
             end
           end
 
@@ -87,12 +92,7 @@ module Archimate
           when DataModel::ArchimateNode
             my_item.diff(other_enum.peek[0])
           else
-            [
-              Diff::Change.new(
-                Diff::ArchimateNodeReference.for_node(other, other_enum.peek[1]),
-                Diff::ArchimateNodeReference.for_node(self, find_index(my_item))
-              )
-            ]
+            my_item.diff(other_enum.peek[0], self, other, other_enum.peek[1], find_index(my_item))
           end
         end
 
@@ -105,22 +105,26 @@ module Archimate
           end
         end
 
-        def assign_model(model)
+        def in_model=(model)
           @in_model = model
-          each { |item| item.assign_model(model) }
+          each { |item| item.in_model = model }
         end
 
         def in_model
           @in_model if defined?(@in_model)
         end
 
-        def assign_parent(par)
+        def parent=(par)
           @parent = par
-          each { |i| i.assign_parent(self) }
+          each { |i| i.parent = self }
         end
 
         def parent
           @parent if defined?(@parent)
+        end
+
+        def parent_attribute_name
+          @parent_attribute_name if defined?(@parent_attribute_name)
         end
 
         def id
@@ -129,7 +133,9 @@ module Archimate
 
         def build_index(hash_index = {})
           hash_index[id] = self
-          each_with_object(hash_index) { |i, a| i.primitive? ? a[i.object_id] = i : i.build_index(a) }
+          each_with_object(hash_index) do |i, a|
+            i.primitive? ? a[i.object_id] = i : i.build_index(a)
+          end
         end
 
         def match(other)
@@ -139,16 +145,8 @@ module Archimate
         def path(options = {})
           [
             parent&.path(options),
-            parent&.attribute_name(self, options)
+            parent_attribute_name
           ].compact.reject(&:empty?).join("/")
-        end
-
-        def attribute_name(child, options = {})
-          if child.is_a?(IdentifiedNode) && options.fetch(:force_array_index, :id) == :id
-            child.id
-          else
-            smart_find(child)
-          end
         end
 
         def primitive?
@@ -185,8 +183,19 @@ module Archimate
           raise(ArgumentError, "Invalid index #{idx.inspect} given for Array size #{size}") if idx.negative? || idx >= size
           raise(
             ArgumentError, "Invalid to_value type #{to_value.class}"
-          ) unless to_value.is_a?(ArchimateNode) || (to_value.is_a?(String) && to_value =~ /^[0-9a-f]{8}$/)
+          ) unless to_value.is_a?(ArchimateNode) || to_value.is_a?(String)
           self[smart_find(from_value)] = to_value
+          self
+        end
+
+        def move(to_index, value)
+          raise(ArgumentError, "to_index was blank") if to_index.nil?
+          raise(ArgumentError, "Invalid to_index #{to_index.inspect} given for Array size #{size}") if to_index.negative? || to_index >= size
+          raise(
+            ArgumentError, "Invalid value type #{value.class}"
+          ) unless value.is_a?(ArchimateNode) || value.is_a?(String)
+          self.delete_at(smart_find(value))
+          self.insert(to_index, value)
           self
         end
 
@@ -207,7 +216,7 @@ module Archimate
         end
 
         def to_s
-          "#{parent}/#{parent&.attribute_name(self)}"
+          "#{parent}/#{parent_attribute_name}"
         end
 
         def referenced_identified_nodes

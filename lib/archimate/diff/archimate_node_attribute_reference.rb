@@ -30,12 +30,8 @@ module Archimate
         recurse_lookup_in_model(archimate_node, model)[attribute]
       end
 
-      def attribute_index
-        attribute
-      end
-
       def to_s
-        value.to_s
+        attribute.to_s
       end
 
       def value
@@ -44,6 +40,22 @@ module Archimate
 
       def path(options = {})
         [super, @attribute].map(&:to_s).reject(&:empty?).join("/")
+      end
+
+      def insert(to_model)
+        lookup_parent_in_model(to_model).insert(attribute, value)
+      end
+
+      def delete(to_model)
+        lookup_parent_in_model(to_model).delete(attribute, value)
+      end
+
+      def change(to_model)
+        insert(to_model)
+      end
+
+      def move(to_model)
+        raise "Move is not valid for ArchimateNodes"
       end
     end
   end

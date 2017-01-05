@@ -17,7 +17,12 @@ module Archimate
 
         # TODO: This is simple, but might be slow.
         def diff_conflicts(diff1, diff2)
-          diff2.path.start_with?(diff1.path) && diff2.path.size > diff1.path.size
+          da1 = diff1.path.split("/")
+          da2 = diff2.path.split("/")
+
+          cmp_size = [da1, da2].map(&:size).min - 1
+          return false if da2.size == cmp_size + 1
+          da1[0..cmp_size] == da2[0..cmp_size]
         end
       end
     end

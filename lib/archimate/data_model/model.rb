@@ -21,8 +21,8 @@ module Archimate
         super
         @index_hash = {}
         rebuild_index
-        assign_model(self)
-        assign_parent(nil)
+        self.in_model = self
+        self.parent = nil
         organize
       end
 
@@ -32,8 +32,8 @@ module Archimate
       end
 
       def register(node, parent)
-        node.assign_model(self)
-        node.assign_parent(parent)
+        node.in_model = self
+        node.parent = parent
         @index_hash[node.id] = node
       end
 
@@ -83,12 +83,12 @@ module Archimate
       # diagrams are all present in the model's folders. If an item is missing
       # then move it into the default top-level element for the item type.
       def organize
-        []
-          .concat(elements)
-          .concat(relationships)
-          .concat(diagrams).each do |item|
-            default_folder_for(item).items << item.id if find_in_folders(item).nil?
-          end
+        # []
+        #   .concat(elements)
+        #   .concat(relationships)
+        #   .concat(diagrams).each do |item|
+        #     default_folder_for(item).items << item.id if find_in_folders(item).nil?
+        #   end
         self
       end
 

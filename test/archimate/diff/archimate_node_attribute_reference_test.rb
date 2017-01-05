@@ -19,8 +19,19 @@ module Archimate
         assert_equal "name", @subject.attribute
       end
 
-      def test_lookup_in_model
+      def test_lookup_in_model_model
         assert_same @other, Archimate.node_reference(@model).lookup_in_model(@other)
+      end
+
+      def test_lookup_in_model_name
+        assert_same @other.name, @subject.lookup_in_model(@other)
+      end
+
+      def test_lookup_array_attribute
+        assert_same(
+          @other.documentation,
+          ArchimateNodeAttributeReference.new(@model, "documentation").lookup_in_model(@other)
+        )
       end
 
       def test_lookup_in_model_for_model_name_attribute
@@ -36,7 +47,7 @@ module Archimate
       end
 
       def test_to_s
-        assert_equal @model.name, @subject.to_s
+        assert_equal "name", @subject.to_s
       end
 
       def test_value
