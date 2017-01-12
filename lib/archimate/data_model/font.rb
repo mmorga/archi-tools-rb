@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Font < NonIdentifiedNode
+    class Font < ArchimateNode
       attribute :name, Strict::String.optional
       attribute :size, Coercible::Float.constrained(gt: 0.0).optional
       attribute :style, Coercible::Int.optional # TODO: make this an enum

@@ -27,7 +27,7 @@ module Archimate
           TypeError,
           "Expected a Archimate::DataModel::Model, was a #{to_model.class}"
         ) unless to_model.is_a?(DataModel::Model)
-        target.move(to_model)
+        target.move(to_model, changed_from)
         to_model
       end
 

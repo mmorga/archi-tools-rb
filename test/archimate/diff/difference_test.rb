@@ -13,10 +13,16 @@ module Archimate
 
       def test_change
         folder = model.folders.first
-        children = [build_child]
+        remote = model.with(
+          diagrams: [
+            model.diagrams[0].with(
+              children: [build_child] + model.diagrams[0].children
+            )
+          ]
+        )
 
         change_diff = Change.new(Archimate.node_reference(folder, "name"), Archimate.node_reference(folder, "name"))
-        insert_diff = Insert.new(Archimate.node_reference(children, 0))
+        insert_diff = Insert.new(Archimate.node_reference(remote.diagrams[0].children, 0))
 
         assert change_diff.change?
         refute change_diff.insert?

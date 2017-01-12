@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Style < NonIdentifiedNode
+    class Style < ArchimateNode
       attribute :text_alignment, Coercible::Int.optional # TODO: make this an enum
       attribute :fill_color, Color.optional
       attribute :line_color, Color.optional

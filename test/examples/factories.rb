@@ -1,6 +1,9 @@
 module Archimate
   module Examples
     module Factories
+      using Archimate::DataModel::DiffableArray
+      using Archimate::DataModel::DiffablePrimitive
+
       def build_id
         Faker::Number.hexadecimal(8)
       end
@@ -169,11 +172,9 @@ module Archimate
 
       def build_folder_list(options)
         count = options.fetch(:with_folders, 0)
-        min_items = 1
-        max_items = 10
         (1..count).map do
           build_folder(
-            items: (0..random(min_items, max_items)).each_with_object([]) { |_i2, a2| a2 << build_id },
+            items: options.fetch(:items, []),
             folders: options.fetch(:child_folders, [])
           )
         end

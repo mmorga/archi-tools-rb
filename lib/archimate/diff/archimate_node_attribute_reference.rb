@@ -43,15 +43,15 @@ module Archimate
       end
 
       def insert(to_model)
-        lookup_parent_in_model(to_model).insert(attribute, value)
+        lookup_parent_in_model(to_model).set(attribute, value)
       end
 
       def delete(to_model)
-        lookup_parent_in_model(to_model).delete(attribute, value)
+        lookup_parent_in_model(to_model).delete(attribute)
       end
 
-      def change(to_model)
-        insert(to_model)
+      def change(to_model, _from_value)
+        lookup_parent_in_model(to_model).set(attribute, value)
       end
 
       def move(to_model)

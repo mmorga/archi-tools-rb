@@ -21,41 +21,6 @@ module Archimate
         else
           raise TypeError, "Node references need to be either an ArchimateNode or an Array"
         end
-        # case node
-        # when DataModel::IdentifiedNode
-        #   if child_node.nil?
-        #     ArchimateIdentifiedNodeReference.new(node)
-        #   else
-        #     ArchimateNodeAttributeReference.new(node, child_node)
-        #   end
-        # when Array, DataModel::BaseArray
-        #   return ArchimateNodeReference.new(node) if child_node.nil?
-        #   raise(
-        #     TypeError,
-        #     "child_node must be a Fixnum if node is an Array"
-        #   ) unless child_node.is_a?(Fixnum)
-        #   raise(
-        #     ArgumentError,
-        #     "child_node index is out of range of node array"
-        #   ) unless child_node >= 0 && child_node < node.size
-        #   child_value = node[child_node]
-        #   case child_value
-        #   when DataModel::IdentifiedNode
-        #     ArchimateIdentifiedNodeReference.new(child_value)
-        #   when DataModel::ArchimateNode
-        #     ArchimateNodeReference.new(child_value)
-        #   else
-        #     ArchimateArrayPrimitiveReference.new(node, child_node)
-        #   end
-        # when DataModel::ArchimateNode
-        #   if child_node.nil?
-        #     ArchimateNodeReference.new(node)
-        #   else
-        #     ArchimateNodeAttributeReference.new(node, child_node)
-        #   end
-        # else
-        #   raise TypeError, "Expected node #{node.class} to be ArchimateNode, IdentifiedNode, or Array"
-        # end
       end
 
       def initialize(archimate_node)
@@ -68,7 +33,7 @@ module Archimate
 
       def ==(other)
         other.is_a?(self.class) &&
-          archimate_node == other.archimate_node
+          value == other.value
       end
 
       def to_s
@@ -80,6 +45,7 @@ module Archimate
       end
 
       def recurse_lookup_in_model(node, model)
+        return nil if node.nil?
         raise TypeError, "node argument must be ArchimateNode or Array, was a #{node.class}" unless node.is_a?(Array) || node.is_a?(DataModel::ArchimateNode)
         raise TypeError, "model argument must be a Model, was a #{model.class}" unless model.is_a?(DataModel::Model)
         if node.is_a?(DataModel::Model)
@@ -87,12 +53,18 @@ module Archimate
         elsif node.is_a?(DataModel::IdentifiedNode)
           return model.lookup(node.id)
         else
-          recurse_lookup_in_model(node.parent, model)[node.parent_attribute_name]
+          node_parent_in_model = recurse_lookup_in_model(node.parent, model)
+          node_parent_in_model[node.parent_attribute_name] unless node_parent_in_model.nil?
         end
       end
 
       def lookup_parent_in_model(model)
-        recurse_lookup_in_model(parent, model)
+        raise "WTF? parent at path #{path} is a #{parent.class} but isn't assigned a model" if parent.in_model.nil? && !parent.is_a?(DataModel::Model)
+        result = recurse_lookup_in_model(parent, model)
+        if result.nil?
+          $stderr.puts "Unable to lookup parent with path #{path}"
+        end
+        result
       end
 
       def parent
@@ -100,7 +72,7 @@ module Archimate
       end
 
       def path(options = {})
-        @archimate_node.path(options)
+        archimate_node.path(options)
       end
     end
   end

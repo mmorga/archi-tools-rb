@@ -9,14 +9,14 @@ module Archimate
       def setup
         @base = build_model(with_elements: 3, with_relationships: 2, with_diagrams: 1)
         @diagram = @base.diagrams.first
-        @remote_diagram = @diagram.with(name: "I wuz renamed")
+        remote_diagram = @diagram.with(name: "I wuz renamed")
         @local = @base.with(name: @base.name + "changed")
         @remote = @base.with(
           diagrams: @base.diagrams.map do |i|
-            @diagram.id == i.id ? @remote_diagram : i
+            @diagram.id == i.id ? remote_diagram : i
           end
         )
-        assert @remote.diagrams.any? { |d| d.name == "I wuz renamed" }
+        @remote_diagram = @remote.diagrams.find { |d| d.id == @diagram.id }
       end
 
       def test_diff_on_primitive_attribute
@@ -34,30 +34,20 @@ module Archimate
       end
 
       def test_delete
-        subject = @base.clone.delete("name", @base.name)
+        subject = @base.clone.delete("name")
 
         refute @base.name.nil?
         assert subject.name.nil?
       end
 
-      def test_insert
+      def test_set
         base = build_bounds(x: nil)
         subject = base.clone
         assert_nil subject.x
 
-        subject.insert("x", 3.14)
+        subject.set("x", 3.14)
 
         assert base.x.nil?
-        assert_equal 3.14, subject.x
-      end
-
-      def test_change
-        base = build_bounds(x: 1.0)
-        subject = base.clone
-
-        subject.change("x", 1.0, 3.14)
-
-        assert_equal 1.0, base.x
         assert_equal 3.14, subject.x
       end
 

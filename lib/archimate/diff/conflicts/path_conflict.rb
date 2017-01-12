@@ -32,7 +32,8 @@ module Archimate
           return true if
             local_diff.target.parent.is_a?(Array) &&
             local_diff.target.value.is_a?(DataModel::IdentifiedNode) &&
-            local_diff.target.value.id == remote_diff.target.value.id
+            local_diff.target.value.id == remote_diff.target.value.id &&
+            local_diff != remote_diff
 
           case [local_diff, remote_diff].map { |d| d.class.name.split('::').last }.sort
           when %w(Change Change)

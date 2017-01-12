@@ -25,7 +25,6 @@ module Archimate
         result = base.diff(local)
 
         assert_equal([Diff::Delete.new(Archimate.node_reference(base.elements, base.elements.index(deleted_element)))], result)
-        # assert_equal deleted_element.parent, result[0].target.parent
 
         merged = result[0].apply(merged)
 
@@ -37,7 +36,8 @@ module Archimate
         inserted_element = build_element
         local = base.with(elements: base.elements + [inserted_element])
 
-        result = base.diff(local)
+        diffs = base.diff(local)
+        non_folder_diffs = diffs.reject { |diff| diff.target.path =~ /^folders/ }
 
         assert_equal(
           [
@@ -48,12 +48,12 @@ module Archimate
               )
             )
           ],
-          result
+          non_folder_diffs
         )
 
-        merged = result[0].apply(base.clone)
+        merged = diffs.inject(base.clone) { |ary, diff| diff.apply(ary) }
 
-        assert_equal local, merged
+        assert_equal local.to_h, merged.to_h
       end
 
       def test_diff_with_delete_of_diagram
@@ -68,16 +68,14 @@ module Archimate
 
       def test_diff_change_of_non_identified_node
         base, local = build_model_with_bendpoints_diffs
-        bendpoints = base.diagrams[0].children[0].source_connections[0].bendpoints
-        changed_bendpoint = bendpoints[1].with(start_x: bendpoints[1].start_x + 10)
 
         diffs = base.diff(local)
 
         assert_equal(
           [
             Diff::Change.new(
-              Archimate.node_reference(changed_bendpoint, "start_x"),
-              Archimate.node_reference(bendpoints[1], "start_x")
+              Archimate.node_reference(local.diagrams[0].children[0].source_connections[0].bendpoints[1], "start_x"),
+              Archimate.node_reference(base.diagrams[0].children[0].source_connections[0].bendpoints[1], "start_x")
             )
           ], diffs
         )
@@ -110,7 +108,7 @@ module Archimate
         refute @subject.primitive?
       end
 
-      def test_delete
+      def xtest_delete
         element_to_delete = @model.elements[1]
         subject = @model.clone
         subject.elements.delete("1", subject.elements[1])
@@ -119,7 +117,7 @@ module Archimate
         refute_includes subject.elements, element_to_delete
       end
 
-      def test_insert
+      def xtest_insert # no longer a valid test
         subject = @model.clone
         element_to_insert = build_element
 
@@ -130,7 +128,7 @@ module Archimate
         assert_equal 3, subject.elements.index(element_to_insert)
       end
 
-      def test_change_with_identified_node
+      def xtest_change_with_identified_node
         subject = @model.clone
         element_to_change = @model.elements[1]
         changed_element = element_to_change.with(label: element_to_change.label + "-changed")
@@ -225,121 +223,95 @@ module Archimate
       end
 
       def test_empty_array_diff
-        base = []
-        local = []
-
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
-
-        assert_empty result
-        assert_equal local, merged
+        array_diff_merge_test_case([], [], -> (base, local) { [] })
       end
 
       def test_same_array_diff
-        base = %w(a b c)
-        local = %w(a b c)
-
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
-
-        assert_empty result
-        assert_equal local, merged
+        array_diff_merge_test_case(
+          %w(a b c),
+          %w(a b c),
+          -> (base, local) { [] }
+        )
       end
 
       # a, b, c -> z, a, b, c
       def test_initial_insert_diff
-        base = %w(a b c)
-        local = %w(z a b c)
-
-        expected = [Diff::Insert.new(Archimate.node_reference(local, 0))]
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
-
-        assert_equal expected, result
-        assert_equal local, merged
+        array_diff_merge_test_case(
+          %w(a b c),
+          %w(z a b c),
+          -> (base, local) {
+            [
+              array_insert(local, 0)
+            ]
+          }
+        )
       end
 
       # a, b, c -> b, c
       def test_initial_delete_diff
-        base = %w(a b c)
-        local = %w(b c)
-
-        expected = [Diff::Delete.new(Archimate.node_reference(base, 0))]
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
-
-        assert_equal expected, result
-        assert_equal local, merged
+        array_diff_merge_test_case(
+          %w(a b c),
+          %w(b c),
+          -> (base, local) {
+            [
+              array_delete(base, 0)
+            ]
+          }
+        )
       end
 
       # a, b, c -> a, c
       def test_diff_with_internal_delete
-        base = %w(a b c)
-        local = %w(a c)
-
-        expected = [Diff::Delete.new(Archimate.node_reference(base, 1))]
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
-
-        assert_equal expected, result
-        assert_equal local, merged
+        array_diff_merge_test_case(
+          %w(a b c),
+          %w(a c),
+          -> (base, local) {
+            [
+              array_delete(base, 1)
+            ]
+          }
+        )
       end
 
       # a, b, c -> a, c, b
       def test_reorder_diff
-        base = %w(a b c)
-        local = %w(a c b)
-
-        expected = [
-          Diff::Move.new(
-            Archimate.node_reference(local, 1),
-            Archimate.node_reference(base, 2)
-          )
-        ]
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
-
-        assert_equal expected, result
-        assert_equal local, merged
+        array_diff_merge_test_case(
+          %w(a b c),
+          %w(a c b),
+          -> (base, local) {
+            [
+              array_move(local, 1, base, 2)
+            ]
+          }
+        )
       end
 
       def test_order_change_false_deletion_case
-        base = %w(a b c)
-        local = %w(a c b d)
-
-        expected = [
-          Diff::Move.new(
-            Archimate.node_reference(local, 1),
-            Archimate.node_reference(base, 2)
-          ),
-          Diff::Insert.new(
-            Archimate.node_reference(local, 3)
-          )
-        ]
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
-
-        assert_equal expected, result
-        assert_equal local, merged
+        array_diff_merge_test_case(
+          %w(a b c),
+          %w(a c b d),
+          -> (base, local) {
+            [
+              array_move(local, 1, base, 2),
+              array_insert(local, 3)
+            ]
+          }
+        )
       end
 
       def test_order_change_false_deletion_case_with_elements
         added_element = build_element
         local = @model.with(
           elements: [
-            @model.elements[0],
-            @model.elements[2],
-            @model.elements[1],
+            @model.elements[0].dup,
+            @model.elements[2].dup,
+            @model.elements[1].dup,
             added_element
           ]
         )
+
+        diffs = @model.diff(local)
+        non_folder_diffs = diffs.reject { |diff| diff.target.path =~ /^folders/ }
 
         assert_equal(
           [
@@ -351,173 +323,247 @@ module Archimate
               Archimate.node_reference(local.elements, 3)
             )
           ],
-          @model.diff(local)
+          non_folder_diffs
         )
       end
 
       # a, b, c -> a, b', c
       def test_changed_value
-        base = %w(a b c)
-        local = %w(a bp c)
-
-        expected =[
-          Diff::Change.new(
-            Archimate.node_reference(local, 1),
-            Archimate.node_reference(base, 1)
-          )
-        ]
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
-
-        assert_equal expected, result
-        assert_equal local, merged
+        array_diff_merge_test_case(
+          %w(a b c),
+          %w(a bp c),
+          -> (base, local) {
+            [
+              array_change(local, 1, base, 1)
+            ]
+          }
+        )
       end
 
       # a, b, c -> z, c, b'
       def test_changed_value_and_move_with_change
-        base = %w(a b c)
-        local = %w(z c bp)
-
-        expected = [
-          Diff::Change.new(
-            Archimate.node_reference(local, 0),
-            Archimate.node_reference(base, 0)
-          ),
-          Diff::Delete.new(Archimate.node_reference(base, 1)),
-          Diff::Insert.new(Archimate.node_reference(local, 2))
-        ]
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
-
-        assert_equal expected, result
-        assert_equal local, merged
+        array_diff_merge_test_case(
+          %w(a b c),
+          %w(z c bp),
+          -> (base, local) {
+            [
+              array_change(local, 0, base, 0),
+              array_delete(base, 1),
+              array_insert(local, 2)
+            ]
+          }
+        )
       end
 
       # a, b, c -> a, b, c, d
       def test_insert_at_end_diff
-        base = %w(a b c)
-        local = %w(a b c d)
-
-        expected = [Diff::Insert.new(Archimate.node_reference(local, 3))]
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
-
-        assert_equal expected, result
-        assert_equal local, merged
+        array_diff_merge_test_case(
+          %w(a b c),
+          %w(a b c d),
+          -> (base, local) {
+            [
+              array_insert(local, 3)
+            ]
+          }
+        )
       end
 
       # a, b, c -> a, b
       def test_delete_at_end_diff
-        base = %w(a b c)
-        local = %w(a b)
-
-        expected = [Diff::Delete.new(Archimate.node_reference(base, 2))]
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
-
-        assert_equal expected, result
-        assert_equal local, merged
+        array_diff_merge_test_case(
+          %w(a b c),
+          %w(a b),
+          -> (base, local) {
+            [
+              array_delete(base, 2)
+            ]
+          }
+        )
       end
 
       # a, b, c -> a, z, c
       def test_changed_value_duplicate_case
-        base = %w(a b c)
-        local = %w(a z c)
-
-        expected = [
-          Diff::Change.new(
-            Archimate.node_reference(local, 1),
-            Archimate.node_reference(base, 1)
-          )
-        ]
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
-
-        assert_equal expected, result
-        assert_equal local, merged
+        array_diff_merge_test_case(
+          %w(a b c),
+          %w(a z c),
+          -> (base, local) {
+            [
+              array_change(local, 1, base, 1)
+            ]
+          }
+        )
       end
 
       # a, b, c -> a, z, b, c
       def test_insert_in_middle_diff
-        base = %w(a b c)
-        local = %w(a z b c)
-
-        expected = [Diff::Insert.new(Archimate.node_reference(local, 1))]
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
-
-        assert_equal expected, result
-        assert_equal local, merged
+        array_diff_merge_test_case(
+          %w(a b c),
+          %w(a z b c),
+          -> (base, local) {
+            [
+              array_insert(local, 1)
+            ]
+          }
+        )
       end
 
       # a, b, c -> a, z, b', c
       def test_insert_with_change_in_middle_diff
-        base = %w(a b c)
-        local = %w(a z bp c)
-
-        expected = [
-          Diff::Change.new(
-            Archimate.node_reference(local, 1),
-            Archimate.node_reference(base, 1)
-          ),
-          Diff::Insert.new(Archimate.node_reference(local, 2))
-        ]
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
-
-        assert_equal expected, result
-        assert_equal local, merged
+        array_diff_merge_test_case(
+          %w(a b c),
+          %w(a z bp c),
+          -> (base, local) {
+            [
+              array_change(local, 1, base, 1),
+              array_insert(local, 2)
+            ]
+          }
+        )
       end
 
       def test_diff_with_delete_and_ending_insert
-        base = %w(a b c)
-        local = %w(a c d)
-
-        result = base.diff(local)
-
-        expected = [
-          Diff::Delete.new(Archimate.node_reference(base, 1)),
-          Diff::Insert.new(Archimate.node_reference(local, 2))
-        ]
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
-
-        assert_equal expected, result
-        assert_equal local, merged
+        array_diff_merge_test_case(
+          %w(a b c),
+          %w(a c d),
+          -> (base, local) {
+            [
+              array_delete(base, 1),
+              array_insert(local, 2)
+            ]
+          }
+        )
       end
 
       # a, b, c -> c, x, b, y, z, a
       def test_reverse_order_with_inserts_diff
-        base = %w(a b c)
-        local = %w(c x b y z a)
+        array_diff_merge_test_case(
+          %w(a b c),
+          %w(c x b y z a),
+          -> (base, local) {
+            [
+              array_move(local, 0, base, 2),
+              array_insert(local, 1),
+              array_move(local, 2, base, 1),
+              array_insert(local, 3),
+              array_insert(local, 4)
+            ]
+          }
+        )
+      end
 
-        expected = [
-          Diff::Move.new(
-            Archimate.node_reference(local, 0),
-            Archimate.node_reference(base, 2)
-          ),
-          Diff::Insert.new(Archimate.node_reference(local, 1)),
-          Diff::Move.new(
-            Archimate.node_reference(local, 2),
-            Archimate.node_reference(base, 1)
-          ),
-          Diff::Insert.new(Archimate.node_reference(local, 3)),
-          Diff::Insert.new(Archimate.node_reference(local, 4))
-        ]
-        result = base.diff(local)
-        # merged = result.inject(base.clone) { |ary, diff| diff.apply(ary) }
-        merged = base.clone.patch(result)
+      def test_find_index_of_previous_item_in_array
+        base = %w(a b d)
+        ary = %w(a b c d)
+        assert_equal(1, base.previous_item_index(ary, "d"))
+        assert_equal(-1, base.previous_item_index(ary, "a"))
+        assert_equal(0, base.previous_item_index(ary, "b"))
+        assert_equal(-1, base.previous_item_index(ary, "c"))
+        assert_equal(-1, base.previous_item_index(ary, "z"))
+      end
 
-        assert_equal expected, result
+      def test_previous_item_index
+        base = build_model(
+          folders: [
+            build_folder(
+              items: %w(m n o a b x y z c)
+            )
+          ]
+        )
+        local = base.with(
+          folders: [
+            base.folders[0].with(
+              items: %w(a c b d)
+            )
+          ]
+        )
+
+        base_items = base.folders[0].items
+        local_items = local.folders[0].items
+
+        assert_equal(-1, base_items.previous_item_index(local_items, local_items[0]))
+        assert_equal(4, base_items.previous_item_index(local_items, local_items[1]))
+        assert_equal(3, base_items.previous_item_index(local_items, local_items[2]))
+        assert_equal(-1, base_items.previous_item_index(local_items, local_items[3]))
+      end
+
+      def test_previous_item_index_for_reverse_case
+        base = build_model(
+          folders: [
+            build_folder(
+              items: %w(a b c)
+            )
+          ]
+        )
+        local = base.with(
+          folders: [
+            base.folders[0].with(
+              items: %w(c b a)
+            )
+          ]
+        )
+
+        merged = base.clone
+        merged_items = merged.folders[0].items
+        local_items = local.folders[0].items
+
+        assert_equal(1, merged_items.previous_item_index(local_items, local_items[0]))
+        assert_equal(0, merged_items.previous_item_index(local_items, local_items[1]))
+        assert_equal(-1, merged_items.previous_item_index(local_items, local_items[2]))
+      end
+
+      private
+
+      def array_diff_merge_test_case(base_ary, local_ary, expected)
+        base = build_model(folders: [build_folder(items: base_ary)])
+        local = base.with(folders: [base.folders[0].with(items: local_ary)])
+
+        diffs = base.diff(local)
+
+        merged = diffs.inject(base.clone) { |ary, diff| diff.apply(ary) }
+
+        assert_equal expected.call(base, local), diffs
         assert_equal local, merged
+
+        merged_ary = base.folders[0].items.clone.patch(diffs)
+
+        assert_equal local.folders[0].items, merged_ary
+      end
+
+      def array_change(local, local_idx, base, base_idx)
+        Diff::Change.new(
+          Archimate.node_reference(local.folders[0].items, local_idx),
+          Archimate.node_reference(base.folders[0].items, base_idx)
+        )
+      end
+
+      def array_move(local, local_idx, base, base_idx)
+        Diff::Move.new(
+          Archimate.node_reference(local.folders[0].items, local_idx),
+          Archimate.node_reference(base.folders[0].items, base_idx)
+        )
+      end
+
+      def array_delete(base, base_idx)
+        Diff::Delete.new(Archimate.node_reference(base.folders[0].items, base_idx))
+      end
+
+      def array_insert(local, local_idx)
+        Diff::Insert.new(Archimate.node_reference(local.folders[0].items, local_idx))
+      end
+
+      def validate_model_refs(node, model)
+        return if node.primitive?
+        raise "Invalid in_model value: '#{node.in_model}' parent: '#{node.parent}' for #{node.class} at path #{node.path}" if node.in_model.nil? && !node.is_a?(Archimate::DataModel::Model)
+        case node
+        when Archimate::DataModel::ArchimateNode
+          node.struct_instance_variables.each do |attr|
+            validate_model_refs(node[attr], model)
+          end
+        when Array
+          node.each_with_index do |val, idx|
+            validate_model_refs(val, model)
+          end
+        end
       end
     end
   end

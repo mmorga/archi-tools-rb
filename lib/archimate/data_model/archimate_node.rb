@@ -39,6 +39,10 @@ module Archimate
         )
       end
 
+      def id
+        object_id.to_s
+      end
+
       def primitive?
         false
       end
@@ -91,16 +95,28 @@ module Archimate
         end
       end
 
-      def patch(a_diff)
-        case a_diff
+      def patch(diff)
+        parent_node = lookup_in_model(diff.target.parent)
+        case diff
         when Diff::Delete
           # TODO: maybe an issue here is that my diffs are poorly formed
           # diff should be of the form: something that responds to parent and an attribute name or index or "after"
-          parent.delete(parent_attribute_name, self)
-        when Diff::Insert, Diff::Change
+          parent_node.delete(parent_attribute_name, self)
+        when Diff::Insert
+        when Diff::Change
 
         when Diff::Move
           raise ArgumentError, "Move is an invalid patch to apply to #{self.class}"
+        end
+      end
+
+      def lookup_in_model(node)
+        if node.is_a?(DataModel::Model)
+          return in_model
+        elsif node.is_a?(DataModel::IdentifiedNode)
+          return in_model.lookup(node.id)
+        else
+          lookup_in_model(node.parent)[node.parent_attribute_name]
         end
       end
 
@@ -131,38 +147,24 @@ module Archimate
         self
       end
 
-      def delete(attrname, value)
+      def delete(attrname)
         raise(
           ArgumentError,
           "attrname was blank must be one of: #{struct_instance_variables.map(&:to_s).join(',')}"
         ) if attrname.nil? || attrname.empty?
-        in_model&.deregister(value)
+        in_model&.deregister(self[attrname])
         instance_variable_set("@#{attrname}".to_sym, nil)
         self
       end
 
-      def insert(attrname, value)
+      def set(attrname, value)
         raise(
           ArgumentError,
           "attrname was blank must be one of: #{struct_instance_variables.map(&:to_s).join(',')}"
         ) if attrname.nil? #  || attrname.empty?
         # value = value.clone
         in_model&.register(value, self)
-
         instance_variable_set("@#{attrname}".to_sym, value)
-        self
-      end
-
-      def change(attrname, from_value, to_value)
-        raise(
-          ArgumentError,
-          "attrname was blank must be one of: #{struct_instance_variables.map(&:to_s).join(',')}"
-        ) if attrname.nil? || attrname.empty?
-        # value = to_value.clone
-        in_model&.deregister(from_value)
-        in_model&.register(to_value, self)
-
-        instance_variable_set("@#{attrname}".to_sym, to_value)
         self
       end
 

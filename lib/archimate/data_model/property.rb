@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Property < NonIdentifiedNode
+    class Property < ArchimateNode
       attribute :key, Strict::String
       attribute :value, Strict::String.optional
       attribute :lang, Strict::String.default("en")

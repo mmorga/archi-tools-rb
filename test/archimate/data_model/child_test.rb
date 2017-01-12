@@ -60,7 +60,6 @@ module Archimate
         children.each do |child|
           # assert child.source_connections.size > 0
           assert child.source_connections.all? do |source_connection_id|
-            puts "Checking a source connection"
             assert_kind_of String, source_connection_id
             assert_kind_of SourceConnection, @model.lookup(source_connection_id)
           end

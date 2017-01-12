@@ -34,9 +34,11 @@ module Archimate
                 Diff::ArchimateNodeReference.for_node(other, other_enum.peek[1]),
                 Diff::ArchimateNodeReference.for_node(self, smart_find(other_enum.peek[0]))
               )
-              remaining_item = remaining_content.smart_find(other_enum.peek[0])
-              result.concat(compute_item_changes(other, other_enum, self, remaining_content[remaining_item]))
-              remaining_content.delete(remaining_item, remaining_content[remaining_item]) if remaining_content.smart_include?(other_enum.peek[0])
+              remaining_item_idx = remaining_content.smart_find(other_enum.peek[0])
+              if remaining_item_idx
+                result.concat(compute_item_changes(other, other_enum, self, remaining_content[remaining_item_idx]))
+                remaining_content.delete_at(remaining_item_idx) if remaining_content.smart_include?(other_enum.peek[0])
+              end
               other_enum.next
             else
               raise "Unhandled diff case for remaining_content: #{remaining_content[0]} and #{other_enum.peek[0]}"
@@ -52,18 +54,19 @@ module Archimate
           )
         end
 
+        # TODO: This may not continue to live here. Only used by testing.
         def patch(diffs)
           # TODO: Beware, order of diffs could break patching at the moment.
           Array(diffs).each do |diff|
             case diff
             when Diff::Delete
-              delete(diff.target.array_index, diff.target.value)
+              delete_at(smart_find(diff.target.value))
             when Diff::Insert
               insert(diff.target.array_index, diff.target.value)
             when Diff::Change
-              change(diff.target.array_index, diff.changed_from.value, diff.target.value)
+              self[smart_find(diff.changed_from.value)] = diff.target.value
             when Diff::Move
-              move(diff.target.array_index, diff.target.value)
+              insert(diff.target.array_index, delete_at(smart_find(diff.target.value)))
             else
               raise "Unexpected diff type: #{diff.class}"
             end
@@ -153,52 +156,6 @@ module Archimate
           false
         end
 
-        def delete(idx, value)
-          raise(ArgumentError, "value #{value} was not found in array") unless include?(value)
-          super(value)
-          self
-        end
-
-        def insert(idx, value)
-          raise(
-            ArgumentError, "Invalid index #{idx.inspect} given for Array size #{size}"
-          ) unless idx =~ /[0-9a-f]{8}/ || ((idx.is_a?(Fixnum) || idx =~ /\d+/) && idx.to_i >= 0 && idx.to_i <= size)
-          raise(
-            ArgumentError, "Invalid value type #{value.class}"
-          ) unless value.is_a?(ArchimateNode) || value.is_a?(String) # && value =~ /^[0-9a-f]{8}$/)
-
-          ary_idx =
-            case value
-            when IdentifiedNode
-              smart_find(value) || size
-            else
-              idx.to_i
-            end
-          super(ary_idx, value)
-          self
-        end
-
-        def change(idx, from_value, to_value)
-          raise(ArgumentError, "idx was blank") if idx.nil?
-          raise(ArgumentError, "Invalid index #{idx.inspect} given for Array size #{size}") if idx.negative? || idx >= size
-          raise(
-            ArgumentError, "Invalid to_value type #{to_value.class}"
-          ) unless to_value.is_a?(ArchimateNode) || to_value.is_a?(String)
-          self[smart_find(from_value)] = to_value
-          self
-        end
-
-        def move(to_index, value)
-          raise(ArgumentError, "to_index was blank") if to_index.nil?
-          raise(ArgumentError, "Invalid to_index #{to_index.inspect} given for Array size #{size}") if to_index.negative? || to_index >= size
-          raise(
-            ArgumentError, "Invalid value type #{value.class}"
-          ) unless value.is_a?(ArchimateNode) || value.is_a?(String)
-          self.delete_at(smart_find(value))
-          self.insert(to_index, value)
-          self
-        end
-
         def clone
           map(&:clone)
         end
@@ -238,9 +195,24 @@ module Archimate
           end
         end
 
+        def smart_intersection(ary)
+          self.select { |item| ary.smart_include?(item) }
+        end
+
         def after(idx)
           return [] if idx >= size - 1
           self[idx + 1..-1]
+        end
+
+        # Given a node in self and ary,
+        # return the idx of first node p in self that exists in both self and ary
+        # and is previous to node in self
+        def previous_item_index(ary, node)
+          common_items = smart_intersection(ary)
+          return -1 unless common_items.smart_include?(node)
+          result = common_items.smart_find(node) - 1
+          result = smart_find(common_items[result]) if result >= 0
+          result
         end
       end
     end

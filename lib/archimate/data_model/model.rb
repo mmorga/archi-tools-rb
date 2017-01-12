@@ -20,9 +20,9 @@ module Archimate
       def initialize(attributes)
         super
         @index_hash = {}
-        rebuild_index
         self.in_model = self
         self.parent = nil
+        rebuild_index
         organize
       end
 
@@ -83,22 +83,22 @@ module Archimate
       # diagrams are all present in the model's folders. If an item is missing
       # then move it into the default top-level element for the item type.
       def organize
-        # []
-        #   .concat(elements)
-        #   .concat(relationships)
-        #   .concat(diagrams).each do |item|
-        #     default_folder_for(item).items << item.id if find_in_folders(item).nil?
-        #   end
+        []
+          .concat(elements)
+          .concat(relationships)
+          .concat(diagrams).each do |item|
+            if find_in_folders(item).nil?
+              default_folder = default_folder_for(item)
+              default_folder.items.push(item.id) unless default_folder.items.include?(item.id)
+            end
+          end
         self
       end
 
       def find_in_folders(item, fs = nil)
-        (fs || @folders).each do |folder|
-          return folder if folder.items.include?(item.id)
-          result = find_in_folders(item, folder.folders)
-          return result unless result.nil?
-        end
-        nil
+        result = find_by_class(DataModel::Folder).select { |f| f.items.include?(item.id) }
+        raise "Program Error! #{item.id} is located in more than one folder. #{result.map(&:to_s).inspect}\n#{item}\n" if result.size > 1
+        result.empty? ? nil : result.first
       end
 
       def default_folder_for(item)
@@ -130,14 +130,18 @@ module Archimate
       end
 
       def find_default_folder(type, name)
-        folders.find { |f| f.type == type } ||
-          folders.find { |f| f.name == name } ||
-          add_folder(type, name)
+        result = folders.find { |f| f.type == type }
+        return result unless result.nil?
+        result = folders.find { |f| f.name == name }
+        return result unless result.nil?
+        add_folder(type, name)
       end
 
       def add_folder(type, name)
-        folder = Folder.new(id: make_unique_id, name: name, type: type)
-        folders << folder
+        raise "Program Error: #{folders.inspect}" unless folders.none? { |f| f.type == type || f.name == name }
+        folder = Folder.new(id: make_unique_id, name: name, type: type, items: [], folders: [])
+        register(folder, folders)
+        folders.push(folder)
         folder
       end
 
@@ -159,10 +163,6 @@ module Archimate
       end
 
       def rebuild_index(missing_id = :model_creation_event)
-        # puts(
-        #   "\nrebuild_index for missing id <#{missing_id.inspect}>, was called:\n" \
-        #   "    #{Thread.current.backtrace[0..5].map(&:to_s).join("\n    ")}"
-        # ) unless missing_id == :model_creation_event
         @index_hash = build_index
       end
     end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Bendpoint < NonIdentifiedNode
+    class Bendpoint < ArchimateNode
       attribute :start_x, Coercible::Float.optional
       attribute :start_y, Coercible::Float.optional
       attribute :end_x, Coercible::Float.optional

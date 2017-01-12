@@ -66,7 +66,7 @@ module Archimate
         include DiffablePrimitiveMethods
       end
 
-      refine Fixnum do
+      refine Integer do
         include DiffablePrimitiveMethods
       end
 

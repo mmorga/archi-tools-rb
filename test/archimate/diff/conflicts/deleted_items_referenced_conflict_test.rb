@@ -32,13 +32,15 @@ module Archimate
           )
 
           diffs2 = base.diff(remote)
-          assert_equal 1, diffs2.size
+          non_folder_diffs2 = diffs2.reject { |diff| diff.target.path =~ /^folders/ }
+          assert_equal 1, non_folder_diffs2.size
           diffs1 = base.diff(local)
-          assert_equal 1, diffs1.size
+          non_folder_diffs1 = diffs1.reject { |diff| diff.target.path =~ /^folders/ }
+          assert_equal 1, non_folder_diffs1.size
 
           subject = DeletedItemsReferencedConflict.new(diffs1, diffs2, @aio)
 
-          assert subject.diff_conflicts(diffs1[0], diffs2[0])
+          assert subject.diff_conflicts(non_folder_diffs1[0], non_folder_diffs2[0])
         end
       end
     end

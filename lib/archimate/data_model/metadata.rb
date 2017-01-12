@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Metadata < NonIdentifiedNode
+    class Metadata < ArchimateNode
       attribute :schema, DiffableString.default("Dublin Core")
       attribute :schemaversion, DiffableString.default("1.1")
       attribute :data, MetadataItemList
