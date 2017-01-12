@@ -9,8 +9,33 @@ module Archimate
 
         attr_writer :parent_attribute_name
 
+        def in_model
+          @in_model if defined?(@in_model)
+        end
+
+        def parent
+          @parent if defined?(@parent)
+        end
+
+        def id
+          object_id.to_s
+        end
+
+        def ancestors
+          result = [self]
+          p = self
+          result << p until (p = p.parent).nil?
+          result
+        end
+
+        def primitive?
+          false
+        end
+
         def diff(other)
           raise TypeError, "Expected other #{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
+          raise "Well Hell other #{other.path} in_model is nil" if other.in_model.nil?
+          raise "Well Hell my path `#{path}` in_model is nil" if in_model.nil?
 
           result = []
           remaining_content = Array.new(self) # TODO: I want a copy of the array, not a deep clone
@@ -25,14 +50,14 @@ module Archimate
               remaining_content.shift
               other_enum.next
             elsif !remaining_content.empty? && !other.smart_include?(remaining_content[0])
-              result << Diff::Delete.new(Diff::ArchimateNodeReference.for_node(self, smart_find(remaining_content[0])))
+              result << Diff::Delete.new(Diff::ArchimateArrayReference.new(self, smart_find(remaining_content[0])))
               remaining_content.shift
             elsif !smart_include?(other_enum.peek[0])
-              result << Diff::Insert.new(Diff::ArchimateNodeReference.for_node(other, other_enum.next[1]))
+              result << Diff::Insert.new(Diff::ArchimateArrayReference.new(other, other_enum.next[1]))
             elsif smart_include?(other_enum.peek[0])
               result << Diff::Move.new(
-                Diff::ArchimateNodeReference.for_node(other, other_enum.peek[1]),
-                Diff::ArchimateNodeReference.for_node(self, smart_find(other_enum.peek[0]))
+                Diff::ArchimateArrayReference.new(other, other_enum.peek[1]),
+                Diff::ArchimateArrayReference.new(self, smart_find(other_enum.peek[0]))
               )
               remaining_item_idx = remaining_content.smart_find(other_enum.peek[0])
               if remaining_item_idx
@@ -49,7 +74,7 @@ module Archimate
             remaining_content
               .reject { |item| other.include?(item) }
               .map do |item|
-                Diff::Delete.new(Diff::ArchimateNodeReference.for_node(self, find_index(item)))
+                Diff::Delete.new(Diff::ArchimateArrayReference.new(self, find_index(item)))
               end
           )
         end
@@ -113,25 +138,13 @@ module Archimate
           each { |item| item.in_model = model }
         end
 
-        def in_model
-          @in_model if defined?(@in_model)
-        end
-
         def parent=(par)
           @parent = par
           each { |i| i.parent = self }
         end
 
-        def parent
-          @parent if defined?(@parent)
-        end
-
         def parent_attribute_name
           @parent_attribute_name if defined?(@parent_attribute_name)
-        end
-
-        def id
-          object_id
         end
 
         def build_index(hash_index = {})
@@ -141,19 +154,11 @@ module Archimate
           end
         end
 
-        def match(other)
-          self == other
-        end
-
         def path(options = {})
           [
             parent&.path(options),
             parent_attribute_name
           ].compact.reject(&:empty?).join("/")
-        end
-
-        def primitive?
-          false
         end
 
         def clone
@@ -162,14 +167,6 @@ module Archimate
 
         def dup
           map(&:dup)
-        end
-
-        # TODO: this duplicates the same method in ArchimateNode look for opportunity to refactor into common module.
-        def ancestors
-          result = [self]
-          p = self
-          result << p until (p = p.parent).nil?
-          result
         end
 
         def to_s

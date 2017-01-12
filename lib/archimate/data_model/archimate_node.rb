@@ -39,8 +39,23 @@ module Archimate
         )
       end
 
+      def in_model
+        @in_model if defined?(@in_model)
+      end
+
+      def parent
+        @parent if defined?(@parent)
+      end
+
       def id
         object_id.to_s
+      end
+
+      def ancestors
+        result = [self]
+        p = self
+        result << p until (p = p.parent).nil?
+        result
       end
 
       def primitive?
@@ -54,10 +69,6 @@ module Archimate
         end
       end
 
-      def parent
-        @parent if defined?(@parent)
-      end
-
       def parent_attribute_name
         return @parent_attribute_name if defined?(@parent_attribute_name)
         parent.find_index(self) if parent&.is_a?(Array)
@@ -66,10 +77,6 @@ module Archimate
       def in_model=(model)
         @in_model = model unless is_a?(Model)
         struct_instance_variables.each { |attrname| self[attrname].in_model = model }
-      end
-
-      def in_model
-        @in_model if defined?(@in_model)
       end
 
       def build_index(hash_index = {})
@@ -95,42 +102,6 @@ module Archimate
         end
       end
 
-      def patch(diff)
-        parent_node = lookup_in_model(diff.target.parent)
-        case diff
-        when Diff::Delete
-          # TODO: maybe an issue here is that my diffs are poorly formed
-          # diff should be of the form: something that responds to parent and an attribute name or index or "after"
-          parent_node.delete(parent_attribute_name, self)
-        when Diff::Insert
-        when Diff::Change
-
-        when Diff::Move
-          raise ArgumentError, "Move is an invalid patch to apply to #{self.class}"
-        end
-      end
-
-      def lookup_in_model(node)
-        if node.is_a?(DataModel::Model)
-          return in_model
-        elsif node.is_a?(DataModel::IdentifiedNode)
-          return in_model.lookup(node.id)
-        else
-          lookup_in_model(node.parent)[node.parent_attribute_name]
-        end
-      end
-
-      def match(other)
-        self == other
-      end
-
-      def ancestors
-        result = [self]
-        p = self
-        result << p until (p = p.parent).nil?
-        result
-      end
-
       def path(options = {})
         [
           parent&.path(options),
@@ -139,7 +110,7 @@ module Archimate
       end
 
       def struct_instance_variables
-        self.class.schema.keys
+        @struct_instance_variables ||= self.class.schema.keys
       end
 
       def compact!
@@ -171,12 +142,6 @@ module Archimate
       def referenced_identified_nodes
         struct_instance_variables.reduce([]) do |a, e|
           a.concat(self[e].referenced_identified_nodes)
-        end
-      end
-
-      def identified_nodes(starting_ary = [])
-        struct_instance_variables.reduce(starting_ary) do |a, e|
-          a.concat(self[e].identified_nodes)
         end
       end
 

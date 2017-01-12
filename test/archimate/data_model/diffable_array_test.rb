@@ -1,4 +1,4 @@
-#243 frozen_string_literal: true
+# frozen_string_literal: true
 require 'test_helper'
 
 module Archimate
@@ -24,7 +24,7 @@ module Archimate
 
         result = base.diff(local)
 
-        assert_equal([Diff::Delete.new(Archimate.node_reference(base.elements, base.elements.index(deleted_element)))], result)
+        assert_equal([Diff::Delete.new(Diff::ArchimateArrayReference.new(base.elements, base.elements.index(deleted_element)))], result)
 
         merged = result[0].apply(merged)
 
@@ -42,7 +42,7 @@ module Archimate
         assert_equal(
           [
             Diff::Insert.new(
-              Archimate.node_reference(
+              Diff::ArchimateArrayReference.new(
                 local.elements,
                 local.elements.find_index { |item| item.id == inserted_element.id }
               )
@@ -63,7 +63,7 @@ module Archimate
         diffs = base.diff(local)
 
         assert_equal 1, diffs.size
-        assert_equal [Diff::Delete.new(Archimate.node_reference(base.diagrams, 0))], diffs
+        assert_equal [Diff::Delete.new(Diff::ArchimateArrayReference.new(base.diagrams, 0))], diffs
       end
 
       def test_diff_change_of_non_identified_node
@@ -74,8 +74,8 @@ module Archimate
         assert_equal(
           [
             Diff::Change.new(
-              Archimate.node_reference(local.diagrams[0].children[0].source_connections[0].bendpoints[1], "start_x"),
-              Archimate.node_reference(base.diagrams[0].children[0].source_connections[0].bendpoints[1], "start_x")
+              Diff::ArchimateNodeAttributeReference.new(local.diagrams[0].children[0].source_connections[0].bendpoints[1], "start_x"),
+              Diff::ArchimateNodeAttributeReference.new(base.diagrams[0].children[0].source_connections[0].bendpoints[1], "start_x")
             )
           ], diffs
         )
@@ -153,8 +153,8 @@ module Archimate
 
         assert_equal(
           [Diff::Change.new(
-            Archimate.node_reference(local.elements.first, "label"),
-            Archimate.node_reference(base.elements.first, "label")
+            Diff::ArchimateNodeAttributeReference.new(local.elements.first, "label"),
+            Diff::ArchimateNodeAttributeReference.new(base.elements.first, "label")
           )],
           base_local
         )
@@ -316,11 +316,11 @@ module Archimate
         assert_equal(
           [
             Diff::Move.new(
-              Archimate.node_reference(local.elements, 1),
-              Archimate.node_reference(@model.elements, 2)
+              Diff::ArchimateArrayReference.new(local.elements, 1),
+              Diff::ArchimateArrayReference.new(@model.elements, 2)
             ),
             Diff::Insert.new(
-              Archimate.node_reference(local.elements, 3)
+              Diff::ArchimateArrayReference.new(local.elements, 3)
             )
           ],
           non_folder_diffs
@@ -531,31 +531,31 @@ module Archimate
 
       def array_change(local, local_idx, base, base_idx)
         Diff::Change.new(
-          Archimate.node_reference(local.folders[0].items, local_idx),
-          Archimate.node_reference(base.folders[0].items, base_idx)
+          Diff::ArchimateArrayReference.new(local.folders[0].items, local_idx),
+          Diff::ArchimateArrayReference.new(base.folders[0].items, base_idx)
         )
       end
 
       def array_move(local, local_idx, base, base_idx)
         Diff::Move.new(
-          Archimate.node_reference(local.folders[0].items, local_idx),
-          Archimate.node_reference(base.folders[0].items, base_idx)
+          Diff::ArchimateArrayReference.new(local.folders[0].items, local_idx),
+          Diff::ArchimateArrayReference.new(base.folders[0].items, base_idx)
         )
       end
 
       def array_delete(base, base_idx)
-        Diff::Delete.new(Archimate.node_reference(base.folders[0].items, base_idx))
+        Diff::Delete.new(Diff::ArchimateArrayReference.new(base.folders[0].items, base_idx))
       end
 
       def array_insert(local, local_idx)
-        Diff::Insert.new(Archimate.node_reference(local.folders[0].items, local_idx))
+        Diff::Insert.new(Diff::ArchimateArrayReference.new(local.folders[0].items, local_idx))
       end
 
       def validate_model_refs(node, model)
         return if node.primitive?
         raise "Invalid in_model value: '#{node.in_model}' parent: '#{node.parent}' for #{node.class} at path #{node.path}" if node.in_model.nil? && !node.is_a?(Archimate::DataModel::Model)
         case node
-        when Archimate::DataModel::ArchimateNode
+        when DataModel::ArchimateNode
           node.struct_instance_variables.each do |attr|
             validate_model_refs(node[attr], model)
           end

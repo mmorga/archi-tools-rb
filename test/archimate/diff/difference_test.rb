@@ -21,8 +21,8 @@ module Archimate
           ]
         )
 
-        change_diff = Change.new(Archimate.node_reference(folder, "name"), Archimate.node_reference(folder, "name"))
-        insert_diff = Insert.new(Archimate.node_reference(remote.diagrams[0].children, 0))
+        change_diff = Change.new(ArchimateNodeAttributeReference.new(folder, "name"), ArchimateNodeAttributeReference.new(folder, "name"))
+        insert_diff = Insert.new(ArchimateArrayReference.new(remote.diagrams[0].children, 0))
 
         assert change_diff.change?
         refute change_diff.insert?
@@ -109,8 +109,8 @@ module Archimate
 
       def test_sort_bounds_attributes
         bounds = model.diagrams.first.children.first.bounds
-        d1 = Delete.new(Archimate.node_reference(bounds, "x"))
-        d2 = Delete.new(Archimate.node_reference(bounds, "width"))
+        d1 = Delete.new(ArchimateNodeAttributeReference.new(bounds, "x"))
+        d2 = Delete.new(ArchimateNodeAttributeReference.new(bounds, "width"))
         expected = [d2, d1]
 
         assert_equal expected, [d1, d2].sort
@@ -119,8 +119,8 @@ module Archimate
 
       def test_sort_elements_index
         skip "sorting isn't working yet"
-        d1 = Delete.new(Archimate.node_reference(model.elements.last, "label"))
-        d2 = Delete.new(Archimate.node_reference(model.elements.first, "label"))
+        d1 = Delete.new(ArchimateNodeAttributeReference.new(model.elements.last, "label"))
+        d2 = Delete.new(ArchimateNodeAttributeReference.new(model.elements.first, "label"))
         expected = [d2, d1]
 
         assert_equal expected, [d1, d2].sort
@@ -128,19 +128,31 @@ module Archimate
       end
 
       def test_path
-        d1 = Delete.new(Archimate.node_reference(model, "name"))
+        d1 = Delete.new(ArchimateNodeAttributeReference.new(model, "name"))
 
         assert_equal("name", d1.path)
       end
 
       def test_bounds_path
         bounds = model.diagrams.first.children.first.bounds
-        d1 = Delete.new(Archimate.node_reference(bounds, "x"))
+        d1 = Delete.new(ArchimateNodeAttributeReference.new(bounds, "x"))
 
         assert_equal(
           "diagrams/#{model.diagrams.first.id}/children/#{model.diagrams.first.children.first.id}/bounds/x",
           d1.path
         )
+      end
+
+      def test_type_query_method_helpers
+        d1 = Difference.new(
+          ArchimateNodeAttributeReference.new(@model, "name"),
+          nil
+        )
+
+        refute d1.insert?
+        refute d1.delete?
+        refute d1.change?
+        refute d1.move?
       end
     end
   end

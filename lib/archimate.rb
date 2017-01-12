@@ -4,6 +4,7 @@ require "dry-types"
 require "dry-struct"
 require "archimate/version"
 require 'archimate/data_model'
+require 'archimate/diff'
 require 'archimate/aio'
 
 module Archimate
@@ -26,22 +27,6 @@ module Archimate
     autoload :GraphML, 'archimate/export/graph_ml'
     autoload :CSVExport, 'archimate/export/csv_export'
     autoload :Cypher, 'archimate/export/cypher'
-  end
-
-  module Diff
-    autoload :ArchimateIdentifiedNodeReference, 'archimate/diff/archimate_identified_node_reference'
-    autoload :ArchimateArrayReference, 'archimate/diff/archimate_array_reference'
-    autoload :ArchimateNodeAttributeReference, 'archimate/diff/archimate_node_attribute_reference'
-    autoload :ArchimateNodeReference, 'archimate/diff/archimate_node_reference'
-    autoload :Change, 'archimate/diff/change'
-    autoload :Conflict, 'archimate/diff/conflict'
-    autoload :Conflicts, 'archimate/diff/conflicts'
-    autoload :Context, 'archimate/diff/context'
-    autoload :Delete, 'archimate/diff/delete'
-    autoload :Difference, 'archimate/diff/difference'
-    autoload :Insert, 'archimate/diff/insert'
-    autoload :Merge, 'archimate/diff/merge'
-    autoload :Move, 'archimate/diff/move'
   end
 
   module FileFormats
@@ -79,22 +64,4 @@ module Archimate
 
   using DataModel::DiffablePrimitive
   using DataModel::DiffableArray
-
-  # Produces a NodeReference instance for the given parameters
-  def self.node_reference(node, child_node = nil)
-    return Diff::ArchimateIdentifiedNodeReference.new(node) if child_node.nil? && node.is_a?(DataModel::Model)
-
-    if child_node.nil? && !node.is_a?(DataModel::Model)
-      case node.parent
-      when DataModel::ArchimateNode
-        Diff::ArchimateNodeReference.for_node(node.parent, node.parent.parent_attribute_name)
-      when Array, DataModel::BaseArray
-        Diff::ArchimateNodeReference.for_node(node.parent, node.parent.index(node))
-      else
-        raise "Whoops! was a #{node.parent.class}"
-      end
-    else
-      Diff::ArchimateNodeReference.for_node(node, child_node)
-    end
-  end
 end

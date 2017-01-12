@@ -7,7 +7,6 @@ module Archimate
     Strict = Archimate::DataModel::Strict
 
     require 'archimate/data_model/diffable_primitive'
-    require 'archimate/data_model/membership'
     require 'archimate/data_model/diffable_array'
     require 'archimate/data_model/constants'
     require 'archimate/data_model/archimate_node'

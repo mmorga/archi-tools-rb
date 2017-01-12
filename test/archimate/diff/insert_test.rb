@@ -40,7 +40,7 @@ module Archimate
         inserted_element = build_element
         local = base.with(elements: base.elements + [inserted_element])
         inserted_element = local.lookup(inserted_element.id)
-        subject = Insert.new(Archimate.node_reference(local.elements, local.elements.index(inserted_element)))
+        subject = Insert.new(ArchimateArrayReference.new(local.elements, local.elements.index(inserted_element)))
         assert_equal local, inserted_element.in_model
         assert_same local.elements, inserted_element.parent
 

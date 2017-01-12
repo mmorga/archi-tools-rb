@@ -16,7 +16,7 @@ module Archimate
         case node
         when DataModel::ArchimateNode
           ArchimateNodeAttributeReference.new(node, child_node)
-        when Array, DataModel::BaseArray
+        when Array
           ArchimateArrayReference.new(node, child_node)
         else
           raise TypeError, "Node references need to be either an ArchimateNode or an Array"
@@ -27,7 +27,8 @@ module Archimate
         raise(
           TypeError,
           "archimate_node must be an ArchimateNode or Array, was #{archimate_node.class}"
-        ) unless archimate_node.is_a?(DataModel::ArchimateNode) || archimate_node.is_a?(Array) || archimate_node.is_a?(DataModel::BaseArray)
+        ) unless archimate_node.is_a?(DataModel::ArchimateNode) || archimate_node.is_a?(Array)
+        raise "new WTF? parent at path #{archimate_node.path} is a #{archimate_node.class} but isn't assigned a model" if archimate_node.in_model.nil? && !archimate_node.is_a?(DataModel::Model)
         @archimate_node = archimate_node
       end
 

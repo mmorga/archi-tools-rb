@@ -10,7 +10,10 @@ module Archimate
       def setup
         @from_model = build_model
         @to_model = @from_model.with(name: @from_model.name + "-changed")
-        @subject = Change.new(Archimate.node_reference(to_model, "name"), Archimate.node_reference(from_model, "name"))
+        @subject = Change.new(
+          ArchimateNodeAttributeReference.new(to_model, "name"),
+          ArchimateNodeAttributeReference.new(from_model, "name")
+        )
       end
 
       def test_to_s

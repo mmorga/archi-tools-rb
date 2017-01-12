@@ -5,13 +5,13 @@ module Archimate
       module DiffablePrimitiveMethods
         def diff(other, from_parent, to_parent, attribute, from_attribute = nil)
           from_attribute = attribute if from_attribute.nil?
-          return [Archimate::Diff::Delete.new(
-            Archimate.node_reference(from_parent, attribute)
+          return [Diff::Delete.new(
+            Diff::ArchimateNodeAttributeReference.new(from_parent, attribute)
           )] if other.nil?
           raise TypeError, "Expected other #{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
-          return [Archimate::Diff::Change.new(
-            Archimate.node_reference(to_parent, attribute),
-            Archimate.node_reference(from_parent, from_attribute)
+          return [Diff::Change.new(
+            Diff::ArchimateNodeReference.for_node(to_parent, attribute),
+            Diff::ArchimateNodeReference.for_node(from_parent, from_attribute)
           )] unless self == other
           []
         end
@@ -25,10 +25,6 @@ module Archimate
         def parent_attribute_name=(_attr_name)
         end
 
-        def match(other)
-          self == other
-        end
-
         def build_index(index_hash)
           index_hash
         end
@@ -38,7 +34,7 @@ module Archimate
         end
 
         def id
-          object_id
+          object_id.to_s
         end
 
         def clone
@@ -54,10 +50,6 @@ module Archimate
         end
 
         def referenced_identified_nodes
-          []
-        end
-
-        def identified_nodes
           []
         end
       end

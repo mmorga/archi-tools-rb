@@ -22,8 +22,8 @@ module Archimate
       def test_diff_on_primitive_attribute
         assert_equal(
           [Diff::Change.new(
-            Archimate.node_reference(@remote_diagram, "name"),
-            Archimate.node_reference(@diagram, "name")
+            Diff::ArchimateNodeAttributeReference.new(@remote_diagram, "name"),
+            Diff::ArchimateNodeAttributeReference.new(@diagram, "name")
           )],
           @diagram.diff(@remote_diagram)
         )
@@ -133,12 +133,12 @@ module Archimate
         remote = base.with(elements: base.elements.map { |el| el.id == remote_el.id ? remote_el : el })
 
         assert_equal(
-          [Diff::Insert.new(Archimate.node_reference(local.elements.first.documentation, 0))],
+          [Diff::Insert.new(Diff::ArchimateArrayReference.new(local.elements.first.documentation, 0))],
           base.diff(local)
         )
 
         assert_equal(
-          [Diff::Insert.new(Archimate.node_reference(remote.elements.first.documentation, 0))],
+          [Diff::Insert.new(Diff::ArchimateArrayReference.new(remote.elements.first.documentation, 0))],
           base.diff(remote)
         )
       end

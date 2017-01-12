@@ -53,8 +53,7 @@ module Archimate
         # end
 
         # TODO: This is simple, but might be slow. If it is, then override
-        # the conflicts method to prevent calculating identified_nodes
-        # and referenced_identified_nodes methods
+        # the conflicts method to prevent calculating referenced_identified_nodes methods
         def diff_conflicts(diff1, diff2)
           diff2.target.value.referenced_identified_nodes.include?(diff1.target.value.id)
         end

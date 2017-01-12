@@ -1,7 +1,7 @@
 # TODO
 
+* [ ] Look into using Celluloid and/or jruby to improve performance
 * [ ] Conflicts can happen on the same diff 2x. How to handle this?
-* [ ] Add a summary diff - elements added/changed/deleted, diagrams
 * [ ] In `Change.to_s` - deref args that point to other elements (like archimate_element)
 * [ ] In Diagram children diffs - make to_s reference the parent diagram
 * [ ] Array diffs on non-id'd diffable elements should detect changes rather than delete/insert
@@ -23,6 +23,7 @@
   - [X] Cypher
   - [X] N-Quad
   - [X] GraphML
+* [X] Add a summary diff - elements added/changed/deleted, diagrams
 * [X] Convert all CLIs to use AIO - merge with OutputIO and MaybeIO (maybe)
 * [X] Stats (elements, relationships, diagrams)
 * [X] figure out a better parent mechanism - it's really not fully cooked

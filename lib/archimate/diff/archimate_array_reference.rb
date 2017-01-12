@@ -12,7 +12,7 @@ module Archimate
         raise(
           TypeError,
           "array argument must be an Array, was #{array.class}"
-        ) unless array.is_a?(Array) || array.is_a?(DataModel::BaseArray)
+        ) unless array.is_a?(Array)
         raise(
           TypeError,
           "array_index argument must be a Integer, was #{array_index.class} #{array_index.inspect}"
@@ -80,14 +80,19 @@ module Archimate
           to_model.deregister(ary_in_model[idx])
           ary_in_model.delete_at(idx)
         else
-          $stderr.puts "Oh crap - couldn't find item #{value.inspect} to delete in to_model"
+          $stderr.puts "Couldn't find item #{value.inspect} in path #{path} to delete in to_model"
         end
       end
 
       def change(to_model, from_value)
         ary_in_model = lookup_parent_in_model(to_model)
         idx = ary_in_model.smart_find(from_value)
-        to_model.deregister(ary_in_model[idx])
+        if idx.nil?
+          $stderr.puts "Couldn't find value #{from_value.inspect} in path #{path} to change in to_model, adding to end of list"
+          idx = ary_in_model.size
+        else
+          to_model.deregister(ary_in_model[idx])
+        end
         to_model.register(value, ary_in_model)
         ary_in_model[idx] = value
       end

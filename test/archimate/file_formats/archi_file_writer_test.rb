@@ -12,7 +12,7 @@ module Archimate
         @model = ARCHISURANCE_MODEL
       end
 
-      def xtest_write
+      def test_write
         result_io = StringIO.new
 
         ArchiFileWriter.write(@model, result_io)

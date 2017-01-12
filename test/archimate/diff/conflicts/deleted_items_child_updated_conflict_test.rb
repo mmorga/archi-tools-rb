@@ -17,8 +17,8 @@ module Archimate
             ]
           )
 
-          @diff1 = Diff::Delete.new(Archimate.node_reference(@model.elements, 0))
-          @diff2 = Diff::Insert.new(Archimate.node_reference(@model.elements[0].documentation, 0))
+          @diff1 = Diff::Delete.new(ArchimateArrayReference.new(@model.elements, 0))
+          @diff2 = Diff::Insert.new(ArchimateArrayReference.new(@model.elements[0].documentation, 0))
           @subject = DeletedItemsChildUpdatedConflict.new([@diff1], [@diff2], @aio)
         end
 

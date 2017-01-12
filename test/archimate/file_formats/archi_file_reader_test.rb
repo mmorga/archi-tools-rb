@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 require 'test_helper'
 require 'test_examples'
+require 'ruby-prof'
 
 module Archimate
   module FileFormats
@@ -9,6 +10,20 @@ module Archimate
 
       def setup
         @model = ArchiFileReader.parse(ARCHISURANCE_SOURCE, TEST_AIO)
+      end
+
+      def xtest_reader_profile
+        RubyProf.start
+        ArchiFileReader.parse(ARCHISURANCE_SOURCE, TEST_AIO)
+        result = RubyProf.stop
+        result.eliminate_methods!(
+          [
+            /Nokogiri/,
+            /Dry/
+          ]
+        )
+        printer = RubyProf::FlatPrinterWithLineNumbers.new(result)
+        printer.print(STDOUT, min_percent: 1)
       end
 
       def test_read_diagrams

@@ -42,14 +42,14 @@ module Archimate
 
       def test_diff_delete
         assert_equal(
-          [Diff::Delete.new(Archimate.node_reference(@model, "name"))],
+          [Diff::Delete.new(Diff::ArchimateNodeAttributeReference.new(@model, "name"))],
           @subject.diff(nil, @model, @model, "name")
         )
       end
 
       def test_diff_change
         assert_equal(
-          [Diff::Change.new(Archimate.node_reference(@model, "name"), Archimate.node_reference(@model, "name"))],
+          [Diff::Change.new(Diff::ArchimateNodeAttributeReference.new(@model, "name"), Diff::ArchimateNodeAttributeReference.new(@model, "name"))],
           @subject.diff("primal", @model, @model, "name")
         )
       end

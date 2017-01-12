@@ -28,21 +28,21 @@ module Archimate
       end
 
       def test_lookup_in_model
-        assert_same @other, Archimate.node_reference(@model).lookup_in_model(@other)
+        assert_same @other, ArchimateIdentifiedNodeReference.new(@model).lookup_in_model(@other)
       end
 
       def test_lookup_in_model_string_attribute
-        assert_same @other.id, Archimate.node_reference(@model, "id").lookup_in_model(@other)
+        assert_same @other.id, ArchimateNodeAttributeReference.new(@model, "id").lookup_in_model(@other)
       end
 
       def test_lookup_in_model_documentation
-        assert_same @other, Archimate.node_reference(@model).lookup_in_model(@other)
-        assert_same @other.documentation, Archimate.node_reference(@model, :documentation).lookup_in_model(@other)
+        assert_same @other, ArchimateIdentifiedNodeReference.new(@model).lookup_in_model(@other)
+        assert_same @other.documentation, ArchimateNodeAttributeReference.new(@model, :documentation).lookup_in_model(@other)
         assert_equal 2, @other.documentation.size
         refute_nil @other.documentation[0]
         refute_nil @other.documentation[1]
-        assert_same @other.documentation[0], Archimate.node_reference(@model.documentation, 0).lookup_in_model(@other)
-        assert_same @other.documentation[1], Archimate.node_reference(@model.documentation, 1).lookup_in_model(@other)
+        assert_same @other.documentation[0], ArchimateArrayReference.new(@model.documentation, 0).lookup_in_model(@other)
+        assert_same @other.documentation[1], ArchimateArrayReference.new(@model.documentation, 1).lookup_in_model(@other)
       end
 
       def test_lookup_in_model_for_bounds
@@ -54,7 +54,7 @@ module Archimate
       end
 
       def test_lookup_parent_in_model_for_documentation
-        subject = Archimate.node_reference(@model.documentation, 1)
+        subject = ArchimateArrayReference.new(@model.documentation, 1)
 
         assert_same @other.documentation[1], subject.lookup_in_model(@other)
         assert_same(

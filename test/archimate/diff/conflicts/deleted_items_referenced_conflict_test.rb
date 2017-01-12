@@ -11,8 +11,9 @@ module Archimate
 
         def test_element_deleted_referenced_in_relationship
           model = build_model(with_elements: 1, with_relationships: 1)
-          diff1 = Diff::Delete.new(Archimate.node_reference(model.lookup(model.relationships.first.source)))
-          diff2 = Diff::Insert.new(Archimate.node_reference(model.relationships.first))
+          thing = model.lookup(model.relationships.first.source)
+          diff1 = Diff::Delete.new(ArchimateArrayReference.new(thing.parent, thing.parent_attribute_name))
+          diff2 = Diff::Insert.new(ArchimateArrayReference.new(model.relationships, 0))
           subject = DeletedItemsReferencedConflict.new([diff1], [diff2], @aio)
 
           assert subject.diff_conflicts(diff1, diff2)

@@ -55,7 +55,7 @@ module Archimate
           folders: folders,
           relationships: relationships,
           diagrams: diagrams
-        )
+        ).organize
       end
 
       def build_element_list(options)
@@ -237,7 +237,7 @@ module Archimate
 
       def build_diff(options = {})
         model = options.fetch(:model, build_model)
-        Archimate::Diff::Insert.new(Archimate.node_reference(model, "name"))
+        Archimate::Diff::Insert.new(Diff::ArchimateNodeAttributeReference.new(model, "name"))
       end
 
       def random_relationship_type

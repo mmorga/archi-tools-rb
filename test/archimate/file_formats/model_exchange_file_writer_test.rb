@@ -11,7 +11,7 @@ module Archimate
         @model = MODEL_EXCHANGE_ARCHISURANCE_MODEL
       end
 
-      def xtest_write
+      def test_write
         result_io = StringIO.new
 
         assert_equal 2, model.properties.size
