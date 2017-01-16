@@ -120,3 +120,23 @@ Presents a conflict
 1. path is same
 2. a.delete IdentifiedNode & b.adds/changes reference to IdentifieNode (as shown above)
 3. a.deletes a node and b.insert/change a node under that node's path
+---
+
+Thinking about concurrency for performance improvements
+
+read base
+read local
+read remote
+
+base + local -> diff l
+base + remote -> diff b
+
+diff l + diff b -> conflict detection
+
+cd -> each conflict type
+
+conflicts -> conflict resolution
+
+cr (user response)
+
+serialize result (single)

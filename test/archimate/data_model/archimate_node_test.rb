@@ -22,8 +22,8 @@ module Archimate
       def test_diff_on_primitive_attribute
         assert_equal(
           [Diff::Change.new(
-            Diff::ArchimateNodeAttributeReference.new(@remote_diagram, "name"),
-            Diff::ArchimateNodeAttributeReference.new(@diagram, "name")
+            Diff::ArchimateNodeAttributeReference.new(@remote_diagram, :name),
+            Diff::ArchimateNodeAttributeReference.new(@diagram, :name)
           )],
           @diagram.diff(@remote_diagram)
         )

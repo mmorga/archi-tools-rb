@@ -73,7 +73,7 @@ module Archimate
       end
 
       def path(options = {})
-        archimate_node.path(options)
+        @node_ref_path ||= archimate_node.path(options)
       end
     end
   end

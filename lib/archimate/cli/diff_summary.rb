@@ -92,7 +92,7 @@ module Archimate
         by_kind = diffs_by_kind(diffs)
         %w(Delete Change Insert).each do |kind|
           next unless by_kind.key?(kind)
-          diagram_names = by_kind[kind].map(&:name)
+          diagram_names = by_kind[kind].uniq.map(&:name)
           puts "  #{color(kind)}"
           # TODO: make this magic number an option
           diagram_names[0..14].each { |diagram_name| puts "    #{diagram_name}" }

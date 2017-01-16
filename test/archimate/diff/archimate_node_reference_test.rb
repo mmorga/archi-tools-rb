@@ -9,7 +9,7 @@ module Archimate
       def setup
         @model = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 3, with_folders: 4, with_documentation: 2)
         @bounds = @model.find_by_class(DataModel::Bounds).first
-        @subject = ArchimateNodeAttributeReference.new(@bounds.parent, "bounds")
+        @subject = ArchimateNodeAttributeReference.new(@bounds.parent, :bounds)
         @other = @model.clone
         @other_bounds = @other.find_by_class(DataModel::Bounds).first
       end
@@ -32,7 +32,7 @@ module Archimate
       end
 
       def test_lookup_in_model_string_attribute
-        assert_same @other.id, ArchimateNodeAttributeReference.new(@model, "id").lookup_in_model(@other)
+        assert_same @other.id, ArchimateNodeAttributeReference.new(@model, :id).lookup_in_model(@other)
       end
 
       def test_lookup_in_model_documentation

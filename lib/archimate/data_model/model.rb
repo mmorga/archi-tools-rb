@@ -19,16 +19,23 @@ module Archimate
 
       def initialize(attributes)
         super
-        @index_hash = {}
         self.in_model = self
         self.parent = nil
         rebuild_index
-        organize
+      end
+
+      def with(options = {})
+        super.organize
       end
 
       def lookup(id)
         rebuild_index(id) unless @index_hash.include?(id)
         @index_hash[id]
+      end
+
+      def rebuild_index(missing_id = :model_creation_event)
+        @index_hash = build_index
+        self
       end
 
       def register(node, parent)
@@ -160,10 +167,6 @@ module Archimate
       def random_id
         @random ||= Random.new
         format("%08x", @random.rand(0xffffffff))
-      end
-
-      def rebuild_index(missing_id = :model_creation_event)
-        @index_hash = build_index
       end
     end
   end

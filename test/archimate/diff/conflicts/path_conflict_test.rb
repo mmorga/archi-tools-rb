@@ -25,7 +25,7 @@ module Archimate
           @element = @model.elements.first
           @relationship = @model.relationships.first
           @relationship2 = @model.relationships[1]
-          @diff_name = Archimate::Diff::Delete.new(ArchimateNodeAttributeReference.new(@model, "name"))
+          @diff_name = Archimate::Diff::Delete.new(ArchimateNodeAttributeReference.new(@model, :name))
 
           @diff1 = Archimate::Diff::Insert.new(ArchimateArrayReference.new(@model.relationships, 0))
           @diff2 = Archimate::Diff::Insert.new(ArchimateArrayReference.new(@model.relationships, 1))

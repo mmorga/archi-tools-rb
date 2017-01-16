@@ -24,7 +24,7 @@ childType:
     - lineColor?: string (html hex color) (nodeType.style.lineColor)
     - model?: string (id ref to another ArchimateDiagramModel) (TODO)
     - name?: string (nodeType.label)
-    - targetConnections?: string (space separated ids) (TODO)
+    - targetConnections?: string (space separated ids of sourceConnections) (TODO)
     - textAlignment?: string (int value) (TODO)
   Children:
     - bounds: boundsType (nodeType.[x, y, w, h])
@@ -37,7 +37,7 @@ childType:
 sourceConnectionType:
   Attributes:
     - id: string (id) (connectionType.identifier)
-    - source: string (id ref) (connectionType.source)
+    - source: string (id ref) (connectionType.source either element.id or child.id)
     - target: string (id ref) (connectionType.target)
     - font?: string (|separated values) (connectionType.style.font)
     - fontColor?: string (html hex color) (connectionType.style.font.color)

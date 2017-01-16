@@ -6,7 +6,7 @@ module Archimate
     class DeleteTest < Minitest::Test
       def setup
         @model = build_model(with_elements: 1)
-        @subject = Delete.new(ArchimateNodeAttributeReference.new(@model, "name"))
+        @subject = Delete.new(ArchimateNodeAttributeReference.new(@model, :name))
       end
 
       def test_to_s

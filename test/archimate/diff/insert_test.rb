@@ -8,7 +8,7 @@ module Archimate
 
       def setup
         @model = build_model(with_elements: 1)
-        @subject = Insert.new(ArchimateNodeAttributeReference.new(@model, "name"))
+        @subject = Insert.new(ArchimateNodeAttributeReference.new(@model, :name))
       end
 
       def test_to_s

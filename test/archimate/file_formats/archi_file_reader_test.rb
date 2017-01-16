@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 require 'test_helper'
 require 'test_examples'
-require 'ruby-prof'
 
 module Archimate
   module FileFormats

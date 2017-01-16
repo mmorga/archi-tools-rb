@@ -12,14 +12,14 @@ module Archimate
         ) unless archimate_node.is_a?(DataModel::ArchimateNode)
         raise(
           TypeError,
-          "Node #{archimate_node.class} attribute should be a sym or string, was a #{attribute.class} value #{attribute.inspect}"
-        ) unless attribute.is_a?(String) || attribute.is_a?(Symbol)
+          "Node #{archimate_node.class} attribute must be a sym, was a #{attribute.class} value #{attribute.inspect}"
+        ) unless attribute.is_a?(Symbol)
         raise(
           ArgumentError,
           "Attribute #{attribute} invalid for class #{archimate_node.class}"
-        ) unless archimate_node.class.schema.keys.include?(attribute.to_sym)
+        ) unless archimate_node.class.schema.keys.include?(attribute)
         super(archimate_node)
-        @attribute = attribute.to_s
+        @attribute = attribute
       end
 
       def ==(other)
@@ -39,7 +39,9 @@ module Archimate
       end
 
       def path(options = {})
-        [super, @attribute].map(&:to_s).reject(&:empty?).join("/")
+        @node_attribute_ref_path ||= [
+          super, @attribute
+        ].map(&:to_s).reject(&:empty?).join("/")
       end
 
       def insert(to_model)

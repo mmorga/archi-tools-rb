@@ -20,8 +20,9 @@ module Archimate
 
         aio.debug "Finding Conflicts in #{base_local_diffs.size + base_remote_diffs.size} diffs"
         conflicts = Conflicts.new(base_local_diffs, base_remote_diffs, aio)
+        resolved_diffs = conflicts.resolve
 
-        [apply_diffs(conflicts.resolve, base.clone), conflicts]
+        [apply_diffs(resolved_diffs, base.clone), conflicts]
       end
 
       # Applies the set of diffs to the model returning a
@@ -29,10 +30,11 @@ module Archimate
       def apply_diffs(diffs, model)
         aio.debug "Applying #{diffs.size} diffs"
         progressbar = @aio.create_progressbar(total: diffs.size, title: "Applying diffs")
-        diffs.inject(model) do |model_a, diff|
-          progressbar.increment
-          diff.apply(model_a)
-        end.compact!.organize
+        diffs
+          .tap { |_x| progressbar.increment }
+          .inject(model) { |model_a, diff| diff.apply(model_a) }
+          .rebuild_index
+          .organize
       ensure
         progressbar&.finish
       end

@@ -9,14 +9,14 @@ module Archimate
       def setup
         @model = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 3, with_folders: 4)
         @bounds = @model.find_by_class(DataModel::Bounds).first
-        @subject = ArchimateNodeAttributeReference.new(@model, "name")
+        @subject = ArchimateNodeAttributeReference.new(@model, :name)
         @other = @model.clone
         @other_bounds = @other.find_by_class(DataModel::Bounds).first
       end
 
       def test_initialize
         assert_same @model, @subject.archimate_node
-        assert_equal "name", @subject.attribute
+        assert_equal :name, @subject.attribute
       end
 
       def test_lookup_in_model_model
@@ -30,7 +30,7 @@ module Archimate
       def test_lookup_array_attribute
         assert_same(
           @other.documentation,
-          ArchimateNodeAttributeReference.new(@model, "documentation").lookup_in_model(@other)
+          ArchimateNodeAttributeReference.new(@model, :documentation).lookup_in_model(@other)
         )
       end
 
@@ -39,7 +39,7 @@ module Archimate
       end
 
       def test_lookup_in_model_for_bounds
-        assert_same @other_bounds, ArchimateNodeAttributeReference.new(@bounds.parent, "bounds").lookup_in_model(@other)
+        assert_same @other_bounds, ArchimateNodeAttributeReference.new(@bounds.parent, :bounds).lookup_in_model(@other)
       end
 
       def test_parent

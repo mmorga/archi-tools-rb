@@ -40,7 +40,7 @@ module Archimate
       end
 
       def path(options = {})
-        [
+        @array_ref_path ||= [
           super,
           case value
           when DataModel::IdentifiedNode
@@ -65,7 +65,6 @@ module Archimate
       def insert(to_model)
         ary_in_model = lookup_parent_in_model(to_model)
         insert_idx = find_insert_index_in_ary(ary_in_model) + 1
-        to_model.register(value, ary_in_model)
         ary_in_model.insert(insert_idx, value)
       end
 
@@ -77,7 +76,6 @@ module Archimate
         end
         idx = ary_in_model.smart_find(value)
         if idx
-          to_model.deregister(ary_in_model[idx])
           ary_in_model.delete_at(idx)
         else
           $stderr.puts "Couldn't find item #{value.inspect} in path #{path} to delete in to_model"
@@ -90,10 +88,7 @@ module Archimate
         if idx.nil?
           $stderr.puts "Couldn't find value #{from_value.inspect} in path #{path} to change in to_model, adding to end of list"
           idx = ary_in_model.size
-        else
-          to_model.deregister(ary_in_model[idx])
         end
-        to_model.register(value, ary_in_model)
         ary_in_model[idx] = value
       end
 

@@ -42,7 +42,7 @@ module Archimate
           other_enum = other.each_with_index
 
           loop do
-            if items_are_equal?(other_enum.peek[0], remaining_content[0])
+            if other_enum.peek[0] == remaining_content[0]
               other_enum.next
               remaining_content.shift
             elsif items_are_changed?(other, other_enum, remaining_content)
@@ -99,10 +99,6 @@ module Archimate
           self
         end
 
-        def items_are_equal?(a, b)
-          a == b
-        end
-
         def items_are_changed?(other, other_enum, remaining)
           !remaining.empty? &&
             case remaining[0]
@@ -121,15 +117,6 @@ module Archimate
             my_item.diff(other_enum.peek[0])
           else
             my_item.diff(other_enum.peek[0], self, other, other_enum.peek[1], find_index(my_item))
-          end
-        end
-
-        def smart_include?(val)
-          case val
-          when IdentifiedNode
-            any? { |item| item.id == val.id }
-          else
-            include?(val)
           end
         end
 
@@ -186,9 +173,18 @@ module Archimate
         def smart_find(val = nil)
           case val
           when IdentifiedNode
-            find_index { |item| item.id == val.id }
+            lazy.map(&:id).find_index(val.id)
           else
             find_index(val)
+          end
+        end
+
+        def smart_include?(val)
+          case val
+          when IdentifiedNode
+            lazy.map(&:id).include?(val.id)
+          else
+            include?(val)
           end
         end
 
@@ -205,11 +201,13 @@ module Archimate
         # return the idx of first node p in self that exists in both self and ary
         # and is previous to node in self
         def previous_item_index(ary, node)
-          common_items = smart_intersection(ary)
-          return -1 unless common_items.smart_include?(node)
-          result = common_items.smart_find(node) - 1
-          result = smart_find(common_items[result]) if result >= 0
-          result
+          return -1 unless ary.smart_include?(node)
+          initial_idx = smart_find(node)
+          return -1 if initial_idx.nil?
+
+          (initial_idx - 1).downto(0).find(-> { -1 }) do |idx|
+            ary.smart_include?(at(idx))
+          end
         end
       end
     end

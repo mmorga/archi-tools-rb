@@ -8,6 +8,12 @@ module Archimate
       constructor_type :schema
 
       attr_writer :parent_attribute_name
+      attr_reader :struct_instance_variables
+
+      def initialize(attributes)
+        super
+        @struct_instance_variables = self.class.schema.keys
+      end
 
       def with(options = {})
         self.class.new(
@@ -107,10 +113,6 @@ module Archimate
           parent&.path(options),
           path_identifier
         ].compact.map(&:to_s).reject(&:empty?).join("/")
-      end
-
-      def struct_instance_variables
-        @struct_instance_variables ||= self.class.schema.keys
       end
 
       def compact!

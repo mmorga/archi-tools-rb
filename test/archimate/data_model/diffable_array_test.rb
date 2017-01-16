@@ -12,6 +12,13 @@ module Archimate
         @subject = %w(apple orange banana)
       end
 
+      def test_smart_find_for_identified_nodes
+        subject = @model.elements
+        @model.elements.each_with_index do |el, idx|
+          assert_equal idx, subject.smart_find(el)
+        end
+      end
+
       def test_diff_on_non_array_error_state
         assert_raises(TypeError) { @subject.diff(42) }
       end
@@ -74,8 +81,8 @@ module Archimate
         assert_equal(
           [
             Diff::Change.new(
-              Diff::ArchimateNodeAttributeReference.new(local.diagrams[0].children[0].source_connections[0].bendpoints[1], "start_x"),
-              Diff::ArchimateNodeAttributeReference.new(base.diagrams[0].children[0].source_connections[0].bendpoints[1], "start_x")
+              Diff::ArchimateNodeAttributeReference.new(local.diagrams[0].children[0].source_connections[0].bendpoints[1], :start_x),
+              Diff::ArchimateNodeAttributeReference.new(base.diagrams[0].children[0].source_connections[0].bendpoints[1], :start_x)
             )
           ], diffs
         )
@@ -153,8 +160,8 @@ module Archimate
 
         assert_equal(
           [Diff::Change.new(
-            Diff::ArchimateNodeAttributeReference.new(local.elements.first, "label"),
-            Diff::ArchimateNodeAttributeReference.new(base.elements.first, "label")
+            Diff::ArchimateNodeAttributeReference.new(local.elements.first, :label),
+            Diff::ArchimateNodeAttributeReference.new(base.elements.first, :label)
           )],
           base_local
         )

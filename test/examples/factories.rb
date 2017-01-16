@@ -237,7 +237,7 @@ module Archimate
 
       def build_diff(options = {})
         model = options.fetch(:model, build_model)
-        Archimate::Diff::Insert.new(Diff::ArchimateNodeAttributeReference.new(model, "name"))
+        Archimate::Diff::Insert.new(Diff::ArchimateNodeAttributeReference.new(model, :name))
       end
 
       def random_relationship_type

@@ -39,8 +39,7 @@ module Archimate
       # @param changed_from [same class as target] (optional) for change this is the previous value
       # def initialize(changed_from, target)
       def initialize(target, changed_from = nil)
-        raise TypeError, "Expected target to be an ArchimateNodeReference" unless target.is_a?(ArchimateNodeReference)
-        raise "Instantiating abstract Difference" if self.class == Difference
+        # raise TypeError, "Expected target to be an ArchimateNodeReference" unless target.is_a?(ArchimateNodeReference)
         @target = target
         @changed_from = changed_from
       end

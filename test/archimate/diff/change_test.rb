@@ -11,8 +11,8 @@ module Archimate
         @from_model = build_model
         @to_model = @from_model.with(name: @from_model.name + "-changed")
         @subject = Change.new(
-          ArchimateNodeAttributeReference.new(to_model, "name"),
-          ArchimateNodeAttributeReference.new(from_model, "name")
+          ArchimateNodeAttributeReference.new(to_model, :name),
+          ArchimateNodeAttributeReference.new(from_model, :name)
         )
       end
 
