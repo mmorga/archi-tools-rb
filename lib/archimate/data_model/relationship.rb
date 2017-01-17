@@ -11,11 +11,19 @@ module Archimate
         HighLine.color(
           "#{AIO.data_model(type)}<#{id}>[#{HighLine.color(name || '', [:black, :underline])}]",
           :on_light_magenta
-        ) + " #{source} -> #{target}"
+        ) + " #{source_element} -> #{target_element}"
       end
 
       def referenced_identified_nodes
         [@source, @target].compact
+      end
+
+      def source_element
+        element_by_id(source)
+      end
+
+      def target_element
+        element_by_id(target)
       end
     end
     Dry::Types.register_class(Relationship)

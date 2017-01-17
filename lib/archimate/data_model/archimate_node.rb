@@ -147,6 +147,11 @@ module Archimate
         end
       end
 
+      def element_by_id(element_id)
+        return nil if element_id.nil?
+        in_model&.lookup(element_id)
+      end
+
       private
 
       def path_identifier

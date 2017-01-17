@@ -59,14 +59,25 @@ module Archimate
       end
 
       def test_to_s
-        rel = build_relationship(
+        src_el = build_element
+        target_el = build_element
+        subject = build_relationship(
           id: "abc123",
-          name: nil,
-          type: "complicated",
-          source: "src",
-          target: "tar"
+          type: "AssociationRelationship",
+          name: "friends",
+          source: src_el.id,
+          target: target_el.id
         )
-        assert_equal "complicated<abc123>[] src -> tar", HighLine.uncolor(rel.to_s)
+        model = build_model(
+          elements: [src_el, target_el],
+          relationships: [
+            subject
+          ]
+        )
+        assert_equal(
+          HighLine.uncolor("AssociationRelationship<abc123>[friends] #{src_el} -> #{target_el}"),
+          HighLine.uncolor(model.relationships[0].to_s)
+        )
       end
 
       def test_referenced_identified_nodes
