@@ -31,11 +31,9 @@ end
 
 module Archimate
   class FakeProgressBar
-    def increment
-    end
+    def increment; end
 
-    def finish
-    end
+    def finish; end
   end
 
   class AIO

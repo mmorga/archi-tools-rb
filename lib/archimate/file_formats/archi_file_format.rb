@@ -89,14 +89,14 @@ module Archimate
         "folder[type=\"connectors\"]"
       ].freeze
 
-      ELEMENT_FOLDER_TYPES = [
-        "business",
-        "application",
-        "technology",
-        "motivation",
-        "implementation_migration",
-        "connectors"
-      ].freeze
+      ELEMENT_FOLDER_TYPES = %w(
+        business
+        application
+        technology
+        motivation
+        implementation_migration
+        connectors
+      ).freeze
 
       RELATION_XPATHS = [
         "folder[type=\"relations\"]",

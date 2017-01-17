@@ -104,7 +104,7 @@ module Archimate
 
       def find_in_folders(item, fs = nil)
         result = find_by_class(DataModel::Folder).select { |f| f.items.include?(item.id) }
-        raise "Program Error! #{item.id} is located in more than one folder. #{result.map(&:to_s).inspect}\n#{item}\n" if result.size > 1
+        #raise "Program Error! #{item.id} is located in more than one folder. #{result.map(&:to_s).inspect}\n#{item}\n" if result.size > 1
         result.empty? ? nil : result.first
       end
 
