@@ -15,6 +15,7 @@ module Archimate
     autoload :Diff, 'archimate/cli/diff'
     autoload :DiffSummary, 'archimate/cli/diff_summary'
     autoload :Duper, 'archimate/cli/duper'
+    autoload :Lint, 'archimate/cli/lint'
     autoload :Mapper, 'archimate/cli/mapper'
     autoload :Merge, 'archimate/cli/merge'
     autoload :Merger, 'archimate/cli/merger'
@@ -30,6 +31,7 @@ module Archimate
   end
 
   module FileFormats
+    autoload :ArchimateV2, 'archimate/file_formats/archimate_v2'
     autoload :ArchiFileFormat, 'archimate/file_formats/archi_file_format'
     autoload :ArchiFileReader, 'archimate/file_formats/archi_file_reader'
     autoload :ArchiFileWriter, 'archimate/file_formats/archi_file_writer'
@@ -37,6 +39,10 @@ module Archimate
     autoload :ModelExchangeFileReader, 'archimate/file_formats/model_exchange_file_reader'
     autoload :ModelExchangeFileWriter, 'archimate/file_formats/model_exchange_file_writer'
     autoload :Writer, 'archimate/file_formats/writer'
+  end
+
+  module Lint
+    autoload :Linter, 'archimate/lint/linter'
   end
 
   autoload :FileFormat, 'archimate/file_format'

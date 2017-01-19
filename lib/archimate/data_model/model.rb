@@ -34,6 +34,7 @@ module Archimate
       end
 
       def rebuild_index(missing_id = :model_creation_event)
+        return self if missing_id.nil?
         @index_hash = build_index
         self
       end

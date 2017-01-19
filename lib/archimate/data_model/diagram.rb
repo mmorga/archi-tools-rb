@@ -14,8 +14,20 @@ module Archimate
         end
       end
 
+      def all_children
+        children.inject(Array.new(children)) { |child_ary, child| child_ary.concat(child.all_children) }
+      end
+
+      def all_source_connections
+        children.inject([]) { |child_ary, child| child_ary.concat(child.all_source_connections) }
+      end
+
       def to_s
         "#{AIO.data_model('Diagram')}<#{id}>[#{HighLine.color(name, [:white, :underline])}]"
+      end
+
+      def total_viewpoint?
+        viewpoint.nil? || viewpoint.empty?
       end
     end
     Dry::Types.register_class(Diagram)

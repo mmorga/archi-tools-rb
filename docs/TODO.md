@@ -4,7 +4,7 @@
 * [ ] Conflicts can happen on the same diff 2x. How to handle this?
 * [ ] In `Change.to_s` - deref args that point to other elements (like archimate_element)
 * [ ] In Diagram children diffs - make to_s reference the parent diagram
-* [ ] Array diffs on non-id'd diffable elements should detect changes rather than delete/insert
+* [x] Array diffs on non-id'd diffable elements should detect changes rather than delete/insert
 * [ ] Add Split file feature (extract say a diagram or set of elements)
 * [ ] Merge unrelated files (this is the intent of Merger)
 * [ ] Scorecard lint

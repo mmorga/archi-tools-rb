@@ -121,10 +121,13 @@ module Archimate
           'element[xsi|type="archimate:SketchModel"]'
         ).map do |i|
           tick
+          viewpoint_idx = i["viewpoint"]
+          viewpoint_idx = viewpoint_idx.to_i unless viewpoint_idx.nil?
+          viewpoint = viewpoint_idx.nil? ? nil : ArchiFileFormat::VIEWPOINTS[viewpoint_idx]
           DataModel::Diagram.new(
             id: i["id"],
             name: i["name"],
-            viewpoint: i["viewpoint"],
+            viewpoint: viewpoint,
             documentation: parse_documentation(i),
             properties: parse_properties(i),
             children: parse_children(i),

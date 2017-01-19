@@ -177,6 +177,19 @@ module Archimate
           )
         ).convert(options[:to])
       end
+
+      desc "lint ARCHIFILE", "Examine the ArchiMate file for potential problems"
+      option :output,
+             aliases: :o,
+             desc: "Write output to FILE instead of STDOUT"
+      def lint(archifile)
+        Archimate::Cli::Lint.new(
+          Archimate::AIO.new(
+            input_io: archifile,
+            output_io: options.fetch("output", $stdout)
+          )
+        ).lint
+      end
     end
   end
 end

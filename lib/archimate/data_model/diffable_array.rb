@@ -135,10 +135,7 @@ module Archimate
         end
 
         def build_index(hash_index = {})
-          hash_index[id] = self
-          each_with_object(hash_index) do |i, a|
-            i.primitive? ? a[i.object_id] = i : i.build_index(a)
-          end
+          reduce(hash_index) { |hi, array_item| array_item.build_index(hi) }
         end
 
         def path(options = {})

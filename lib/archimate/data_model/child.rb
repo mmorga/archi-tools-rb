@@ -18,7 +18,11 @@ module Archimate
       end
 
       def element
-        in_model.lookup(archimate_element)
+        @element ||= in_model.lookup(archimate_element)
+      end
+
+      def all_children
+        children.inject(Array.new(children)) { |child_ary, child| child_ary.concat(child.all_children) }
       end
 
       def all_source_connections
@@ -35,6 +39,10 @@ module Archimate
         ) do |a, e|
           a.concat(e.referenced_identified_nodes)
         end
+      end
+
+      def in_diagram
+        @diagram ||= ->(node) { node = node.parent until node.nil? || node.is_a?(Diagram) }.call(self)
       end
     end
 

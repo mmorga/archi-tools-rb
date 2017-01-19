@@ -54,7 +54,7 @@ module Archimate
       end
 
       def id
-        object_id.to_s
+        nil
       end
 
       def ancestors
@@ -86,7 +86,7 @@ module Archimate
       end
 
       def build_index(hash_index = {})
-        hash_index[id] = self
+        hash_index[id] = self unless id.nil?
         struct_instance_variables.reduce(hash_index) do |a, e|
           self[e].parent_attribute_name = e
           self[e].build_index(a)

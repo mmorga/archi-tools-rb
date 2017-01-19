@@ -13,6 +13,10 @@ module Archimate
         HighLine.color("#{AIO.data_model('SourceConnection')}[#{HighLine.color(@name || '', [:white, :underline])}]", :on_light_magenta)
       end
 
+      def element
+        in_model.lookup(relationship)
+      end
+
       def to_s
         if in_model
           s = in_model.lookup(source) unless source.nil?
