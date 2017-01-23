@@ -17,3 +17,4 @@ tags
 .srclib-cache/
 *.sublime-*
 .byebug_history
+*.xlsx
