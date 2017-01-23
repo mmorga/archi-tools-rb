@@ -54,7 +54,7 @@ module Archimate
       end
 
       def id
-        nil
+        object_id
       end
 
       def ancestors
