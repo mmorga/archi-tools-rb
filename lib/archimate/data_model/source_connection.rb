@@ -13,8 +13,20 @@ module Archimate
         HighLine.color("#{AIO.data_model('SourceConnection')}[#{HighLine.color(@name || '', [:white, :underline])}]", :on_light_magenta)
       end
 
-      def element
+      def relationship_element
         in_model.lookup(relationship)
+      end
+
+      def element
+        relationship_element
+      end
+
+      def source_element
+        in_model.lookup(source)
+      end
+
+      def target_element
+        in_model.lookup(target)
       end
 
       def to_s

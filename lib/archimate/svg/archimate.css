@@ -1,17 +1,23 @@
 svg {
-    font-size: 12px;
     font-family: "Lucida Grande";
+    font-size: 11px;
 }
 
 p {
     fill: black;
+    margin: 3px;
     stroke: none;
 }
 
 path {
-    stroke-width: 1px;
-    stroke: black;
     fill: none;
+    stroke: black;
+    stroke-width: 1px;
+}
+
+.entity-name {
+    text-align: center;
+    vertical-align: top;
 }
 
 .entity>.properties {
@@ -35,20 +41,21 @@ table.properties>caption {
     border-top-right-radius: 8px;
 }
 
-td.entity-name {
-    text-align: center;
-    vertical-align: middle;
-}
-
 .archimate-badge {
     fill: none;
     stroke: black;
     stroke-width: 1px;
 }
 
+.archimate-badge-spacer {
+    float: right;
+    height: 20px;
+    width: 20px;
+}
+
 .archimate-icon {
-    stroke: black;
     fill: none;
+    stroke: black;
 }
 
 .archimate-default-element {
@@ -116,6 +123,63 @@ td.entity-name {
     stroke: #999;
 }
 
+/* Relationships */
+
+.archimate-assignment-relationship {
+    marker-end: url(#archimate-dot-marker);
+    marker-start: url(#archimate-dot-marker);
+}
+
+.archimate-composition-relationship {
+    marker-start: url(#archimate-filled-diamond);
+}
+
+.archimate-used-by-relationship {
+    marker-end: url(#archimate-used-by-arrow);
+}
+
+.archimate-aggregation-relationship {
+    marker-start: url(#archimate-open-diamond);
+}
+
+.archimate-access-relationship {
+    marker-end: url(#archimate-open-arrow);
+    stroke-dasharray: 2, 3;
+}
+
+.archimate-realisation-relationship {
+    marker-end: url(#archimate-hollow-arrow);
+    stroke-dasharray: 5, 3;
+    stroke-width: 1px;
+}
+
+.archimate-specialisation-relationship {
+    marker-end: url(#archimate-hollow-arrow);
+    stroke-width: 1px;
+}
+
+/*.archimate-influence-relationship, .archimate-association-relationship {
+}
+*/
+.archimate-triggering-relationship {
+    marker-end: url(#archimate-filled-arrow);
+}
+
+.archimate-flow-relationship {
+    marker-end: url(#archimate-filled-arrow);
+    stroke-dasharray: 3, 3;
+}
+
+/*.archimate-default-connection {
+}
+*/
+
+
+/******************************************
+
+OBSOLETE
+
+*******************************************/
 
 /*********************************************/
 
@@ -271,53 +335,4 @@ td.entity-name {
 
 .Group>.detail {
     fill: #bdc1c1;
-}
-
-
-/* Relationships */
-
-.AssignmentRelationship {
-    marker-start: url(#dot-marker);
-    marker-end: url(#dot-marker);
-}
-
-.CompositionRelationship {
-    marker-start: url(#filled-diamond);
-}
-
-.UsedByRelationship {
-    marker-start: url(#used-by-arrow);
-}
-
-.AggregationRelationship {
-    marker-start: url(#open-diamond);
-}
-
-.AccessRelationship {
-    marker-end: url(#open-arrow);
-    stroke-dasharray: 2, 3;
-}
-
-.RealisationRelationship {
-    marker-end: url(#hollow-arrow);
-    stroke-dasharray: 5, 3;
-    stroke-width: 1px;
-}
-
-.SpecialisationRelationship {
-    marker-end: url(#hollow-arrow);
-    stroke-width: 1px;
-}
-
-.InfluenceRelationship {}
-
-.AssociationRelationship {}
-
-.TriggeringRelationship {
-    marker-end: url(#filled-arrow);
-}
-
-.FlowRelationship {
-    marker-end: url(#filled-arrow);
-    stroke-dasharray: 3, 3;
 }

@@ -22,19 +22,11 @@ module Archimate
     end
 
     class Diagram
-      attr_reader :todos
       attr_reader :diagram
-
-      # SvgTemplateVars = Struct.new(:stylesheet)
-      # CSS_CONTENT = File.read(File.join(File.dirname(__FILE__), "archimate.css"))
-      # SVG_ERB = File.read(File.join(File.dirname(__FILE__), "svg_template.svg.erb"))
-      # SVG_TEMPLATE_XML = ERB.new(SVG_ERB).result(SvgTemplateVars.new(CSS_CONTENT).binding)
-      # SVG_TEMPLATE = Nokogiri::XML::Document.parse(SVG_TEMPLATE_XML).freeze
 
       def initialize(diagram, aio)
         @diagram = diagram
         @aio = aio
-        @todos = Hash.new(0)
         @svg_template = Nokogiri::XML::Document.parse(SvgTemplate.new.to_s).freeze
       end
 

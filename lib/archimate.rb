@@ -47,11 +47,13 @@ module Archimate
 
   module Svg
     autoload :Child, 'archimate/svg/child'
+    autoload :Connection, 'archimate/svg/connection'
     autoload :Diagram, 'archimate/svg/diagram'
     autoload :Entity, 'archimate/svg/entity'
     autoload :Export, 'archimate/svg/export'
     autoload :Font, 'archimate/svg/font'
     autoload :Icons, 'archimate/svg/icons'
+    autoload :Point, 'archimate/svg/point'
     autoload :StringRefinements, 'archimate/svg/string_refinements'
     autoload :SvgTemplate, 'archimate/svg/svg_template'
   end

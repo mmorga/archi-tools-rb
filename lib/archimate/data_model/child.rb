@@ -2,6 +2,8 @@
 module Archimate
   module DataModel
     class Child < IdentifiedNode
+      using DiffableArray
+
       attribute :model, Strict::String.optional
       attribute :name, Strict::String.optional
       attribute :content, Strict::String.optional
@@ -43,6 +45,18 @@ module Archimate
 
       def in_diagram
         @diagram ||= ->(node) { node = node.parent until node.nil? || node.is_a?(Diagram) }.call(self)
+      end
+
+      # TODO: Is this true for all or only Archi models?
+      def absolute_position
+        offset = bounds || Archimate::DataModel::Bounds.zero
+        el = self.parent.parent
+        while el.respond_to?(:bounds) && el.bounds
+          bounds = el.bounds
+          offset = offset.with(x: (offset.x || 0) + (bounds.x || 0), y: (offset.y || 0) + (bounds.y || 0))
+          el = el.parent.parent
+        end
+        offset
       end
     end
 
