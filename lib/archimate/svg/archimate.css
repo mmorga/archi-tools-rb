@@ -1,0 +1,323 @@
+svg {
+    font-size: 12px;
+    font-family: "Lucida Grande";
+}
+
+p {
+    fill: black;
+    stroke: none;
+}
+
+path {
+    stroke-width: 1px;
+    stroke: black;
+    fill: none;
+}
+
+.entity>.properties {
+    visibility: hidden;
+}
+
+.entity:hover>.properties {
+    visibility: visible;
+    z-index: 1000;
+}
+
+table.properties {
+    background-color: whitesmoke;
+    border: 2px solid gray;
+}
+
+table.properties>caption {
+    background-color: gray;
+    border: 2px solid gray;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+td.entity-name {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.archimate-badge {
+    fill: none;
+    stroke: black;
+    stroke-width: 1px;
+}
+
+.archimate-icon {
+    stroke: black;
+    fill: none;
+}
+
+.archimate-default-element {
+    fill: #ddd;
+    stroke: #999;
+}
+
+.archimate-business-background {
+    fill: #fffeb9;
+    stroke: #b2b181;
+}
+
+.archimate-business-decoration {
+    fill: rgb(229, 229, 162);
+    stroke: rgb(178, 178, 126);
+}
+
+.archimate-application-background {
+    fill: #ccfdfe;
+    stroke: #80b2b2;
+}
+
+.archimate-application-decoration {
+    fill: rgb(162, 229, 229);
+    stroke: rgb(126, 178, 178);
+}
+
+.archimate-infrastructure-background {
+    fill: #cae6b9;
+    stroke: #8ca081;
+}
+
+.archimate-infrastructure-decoration {
+    fill: #b4cfa4;
+    stroke: #9bb28d;
+}
+
+.archimate-motivation-background {
+    fill: #fecdfe;
+    stroke: #b18fb1;
+}
+
+.archimate-motivation2-background {
+    fill: #cccdfd;
+    stroke: #8e8fb1;
+}
+
+.archimate-implementation-background {
+    fill: #fee0e0;
+    stroke: #b19c9c;
+}
+
+.archimate-implementation2-background {
+    fill: #e0ffe0;
+    stroke: #9cb29c;
+}
+
+.archimate-implementation2-decoration {
+    fill: #c9e5c9;
+    stroke: #9cb29c;
+}
+
+.archimate-default-background {
+    fill: #ddd;
+    stroke: #999;
+}
+
+
+/*********************************************/
+
+/* Business Layer: Active Structure */
+
+.BusinessActor,
+.BusinessCollaboration,
+.BusinessInterface,
+.BusinessRole,
+.Location {
+    fill: #e6ffff;
+    stroke: #B8CCCC;
+}
+
+
+/* Business Layer: Behavioral */
+
+.BusinessEvent,
+.BusinessFunction,
+.BusinessInteraction,
+.BusinessProcess,
+.BusinessService {
+    fill: #ffffe6;
+    stroke: #b2b2a1;
+}
+
+
+/* Business Layer: Passive Structre */
+
+.BusinessObject,
+.Contract,
+.Meaning,
+.Product,
+.Representation,
+.Value: {
+    fill: #e6ffe6;
+    stroke: #B8CCB8;
+}
+
+
+/* Application Layer: Active Structure */
+
+.ApplicationCollaboration,
+.ApplicationComponent,
+.ApplicationInterface {
+    fill: #afffff;
+    /* #b0ffff */
+    stroke: #8CCCCC;
+}
+
+.ApplicationComponent>.topbox {
+    fill: #9de5e5;
+}
+
+
+/* Application Layer: Behavioral */
+
+.ApplicationFunction,
+.ApplicationInteraction,
+.ApplicationService {
+    fill: #ffffaf;
+    stroke: #CCCC8C;
+}
+
+
+/* Application Layer: Passive Structure */
+
+.DataObject {
+    fill: #afffaf;
+    stroke: #8CCC8C;
+}
+
+.DataObject>.topbox {
+    fill: #9de59d;
+}
+
+
+/* Technology Layer: Active Structure */
+
+.CommunicationPath,
+.Device,
+.InfrastructureInterface,
+.Network,
+.Node,
+.SystemSoftware {
+    fill: #7effff;
+    stroke: #57b2b2;
+}
+
+
+/* Technology Layer: Behavior */
+
+.InfrastructureFunction,
+.InfrastructureService {
+    fill: #ffff82;
+    stroke: #CCCC68;
+}
+
+
+/* Technology Layer: Passive Structure */
+
+.Artifact {
+    fill: #91ff91;
+    stroke: #74CC74;
+}
+
+
+/* Motivation Extension */
+
+.Stakeholder,
+.Driver,
+.Assessment {
+    fill: #ffccff;
+    stroke: #b28eb2;
+}
+
+.Goal,
+.Constraint,
+.Principal,
+.Requirement {
+    fill: #ccccff;
+    stroke: #8e8eb2;
+}
+
+
+/* Implementation and Migration Extension */
+
+.Gap,
+.Plateau {
+    fill: #e1ffe0;
+    stroke: #9db29c;
+}
+
+.Plateau>.detail {
+    fill: #cae5c9;
+}
+
+.WorkPackage,
+.Deliverable {
+    fill: #ffe0e0;
+    stroke: #b19c9c;
+}
+
+.Note {
+    fill: #ffffff;
+    stroke: #e2e2e2;
+}
+
+.Group {
+    fill: #d2d7d7;
+    stroke: #939696;
+}
+
+.Group>.detail {
+    fill: #bdc1c1;
+}
+
+
+/* Relationships */
+
+.AssignmentRelationship {
+    marker-start: url(#dot-marker);
+    marker-end: url(#dot-marker);
+}
+
+.CompositionRelationship {
+    marker-start: url(#filled-diamond);
+}
+
+.UsedByRelationship {
+    marker-start: url(#used-by-arrow);
+}
+
+.AggregationRelationship {
+    marker-start: url(#open-diamond);
+}
+
+.AccessRelationship {
+    marker-end: url(#open-arrow);
+    stroke-dasharray: 2, 3;
+}
+
+.RealisationRelationship {
+    marker-end: url(#hollow-arrow);
+    stroke-dasharray: 5, 3;
+    stroke-width: 1px;
+}
+
+.SpecialisationRelationship {
+    marker-end: url(#hollow-arrow);
+    stroke-width: 1px;
+}
+
+.InfluenceRelationship {}
+
+.AssociationRelationship {}
+
+.TriggeringRelationship {
+    marker-end: url(#filled-arrow);
+}
+
+.FlowRelationship {
+    marker-end: url(#filled-arrow);
+    stroke-dasharray: 3, 3;
+}

@@ -45,6 +45,17 @@ module Archimate
     autoload :Linter, 'archimate/lint/linter'
   end
 
+  module Svg
+    autoload :Child, 'archimate/svg/child'
+    autoload :Diagram, 'archimate/svg/diagram'
+    autoload :Entity, 'archimate/svg/entity'
+    autoload :Export, 'archimate/svg/export'
+    autoload :Font, 'archimate/svg/font'
+    autoload :Icons, 'archimate/svg/icons'
+    autoload :StringRefinements, 'archimate/svg/string_refinements'
+    autoload :SvgTemplate, 'archimate/svg/svg_template'
+  end
+
   autoload :FileFormat, 'archimate/file_format'
   autoload :MaybeIO, 'archimate/maybe_io'
 
