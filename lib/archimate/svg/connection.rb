@@ -6,14 +6,12 @@ module Archimate
 
       attr_reader :source_connection
 
-      EntityProperties = Struct.new(:shape, :layer, :badge, :decoration)
-
       def initialize(source_connection)
         @source_connection = source_connection
       end
 
       def to_svg(xml)
-        xml.path(path_attrs)
+        xml.path(path_attrs) unless source_connection.source_element.children.include?(source_connection.target_element)
       end
 
       def path_attrs
