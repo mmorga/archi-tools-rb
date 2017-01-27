@@ -11,7 +11,9 @@ module Archimate
       end
 
       def to_svg(xml)
-        xml.path(path_attrs) unless source_connection.source_element.children.include?(source_connection.target_element)
+        return if source_connection.source_element.children.include?(source_connection.target_element)
+        xml.path(path_attrs)
+        # TODO: path label
       end
 
       def path_attrs
@@ -30,7 +32,7 @@ module Archimate
         ].join("-")
       end
 
-      # TODO: refinement isn't working here. Investigate.
+      # TODO: StringRefinements refinement isn't working in this class, so added this method here. Investigate.
       def css_classify(str)
         str.gsub(/::/, '/')
           .gsub(/([A-Z]+)([A-Z][a-z])/, '\1-\2')
@@ -54,42 +56,68 @@ module Archimate
         source_bounds = source_connection.source_element&.absolute_position || DataModel::Bounds.zero
         target_bounds = source_connection.target_element&.absolute_position || DataModel::Bounds.zero
 
-        source_x_range = source_bounds.x_range
-        target_x_range = target_bounds.x_range
+        last_bounds = DataModel::Bounds.new(
+          x: source_bounds.left + source_bounds.width / 2.0,
+          y: source_bounds.top + source_bounds.height / 2.0,
+          width: 0,
+          height: 0
+        )
+        bp_bounds = source_connection.bendpoints.map do |bp|
+          last_bounds = DataModel::Bounds.new(
+            x: last_bounds.left + (bp.start_x || 0),
+            y: last_bounds.top + (bp.start_y || 0),
+            width: 0,
+            height: 0
+          )
+        end
 
-        overlap_x_center = ranges_overlap(source_x_range, target_x_range)
+        bounds = [source_bounds].concat(bp_bounds) << target_bounds
+
+        points = []
+        a = bounds.shift
+        until (bounds.empty?)
+          b = bounds.shift
+          points.concat(calc_points(a, b))
+          a = b
+        end
+        points.uniq!
+        [move_to(points.shift)].concat(points.map{ |pt| line_to(pt) }).join(" ")
+      end
+
+      # a: Bounds
+      # b: Bounds
+      def calc_points(a, b)
+        ax_range = a.x_range
+        bx_range = b.x_range
+
+        overlap_x_center = ranges_overlap(ax_range, bx_range)
 
         if overlap_x_center
-          start_x = overlap_x_center
-          end_x = overlap_x_center
-        elsif target_bounds.is_right_of?(source_bounds)
-          start_x = source_bounds.right
-          end_x = target_bounds.left
+          ax = bx = overlap_x_center
+        elsif b.is_right_of?(a)
+          ax = a.right
+          bx = b.left
         else
-          start_x = source_bounds.left
-          end_x = target_bounds.right
+          ax = a.left
+          bx = b.right
         end
 
-        source_y_range = source_bounds.y_range
-        target_y_range = target_bounds.y_range
+        ay_range = a.y_range
+        by_range = b.y_range
 
-        overlap_y_center = ranges_overlap(source_y_range, target_y_range)
+        overlap_y_center = ranges_overlap(ay_range, by_range)
 
         if overlap_y_center
-          start_y = overlap_y_center
-          end_y = overlap_y_center
-        elsif target_bounds.is_above?(source_bounds)
-          start_y = source_bounds.top
-          end_y = target_bounds.bottom
+          ay = by = overlap_y_center
+        elsif b.is_above?(a)
+          ay = a.top
+          by = b.bottom
         else
-          start_y = source_bounds.bottom
-          end_y = target_bounds.top
+          ay = a.bottom
+          by = b.top
         end
 
-        [
-          move_to(Point.new(start_x, start_y)),
-          line_to(Point.new(end_x, end_y))
-        ].join(" ")
+        [Point.new(ax, ay), Point.new(bx, by)]
       end
 
       def move_to(point)

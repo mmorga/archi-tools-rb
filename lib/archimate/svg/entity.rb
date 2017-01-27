@@ -32,18 +32,6 @@ module Archimate
         end
       end
 
-      # def entity_text_bounds(bounds, eprops)
-      #   return Archimate::DataModel::Bounds.zero if element.is_a?(Archimate::DataModel::Model) # TODO: why is this happening?
-      #   case element.type
-      #   when "ApplicationService"
-      #     ctx.with(x: (ctx.x || 0) + 10, y: (ctx.y || 0), width: ctx.width - 20, height: ctx.height)
-      #   when "DataObject"
-      #     ctx.with(x: (ctx.x || 0) + 5, y: (ctx.y || 0) + 14, width: ctx.width - 10, height: ctx.height)
-      #   else
-      #     ctx.with(x: (ctx.x || 0) + 5, y: (ctx.y || 0), width: ctx.width - 30, height: ctx.height)
-      #   end
-      # end
-
       def entity_label(xml, _eprops)
         return if (entity.nil? || entity.name.nil? || entity.name.strip.empty?) && (child.content.nil? || child.content.strip.empty?)
         text_bounds = child.bounds # eprops.text_bounds
