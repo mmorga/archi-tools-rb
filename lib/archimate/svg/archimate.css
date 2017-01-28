@@ -10,8 +10,8 @@ p {
 }
 
 path {
-    fill: none;
-    stroke: black;
+    fill: inherit;
+    stroke: inherit;
     stroke-width: 1px;
 }
 
@@ -41,6 +41,11 @@ table.properties>caption {
     border-top-right-radius: 8px;
 }
 
+.archimate-decoration {
+    fill:rgba(0,0,0,0.1);
+    stroke: inherit;
+}
+
 .archimate-badge {
     fill: none;
     stroke: black;
@@ -51,6 +56,7 @@ table.properties>caption {
     float: right;
     height: 20px;
     width: 20px;
+    /*border: 1px solid red;*/
 }
 
 .archimate-icon {
@@ -118,12 +124,36 @@ table.properties>caption {
     stroke: #9cb29c;
 }
 
+.archimate-note-background {
+    fill: #fff;
+    stroke: #b2b2b2;
+}
+
+.archimate-group-background {
+    fill: #d2d7d7;
+    stroke: #939696;
+}
+
+.archimate-sticky-background {
+    fill: #fffeb9;
+    stroke: #b2b181;
+}
+
 .archimate-default-background {
     fill: #ddd;
     stroke: #999;
 }
 
 /* Relationships */
+.archimate-relationship {
+    fill: none;
+    stroke: black;
+    stroke-width: 1px;
+}
+
+.archimate-relationship-name {
+    font-size: 9px;
+}
 
 .archimate-assignment-relationship {
     marker-end: url(#archimate-dot-marker);
@@ -139,7 +169,7 @@ table.properties>caption {
 }
 
 .archimate-aggregation-relationship {
-    marker-start: url(#archimate-open-diamond);
+    marker-start: url(#archimate-hollow-diamond);
 }
 
 .archimate-access-relationship {
@@ -150,12 +180,10 @@ table.properties>caption {
 .archimate-realisation-relationship {
     marker-end: url(#archimate-hollow-arrow);
     stroke-dasharray: 5, 3;
-    stroke-width: 1px;
 }
 
 .archimate-specialisation-relationship {
     marker-end: url(#archimate-hollow-arrow);
-    stroke-width: 1px;
 }
 
 /*.archimate-influence-relationship, .archimate-association-relationship {
@@ -173,166 +201,3 @@ table.properties>caption {
 /*.archimate-default-connection {
 }
 */
-
-
-/******************************************
-
-OBSOLETE
-
-*******************************************/
-
-/*********************************************/
-
-/* Business Layer: Active Structure */
-
-.BusinessActor,
-.BusinessCollaboration,
-.BusinessInterface,
-.BusinessRole,
-.Location {
-    fill: #e6ffff;
-    stroke: #B8CCCC;
-}
-
-
-/* Business Layer: Behavioral */
-
-.BusinessEvent,
-.BusinessFunction,
-.BusinessInteraction,
-.BusinessProcess,
-.BusinessService {
-    fill: #ffffe6;
-    stroke: #b2b2a1;
-}
-
-
-/* Business Layer: Passive Structre */
-
-.BusinessObject,
-.Contract,
-.Meaning,
-.Product,
-.Representation,
-.Value: {
-    fill: #e6ffe6;
-    stroke: #B8CCB8;
-}
-
-
-/* Application Layer: Active Structure */
-
-.ApplicationCollaboration,
-.ApplicationComponent,
-.ApplicationInterface {
-    fill: #afffff;
-    /* #b0ffff */
-    stroke: #8CCCCC;
-}
-
-.ApplicationComponent>.topbox {
-    fill: #9de5e5;
-}
-
-
-/* Application Layer: Behavioral */
-
-.ApplicationFunction,
-.ApplicationInteraction,
-.ApplicationService {
-    fill: #ffffaf;
-    stroke: #CCCC8C;
-}
-
-
-/* Application Layer: Passive Structure */
-
-.DataObject {
-    fill: #afffaf;
-    stroke: #8CCC8C;
-}
-
-.DataObject>.topbox {
-    fill: #9de59d;
-}
-
-
-/* Technology Layer: Active Structure */
-
-.CommunicationPath,
-.Device,
-.InfrastructureInterface,
-.Network,
-.Node,
-.SystemSoftware {
-    fill: #7effff;
-    stroke: #57b2b2;
-}
-
-
-/* Technology Layer: Behavior */
-
-.InfrastructureFunction,
-.InfrastructureService {
-    fill: #ffff82;
-    stroke: #CCCC68;
-}
-
-
-/* Technology Layer: Passive Structure */
-
-.Artifact {
-    fill: #91ff91;
-    stroke: #74CC74;
-}
-
-
-/* Motivation Extension */
-
-.Stakeholder,
-.Driver,
-.Assessment {
-    fill: #ffccff;
-    stroke: #b28eb2;
-}
-
-.Goal,
-.Constraint,
-.Principal,
-.Requirement {
-    fill: #ccccff;
-    stroke: #8e8eb2;
-}
-
-
-/* Implementation and Migration Extension */
-
-.Gap,
-.Plateau {
-    fill: #e1ffe0;
-    stroke: #9db29c;
-}
-
-.Plateau>.detail {
-    fill: #cae5c9;
-}
-
-.WorkPackage,
-.Deliverable {
-    fill: #ffe0e0;
-    stroke: #b19c9c;
-}
-
-.Note {
-    fill: #ffffff;
-    stroke: #e2e2e2;
-}
-
-.Group {
-    fill: #d2d7d7;
-    stroke: #939696;
-}
-
-.Group>.detail {
-    fill: #bdc1c1;
-}

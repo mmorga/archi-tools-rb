@@ -13,7 +13,14 @@ module Archimate
       def to_svg(xml)
         return if source_connection.source_element.children.include?(source_connection.target_element)
         xml.path(path_attrs)
-        # TODO: path label
+        name = source_connection&.relationship_element&.name&.strip
+        if !name.nil? && !name.empty?
+          xml.text_(class: "archimate-relationship-name", dy: -2, "text-anchor" => "middle") do
+            xml.textPath(startOffset: "50%", "xlink:href" => "##{source_connection.id}") do
+              xml.text name
+            end
+          end
+        end
       end
 
       def path_attrs
@@ -29,7 +36,7 @@ module Archimate
         [
           "archimate",
           css_classify(source_connection&.relationship_element&.type || "default")
-        ].join("-")
+        ].join("-") + " archimate-relationship"
       end
 
       # TODO: StringRefinements refinement isn't working in this class, so added this method here. Investigate.
