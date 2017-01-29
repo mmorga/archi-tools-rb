@@ -14,6 +14,19 @@ module Archimate
         attr_name_vals = struct_instance_variables.map { |k| "#{k}: #{self[k]}" }.join(", ")
         "Style(#{attr_name_vals})"
       end
+
+      def text_align
+        case text_alignment
+        when "1"
+          "left"
+        when "2"
+          "center"
+        when "3"
+          "right"
+        else
+          nil
+        end
+      end
     end
 
     Dry::Types.register_class(Style)

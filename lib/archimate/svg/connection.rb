@@ -15,19 +15,56 @@ module Archimate
         xml.path(path_attrs)
         name = source_connection&.relationship_element&.name&.strip
         if !name.nil? && !name.empty?
-          xml.text_(class: "archimate-relationship-name", dy: -2, "text-anchor" => "middle") do
-            xml.textPath(startOffset: "50%", "xlink:href" => "##{source_connection.id}") do
+          xml.text_(class: "archimate-relationship-name", dy: -2, "text-anchor" => "middle", style: text_style) do
+            xml.textPath(startOffset: text_position, "xlink:href" => "##{source_connection.id}") do
               xml.text name
             end
           end
         end
       end
 
+      def line_style
+        style = source_connection.style
+        return "" if style.nil?
+        res = {
+          "stroke": style.line_color&.to_rgba,
+          "stroke-width": style.line_width
+        }.delete_if { |key, value| value.nil? }
+          .map { |key, value| "#{key}:#{value};"}
+          .join("")
+      end
+
+      def text_position
+        case source_connection.style
+        when 0
+          "10%"
+        when 1
+          "90%"
+        else
+          "50%"
+        end
+      end
+
+      def text_style
+        style = source_connection.style
+        return "" if style.nil?
+        res = {
+          "fill": style.font_color&.to_rgba,
+          "color": style.font_color&.to_rgba,
+          "font-family": style.font&.name,
+          "font-size": style.font&.size,
+          "text-align": style.text_align
+        }.delete_if { |key, value| value.nil? }
+          .map { |key, value| "#{key}:#{value};"}
+          .join("")
+      end
+
       def path_attrs
         {
           id: source_connection.id,
           class: path_class,
-          d: path_d
+          d: path_d,
+          style: line_style
         }
       end
 
@@ -63,16 +100,16 @@ module Archimate
         source_bounds = source_connection.source_element&.absolute_position || DataModel::Bounds.zero
         target_bounds = source_connection.target_element&.absolute_position || DataModel::Bounds.zero
 
-        last_bounds = DataModel::Bounds.new(
+        start_point = DataModel::Bounds.new(
           x: source_bounds.left + source_bounds.width / 2.0,
           y: source_bounds.top + source_bounds.height / 2.0,
           width: 0,
           height: 0
         )
         bp_bounds = source_connection.bendpoints.map do |bp|
-          last_bounds = DataModel::Bounds.new(
-            x: last_bounds.left + (bp.start_x || 0),
-            y: last_bounds.top + (bp.start_y || 0),
+          DataModel::Bounds.new(
+            x: start_point.x + (bp.start_x || 0),
+            y: start_point.y + (bp.start_y || 0),
             width: 0,
             height: 0
           )

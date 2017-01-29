@@ -10,6 +10,6 @@ module Archimate
       def scale(v)
         v / @vmax * @smax
       end
-      end
+    end
   end
 end

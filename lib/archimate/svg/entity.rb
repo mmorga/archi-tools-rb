@@ -19,7 +19,6 @@ module Archimate
         @text_bounds = child.bounds
         @bounds_offset = bounds_offset
         @entity = @child.element || @child
-        raise "Hell!" if @entity.nil?
       end
 
       def to_svg(xml)
@@ -41,7 +40,7 @@ module Archimate
             xml.tr(style: "height:#{text_bounds.height}px;") do
               xml.td(class: "entity-name") do
                 xml.div(class: "archimate-badge-spacer") unless eprops.badge.nil?
-                xml.p(class: "entity-name") do
+                xml.p(class: "entity-name", style: text_style) do
                   text_lines(entity.name || child.content).each do |line|
                     xml.text(line)
                     xml.br
@@ -75,17 +74,34 @@ module Archimate
         }
       end
 
-      def entity_rect(xml, eprops)
-        xml.use(
-          child
-            .bounds
-            .to_h
-            .merge("xlink:href" => eprops.shape, class: eprops.layer)
-        )
+      def shape_style
+        style = child.style
+        return "" if style.nil?
+        res = {
+          "fill": style.fill_color&.to_rgba,
+          "stroke": style.line_color&.to_rgba,
+          "stroke-width": style.line_width
+        }.delete_if { |key, value| value.nil? }
+          .map { |key, value| "#{key}:#{value};"}
+          .join("")
+      end
+
+      def text_style
+        style = child.style
+        return "" if style.nil?
+        res = {
+          "fill": style.font_color&.to_rgba,
+          "color": style.font_color&.to_rgba,
+          "font-family": style.font&.name,
+          "font-size": style.font&.size,
+          "text-align": style.text_align
+        }.delete_if { |key, value| value.nil? }
+          .map { |key, value| "#{key}:#{value};"}
+          .join("")
       end
 
       def rect_path(xml, bounds, eprops)
-        xml.rect(x: bounds.left, y: bounds.top, width: bounds.width, height: bounds.height, class: eprops.layer)
+        xml.rect(x: bounds.left, y: bounds.top, width: bounds.width, height: bounds.height, class: eprops.layer, style: shape_style)
       end
 
       def rounded_rect_path(xml, bounds, eprops)
@@ -94,8 +110,8 @@ module Archimate
 
       def group_path(xml, bounds, eprops)
         group_header_height = 12
-        xml.rect(x: bounds.left, y: bounds.top + group_header_height, width: bounds.width, height: bounds.height - group_header_height, class: eprops.layer)
-        xml.rect(x: bounds.left, y: bounds.top, width: bounds.width / 2.0, height: group_header_height, class: eprops.layer)
+        xml.rect(x: bounds.left, y: bounds.top + group_header_height, width: bounds.width, height: bounds.height - group_header_height, class: eprops.layer, style: shape_style)
+        xml.rect(x: bounds.left, y: bounds.top, width: bounds.width / 2.0, height: group_header_height, class: eprops.layer, style: shape_style)
         xml.rect(x: bounds.left, y: bounds.top, width: bounds.width / 2.0, height: group_header_height, class: "archimate-decoration")
       end
 
@@ -106,7 +122,7 @@ module Archimate
               "M 1 1 l 18 29 l -18 29 h 102 a 17 29 0 0 0 0 -58 z",
               bounds
             ).d,
-         class: eprops.layer
+         class: eprops.layer, style: shape_style
         )
       end
 
@@ -117,14 +133,14 @@ module Archimate
               "M1 1 m 28 1 a 27.5 29 0 0 0 0 58 h 64 a 27.5 29 0 0 0 0 -58 z",
               bounds
             ).d,
-          class: eprops.layer
+          class: eprops.layer, style: shape_style
         )
       end
 
       def value_path(xml, bounds, eprops)
         cx = bounds.width / 2.0
         cy = bounds.height / 2.0
-        xml.ellipse(cx: cx, cy: cy, rx: cx - 1, ry: cy - 1, class: eprops.layer)
+        xml.ellipse(cx: cx, cy: cy, rx: cx - 1, ry: cy - 1, class: eprops.layer, style: shape_style)
       end
 
       def component_path(xml, bounds, eprops)
@@ -136,9 +152,9 @@ module Archimate
           width: bounds.width - 22,
           height: bounds.height - 2
         )
-        xml.rect(x: main_box_x, y: bounds.top, width: main_box_width, height: bounds.height, class: eprops.layer)
-        xml.rect(x: bounds.left, y: bounds.top + 10, width: "21", height: "13", class: eprops.layer)
-        xml.rect(x: bounds.left, y: bounds.top + 30, width: "21", height: "13", class: eprops.layer)
+        xml.rect(x: main_box_x, y: bounds.top, width: main_box_width, height: bounds.height, class: eprops.layer, style: shape_style)
+        xml.rect(x: bounds.left, y: bounds.top + 10, width: "21", height: "13", class: eprops.layer, style: shape_style)
+        xml.rect(x: bounds.left, y: bounds.top + 30, width: "21", height: "13", class: eprops.layer, style: shape_style)
         xml.rect(x: bounds.left, y: bounds.top + 10, width: "21", height: "13", class: "archimate-decoration")
         xml.rect(x: bounds.left, y: bounds.top + 30, width: "21", height: "13", class: "archimate-decoration")
       end
@@ -150,7 +166,7 @@ module Archimate
               "m64 50 c 10.032684,0.88695 19.756064,1.69123 32.056904,-1.990399 7.78769,-2.585368 13.84045,-6.631723 15.325,-14.525001 l -2.1243,-0.9298 c 12.08338,-6.64622 12.17498,-16.325 0.21788,-23.01969 -11.9571,-6.69469 -32.55996,-8.50001 -48.922378,-4.21636 -15.07176,-3.90873 -34.171306,-2.8786 -46.861284,2.60905 -12.689977,5.48764 -15.947034,14.12539 -7.812766,21.5177 -10.388939,9.088879 -2.212295,18.648042 9.683896,23.10671 14.30355,5.36094 31.495042,4.5785 46.145701,-2.1696 z",
               bounds
             ).d,
-          class: eprops.layer
+          class: eprops.layer, style: shape_style
         )
       end
 
@@ -170,7 +186,7 @@ module Archimate
             ["v", -(bounds.height - 8)],
             "z"
             ].flatten.join(" "),
-          class: eprops.layer
+          class: eprops.layer, style: shape_style
         )
       end
 
@@ -184,7 +200,7 @@ module Archimate
           width: node_box_width - 2,
           height: node_box_height - 2
         )
-        xml.g(class: eprops.layer) do
+        xml.g(class: eprops.layer, style: shape_style) do
           xml.path(
             d: [
               ["M", bounds.left, bounds.bottom],
@@ -225,7 +241,7 @@ module Archimate
 
       def artifact_path(xml, bounds, eprops)
         margin = 18
-        xml.g(class: eprops.layer) do
+        xml.g(class: eprops.layer, style: shape_style) do
           xml.path(
             d: [
               ["M", bounds.left, bounds.top],
@@ -254,20 +270,20 @@ module Archimate
               "m 11 1 h 98 l 10 10 v 38 l -10 10 h -98 l -10 -10 v -38 z",
               bounds
             ).d,
-          class: eprops.layer
+          class: eprops.layer, style: shape_style
         )
       end
 
       def product_path(xml, bounds, eprops)
         xml.g(class: eprops.layer) do
-          xml.rect(x: bounds.left, y: bounds.top, width: bounds.width, height: bounds.height, class: eprops.layer)
+          xml.rect(x: bounds.left, y: bounds.top, width: bounds.width, height: bounds.height, class: eprops.layer, style: shape_style)
           xml.rect(x: bounds.left, y: bounds.top, width: bounds.width / 2.0, height: "8", class: "archimate-decoration")
         end
       end
 
       def data_path(xml, bounds, eprops)
         xml.g(class: eprops.layer) do
-          xml.rect(x: bounds.left, y: bounds.top, width: bounds.width, height: bounds.height, class: eprops.layer)
+          xml.rect(x: bounds.left, y: bounds.top, width: bounds.width, height: bounds.height, class: eprops.layer, style: shape_style)
           xml.rect(x: bounds.left, y: bounds.top, width: bounds.width, height: "8", class: "archimate-decoration")
         end
       end
@@ -282,7 +298,8 @@ module Archimate
             ["h", -(bounds.width - 8)],
             "z"
           ].flatten.join(" "),
-          class: eprops.layer
+          class: eprops.layer,
+          style: shape_style
         )
       end
 
@@ -298,17 +315,6 @@ module Archimate
         type = entity.type
 
         case type
-        when "Business"
-          EntityProperties.new(:rect_path, "archimate-business-background")
-        when "Application"
-          EntityProperties.new(:rect_path, "archimate-application-background")
-        when "Technology"
-          EntityProperties.new(:rect_path, "archimate-infrastructure-background")
-        when "Motivation"
-          EntityProperties.new(:rect_path, "archimate-motivation-background")
-        when "ImplementationandMigration"
-          EntityProperties.new(:rect_path, "archimate-implementation-background")
-
         when "BusinessActor"
           EntityProperties.new(:rect_path, "archimate-business-background", "#archimate-actor-badge")
         when "BusinessRole"
