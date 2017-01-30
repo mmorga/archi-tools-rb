@@ -40,6 +40,15 @@ module Archimate
         "#{type_name} #{s.nil? ? 'nothing' : s} -> #{t.nil? ? 'nothing' : t}"
       end
 
+      def description
+        [
+          name.nil? ? nil : "#{name}: ",
+          source_element&.description,
+          relationship_element&.description,
+          target_element&.description
+        ].compact.join(" ")
+      end
+
       def referenced_identified_nodes
         [@source, @target, @relationship].compact
       end

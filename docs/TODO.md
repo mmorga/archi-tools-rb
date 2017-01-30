@@ -140,3 +140,19 @@ conflicts -> conflict resolution
 cr (user response)
 
 serialize result (single)
+
+# SVG Render TODO
+
+[X] skip bendpoints inside source or target
+[X] badges for device, node, service (cosmetic)
+[X] trim space around diagram names (cosmetic)
+[ ] alternate figures (curved vs box & badge) selected by type="1" on Child (legibility)
+[ ] text bounds in entities (cosmetic, legibility)
+[ ] badge position updates (cosmetic, legibility)
+[ ] badge spacer settings (cosmetic, legibility) - artifact needs work.
+[ ] text on lines (cosmetic, legibility)
+[ ] badge updates (cosmetic)
+[ ] bendpoint curves (cosmetic)
+[ ] line crossing hops (cosmetic)
+[ ] verify junctions
+[ ] refactor

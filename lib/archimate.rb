@@ -50,6 +50,7 @@ module Archimate
     autoload :Connection, 'archimate/svg/connection'
     autoload :Diagram, 'archimate/svg/diagram'
     autoload :Entity, 'archimate/svg/entity'
+    autoload :Extents, 'archimate/svg/extents'
     autoload :Export, 'archimate/svg/export'
     autoload :Font, 'archimate/svg/font'
     autoload :Icons, 'archimate/svg/icons'

@@ -8,6 +8,7 @@ module Archimate
       attr_reader :entity
       attr_reader :bounds_offset
       attr_reader :text_bounds
+      attr_reader :badge_bounds
 
       # shape (+ class: layer)
       #   badge (shape knows badge position)
@@ -16,9 +17,16 @@ module Archimate
 
       def initialize(child, bounds_offset)
         @child = child
-        @text_bounds = child.bounds
+        @text_bounds = child.bounds.reduced_by(2)
         @bounds_offset = bounds_offset
         @entity = @child.element || @child
+        @text_align = nil
+        @badge_bounds = child.bounds.with(
+          x: child.bounds.right - 25,
+          y: child.bounds.top + 5,
+          width: 20,
+          height: 20
+        )
       end
 
       def to_svg(xml)
@@ -53,25 +61,16 @@ module Archimate
       end
 
       def text_lines(text)
-        text.split(/[\r\n]/)
+        text.tr("\r\n", "\n").split(/[\r\n]/)
       end
 
       def entity_badge(xml, eprops)
         return if eprops.badge.nil?
         xml.use(
-          badge_position(child.bounds)
+          badge_bounds
             .to_h
             .merge("xlink:href" => eprops.badge)
         )
-      end
-
-      def badge_position(bounds)
-        {
-          x: bounds.x.to_i + bounds.width.to_i - 25,
-          y: bounds.y.to_i + 5,
-          width: 20,
-          height: 15
-        }
       end
 
       def shape_style
@@ -87,14 +86,13 @@ module Archimate
       end
 
       def text_style
-        style = child.style
-        return "" if style.nil?
+        style = child.style || DataModel::Style.new
         res = {
           "fill": style.font_color&.to_rgba,
           "color": style.font_color&.to_rgba,
           "font-family": style.font&.name,
           "font-size": style.font&.size,
-          "text-align": style.text_align
+          "text-align": style.text_align || @text_align
         }.delete_if { |key, value| value.nil? }
           .map { |key, value| "#{key}:#{value};"}
           .join("")
@@ -109,10 +107,12 @@ module Archimate
       end
 
       def group_path(xml, bounds, eprops)
-        group_header_height = 12
+        group_header_height = 21
         xml.rect(x: bounds.left, y: bounds.top + group_header_height, width: bounds.width, height: bounds.height - group_header_height, class: eprops.layer, style: shape_style)
         xml.rect(x: bounds.left, y: bounds.top, width: bounds.width / 2.0, height: group_header_height, class: eprops.layer, style: shape_style)
         xml.rect(x: bounds.left, y: bounds.top, width: bounds.width / 2.0, height: group_header_height, class: "archimate-decoration")
+        @text_bounds = bounds.with(height: group_header_height)
+        @text_align = "left"
       end
 
       def event_path(xml, bounds, eprops)
@@ -127,6 +127,12 @@ module Archimate
       end
 
       def service_path(xml, bounds, eprops)
+        @text_bounds = bounds.with(
+          x: bounds.left + 5,
+          y: bounds.top + 5,
+          width: bounds.width - 10,
+          height: bounds.height - 10
+        )
         xml.path(
           d:
             ScaledPath.new(
@@ -192,6 +198,12 @@ module Archimate
 
       def node_path(xml, bounds, eprops)
         margin = 14
+        @badge_bounds = DataModel::Bounds.new(
+          x: bounds.right - margin - 25,
+          y: bounds.top + margin + 5,
+          width: 20,
+          height: 20
+        )
         node_box_height = bounds.height - margin
         node_box_width = bounds.width - margin
         @text_bounds = DataModel::Bounds.new(
@@ -366,9 +378,9 @@ module Archimate
         when "Node"
           EntityProperties.new(:node_path, "archimate-infrastructure-background")
         when "Device"
-          EntityProperties.new(:rect_path, "archimate-infrastructure-background")
+          EntityProperties.new(:node_path, "archimate-infrastructure-background", "#archimate-device-badge")
         when "SystemSoftware"
-          EntityProperties.new(:rect_path, "archimate-infrastructure-background", "#archimate-system_software-badge")
+          EntityProperties.new(:rect_path, "archimate-infrastructure-background", "#archimate-system-software-badge")
         when "InfrastructureInterface"
           EntityProperties.new(:rect_path, "archimate-infrastructure-background", "#archimate-interface-badge")
         when "Network"

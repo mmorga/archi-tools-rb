@@ -54,6 +54,17 @@ module Archimate
       def is_left_of?(other)
         right < other.left
       end
+
+      def reduced_by(val)
+        Bounds.new(x: left + val, y: top + val, width: width - val * 2, height: height - val * 2)
+      end
+
+      def inside?(other)
+        left > other.left &&
+          right < other.right &&
+          top > other.top &&
+          bottom < other.bottom
+      end
     end
 
     Dry::Types.register_class(Bounds)

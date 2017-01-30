@@ -14,6 +14,13 @@ module Archimate
         ) + " #{source_element} -> #{target_element}"
       end
 
+      def description
+        [
+          name.nil? ? nil : "#{name}:",
+          FileFormats::ArchimateV2::RELATION_VERBS.fetch(type, nil)
+        ].compact.join(" ")
+      end
+
       def referenced_identified_nodes
         [@source, @target].compact
       end

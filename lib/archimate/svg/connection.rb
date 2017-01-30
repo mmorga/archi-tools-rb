@@ -12,7 +12,10 @@ module Archimate
 
       def to_svg(xml)
         return if source_connection.source_element.children.include?(source_connection.target_element)
-        xml.path(path_attrs)
+        xml.path(path_attrs) do
+          xml.title @source_connection.description
+        end
+
         name = source_connection&.relationship_element&.name&.strip
         if !name.nil? && !name.empty?
           xml.text_(class: "archimate-relationship-name", dy: -2, "text-anchor" => "middle", style: text_style) do
@@ -113,6 +116,9 @@ module Archimate
             width: 0,
             height: 0
           )
+        end
+        bp_bounds = bp_bounds.reject do |bounds|
+          bounds.inside?(source_bounds) || bounds.inside?(target_bounds)
         end
 
         bounds = [source_bounds].concat(bp_bounds) << target_bounds

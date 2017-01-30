@@ -19,6 +19,14 @@ module Archimate
         "Child[#{name || ''}](#{in_model.lookup(archimate_element) if archimate_element && in_model})"
       end
 
+      def description
+        [
+          name.nil? ? nil : "#{name}",
+          element.nil? ? nil : element.name,
+          element&.type.nil? ? nil : "(#{element.type})",
+        ].compact.join(" ")
+      end
+
       def element
         @element ||= in_model.lookup(archimate_element)
       end

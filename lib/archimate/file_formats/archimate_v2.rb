@@ -97,6 +97,20 @@ module Archimate
         UsedByRelationship
       ).freeze
 
+      RELATION_VERBS = {
+        "AccessRelationship" => "accesses",
+        "AggregationRelationship" => "aggregates",
+        "AssignmentRelationship" => "is assigned to",
+        "AssociationRelationship" => "is associated with",
+        "CompositionRelationship" => "composes",
+        "FlowRelationship" => "flows to",
+        "InfluenceRelationship" => "influenecs",
+        "RealisationRelationship" => "realizes",
+        "SpecialisationRelationship" => "specializes",
+        "TriggeringRelationship" => "triggers",
+        "UsedByRelationship" => "is used by"
+      }.freeze
+
       VIEWPOINTS = {
         "Introductory" => { entities: CORE_ELEMENTS, relations: RELATIONS },
         "Organization" => {
