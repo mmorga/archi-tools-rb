@@ -1,11 +1,4 @@
 # frozen_string_literal: true
-
-begin
-  require 'RMagick'
-rescue LoadError
-  $stderr.puts "SVG production depends on ImageMagick and the RMagick gem. Install ImageMagick from http://www.imagemagick.org/ and 'gem install rmagick'"
-end
-
 module Archimate
   module Cli
     class Svger

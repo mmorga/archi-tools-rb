@@ -149,6 +149,11 @@ table.properties>caption {
     stroke: black;
 }
 
+.archimate-diagram-model-reference-background {
+    fill: #dcebeb;
+    stroke: #9aa4a4;
+}
+
 .archimate-default-background {
     fill: #ddd;
     stroke: #999;

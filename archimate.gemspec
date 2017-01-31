@@ -31,7 +31,6 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "dry-struct", "~> 0.1.0"
   spec.add_runtime_dependency "nokogiri", "~> 1.6"
-  spec.add_runtime_dependency "rmagick", "~> 2.15"
   spec.add_runtime_dependency "thor", "~> 0.19"
   spec.add_runtime_dependency "highline", "~> 1.7"
   spec.add_runtime_dependency "ruby-progressbar", "~>1.8.1"

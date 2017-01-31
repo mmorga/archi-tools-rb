@@ -31,6 +31,10 @@ module Archimate
         @element ||= in_model.lookup(archimate_element)
       end
 
+      def model_element
+        @model_element ||= in_model.lookup(model)
+      end
+
       def all_children
         children.inject(Array.new(children)) { |child_ary, child| child_ary.concat(child.all_children) }
       end
