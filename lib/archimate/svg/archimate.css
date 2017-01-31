@@ -139,6 +139,16 @@ table.properties>caption {
     stroke: #b2b181;
 }
 
+.archimate-junction-background {
+    fill: black;
+    stroke: black;
+}
+
+.archimate-or-junction-background {
+    fill: white;
+    stroke: black;
+}
+
 .archimate-default-background {
     fill: #ddd;
     stroke: #999;

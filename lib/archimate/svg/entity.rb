@@ -2,8 +2,6 @@
 module Archimate
   module Svg
     class Entity
-      using StringRefinements
-
       attr_reader :child
       attr_reader :entity
       attr_reader :bounds_offset
@@ -76,7 +74,7 @@ module Archimate
       def shape_style
         style = child.style
         return "" if style.nil?
-        res = {
+        {
           "fill": style.fill_color&.to_rgba,
           "stroke": style.line_color&.to_rgba,
           "stroke-width": style.line_width
@@ -87,7 +85,7 @@ module Archimate
 
       def text_style
         style = child.style || DataModel::Style.new
-        res = {
+        {
           "fill": style.font_color&.to_rgba,
           "color": style.font_color&.to_rgba,
           "font-family": style.font&.name,
@@ -100,6 +98,10 @@ module Archimate
 
       def rect_path(xml, bounds, eprops)
         xml.rect(x: bounds.left, y: bounds.top, width: bounds.width, height: bounds.height, class: eprops.layer, style: shape_style)
+      end
+
+      def circle_path(xml, bounds, eprops)
+        xml.circle(cx: bounds.left + bounds.width / 2.0, cy: bounds.top + bounds.height / 2.0, r: bounds.width / 2.0, class: eprops.layer, style: shape_style)
       end
 
       def rounded_rect_path(xml, bounds, eprops)
@@ -116,12 +118,19 @@ module Archimate
       end
 
       def event_path(xml, bounds, eprops)
+        notch_x = 18
+        notch_height = bounds.height / 2.0
+        event_width = bounds.width * 0.85
+        rx = 17
         xml.path(
-          d:
-            ScaledPath.new(
-              "M 1 1 l 18 29 l -18 29 h 102 a 17 29 0 0 0 0 -58 z",
-              bounds
-            ).d,
+          d: [
+            "M", bounds.left, bounds.top,
+            "l", notch_x, notch_height,
+            "l", -notch_x, notch_height,
+            "h", event_width,
+            "a", rx, notch_height, 0, 0, 0, 0, -bounds.height,
+            "z"
+          ].flatten.join(" "),
          class: eprops.layer, style: shape_style
         )
       end
@@ -133,20 +142,24 @@ module Archimate
           width: bounds.width - 10,
           height: bounds.height - 10
         )
-        xml.path(
-          d:
-            ScaledPath.new(
-              "M1 1 m 28 1 a 27.5 29 0 0 0 0 58 h 64 a 27.5 29 0 0 0 0 -58 z",
-              bounds
-            ).d,
-          class: eprops.layer, style: shape_style
+        xml.rect(
+          x: bounds.left,
+          y: bounds.top,
+          width: bounds.width,
+          height: bounds.height,
+          rx: bounds.height / 2.0,
+          ry: bounds.height / 2.0,
+          class: eprops.layer,
+          style: shape_style
         )
       end
 
       def value_path(xml, bounds, eprops)
-        cx = bounds.width / 2.0
-        cy = bounds.height / 2.0
-        xml.ellipse(cx: cx, cy: cy, rx: cx - 1, ry: cy - 1, class: eprops.layer, style: shape_style)
+        cx = bounds.left + bounds.width / 2.0
+        rx = bounds.width / 2.0 - 1
+        cy = bounds.top + bounds.height / 2.0
+        ry = bounds.height / 2.0 - 1
+        xml.ellipse(cx: cx, cy: cy, rx: rx, ry: ry, class: eprops.layer, style: shape_style)
       end
 
       def component_path(xml, bounds, eprops)
@@ -166,12 +179,28 @@ module Archimate
       end
 
       def meaning_path(xml, bounds, eprops)
+        pts = [
+          Point.new(bounds.left + bounds.width * 0.04, bounds.top + bounds.height * 0.5),
+          Point.new(bounds.left + bounds.width * 0.5, bounds.top + bounds.height * 0.12),
+          Point.new(bounds.left + bounds.width * 0.94, bounds.top + bounds.height * 0.55),
+          Point.new(bounds.left + bounds.width * 0.53, bounds.top + bounds.height * 0.87)
+        ]
         xml.path(
-          d:
-            ScaledPath.new(
-              "m64 50 c 10.032684,0.88695 19.756064,1.69123 32.056904,-1.990399 7.78769,-2.585368 13.84045,-6.631723 15.325,-14.525001 l -2.1243,-0.9298 c 12.08338,-6.64622 12.17498,-16.325 0.21788,-23.01969 -11.9571,-6.69469 -32.55996,-8.50001 -48.922378,-4.21636 -15.07176,-3.90873 -34.171306,-2.8786 -46.861284,2.60905 -12.689977,5.48764 -15.947034,14.12539 -7.812766,21.5177 -10.388939,9.088879 -2.212295,18.648042 9.683896,23.10671 14.30355,5.36094 31.495042,4.5785 46.145701,-2.1696 z",
-              bounds
-            ).d,
+          d: [
+            "M", pts[0].x, pts[0].y,
+            "C", pts[0].x - bounds.width * 0.15, pts[0].y - bounds.height * 0.32,
+                 pts[1].x - bounds.width * 0.3, pts[1].y - bounds.height * 0.15,
+                 pts[1].x, pts[1].y,
+            "C", pts[1].x + bounds.width * 0.29, pts[1].y - bounds.height * 0.184,
+                 pts[2].x + bounds.width * 0.204, pts[2].y - bounds.height * 0.304,
+                 pts[2].x, pts[2].y,
+            "C", pts[2].x + bounds.width * 0.028, pts[2].y + bounds.height * 0.295,
+                 pts[3].x + bounds.width * 0.156, pts[3].y + bounds.height * 0.088,
+                 pts[3].x, pts[3].y,
+            "C", pts[3].x - bounds.width * 0.279, pts[3].y + bounds.height * 0.326,
+                 pts[0].x - bounds.width * 0.164, pts[0].y + bounds.height * 0.314,
+                 pts[0].x, pts[0].y
+          ].flatten.join(" "),
           class: eprops.layer, style: shape_style
         )
       end
@@ -277,12 +306,23 @@ module Archimate
       end
 
       def motivation_path(xml, bounds, eprops)
+        margin = 10
+        width = bounds.width - margin * 2
+        height = bounds.height - margin * 2
         xml.path(
-          d: ScaledPath.new(
-              "m 11 1 h 98 l 10 10 v 38 l -10 10 h -98 l -10 -10 v -38 z",
-              bounds
-            ).d,
-          class: eprops.layer, style: shape_style
+          d: [
+            ["M", bounds.left + margin, bounds.top],
+            ["h", width],
+            ["l", margin, margin],
+            ["v", height],
+            ["l", -margin, margin],
+            ["h", -width],
+            ["l", -margin, -margin],
+            ["v", -height],
+            "z"
+          ].flatten.join(" "),
+          class: eprops.layer,
+          style: shape_style
         )
       end
 
@@ -418,10 +458,12 @@ module Archimate
         when "Gap"
           EntityProperties.new(:representation_path, "archimate-implementation2-background", "#archimate-gap-badge")
 
-        when "Junction", "AndJunction"
-          EntityProperties.new(:rect_path, "archimate-junction-background", "#archimate-junction-badge")
+        when "Junction"
+          EntityProperties.new(:circle_path, "archimate-junction-background")
+        when "AndJunction"
+          EntityProperties.new(:rect_path, "archimate-junction-background")
         when "OrJunction"
-          EntityProperties.new(:rect_path, "archimate-junction-background", "#archimate-or-junction-badge")
+          EntityProperties.new(:rect_path, "archimate-or-junction-background")
 
         when "archimate:Group", "Group"
           EntityProperties.new(:group_path, "archimate-group-background")

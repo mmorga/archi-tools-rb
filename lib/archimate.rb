@@ -55,9 +55,6 @@ module Archimate
     autoload :Font, 'archimate/svg/font'
     autoload :Icons, 'archimate/svg/icons'
     autoload :Point, 'archimate/svg/point'
-    autoload :ScaledPath, 'archimate/svg/scaled_path'
-    autoload :ScaledValue, 'archimate/svg/scaled_value'
-    autoload :StringRefinements, 'archimate/svg/string_refinements'
     autoload :SvgTemplate, 'archimate/svg/svg_template'
   end
 

@@ -2,8 +2,6 @@
 module Archimate
   module Svg
     class Connection
-      using StringRefinements
-
       attr_reader :source_connection
 
       def initialize(source_connection)
@@ -29,7 +27,7 @@ module Archimate
       def line_style
         style = source_connection.style
         return "" if style.nil?
-        res = {
+        {
           "stroke": style.line_color&.to_rgba,
           "stroke-width": style.line_width
         }.delete_if { |key, value| value.nil? }
@@ -51,7 +49,7 @@ module Archimate
       def text_style
         style = source_connection.style
         return "" if style.nil?
-        res = {
+        {
           "fill": style.font_color&.to_rgba,
           "color": style.font_color&.to_rgba,
           "font-family": style.font&.name,

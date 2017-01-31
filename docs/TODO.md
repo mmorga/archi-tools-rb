@@ -2,18 +2,18 @@
 
 * [ ] Look into using Celluloid and/or jruby to improve performance
 * [ ] Conflicts can happen on the same diff 2x. How to handle this?
-* [ ] In `Change.to_s` - deref args that point to other elements (like archimate_element)
+* [X] In `Change.to_s` - deref args that point to other elements (like archimate_element)
 * [ ] In Diagram children diffs - make to_s reference the parent diagram
 * [x] Array diffs on non-id'd diffable elements should detect changes rather than delete/insert
 * [ ] Add Split file feature (extract say a diagram or set of elements)
 * [ ] Merge unrelated files (this is the intent of Merger)
-* [ ] Scorecard lint
+* [X] Scorecard lint
 * [ ] CLI DSL
 * [ ] Add a super strict mode to note when reader finds unexpected content
 * [ ] Consider breaking this into a number of gems (for example: base lib, diff/merge, other cmdline tools)
 * [ ] Archi file could have ids that conflict (i.e. 2 relationships with same id - this is bad!!! Was it a bad merge or something worse)
 * [ ] Consider making classes for each element and relationship type?
-* [ ] Figure out how to make rmagick optional and/or remove rmagick dependency
+* [X] Figure out how to make rmagick optional and/or remove rmagick dependency
 * [ ] Data model items that reference something else by id should have the actual object available - not just the id
 * [ ] Implement check for de-duplicated merges
 * Convert support for
@@ -146,13 +146,13 @@ serialize result (single)
 [X] skip bendpoints inside source or target
 [X] badges for device, node, service (cosmetic)
 [X] trim space around diagram names (cosmetic)
+[X] badge position updates (cosmetic, legibility)
+[X] badge updates (cosmetic)
+[X] verify junctions
 [ ] alternate figures (curved vs box & badge) selected by type="1" on Child (legibility)
 [ ] text bounds in entities (cosmetic, legibility)
-[ ] badge position updates (cosmetic, legibility)
 [ ] badge spacer settings (cosmetic, legibility) - artifact needs work.
 [ ] text on lines (cosmetic, legibility)
-[ ] badge updates (cosmetic)
 [ ] bendpoint curves (cosmetic)
 [ ] line crossing hops (cosmetic)
-[ ] verify junctions
 [ ] refactor
