@@ -11,9 +11,9 @@ module Archimate
           super
           bounds = child.bounds
           @text_bounds = bounds.with(
-            x: bounds.left + 5,
+            x: bounds.left + 7,
             y: bounds.top + 5,
-            width: bounds.width - 10,
+            width: bounds.width - 14,
             height: bounds.height - 10
           )
         end

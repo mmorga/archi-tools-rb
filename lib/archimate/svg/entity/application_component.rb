@@ -17,10 +17,6 @@ module Archimate
           main_box_width = bounds.width - 21 / 2
           set_text_bounds(bounds, main_box_x)
           xml.rect(x: main_box_x, y: bounds.top, width: main_box_width, height: bounds.height, class: background_class, style: shape_style)
-          # xml.rect(x: bounds.left, y: bounds.top + 10, width: "21", height: "13", class: background_class, style: shape_style)
-          # xml.rect(x: bounds.left, y: bounds.top + 30, width: "21", height: "13", class: background_class, style: shape_style)
-          # xml.rect(x: bounds.left, y: bounds.top + 10, width: "21", height: "13", class: "archimate-decoration")
-          # xml.rect(x: bounds.left, y: bounds.top + 30, width: "21", height: "13", class: "archimate-decoration")
           component_decoration(xml, bounds.left, bounds.top + 10)
           component_decoration(xml, bounds.left, bounds.top + 30)
         end

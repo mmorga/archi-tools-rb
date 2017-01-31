@@ -149,10 +149,10 @@ serialize result (single)
 [X] badge position updates (cosmetic, legibility)
 [X] badge updates (cosmetic)
 [X] verify junctions
-[ ] alternate figures (curved vs box & badge) selected by type="1" on Child (legibility)
-[ ] text bounds in entities (cosmetic, legibility)
-[ ] badge spacer settings (cosmetic, legibility) - artifact needs work.
+[X] alternate figures (curved vs box & badge) selected by type="1" on Child (legibility)
+[X] text bounds in entities (cosmetic, legibility)
+[X] badge spacer settings (cosmetic, legibility) - artifact needs work.
 [ ] text on lines (cosmetic, legibility)
 [ ] bendpoint curves (cosmetic)
 [ ] line crossing hops (cosmetic)
-[ ] refactor
+[X] refactor

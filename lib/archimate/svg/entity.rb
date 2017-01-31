@@ -25,7 +25,6 @@ module Archimate
 	    autoload :CommunicationPath, 'archimate/svg/entity/communication_path'
 	    autoload :Constraint, 'archimate/svg/entity/constraint'
 	    autoload :Contract, 'archimate/svg/entity/contract'
-	    autoload :Data, 'archimate/svg/entity/data'
 	    autoload :DataEntity, 'archimate/svg/entity/data_entity'
 	    autoload :DataObject, 'archimate/svg/entity/data_object'
 	    autoload :Deliverable, 'archimate/svg/entity/deliverable'

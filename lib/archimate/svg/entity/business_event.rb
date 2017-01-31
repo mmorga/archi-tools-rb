@@ -4,14 +4,11 @@ module Archimate
     module Entity
       class BusinessEvent < BaseEntity
         def entity_shape(xml, bounds)
-          event_path(xml, bounds)
-        end
-
-        def event_path(xml, bounds)
           notch_x = 18
           notch_height = bounds.height / 2.0
           event_width = bounds.width * 0.85
           rx = 17
+          calc_text_bounds(notch_x)
           xml.path(
             d: [
               "M", bounds.left, bounds.top,
@@ -22,6 +19,14 @@ module Archimate
               "z"
             ].flatten.join(" "),
             class: background_class, style: shape_style
+          )
+        end
+
+        def calc_text_bounds(notch_x)
+          bounds = @text_bounds
+          @text_bounds = bounds.with(
+            x: bounds.left + notch_x * 0.80,
+            width: bounds.width - notch_x
           )
         end
       end

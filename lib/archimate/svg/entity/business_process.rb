@@ -20,20 +20,42 @@ module Archimate
         end
 
         def process_path(xml, bounds)
+          top = bounds.top
+          shaft_top = bounds.top + bounds.height * 0.15
+          middle = bounds.top + bounds.height * 0.5
+          shaft_bottom = bounds.bottom - bounds.height * 0.15
+          bottom = bounds.bottom
+
+          left = bounds.left
+          arrow_back = bounds.right - bounds.height * 0.5
+          right = bounds.right
+
+          calc_text_bounds(
+            DataModel::Bounds.new(
+              x: left,
+              y: shaft_top,
+              width: bounds.width - bounds.height * 0.25,
+              height: shaft_bottom - shaft_top
+            )
+          )
           xml.path(
             d: [
-              "M", bounds.left, bounds.top + bounds.height * (3.0 / 20),
-              "h", bounds.width * (11.0 / 20),
-              "v", bounds.height * (-4.0 / 20),
-              "l", bounds.width * (7.0 / 20), bounds.height * (6.0 / 20),
-              "l", -bounds.width * (7.0 / 20), bounds.height * (6.0 / 20),
-              "v", bounds.height * (-4.0 / 20),
-              "h", bounds.width * (-11.0 / 20),
+              "M", left, shaft_top,
+              "L", arrow_back, shaft_top,
+              "L", arrow_back, top,
+              "L", right, middle,
+              "L", arrow_back, bottom,
+              "L", arrow_back, shaft_bottom,
+              "L", left, shaft_bottom,
               "z"
             ].flatten.join(" "),
             class: background_class,
             style: shape_style
           )
+        end
+
+        def calc_text_bounds(bounds)
+          @text_bounds = bounds.reduced_by(2)
         end
       end
     end
