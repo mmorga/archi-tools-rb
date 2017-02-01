@@ -47,6 +47,7 @@ module Archimate
 
   module Svg
     autoload :Child, 'archimate/svg/child'
+    autoload :CssStyle, 'archimate/svg/css_style'
     autoload :Connection, 'archimate/svg/connection'
     autoload :Diagram, 'archimate/svg/diagram'
     autoload :Entity, 'archimate/svg/entity'

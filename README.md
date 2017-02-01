@@ -31,11 +31,11 @@ command        | description
 `archimate help [COMMAND]` | Describe available commands or one specific command
 `archimate convert ARCHIFILE` | Convert the incoming file to the desired type
 `archimate dedupe ARCHIFILE` | de-duplicate elements in Archi file
-`archimate dupes ARCHIFILE`  | List all duplicate elements in Archi file
 `archimate map ARCHIFILE` | *EXPERIMENTAL:* Produce a map of diagram links to a diagram
 `archimate merge ARCHIFILE1 ARCHIFILE2` | *EXPERIMENTAL:*Merge two archimate files
 `archimate project ARCHIFILE PROJECTFILE` | *EXPERIMENTAL:*Synchronize an Archi file and an MSProject XML file
-`archimate svg ARCHIFILE` | *IN DEVELOPMENT:* Produce semantically meaningful SVG files from an Archi file
+`archimate svg ARCHIFILE` | Produce semantically meaningful SVG files from an Archi file
+`archimate lint ARCHIFILE` | Produce a report of warnings and issues in the Archi file
 
 ### archidiff & archimerge
 

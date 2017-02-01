@@ -3,9 +3,11 @@ module Archimate
   module Svg
     class Connection
       attr_reader :source_connection
+      attr_reader :css_style
 
       def initialize(source_connection)
         @source_connection = source_connection
+        @css_style = CssStyle.new(source_connection.style)
       end
 
       def to_svg(xml)
@@ -15,11 +17,15 @@ module Archimate
         end
 
         name = source_connection&.relationship_element&.name&.strip
-        if !name.nil? && !name.empty?
-          xml.text_(class: "archimate-relationship-name", dy: -2, "text-anchor" => "middle", style: text_style) do
-            xml.textPath(startOffset: text_position, "xlink:href" => "##{source_connection.id}") do
-              xml.text name
-            end
+        return if name.nil? || name.empty?
+        xml.text_(
+          class: "archimate-relationship-name",
+          dy: -2,
+          "text-anchor" => "middle",
+          style: css_style.text
+        ) do
+          xml.textPath(startOffset: text_position, "xlink:href" => "##{source_connection.id}") do
+            xml.text name
           end
         end
       end
@@ -44,20 +50,6 @@ module Archimate
         else
           "50%"
         end
-      end
-
-      def text_style
-        style = source_connection.style
-        return "" if style.nil?
-        {
-          "fill": style.font_color&.to_rgba,
-          "color": style.font_color&.to_rgba,
-          "font-family": style.font&.name,
-          "font-size": style.font&.size,
-          "text-align": style.text_align
-        }.delete_if { |_key, value| value.nil? }
-          .map { |key, value| "#{key}:#{value};" }
-          .join("")
       end
 
       def path_attrs

@@ -66,30 +66,6 @@ module Archimate
         )
       end
 
-      desc "dupes ARCHIFILE", "List all duplicate elements in Archi file"
-      option :output,
-             aliases: :o,
-             desc: "Write output to FILE instead of STDOUT"
-      option :force,
-             aliases: :f,
-             type: :boolean,
-             desc: "Force overwriting of existing output file"
-      option :noninteractive,
-             aliases: :n,
-             type: :boolean,
-             default: false,
-             desc: "Don't provide interactive feedback"
-      def dupes(archifile)
-        Archimate::Cli::Duper.new(
-          Archimate::AIO.new(
-            input_io: archifile,
-            output_io: options.fetch("output", $stdout),
-            force: options.fetch("force", false),
-            interactive: !options.fetch("noninteractive", false)
-          )
-        ).list_dupes
-      end
-
       desc "clean ARCHIFILE", "Clean up unreferenced elements and relations"
       option :output,
              aliases: :o,
