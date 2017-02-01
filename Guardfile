@@ -19,14 +19,9 @@ end
 guard :minitest, all_after_pass: true do
   # with Minitest::Unit
   watch(%r{^test/(.*)\/?(.*)_test\.rb$})
-  watch(%r{^lib/(.*/)?([^/]+)\.rb$})     { |m| "test/#{m[1]}#{m[2]}_test.rb" }
-  watch(%r{^test/test_helper\.rb$})      { 'test' }
-  watch(%r{^test/examples/factories\.rb$})      { 'test' }
+  watch(%r{^lib/(.*/)?([^/]+)\.rb$}) { |m| "test/#{m[1]}#{m[2]}_test.rb" }
+  watch(%r{^test/test_helper\.rb$}) { 'test' }
+  watch(%r{^test/examples/factories\.rb$}) { 'test' }
   watch(%r{^lib/archimate/data_model.rb$}) { 'test' }
   watch(%r{^lib/archimate.rb$}) { 'test' }
-end
-
-guard 'ctags-bundler', src_path: %w(lib test), stdlib: true do
-  watch(%r{^(lib|test)/.*\.rb$})
-  watch('Gemfile.lock')
 end

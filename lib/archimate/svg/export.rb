@@ -21,7 +21,7 @@ module Archimate
       end
 
       def export(diagram, file_name = nil)
-        file_name ||= diagram.name || diagram.id
+        file_name ||= diagram.id
         file_name = file_name.strip.tr("/",  "-")
         file_name += ".svg" unless file_name =~ /\.svg$/
         File.open(File.join(@aio.output_dir, file_name), "wb") do |f|

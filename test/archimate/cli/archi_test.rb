@@ -49,11 +49,6 @@ module Archimate
       end
 
       # TODO: make this actually test something
-      def test_dupes
-        Archi.start(%w(dupes --output /dev/null --force --noninteractive) << File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'))
-      end
-
-      # TODO: make this actually test something
       def test_clean
         removed_items = Tempfile.new("test_clean_removed.xml")
         Archi.start(
