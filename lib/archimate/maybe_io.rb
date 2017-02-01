@@ -29,7 +29,6 @@ module Archimate
     # String to /dev/null
     #
     # @param _str [String] - unused, no effect
-    def write(_str)
-    end
+    def write(_str); end
   end
 end

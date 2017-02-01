@@ -56,13 +56,13 @@ module Archimate
       end
 
       VIEWPOINTS = ["Total", "Actor Co-operation", "Application Behaviour",
-              "Application Co-operation", "Application Structure", "Application Usage",
-              "Business Function", "Business Process Co-operation", "Business Process",
-              "Business Product", "Implementation and Deployment", "Information Structure",
-              "Infrastructure Usage", "Infrastructure", "Layered", "Organisation",
-              "Service Realization", "Stakeholder", "Goal Realization", "Goal Contribution",
-              "Principles", "Requirements Realisation", "Motivation", "Project",
-              "Migration", "Implementation and Migration"].freeze
+                    "Application Co-operation", "Application Structure", "Application Usage",
+                    "Business Function", "Business Process Co-operation", "Business Process",
+                    "Business Product", "Implementation and Deployment", "Information Structure",
+                    "Infrastructure Usage", "Infrastructure", "Layered", "Organisation",
+                    "Service Realization", "Stakeholder", "Goal Realization", "Goal Contribution",
+                    "Principles", "Requirements Realisation", "Motivation", "Project",
+                    "Migration", "Implementation and Migration"].freeze
     end
   end
 end

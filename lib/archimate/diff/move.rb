@@ -23,10 +23,12 @@ module Archimate
 
       # TODO: patch is a better name than apply
       def apply(to_model)
-        throw(
-          TypeError,
-          "Expected a Archimate::DataModel::Model, was a #{to_model.class}"
-        ) unless to_model.is_a?(DataModel::Model)
+        unless to_model.is_a?(DataModel::Model)
+          throw(
+            TypeError,
+            "Expected a Archimate::DataModel::Model, was a #{to_model.class}"
+          )
+        end
         target.move(to_model, changed_from)
         to_model
       end

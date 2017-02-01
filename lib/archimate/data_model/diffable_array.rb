@@ -111,7 +111,7 @@ module Archimate
             end
         end
 
-        def compute_item_changes(other, other_enum, myself, my_item)
+        def compute_item_changes(other, other_enum, _myself, my_item)
           case my_item
           when DataModel::ArchimateNode
             my_item.diff(other_enum.peek[0])
@@ -186,7 +186,7 @@ module Archimate
         end
 
         def smart_intersection(ary)
-          self.select { |item| ary.smart_include?(item) }
+          select { |item| ary.smart_include?(item) }
         end
 
         def after(idx)

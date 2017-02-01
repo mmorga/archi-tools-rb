@@ -191,7 +191,7 @@ module Archimate
           serialize_label(xml, child.name) if child_attrs[:type] == "group"
           serialize(xml, child.style) if child.style
           child.children.each do |c|
-            serialize_child(xml, c) #, child_attrs[:x].to_f, child_attrs[:y].to_f)
+            serialize_child(xml, c) # , child_attrs[:x].to_f, child_attrs[:y].to_f)
           end
         end
       end

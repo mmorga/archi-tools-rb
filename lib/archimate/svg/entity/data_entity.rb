@@ -8,7 +8,7 @@ module Archimate
           @margin = 10
         end
 
-        def calc_text_bounds(bounds)
+        def calc_text_bounds(_bounds)
           @text_bounds = @text_bounds.with(
             y: @text_bounds.top + @margin,
             height: @text_bounds.height - @margin

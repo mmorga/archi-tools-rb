@@ -30,8 +30,8 @@ module Archimate
         {
           "stroke": style.line_color&.to_rgba,
           "stroke-width": style.line_width
-        }.delete_if { |key, value| value.nil? }
-          .map { |key, value| "#{key}:#{value};"}
+        }.delete_if { |_key, value| value.nil? }
+          .map { |key, value| "#{key}:#{value};" }
           .join("")
       end
 
@@ -55,8 +55,8 @@ module Archimate
           "font-family": style.font&.name,
           "font-size": style.font&.size,
           "text-align": style.text_align
-        }.delete_if { |key, value| value.nil? }
-          .map { |key, value| "#{key}:#{value};"}
+        }.delete_if { |_key, value| value.nil? }
+          .map { |key, value| "#{key}:#{value};" }
           .join("")
       end
 
@@ -80,9 +80,9 @@ module Archimate
       # TODO: StringRefinements refinement isn't working in this class, so added this method here. Investigate.
       def css_classify(str)
         str.gsub(/::/, '/')
-          .gsub(/([A-Z]+)([A-Z][a-z])/, '\1-\2')
-          .gsub(/([a-z\d])([A-Z])/, '\1-\2')
-          .downcase
+           .gsub(/([A-Z]+)([A-Z][a-z])/, '\1-\2')
+           .gsub(/([a-z\d])([A-Z])/, '\1-\2')
+           .downcase
       end
 
       def ranges_overlap(r1, r2)
@@ -123,13 +123,13 @@ module Archimate
 
         points = []
         a = bounds.shift
-        until (bounds.empty?)
+        until bounds.empty?
           b = bounds.shift
           points.concat(calc_points(a, b))
           a = b
         end
         points.uniq!
-        [move_to(points.shift)].concat(points.map{ |pt| line_to(pt) }).join(" ")
+        [move_to(points.shift)].concat(points.map { |pt| line_to(pt) }).join(" ")
       end
 
       # a: Bounds

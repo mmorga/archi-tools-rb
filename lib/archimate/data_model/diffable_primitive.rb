@@ -5,25 +5,26 @@ module Archimate
       module DiffablePrimitiveMethods
         def diff(other, from_parent, to_parent, attribute, from_attribute = nil)
           from_attribute = attribute if from_attribute.nil?
-          return [Diff::Delete.new(
-            Diff::ArchimateNodeAttributeReference.new(from_parent, attribute)
-          )] if other.nil?
+          if other.nil?
+            return [Diff::Delete.new(
+              Diff::ArchimateNodeAttributeReference.new(from_parent, attribute)
+            )]
+          end
           raise TypeError, "Expected other #{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
-          return [Diff::Change.new(
-            Diff::ArchimateNodeReference.for_node(to_parent, attribute),
-            Diff::ArchimateNodeReference.for_node(from_parent, from_attribute)
-          )] unless self == other
+          unless self == other
+            return [Diff::Change.new(
+              Diff::ArchimateNodeReference.for_node(to_parent, attribute),
+              Diff::ArchimateNodeReference.for_node(from_parent, from_attribute)
+            )]
+          end
           []
         end
 
-        def in_model=(_m)
-        end
+        def in_model=(_m); end
 
-        def parent=(_p)
-        end
+        def parent=(_p); end
 
-        def parent_attribute_name=(_attr_name)
-        end
+        def parent_attribute_name=(_attr_name); end
 
         def build_index(index_hash)
           index_hash

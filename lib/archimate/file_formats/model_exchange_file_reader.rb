@@ -37,7 +37,7 @@ module Archimate
 
       def parse_name(node)
         name_node = node.at_css(">name")
-        name_node.content unless name_node.nil?
+        name_node&.content
       end
 
       def parse_documentation(node, element_name = "documentation")
@@ -150,7 +150,7 @@ module Archimate
             properties: parse_properties(i),
             style: parse_style(i),
             content: i.at_css("> content")&.text,
-            child_type: nil  # i.attr("type")
+            child_type: nil # i.attr("type")
           )
         end
       end
@@ -242,7 +242,7 @@ module Archimate
       end
 
       def identifier_to_id(str)
-        str.sub(/^id-/, "") unless str.nil?
+        str&.sub(/^id-/, "")
       end
     end
   end

@@ -14,11 +14,11 @@ module Archimate
         end
 
         def filter1
-          -> (_diff) { true }
+          ->(_diff) { true }
         end
 
         def filter2
-          -> (_diff) { true }
+          ->(_diff) { true }
         end
 
         def conflicts

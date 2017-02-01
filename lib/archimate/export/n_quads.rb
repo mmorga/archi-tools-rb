@@ -129,10 +129,12 @@ module Archimate
       end
 
       def make_quad(subject, predicate, object)
-        raise(
-          ArgumentError,
-          "Invalid: subject, predicate, or object [#{[subject, predicate, object].map(&:inspect).join(', ')}]"
-        ) if subject.nil? || predicate.nil? || object.nil?
+        if subject.nil? || predicate.nil? || object.nil?
+          raise(
+            ArgumentError,
+            "Invalid: subject, predicate, or object [#{[subject, predicate, object].map(&:inspect).join(', ')}]"
+          )
+        end
         Quad.new(subject, predicate, object)
       end
     end

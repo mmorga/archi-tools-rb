@@ -15,14 +15,14 @@ module Archimate
         Constants::ELEMENT_LAYER.fetch(type, "None")
       end
 
-      # TODO move to dynamic method creation
+      # TODO: move to dynamic method creation
       def composed_by
         in_model
           .relationships.select { |r| r.type == "CompositionRelationship" && r.target == id }
           .map { |r| in_model.lookup(r.source) }
       end
 
-      # TODO move to dynamic method creation
+      # TODO: move to dynamic method creation
       def composes
         in_model
           .relationships

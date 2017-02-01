@@ -31,10 +31,10 @@ module Archimate
         aio.debug "Applying #{diffs.size} diffs"
         progressbar = @aio.create_progressbar(total: diffs.size, title: "Applying diffs")
         diffs
-          .inject(model) { |model_a, diff|
+          .inject(model) do |model_a, diff|
             progressbar.increment
             diff.apply(model_a)
-          }
+          end
           .rebuild_index
           .organize
       ensure

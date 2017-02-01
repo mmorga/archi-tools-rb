@@ -24,10 +24,12 @@ module Archimate
       end
 
       def initialize(archimate_node)
-        raise(
-          TypeError,
-          "archimate_node must be an ArchimateNode or Array, was #{archimate_node.class}"
-        ) unless archimate_node.is_a?(DataModel::ArchimateNode) || archimate_node.is_a?(Array)
+        unless archimate_node.is_a?(DataModel::ArchimateNode) || archimate_node.is_a?(Array)
+          raise(
+            TypeError,
+            "archimate_node must be an ArchimateNode or Array, was #{archimate_node.class}"
+          )
+        end
         raise "new WTF? parent at path #{archimate_node.path} is a #{archimate_node.class} but isn't assigned a model" if archimate_node.in_model.nil? && !archimate_node.is_a?(DataModel::Model)
         @archimate_node = archimate_node
       end
@@ -62,9 +64,7 @@ module Archimate
       def lookup_parent_in_model(model)
         raise "WTF? parent at path #{path} is a #{parent.class} but isn't assigned a model" if parent.in_model.nil? && !parent.is_a?(DataModel::Model)
         result = recurse_lookup_in_model(parent, model)
-        if result.nil?
-          $stderr.puts "Unable to lookup parent with path #{path}"
-        end
+        $stderr.puts "Unable to lookup parent with path #{path}" if result.nil?
         result
       end
 

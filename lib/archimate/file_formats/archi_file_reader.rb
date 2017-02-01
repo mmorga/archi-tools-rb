@@ -181,12 +181,14 @@ module Archimate
       def parse_bounds(node)
         bounds = node.at_css("> bounds")
         tick
-        DataModel::Bounds.new(
-          x: bounds.attr("x"),
-          y: bounds.attr("y"),
-          width: bounds.attr("width"),
-          height: bounds.attr("height")
-        ) unless bounds.nil?
+        unless bounds.nil?
+          DataModel::Bounds.new(
+            x: bounds.attr("x"),
+            y: bounds.attr("y"),
+            width: bounds.attr("width"),
+            height: bounds.attr("height")
+          )
+        end
       end
 
       def parse_source_connections(node)

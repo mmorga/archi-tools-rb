@@ -6,10 +6,12 @@ module Archimate
       using DataModel::DiffableArray
 
       def initialize(archimate_node)
-        raise(
-          TypeError,
-          "archimate_node is a #{archimate_node.class}, IdentifiedNode was expected"
-        ) unless archimate_node.is_a?(DataModel::IdentifiedNode)
+        unless archimate_node.is_a?(DataModel::IdentifiedNode)
+          raise(
+            TypeError,
+            "archimate_node is a #{archimate_node.class}, IdentifiedNode was expected"
+          )
+        end
         super
       end
 

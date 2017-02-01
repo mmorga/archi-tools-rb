@@ -21,9 +21,9 @@ module Archimate
 
       def description
         [
-          name.nil? ? nil : "#{name}",
+          name.nil? ? nil : name.to_s,
           element.nil? ? nil : element.name,
-          element&.type.nil? ? nil : "(#{element.type})",
+          element&.type.nil? ? nil : "(#{element.type})"
         ].compact.join(" ")
       end
 
@@ -62,7 +62,7 @@ module Archimate
       # TODO: Is this true for all or only Archi models?
       def absolute_position
         offset = bounds || Archimate::DataModel::Bounds.zero
-        el = self.parent.parent
+        el = parent.parent
         while el.respond_to?(:bounds) && el.bounds
           bounds = el.bounds
           offset = offset.with(x: (offset.x || 0) + (bounds.x || 0), y: (offset.y || 0) + (bounds.y || 0))

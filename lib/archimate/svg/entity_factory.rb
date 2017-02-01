@@ -4,7 +4,7 @@ module Archimate
     module EntityFactory
       def make_entity(child, bounds_offset)
         entity = child.element || child
-        klass_name = "Archimate::Svg::Entity::#{entity.type.sub("archimate:", "")}"
+        klass_name = "Archimate::Svg::Entity::#{entity.type.sub('archimate:', '')}"
         klass = Object.const_get(klass_name)
         klass.new(child, bounds_offset)
       rescue

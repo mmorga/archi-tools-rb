@@ -9,18 +9,24 @@ module Archimate
       attr_reader :array_index
 
       def initialize(array, array_index)
-        raise(
-          TypeError,
-          "array argument must be an Array, was #{array.class}"
-        ) unless array.is_a?(Array)
-        raise(
-          TypeError,
-          "array_index argument must be a Integer, was #{array_index.class} #{array_index.inspect}"
-        ) unless array_index.is_a?(Integer)
-        raise(
-          ArgumentError,
-          "array_index argument a valid index for array #{array_index.inspect}"
-        ) unless array_index >= 0 && array_index < array.size
+        unless array.is_a?(Array)
+          raise(
+            TypeError,
+            "array argument must be an Array, was #{array.class}"
+          )
+        end
+        unless array_index.is_a?(Integer)
+          raise(
+            TypeError,
+            "array_index argument must be a Integer, was #{array_index.class} #{array_index.inspect}"
+          )
+        end
+        unless array_index >= 0 && array_index < array.size
+          raise(
+            ArgumentError,
+            "array_index argument a valid index for array #{array_index.inspect}"
+          )
+        end
         super(array)
         @array_index = array_index
       end
@@ -92,7 +98,7 @@ module Archimate
         ary_in_model[idx] = value
       end
 
-      def move(to_model, from_ref)
+      def move(to_model, _from_ref)
         ary_in_model = lookup_parent_in_model(to_model)
         insert_idx = parent.previous_item_index(ary_in_model, value) + 1
         current_idx = ary_in_model.smart_find(value)

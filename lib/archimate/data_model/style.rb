@@ -23,8 +23,6 @@ module Archimate
           "center"
         when "3"
           "right"
-        else
-          nil
         end
       end
     end

@@ -121,20 +121,24 @@ module Archimate
       end
 
       def delete(attrname)
-        raise(
-          ArgumentError,
-          "attrname was blank must be one of: #{struct_instance_variables.map(&:to_s).join(',')}"
-        ) if attrname.nil? || attrname.empty?
+        if attrname.nil? || attrname.empty?
+          raise(
+            ArgumentError,
+            "attrname was blank must be one of: #{struct_instance_variables.map(&:to_s).join(',')}"
+          )
+        end
         in_model&.deregister(self[attrname])
         instance_variable_set("@#{attrname}".to_sym, nil)
         self
       end
 
       def set(attrname, value)
-        raise(
-          ArgumentError,
-          "attrname was blank must be one of: #{struct_instance_variables.map(&:to_s).join(',')}"
-        ) if attrname.nil? #  || attrname.empty?
+        if attrname.nil?
+          raise(
+            ArgumentError,
+            "attrname was blank must be one of: #{struct_instance_variables.map(&:to_s).join(',')}"
+          )
+        end #  || attrname.empty?
         # value = value.clone
         in_model&.register(value, self)
         instance_variable_set("@#{attrname}".to_sym, value)

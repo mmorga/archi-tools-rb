@@ -6,18 +6,24 @@ module Archimate
       attr_reader :attribute
 
       def initialize(archimate_node, attribute)
-        raise(
-          TypeError,
-          "archimate_node must be an ArchimateNode, was #{archimate_node.class}"
-        ) unless archimate_node.is_a?(DataModel::ArchimateNode)
-        raise(
-          TypeError,
-          "Node #{archimate_node.class} attribute must be a sym, was a #{attribute.class} value #{attribute.inspect}"
-        ) unless attribute.is_a?(Symbol)
-        raise(
-          ArgumentError,
-          "Attribute #{attribute} invalid for class #{archimate_node.class}"
-        ) unless archimate_node.class.schema.keys.include?(attribute)
+        unless archimate_node.is_a?(DataModel::ArchimateNode)
+          raise(
+            TypeError,
+            "archimate_node must be an ArchimateNode, was #{archimate_node.class}"
+          )
+        end
+        unless attribute.is_a?(Symbol)
+          raise(
+            TypeError,
+            "Node #{archimate_node.class} attribute must be a sym, was a #{attribute.class} value #{attribute.inspect}"
+          )
+        end
+        unless archimate_node.class.schema.keys.include?(attribute)
+          raise(
+            ArgumentError,
+            "Attribute #{attribute} invalid for class #{archimate_node.class}"
+          )
+        end
         super(archimate_node)
         @attribute = attribute
       end
@@ -56,7 +62,7 @@ module Archimate
         lookup_parent_in_model(to_model).set(attribute, value)
       end
 
-      def move(to_model)
+      def move(_to_model)
         raise "Move is not valid for ArchimateNodes"
       end
     end

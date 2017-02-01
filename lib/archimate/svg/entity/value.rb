@@ -12,7 +12,7 @@ module Archimate
           xml.ellipse(cx: cx, cy: cy, rx: rx, ry: ry, class: background_class, style: shape_style)
         end
 
-        def calc_text_bounds(bounds)
+        def calc_text_bounds(_bounds)
           @text_bounds = @text_bounds.with(
             x: @text_bounds.left + 10,
             y: @text_bounds.top + 10,

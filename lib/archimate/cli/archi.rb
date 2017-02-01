@@ -58,7 +58,7 @@ module Archimate
              desc: "Don't provide interactive feedback"
       def svg(archifile)
         Archimate::Cli::Svger.export_svgs(
-          archifile, 
+          archifile,
           Archimate::AIO.new(
             output_dir: options.fetch("output", Dir.pwd),
             interactive: !options.fetch("noninteractive", false)
