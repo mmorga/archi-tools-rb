@@ -2,11 +2,9 @@
 module Archimate
   module Svg
     module Entity
-      # TODO: support alternate appearance
-      class BusinessInterface < RectEntity
+      class BusinessInterface < InterfaceEntity
         def initialize(child, bounds_offset)
           super
-          @badge = "#archimate-interface-badge"
         end
       end
     end

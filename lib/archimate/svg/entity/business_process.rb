@@ -2,7 +2,6 @@
 module Archimate
   module Svg
     module Entity
-      # TODO: support alternate appearance
       class BusinessProcess < RoundedRectEntity
         def initialize(child, bounds_offset)
           super

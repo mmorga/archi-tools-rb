@@ -2,9 +2,7 @@
 module Archimate
   module Svg
     module Entity
-      # TODO: support alternate appearance
       class ServiceEntity < BaseEntity
-        include Service
         include Rect
 
         def initialize(child, bounds_offset)
@@ -32,6 +30,19 @@ module Archimate
           else
             service_path(xml, bounds)
           end
+        end
+
+        def service_path(xml, bounds)
+          xml.rect(
+            x: bounds.left,
+            y: bounds.top,
+            width: bounds.width,
+            height: bounds.height,
+            rx: bounds.height / 2.0,
+            ry: bounds.height / 2.0,
+            class: background_class,
+            style: shape_style
+          )
         end
       end
     end

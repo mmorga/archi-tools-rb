@@ -3,8 +3,6 @@ module Archimate
   module Svg
     module Entity
       class RoundedRectEntity < BaseEntity
-        include RoundedRect
-
         def initialize(child, bounds_offset)
           super
           @badge_bounds = child.bounds.with(
@@ -16,7 +14,7 @@ module Archimate
         end
 
         def entity_shape(xml, bounds)
-          rounded_rect_path(xml, bounds)
+          xml.rect(x: bounds.left, y: bounds.top, width: bounds.width, height: bounds.height, rx: "5", ry: "5", class: background_class)
         end
       end
     end
