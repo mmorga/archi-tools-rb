@@ -24,7 +24,7 @@ module Archimate
           "text-anchor" => "middle",
           style: css_style.text
         ) do
-          xml.textPath(startOffset: text_position, "xlink:href" => "##{source_connection.id}") do
+          xml.textPath(startOffset: text_position, "xlink:href" => "##{id}") do
             xml.text name
           end
         end
@@ -54,11 +54,15 @@ module Archimate
 
       def path_attrs
         {
-          id: source_connection.id,
+          id: id,
           class: path_class,
           d: path_d,
           style: line_style
         }
+      end
+
+      def id
+        source_connection.relationship_element&.id || source_connection.id
       end
 
       # Look at the type (if any of the path and set the class appropriately)
