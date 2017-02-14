@@ -27,7 +27,7 @@ module Archimate
       end
 
       def element_ids
-        all_children.map(&:archimate_id).compact
+        all_children.map(&:archimate_element).compact
       end
 
       def relationships
