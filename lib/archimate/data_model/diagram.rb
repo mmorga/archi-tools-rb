@@ -23,19 +23,19 @@ module Archimate
       end
 
       def elements
-        all_children.map(&:element).compact
+        @elements ||= all_children.map(&:element).compact
       end
 
       def element_ids
-        all_children.map(&:archimate_element).compact
+        @element_ids ||= all_children.map(&:archimate_element).compact
       end
 
       def relationships
-        all_source_connections.map(&:element).compact
+        @relationships ||= all_source_connections.map(&:element).compact
       end
 
       def relationship_ids
-        all_source_connections.map(&:relationship).compact
+        @relationship_ids ||= all_source_connections.map(&:relationship).compact
       end
 
       def to_s

@@ -35,7 +35,7 @@ module Archimate
 
       # Diagrams that this element is referenced in.
       def diagrams
-        in_model.diagrams.select do |diagram|
+        @diagrams ||= in_model.diagrams.select do |diagram|
           diagram.relationship_ids.include?(id)
         end
       end

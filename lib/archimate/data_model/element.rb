@@ -32,14 +32,14 @@ module Archimate
 
       # Diagrams that this element is referenced in.
       def diagrams
-        in_model.diagrams.select do |diagram|
+        @diagrams ||= in_model.diagrams.select do |diagram|
           diagram.element_ids.include?(id)
         end
       end
 
       # Relationships that this element is referenced in.
       def relationships
-        in_model.relationships.select do |relationship|
+        @relationships ||= in_model.relationships.select do |relationship|
           relationship.source == id || relationship.target == id
         end
       end
