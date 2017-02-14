@@ -22,6 +22,22 @@ module Archimate
         children.inject([]) { |child_ary, child| child_ary.concat(child.all_source_connections) }
       end
 
+      def elements
+        all_children.map(&:element).compact
+      end
+
+      def element_ids
+        all_children.map(&:archimate_id).compact
+      end
+
+      def relationships
+        all_source_connections.map(&:element).compact
+      end
+
+      def relationship_ids
+        all_source_connections.map(&:relationship).compact
+      end
+
       def to_s
         "#{AIO.data_model('Diagram')}<#{id}>[#{HighLine.color(name, [:white, :underline])}]"
       end

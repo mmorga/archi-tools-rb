@@ -32,6 +32,13 @@ module Archimate
       def target_element
         element_by_id(target)
       end
+
+      # Diagrams that this element is referenced in.
+      def diagrams
+        in_model.diagrams.select do |diagram|
+          diagram.relationship_ids.include?(id)
+        end
+      end
     end
     Dry::Types.register_class(Relationship)
   end

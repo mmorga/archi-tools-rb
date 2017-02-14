@@ -29,6 +29,24 @@ module Archimate
           .select { |r| r.type == "CompositionRelationship" && r.source == id }
           .map { |r| in_model.lookup(r.target) }
       end
+
+      # Diagrams that this element is referenced in.
+      def diagrams
+        in_model.diagrams.select do |diagram|
+          diagram.element_ids.include?(id)
+        end
+      end
+
+      # Relationships that this element is referenced in.
+      def relationships
+        in_model.relationships.select do |relationship|
+          relationship.source == id || relationship.target == id
+        end
+      end
+
+      def folder
+        in_model.lookup(folder_id)
+      end
     end
     Dry::Types.register_class(Element)
   end
