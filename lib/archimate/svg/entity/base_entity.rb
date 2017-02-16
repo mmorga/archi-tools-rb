@@ -107,7 +107,7 @@ module Archimate
         def group_attrs
           attrs = { id: @entity.id }
           # TODO: Transform only needed only for Archi file types
-          attrs[:transform] = "translate(#{@bounds_offset.x}, #{@bounds_offset.y})" unless @bounds_offset.nil?
+          attrs[:transform] = "translate(#{@bounds_offset.x || 0}, #{@bounds_offset.y || 0})" unless @bounds_offset.nil?
           attrs[:class] = "archimate-#{@entity.type}" if @entity.type || !@entity.type.empty?
           attrs
         end
