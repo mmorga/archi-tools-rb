@@ -2,9 +2,10 @@
 module Archimate
   module Svg
     module Entity
-      class BusinessProcess < ProcessEntity
+      class Resource < RectEntity
         def initialize(child, bounds_offset)
           super
+          @badge = "#archimate-resource-badge"
         end
       end
     end

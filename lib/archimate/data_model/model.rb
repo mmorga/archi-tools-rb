@@ -113,12 +113,16 @@ module Archimate
         case item
         when Element
           case item.layer
+          when "Strategy"
+            find_default_folder("strategy", "Strategy")
           when "Business"
             find_default_folder("business", "Business")
           when "Application"
             find_default_folder("application", "Application")
           when "Technology"
             find_default_folder("technology", "Technology")
+          when "Physical"
+            find_default_folder("physical", "Physical")
           when "Motivation"
             find_default_folder("motivation", "Motivation")
           when "Implementation and Migration"

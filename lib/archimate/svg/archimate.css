@@ -69,6 +69,11 @@ table.properties>caption {
     stroke: #999;
 }
 
+.archimate-strategy-background {
+    fill: #eddfac;
+    stroke: #44423b;
+}
+
 .archimate-business-background {
     fill: #fffeb9;
     stroke: #b2b181;
@@ -97,6 +102,11 @@ table.properties>caption {
 .archimate-infrastructure-decoration {
     fill: #b4cfa4;
     stroke: #9bb28d;
+}
+
+.archimate-physical-background {
+    fill: #cdfeb2;
+    stoke: #313331;
 }
 
 .archimate-motivation-background {

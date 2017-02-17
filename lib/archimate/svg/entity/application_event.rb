@@ -2,7 +2,7 @@
 module Archimate
   module Svg
     module Entity
-      class BusinessProcess < ProcessEntity
+      class ApplicationEvent < EventEntity
         def initialize(child, bounds_offset)
           super
         end

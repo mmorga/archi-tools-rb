@@ -15,7 +15,12 @@ module Archimate
       # any offset needed. So this will need to be included in the recursive drawing of children
       def render_elements(svg)
         Nokogiri::XML::Builder.with(svg) do |xml|
-          EntityFactory.make_entity(child, nil).to_svg(xml)
+          entity = EntityFactory.make_entity(child, nil)
+          if entity.nil?
+            puts "Unable to make an SVG Entity for Child:\n#{child.element&.type}"
+          else
+            entity.to_svg(xml)
+          end
         end
         svg
       end
@@ -23,7 +28,12 @@ module Archimate
       def render_connections(svg)
         Nokogiri::XML::Builder.with(svg) do |xml|
           child.all_source_connections.each do |source_connection|
-            Connection.new(source_connection).to_svg(xml)
+            conn = Connection.new(source_connection)
+            if conn.nil?
+              puts "Unable to make an SVG Connection for Source Connection:\n#{source_connection.inspect}"
+            else
+              conn.to_svg(xml)
+            end
           end
         end
         svg

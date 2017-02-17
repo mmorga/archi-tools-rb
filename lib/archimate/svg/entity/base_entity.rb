@@ -23,12 +23,16 @@ module Archimate
 
         def layer_background_class
           case child.element&.layer
+          when "Strategy"
+            "archimate-strategy-background"
           when "Business"
             "archimate-business-background"
           when "Application"
             "archimate-application-background"
           when "Technology"
             "archimate-infrastructure-background"
+          when "Physical"
+            "archimate-physical-background"
           when "Motivation"
             "archimate-motivation-background"
           when "Implementation and Migration"

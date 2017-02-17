@@ -2,9 +2,11 @@
 module Archimate
   module FileFormats
     module ArchiFileFormat
+      strategy_folder_xpath = "/archimate:model/folder[@type='strategy']"
       application_folder_xpath = "/archimate:model/folder[@type='application']"
       business_folder_xpath = "/archimate:model/folder[@type='business']"
       technology_folder_xpath = "/archimate:model/folder[@type='technology']"
+      physical_folder_xpath = "/archimate:model/folder[@type='physical']"
       motivation_folder_xpath = "/archimate:model/folder[@type='motivation']"
       implementation_migration_folder_xpath = "/archimate:model/folder[@type='implementation_migration']"
       connectors_folder_xpath = "/archimate:model/folder[@type='connectors']"
@@ -81,18 +83,23 @@ module Archimate
       }.freeze
 
       FOLDER_XPATHS = [
+        "folder[type=\"strategy\"]",
         "folder[type=\"business\"]",
         "folder[type=\"application\"]",
         "folder[type=\"technology\"]",
+        "folder[type=\"physical\"]",
         "folder[type=\"motivation\"]",
         "folder[type=\"implementation_migration\"]",
+        "folder[type=\"other\"]",
         "folder[type=\"connectors\"]"
       ].freeze
 
       ELEMENT_FOLDER_TYPES = %w(
+        strategy
         business
         application
         technology
+        physical
         motivation
         implementation_migration
         connectors

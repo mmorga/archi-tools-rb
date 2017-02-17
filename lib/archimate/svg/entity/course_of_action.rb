@@ -2,9 +2,10 @@
 module Archimate
   module Svg
     module Entity
-      class BusinessProcess < ProcessEntity
+      class CourseOfAction < RoundedRectEntity
         def initialize(child, bounds_offset)
           super
+          @badge = "#archimate-course-of-action-badge"
         end
       end
     end

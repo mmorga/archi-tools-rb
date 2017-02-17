@@ -2,7 +2,7 @@
 module Archimate
   module Svg
     module Entity
-      class BusinessProcess < ProcessEntity
+      class TechnologyInteraction < InteractionEntity
         def initialize(child, bounds_offset)
           super
         end

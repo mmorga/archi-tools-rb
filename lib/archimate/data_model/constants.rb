@@ -13,7 +13,13 @@ module Archimate
                     InfrastructureFunction InfrastructureInterface InfrastructureService
                     Network Node SystemSoftware Assessment Constraint Driver Goal Principle
                     Requirement Stakeholder Deliverable Gap Plateau WorkPackage AndJunction
-                    Junction OrJunction).freeze
+                    Junction OrJunction Capability CourseOfAction Resource
+                    ApplicationProcess ApplicationEvent TechnologyCollaboration
+                    TechnologyInterface Path CommunicationNetwork
+                    TechnologyFunction TechnologyProcess TechnologyInteraction
+                    TechnologyEvent TechnologyService
+                    TechnologyObject Equipment Facility DistributionNetwork Material
+                    Outcome ImplementationEvent).freeze
 
       RELATIONSHIPS = %w(AssociationRelationship AccessRelationship UsedByRelationship
                          RealisationRelationship AssignmentRelationship AggregationRelationship
@@ -21,6 +27,8 @@ module Archimate
                          GroupingRelationship SpecialisationRelationship InfluenceRelationship).freeze
 
       LAYER_ELEMENTS = {
+        "Strategy" =>
+          %w(Capability CourseOfAction Resource),
         "Business" =>
           %w(BusinessActor BusinessCollaboration
              BusinessEvent BusinessFunction
@@ -34,19 +42,25 @@ module Archimate
           %w(ApplicationCollaboration ApplicationComponent
              ApplicationFunction ApplicationInteraction
              ApplicationInterface ApplicationService
-             DataObject),
+             DataObject ApplicationProcess ApplicationEvent),
         "Technology" =>
           %w(Artifact CommunicationPath
              Device InfrastructureFunction
              InfrastructureInterface InfrastructureService
-             Network Node SystemSoftware),
+             Network Node SystemSoftware TechnologyCollaboration
+             TechnologyInterface Path CommunicationNetwork
+             TechnologyFunction TechnologyProcess TechnologyInteraction
+             TechnologyEvent TechnologyService
+             TechnologyObject),
+        "Physical" =>
+          %w(Equipment Facility DistributionNetwork Material),
         "Motivation" =>
           %w(Assessment Constraint Driver
              Goal Principle Requirement
-             Stakeholder),
+             Stakeholder Outcome),
         "Implementation and Migration" =>
           %w(Deliverable Gap Plateau
-             WorkPackage),
+             WorkPackage ImplementationEvent),
         "Connectors" =>
           %w(AndJunction Junction OrJunction)
       }.freeze
