@@ -17,7 +17,7 @@ module Archimate
         Nokogiri::XML::Builder.with(svg) do |xml|
           entity = EntityFactory.make_entity(child, nil)
           if entity.nil?
-            puts "Unable to make an SVG Entity for Child:\n#{child.element&.type}"
+            puts "Unable to make an SVG Entity for Child:\n#{child}"
           else
             entity.to_svg(xml)
           end
@@ -30,7 +30,7 @@ module Archimate
           child.all_source_connections.each do |source_connection|
             conn = Connection.new(source_connection)
             if conn.nil?
-              puts "Unable to make an SVG Connection for Source Connection:\n#{source_connection.inspect}"
+              puts "Unable to make an SVG Connection for Source Connection:\n#{source_connection}"
             else
               conn.to_svg(xml)
             end
