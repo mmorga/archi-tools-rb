@@ -41,6 +41,38 @@ command        | description
 
 Archidiff is a set of tools to help with versioning an `.archimate` file from Archi in a version control system (like git). Eventually I want to provide diff and (3-way) merge tools that understand how *Archi* files are structured and avoid problems that happen when multiple people collaborate on a model.
 
+To enable using these from the command line git, add these lines to your `~/.gitconfig` replacing `{PATH_TO_ARCHIDIFF}` with the path to the archidiff binaries.
+
+```
+[difftool "archidiff"]
+    cmd = {PATH_TO_ARCHIDIFF}/archidiff $LOCAL $REMOTE
+
+[difftool "archidiff-summary"]
+    cmd = {PATH_TO_ARCHIDIFF}/archidiff-summary $LOCAL $REMOTE
+
+[mergetool "archimerge"]
+	cmd = {PATH_TO_ARCHIDIFF}/archimerge $PWD/$BASE $PWD/$REMOTE $PWD/$LOCAL $PWD/$MERGED
+	trustExitCode = false
+```
+
+Then to use the tool for diffing you can do this:
+
+```sh
+git difftool --tool archidiff 833cbb7 HEAD  -- path_to/my.archimate
+```
+
+or to see a summary of what changed between versions:
+
+```sh
+git difftool --tool archidiff-summary 833cbb7 HEAD  -- path_to/my.archimate
+```
+
+Finally, if you have a merge conflict, you can use archimerge to help make the merge sane:
+
+```sh
+git mergetool --tool archimerge -- path_to/my.archimate
+```
+
 ### fmtxml
 
 Can be used as a `textconv` filter in .gitconfig to pre-format files for better diff use (for visual scanning). You'd set this up in your `$HOME/.gitconfig` file like this.
