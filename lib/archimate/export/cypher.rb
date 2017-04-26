@@ -1,5 +1,43 @@
 # frozen_string_literal: true
+
 # This module takes an ArchiMate model and builds GraphML representation of it.
+#
+# Node Schema:
+#   Properties:
+#     name: Element.label
+#     nodelId: Element.id
+#     layer: Element.layer
+#     documentation: Element.documentation
+#     Element.properties
+#      ("prop:#{Property.key}"): Property.value
+#   Labels:
+#     Element.type
+#
+# Edge Schema:
+#   Properties:
+#     weight (of Relationship Type as in table below)
+#     relationshipId: Relationship.id
+#     name: Relationship.name
+#     documentation: Relationship.documentation
+#     accessType: Relationship.access_type
+#   Labels:
+#     Relationship.type
+#
+# | Weight | Name           |
+# |--------+----------------|
+when ' | Association    |
+when ' | Access         |
+when ' | Used by        |
+when ' | Realization    |
+when ' | Assignment     |
+when ' | Aggregation    |
+when ' | Composition    |
+when ' | Flow           |
+when ' | Triggering     |
+when ' | Grouping       |
+when ' | Junction       |
+when ' | Specialization |
+
 module Archimate
   module Export
     class Cypher
@@ -24,7 +62,15 @@ module Archimate
       def write_nodes(elements)
         write "\n// Nodes\n"
         elements.each do |element|
-          write node(element.type, element.layer.delete(" "), name: element.label, elementID: element.id)
+          write(
+            node(
+              element.type,
+              layer: element.layer.delete(" "),
+              name: element.label,
+              nodeId: element.id,
+              documentation: element.documentation.map(&:text).join("\n")
+            )
+          )
         end
       end
 
@@ -34,8 +80,6 @@ module Archimate
           write "CREATE INDEX ON :#{label}(name);"
           write "CREATE INDEX ON :#{label}(elementID);"
         end
-
-        write "\n\nschema await\n\n"
       end
 
       def write_relationships(relationships)
@@ -47,7 +91,6 @@ module Archimate
 
       private
 
-      # TODO: add the element layer as a label
       def node(label, layer, properties = {})
         "CREATE (n:#{layer}:#{label} #{props(properties)});"
       end
@@ -58,15 +101,46 @@ module Archimate
       end
 
       def props(properties)
-        "{ #{properties.reject { |_k, v| v.nil? }.map { |k, v| "#{k}: #{v.inspect}" }.join(', ')} }"
+        "{ #{properties.reject { |_k, v| v.nil? }.map { |k, v| "`prop:#{k}`: #{v.inspect}" }.join(', ')} }"
       end
 
       def source(rel)
         "(s #{props(elementID: rel.source)})"
       end
 
+      def weight(t)
+        case t
+        when 'AssociationRelationship'
+          1
+        when 'AccessRelationship'
+          2
+        when 'UsedByRelationship'
+          3
+        when 'RealizationRelationship'
+          4
+        when 'AssignmentRelationship'
+          5
+        when 'AggregationRelationship'
+          6
+        when 'CompositionRelationship'
+          7
+        when 'FlowRelationship'
+          8
+        when 'TriggeringRelationship'
+          9
+        when 'GroupingRelationship'
+          10
+        when 'JunctionRelationship'
+          11
+        when 'SpecializationRelationship'
+          12
+        else
+          0
+        end
+      end
+
       def relationship_def(rel)
-        "[r:#{rel.type} #{props(name: rel.name, elementID: rel.id, accessType: rel.access_type)}]"
+        "[r:#{rel.type} #{props(name: rel.name, relationshipID: rel.id, accessType: rel.access_type, weight: weight(rel.type), documentation: rel.documentation.map(&:text).join("\n"))}]"
       end
 
       def target(rel)
