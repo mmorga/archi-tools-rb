@@ -25,23 +25,42 @@
 #
 # | Weight | Name           |
 # |--------+----------------|
-when ' | Association    |
-when ' | Access         |
-when ' | Used by        |
-when ' | Realization    |
-when ' | Assignment     |
-when ' | Aggregation    |
-when ' | Composition    |
-when ' | Flow           |
-when ' | Triggering     |
-when ' | Grouping       |
-when ' | Junction       |
-when ' | Specialization |
+# |      1 | Association    |
+# |      2 | Access         |
+# |      3 | Used by        |
+# |      4 | Realization    |
+# |      5 | Assignment     |
+# |      6 | Aggregation    |
+# |      7 | Composition    |
+# |      8 | Flow           |
+# |      9 | Triggering     |
+# |     10 | Grouping       |
+# |     11 | Junction       |
+# |     12 | Specialization |
+# Structural stronger than Dependency Relationships
+# ServingRelationship == UsedByRelationship
+
 
 module Archimate
   module Export
     class Cypher
       attr_reader :aio
+
+      WEIGHTS = {
+        'GroupingRelationship' => 0,
+        'JunctionRelationship' => 0,
+        'AssociationRelationship' => 0,
+        'SpecialisationRelationship' => 1,
+        'FlowRelationship' => 2,
+        'TriggeringRelationship' => 3,
+        'InfluenceRelationship' => 4,
+        'AccessRelationship' => 5,
+        'UsedByRelationship' => 6,
+        'RealisationRelationship' => 7,
+        'AssignmentRelationship' => 8,
+        'AggregationRelationship' => 9,
+        'CompositionRelationship' => 10
+      }
 
       def initialize(aio)
         @aio = aio
@@ -109,34 +128,8 @@ module Archimate
       end
 
       def weight(t)
-        case t
-        when 'AssociationRelationship'
-          1
-        when 'AccessRelationship'
-          2
-        when 'UsedByRelationship'
-          3
-        when 'RealizationRelationship'
-          4
-        when 'AssignmentRelationship'
-          5
-        when 'AggregationRelationship'
-          6
-        when 'CompositionRelationship'
-          7
-        when 'FlowRelationship'
-          8
-        when 'TriggeringRelationship'
-          9
-        when 'GroupingRelationship'
-          10
-        when 'JunctionRelationship'
-          11
-        when 'SpecializationRelationship'
-          12
-        else
-          0
-        end
+        return 0 unless WEIGHTS.include?(t)
+        WEIGHTS[t]
       end
 
       def relationship_def(rel)
