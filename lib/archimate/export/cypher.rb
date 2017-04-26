@@ -110,8 +110,8 @@ module Archimate
 
       private
 
-      def node(label, layer, properties = {})
-        "CREATE (n:#{layer}:#{label} #{props(properties)});"
+      def node(label, properties = {})
+        "CREATE (n:#{label} #{props(properties)});"
       end
 
       def relationship(rel)
