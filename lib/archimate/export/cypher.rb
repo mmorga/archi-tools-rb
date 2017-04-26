@@ -81,13 +81,21 @@ module Archimate
       def write_nodes(elements)
         write "\n// Nodes\n"
         elements.each do |element|
+          props = {
+            layer: element.layer.delete(" "),
+            name: element.label,
+            nodeId: element.id,
+            documentation: element.documentation.map(&:text).join("\n")
+          }.merge(
+            element.properties.each_with_object({}) do |prop, memo|
+              memo["prop:#{prop.key}"] = prop.value unless prop.value.nil?
+            end
+          )
+
           write(
             node(
               element.type,
-              layer: element.layer.delete(" "),
-              name: element.label,
-              nodeId: element.id,
-              documentation: element.documentation.map(&:text).join("\n")
+              props
             )
           )
         end
@@ -120,7 +128,7 @@ module Archimate
       end
 
       def props(properties)
-        "{ #{properties.reject { |_k, v| v.nil? }.map { |k, v| "`prop:#{k}`: #{v.inspect}" }.join(', ')} }"
+        "{ #{properties.reject { |_k, v| v.nil? }.map { |k, v| "`#{k}`: #{v.inspect}" }.join(', ')} }"
       end
 
       def source(rel)
