@@ -7,10 +7,6 @@ module Archimate
         include Rect
         include NodeShape
 
-        attr_reader :margin
-        attr_reader :node_box_height
-        attr_reader :node_box_width
-
         def initialize(child, bounds_offset)
           super
         end

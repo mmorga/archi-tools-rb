@@ -81,15 +81,16 @@ module Archimate
       def write_nodes(elements)
         write "\n// Nodes\n"
         elements.each do |element|
-          props = {
-            layer: element.layer.delete(" "),
-            name: element.label,
-            nodeId: element.id,
-            documentation: element.documentation.map(&:text).join("\n")
-          }.merge(
-            element.properties.each_with_object({}) do |prop, memo|
-              memo["prop:#{prop.key}"] = prop.value unless prop.value.nil?
-            end
+          props = add_docs(
+            {
+              layer: element.layer.delete(" "),
+              name: element.label,
+              nodeId: element.id
+            }.merge(
+              element.properties.each_with_object({}) do |prop, memo|
+                memo["prop:#{prop.key}"] = prop.value unless prop.value.nil?
+              end
+            ), element.documentation
           )
 
           write(
@@ -105,7 +106,7 @@ module Archimate
         write "\n// Indexes\n"
         elements.map(&:type).uniq.each do |label|
           write "CREATE INDEX ON :#{label}(name);"
-          write "CREATE INDEX ON :#{label}(elementID);"
+          write "CREATE INDEX ON :#{label}(nodeId);"
         end
       end
 
@@ -132,7 +133,7 @@ module Archimate
       end
 
       def source(rel)
-        "(s #{props(elementID: rel.source)})"
+        "(s #{props(nodeId: rel.source)})"
       end
 
       def weight(t)
@@ -140,12 +141,26 @@ module Archimate
         WEIGHTS[t]
       end
 
+      def add_docs(h, l)
+        t = l.map(&:text).join("\n").strip
+        return h if t.empty?
+        h.merge(documentation: t)
+      end
+
       def relationship_def(rel)
-        "[r:#{rel.type} #{props(name: rel.name, relationshipID: rel.id, accessType: rel.access_type, weight: weight(rel.type), documentation: rel.documentation.map(&:text).join("\n"))}]"
+        h = add_docs(
+          {
+            name: rel.name,
+            relationshipId: rel.id,
+            accessType: rel.access_type,
+            weight: weight(rel.type)
+          }, rel.documentation
+        )
+        "[r:#{rel.type} #{props(h)}]"
       end
 
       def target(rel)
-        "(t #{props(elementID: rel.target)})"
+        "(t #{props(nodeId: rel.target)})"
       end
 
       def write(str)
