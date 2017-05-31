@@ -5,12 +5,12 @@ module Archimate
   module DataModel
     class ElementTest < Minitest::Test
       def test_to_s
-        el = build_element(id: "abc123", type: "DataObject", label: "Thing")
+        el = build_element(id: "abc123", type: "DataObject", name: "Thing")
         assert_equal "DataObject<abc123>[Thing]", HighLine.uncolor(el.to_s)
       end
 
       def test_layer
-        el = build_element(id: "abc123", type: "BusinessRole", label: "Thing")
+        el = build_element(id: "abc123", type: "BusinessRole", name: "Thing")
         assert_equal "Business", el.layer
         el = el.with(type: "DataObject")
         assert_equal "Application", el.layer

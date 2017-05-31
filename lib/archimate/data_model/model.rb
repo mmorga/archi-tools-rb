@@ -11,7 +11,6 @@ module Archimate
 
       # TODO: add original file name and file format
       # TODO: add metadata & property_defs as in Model Exchange Format
-      attribute :name, Strict::String
       attribute :elements, Strict::Array.member(Element).default([])
       attribute :folders, Strict::Array.member(Folder).default([])
       attribute :relationships, Strict::Array.member(Relationship).default([])
@@ -31,6 +30,10 @@ module Archimate
       def lookup(id)
         rebuild_index(id) unless @index_hash.include?(id)
         @index_hash[id]
+      end
+
+      def entities
+        @index_hash.values
       end
 
       def rebuild_index(missing_id = :model_creation_event)

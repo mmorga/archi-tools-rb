@@ -37,8 +37,8 @@ module Archimate
       end
 
       def test_independent_changes_element
-        local_el = base_el1.with(label: "#{base_el1.label}-local")
-        remote_el = base_el2.with(label: "#{base_el2.label}-remote")
+        local_el = base_el1.with(name: "#{base_el1.name}-local")
+        remote_el = base_el2.with(name: "#{base_el2.name}-remote")
         local = base.with(elements: base.elements.map { |el| el.id == local_el.id ? local_el : el })
         remote = base.with(elements: base.elements.map { |el| el.id == remote_el.id ? remote_el : el })
 
@@ -97,8 +97,8 @@ module Archimate
       end
 
       def test_conflict
-        local_el = base_el1.with(label: "#{base_el1.label}-local")
-        remote_el = base_el1.with(label: "#{base_el1.label}-remote")
+        local_el = base_el1.with(name: "#{base_el1.name}-local")
+        remote_el = base_el1.with(name: "#{base_el1.name}-remote")
         base_elements = base.elements.reject { |i| i == base_el1 }
         local = base.with(elements: Array(local_el) + base_elements)
         remote = base.with(elements: Array(remote_el) + base_elements)
@@ -107,12 +107,12 @@ module Archimate
 
         expected = Conflict.new(
           Change.new(
-            ArchimateNodeAttributeReference.new(local.elements[0], :label),
-            ArchimateNodeAttributeReference.new(base_el1, :label)
+            ArchimateNodeAttributeReference.new(local.elements[0], :name),
+            ArchimateNodeAttributeReference.new(base_el1, :name)
           ),
           Change.new(
-            ArchimateNodeAttributeReference.new(remote.elements[0], :label),
-            ArchimateNodeAttributeReference.new(base_el1, :label)
+            ArchimateNodeAttributeReference.new(remote.elements[0], :name),
+            ArchimateNodeAttributeReference.new(base_el1, :name)
           ),
           "Differences in one change set conflict with changes in other change set at the same path"
         )
@@ -123,7 +123,7 @@ module Archimate
       def test_local_remote_duplicate_change_no_conflict
         local = base.with(
           elements:
-            base.elements.map { |el| el.id == base_el1.id ? base_el1.with(label: "#{base_el1.label}-same") : el }
+            base.elements.map { |el| el.id == base_el1.id ? base_el1.with(name: "#{base_el1.name}-same") : el }
         )
         remote = local.clone
 

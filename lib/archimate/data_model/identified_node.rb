@@ -3,6 +3,7 @@ module Archimate
   module DataModel
     class IdentifiedNode < ArchimateNode
       attribute :id, Strict::String
+      attribute :name, Strict::String.optional
       attribute :documentation, DocumentationList
       attribute :properties, PropertiesList
       attribute :type, Strict::String.optional

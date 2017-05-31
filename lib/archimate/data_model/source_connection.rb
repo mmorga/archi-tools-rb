@@ -2,7 +2,6 @@
 module Archimate
   module DataModel
     class SourceConnection < IdentifiedNode
-      attribute :name, Strict::String.optional
       attribute :source, Strict::String
       attribute :target, Strict::String
       attribute :relationship, Strict::String.optional

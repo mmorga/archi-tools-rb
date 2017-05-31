@@ -2,7 +2,6 @@
 module Archimate
   module DataModel
     class Relationship < IdentifiedNode
-      attribute :name, Strict::String.optional
       attribute :source, Strict::String
       attribute :target, Strict::String
       attribute :access_type, Coercible::Int.optional # TODO: turn this into an enum

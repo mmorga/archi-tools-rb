@@ -42,14 +42,14 @@ module Archimate
           DataModel::Element.new(
             id: "1544",
             type: "BusinessInterface",
-            label: "mail"
+            name: "mail"
           ), model.elements.first
         )
         assert_equal(
           DataModel::Element.new(
             id: "3db08b5c",
             type: "Principle",
-            label: "Infrastructure Principle"
+            name: "Infrastructure Principle"
           ), model.elements.last
         )
       end

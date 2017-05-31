@@ -2,13 +2,10 @@
 module Archimate
   module DataModel
     class Element < IdentifiedNode
-      attribute :label, Strict::String.optional
       attribute :folder_id, Strict::String.optional
 
-      alias name label
-
       def to_s
-        AIO.layer_color(layer, "#{type}<#{id}>[#{label}]")
+        AIO.layer_color(layer, "#{type}<#{id}>[#{name}]")
       end
 
       def layer

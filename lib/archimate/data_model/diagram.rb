@@ -2,7 +2,6 @@
 module Archimate
   module DataModel
     class Diagram < IdentifiedNode
-      attribute :name, Strict::String
       attribute :viewpoint, Coercible::String.optional
       attribute :children, Strict::Array.member(Child).default([])
       attribute :connection_router_type, Coercible::Int.optional # TODO: fill this in, should be an enum

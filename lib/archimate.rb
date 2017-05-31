@@ -42,6 +42,7 @@ module Archimate
   end
 
   module Lint
+    autoload :DuplicateEntities, 'archimate/lint/duplicate_entities'
     autoload :Linter, 'archimate/lint/linter'
   end
 

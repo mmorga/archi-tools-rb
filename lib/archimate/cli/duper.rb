@@ -13,62 +13,46 @@ module Archimate
         @mergeall = mergeall
       end
 
-      def dupe_list
-        dupes = Hash.new { |type_hash, el_type_name| type_hash[el_type_name] = Hash.new { |name_hash, name| name_hash[name] = [] } }
-        @model.element_type_names.each do |el_type|
-          @model.elements_with_type(el_type).each do |el|
-            dupes[el_type.to_s][simplify(el.label)] << el.id
-          end
+      def list
+        dupes = Archimate::Lint::DuplicateEntities.new(@model)
+
+        dupes.each do |element_type, name, entities|
+          @output.puts "#{element_type} has potential duplicates: \n\t#{entities.join(",\n\t")}\n"
         end
-        dupes.delete_if do |_key, val|
-          val.delete_if { |_k2, v2| v2.size <= 1 }
-          val.size.zero?
-        end
-        dupes
+        @output.puts "Total Possible Duplicates: #{dupes.count}"
       end
 
-      # This method takes an entity name (label) and simplifies it for duplicate determination
-      # This might be configurable in the future
-      # 1. names are explicitly identical
-      # 2. names differ only in case
-      # 3. names differ only in whitespace
-      # 4. names differ only in punctuation
-      # 5. names differ only by stop-words (TBD list of words such as "the", "api", etc.)
-      def simplify(name)
-        return name unless name
-        name.downcase.delete(" \t\n\r").gsub(/[[:punct:]]/, "")
-      end
-
-      def list_dupes
-        dupes = dupe_list
-
-        count = dupes.reduce(0) do |memo, obj|
-          memo + obj[1].reduce(0) { |a, e| a + e[1].size }
+      def merge
+        dupes = Archimate::Lint::DuplicateEntities.new(@model)
+        if dupes.empty?
+          @output.puts "No potential duplicates detected"
+          return
         end
 
-        dupes.keys.each do |element_type|
-          dupes[element_type].keys.each do |name|
-            @output.puts "The name '#{name}' is used more than once for the type '#{element_type}'. "\
-              "Identifiers: #{dupes[element_type][name].inspect}"
-          end
+        dupes.each do |element_type, name, ids|
+          handle_duplicate(element_type, name, ids)
         end
-        @output.puts "Total Possible Duplicates: #{count}"
+
+        @output.write(@model.doc)
       end
 
-      def merge_duplicates(original_id, dupe_ids)
+      # Belongs to handle_duplicate
+      protected def merge_duplicates(original_id, dupe_ids)
         copies_ids = dupe_ids.reject { |id| id == original_id }
         merge_copies(original_id, copies_ids)
         remove_copies(copies_ids)
         update_associations(original_id, copies_ids)
       end
 
-      def display_elements(ids)
+      # Belongs to handle_duplicate
+      protected def display_elements(ids)
         ids.each_with_index do |id, idx|
-          puts "#{idx}. #{@model.stringize(@model.element_by_identifier(id))}\n"
+          puts "#{idx}. #{@model.lookup(id).to_s}\n"
         end
       end
 
-      def choices(element_type, name, ids)
+      # Belongs to handle_duplicate
+      protected def choices(element_type, name, ids)
         if @mergeall
           :mergeall
         elsif @skipall
@@ -90,8 +74,9 @@ module Archimate
         end
       end
 
+      # Belongs to merge
       # 1. Determine which one is the *original*
-      def handle_duplicate(element_type, name, ids)
+      protected def handle_duplicate(element_type, name, ids)
         display_elements(ids)
         choice = choices(element_type, name, ids)
         @mergeall = true if choice == :mergeall
@@ -105,7 +90,8 @@ module Archimate
         end
       end
 
-      def merge_into(original, copy)
+      # Belongs to merge_copies
+      protected def merge_into(original, copy)
         copy.elements.each do |child|
           # TODO: is there a better test than this?
           if original.children.none? { |original_child| child.to_xml == original_child.to_xml }
@@ -119,18 +105,20 @@ module Archimate
       #     2. Child `documentation` (and different `xml:lang` attribute values)
       #     3. Child `properties`
       #     4. Any other elements
-      def merge_copies(original_id, copies_ids)
-        original = @model.element_by_identifier(original_id)
+      # Belongs to merge_duplicates
+      protected def merge_copies(original_id, copies_ids)
+        original = @model.lookup(original_id)
         copies_ids.each do |copy_id|
-          copy = @model.element_by_identifier(copy_id)
+          copy = @model.lookup(copy_id)
           merge_into(original, copy)
         end
       end
 
       # 3. Delete the copy element from the document
-      def remove_copies(copies_ids)
+      # Belongs to merge_duplicates
+      protected def remove_copies(copies_ids)
         copies_ids.each do |copy_id|
-          @model.element_by_identifier(copy_id).remove
+          @model.lookup(copy_id).remove
         end
       end
 
@@ -140,7 +128,8 @@ module Archimate
       #     3. `item`: `identifierref` attribute
       #     4. `node`: `elementref` attribute
       #     5. `connection`: `relationshipref`, `source`, `target` attributes
-      def update_associations(original_id, copies_ids)
+      # Belongs to merge_duplicates
+      protected def update_associations(original_id, copies_ids)
         copies_ids.each do |copy_id|
           @model.elements_with_attribute_value(copy_id).each do |node|
             attrs = node.attributes
@@ -150,23 +139,6 @@ module Archimate
             end
           end
         end
-      end
-
-      def merge
-        dupes = dupe_list
-        if dupes.empty?
-          @output.puts "No potential duplicates detected"
-          return
-        end
-
-        # TODO: sort keys by layer, then alphabetical, then connections
-        dupes.keys.each do |element_type|
-          dupes[element_type].keys.sort.each do |name|
-            handle_duplicate(element_type, name, dupes[element_type][name])
-          end
-        end
-
-        @output.write(@model.doc)
       end
     end
   end

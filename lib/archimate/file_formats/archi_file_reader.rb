@@ -68,7 +68,7 @@ module Archimate
           tick
           DataModel::Element.new(
             id: i["id"],
-            label: i["name"],
+            name: i["name"],
             folder_id: i.parent["id"],
             type: i["xsi:type"].sub("archimate:", ""),
             documentation: parse_documentation(i),

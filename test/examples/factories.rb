@@ -70,7 +70,7 @@ module Archimate
       def build_element(options = {})
         Archimate::DataModel::Element.new(
           id: options.fetch(:id, build_id),
-          label: options.fetch(:label, Faker::Company.buzzword),
+          name: options.fetch(:name, Faker::Company.buzzword),
           type: options.fetch(:type, random_element_type),
           documentation: options.fetch(:documentation, []),
           properties: options.fetch(:properties, [])

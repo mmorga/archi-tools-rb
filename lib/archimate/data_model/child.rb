@@ -5,7 +5,6 @@ module Archimate
       using DiffableArray
 
       attribute :model, Strict::String.optional
-      attribute :name, Strict::String.optional
       attribute :content, Strict::String.optional
       attribute :target_connections, Strict::Array.member(Strict::String).default([])
       attribute :archimate_element, Strict::String.optional

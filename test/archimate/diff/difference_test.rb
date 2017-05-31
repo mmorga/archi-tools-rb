@@ -43,10 +43,10 @@ module Archimate
           "Model<bee5a0a7>/diagrams/[74]/children/[2]/children/[2]/archimate_element",
           "Model<bee5a0a7>/diagrams/[90]/children/[7]/archimate_element",
           "Model<bee5a0a7>/diagrams/[90]/children/[0]/archimate_element",
-          "Model<bee5a0a7>/elements/[1032]/label",
-          "Model<bee5a0a7>/elements/[135]/label",
-          "Model<bee5a0a7>/elements/[1430]/label",
-          "Model<bee5a0a7>/elements/[3]/label",
+          "Model<bee5a0a7>/elements/[1032]/name",
+          "Model<bee5a0a7>/elements/[135]/name",
+          "Model<bee5a0a7>/elements/[1430]/name",
+          "Model<bee5a0a7>/elements/[3]/name",
           "Model<bee5a0a7>/relationships/[1009]/source",
           "Model<bee5a0a7>/relationships/[100]/target",
           "Model<bee5a0a7>/relationships/[4]/source",
@@ -67,10 +67,10 @@ module Archimate
           "Model<bee5a0a7>/elements/[1483]"
         ]
         expected_paths = [
-          "Model<bee5a0a7>/elements/[3]/label",
-          "Model<bee5a0a7>/elements/[135]/label",
-          "Model<bee5a0a7>/elements/[1032]/label",
-          "Model<bee5a0a7>/elements/[1430]/label",
+          "Model<bee5a0a7>/elements/[3]/name",
+          "Model<bee5a0a7>/elements/[135]/name",
+          "Model<bee5a0a7>/elements/[1032]/name",
+          "Model<bee5a0a7>/elements/[1430]/name",
           "Model<bee5a0a7>/elements/[1483]",
           "Model<bee5a0a7>/relationships/[4]/source",
           "Model<bee5a0a7>/relationships/[100]/target",
@@ -119,8 +119,8 @@ module Archimate
 
       def test_sort_elements_index
         skip "sorting isn't working yet"
-        d1 = Delete.new(ArchimateNodeAttributeReference.new(model.elements.last, :label))
-        d2 = Delete.new(ArchimateNodeAttributeReference.new(model.elements.first, :label))
+        d1 = Delete.new(ArchimateNodeAttributeReference.new(model.elements.last, :name))
+        d2 = Delete.new(ArchimateNodeAttributeReference.new(model.elements.first, :name))
         expected = [d2, d1]
 
         assert_equal expected, [d1, d2].sort

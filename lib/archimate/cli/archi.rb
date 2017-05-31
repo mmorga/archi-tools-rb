@@ -85,6 +85,15 @@ module Archimate
         end
       end
 
+      desc "dupes ARCHIFILE", "List (potential) duplicate elements in Archi file"
+      def dupes(archifile)
+        Archimate::Cli::Duper.new(
+          AIO.new(
+            input_io: archifile
+          )
+        ).list
+      end
+
       desc "dedupe ARCHIFILE", "de-duplicate elements in Archi file"
       option :mergeall,
              aliases: :m,

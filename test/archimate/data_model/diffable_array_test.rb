@@ -138,7 +138,7 @@ module Archimate
       def xtest_change_with_identified_node
         subject = @model.clone
         element_to_change = @model.elements[1]
-        changed_element = element_to_change.with(label: element_to_change.label + "-changed")
+        changed_element = element_to_change.with(name: element_to_change.name + "-changed")
 
         subject.elements.change(1, element_to_change, changed_element)
 
@@ -151,8 +151,8 @@ module Archimate
         base = build_model(with_relationships: 2, with_diagrams: 1)
         base_el1 = base.elements.first
         base_el2 = base.elements.last
-        local_el = base_el1.with(label: "#{base_el1.label}-local")
-        remote_el = base_el2.with(label: "#{base_el2.label}-remote")
+        local_el = base_el1.with(name: "#{base_el1.name}-local")
+        remote_el = base_el2.with(name: "#{base_el2.name}-remote")
         local = base.with(elements: base.elements.map { |el| el.id == local_el.id ? local_el : el })
         remote = base.with(elements: base.elements.map { |el| el.id == remote_el.id ? remote_el : el })
 
@@ -160,8 +160,8 @@ module Archimate
 
         assert_equal(
           [Diff::Change.new(
-            Diff::ArchimateNodeAttributeReference.new(local.elements.first, :label),
-            Diff::ArchimateNodeAttributeReference.new(base.elements.first, :label)
+            Diff::ArchimateNodeAttributeReference.new(local.elements.first, :name),
+            Diff::ArchimateNodeAttributeReference.new(base.elements.first, :name)
           )],
           base_local
         )

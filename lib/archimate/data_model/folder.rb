@@ -6,7 +6,6 @@ module Archimate
     # this is representated as items. In the Archi file format, this is
     # represented as folders.
     class Folder < IdentifiedNode
-      attribute :name, Strict::String
       attribute :items, Strict::Array.member(Strict::String).default([])
       attribute :folders, Strict::Array.member(Folder).default([])
 

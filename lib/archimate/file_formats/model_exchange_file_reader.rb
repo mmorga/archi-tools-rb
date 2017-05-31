@@ -68,7 +68,7 @@ module Archimate
           label = i.at_css(">label")
           DataModel::Element.new(
             id: identifier_to_id(i["identifier"]),
-            label: label&.content,
+            name: label&.content,
             type: i["xsi:type"],
             documentation: parse_documentation(i),
             properties: parse_properties(i)

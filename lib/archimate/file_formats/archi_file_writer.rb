@@ -88,7 +88,7 @@ module Archimate
           remove_nil_values(
             "xsi:type" => "archimate:#{element.type}",
             "id" => element.id,
-            "name" => element.label
+            "name" => element.name
           )
         ) do
           serialize(xml, element.documentation)

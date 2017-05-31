@@ -4,7 +4,7 @@
 #
 # Node Schema:
 #   Properties:
-#     name: Element.label
+#     name: Element.name
 #     nodelId: Element.id
 #     layer: Element.layer
 #     documentation: Element.documentation
@@ -84,7 +84,7 @@ module Archimate
           props = add_docs(
             {
               layer: element.layer.delete(" "),
-              name: element.label,
+              name: element.name,
               nodeId: element.id
             }.merge(
               element.properties.each_with_object({}) do |prop, memo|
