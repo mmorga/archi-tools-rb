@@ -35,6 +35,7 @@ module Archimate
       # 4. names differ only in punctuation
       # 5. names differ only by stop-words (TBD list of words such as "the", "api", etc.)
       def simplify(name)
+        return name unless name
         name.downcase.delete(" \t\n\r").gsub(/[[:punct:]]/, "")
       end
 
