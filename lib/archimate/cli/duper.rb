@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "highline"
 
 module Archimate
@@ -12,11 +13,11 @@ module Archimate
         @mergeall = mergeall
       end
 
-      def get_dupe_list
-        dupes = Hash.new { |hash, el_type_name| hash[el_type_name] = Hash.new { |hash2, name| hash2[name] = [] } }
+      def dupe_list
+        dupes = Hash.new { |type_hash, el_type_name| type_hash[el_type_name] = Hash.new { |name_hash, name| name_hash[name] = [] } }
         @model.element_type_names.each do |el_type|
           @model.elements_with_type(el_type).each do |el|
-            dupes[el_type.to_s][el.label] << el.id
+            dupes[el_type.to_s][simplify(el.label)] << el.id
           end
         end
         dupes.delete_if do |_key, val|
@@ -26,8 +27,19 @@ module Archimate
         dupes
       end
 
+      # This method takes an entity name (label) and simplifies it for duplicate determination
+      # This might be configurable in the future
+      # 1. names are explicitly identical
+      # 2. names differ only in case
+      # 3. names differ only in whitespace
+      # 4. names differ only in punctuation
+      # 5. names differ only by stop-words (TBD list of words such as "the", "api", etc.)
+      def simplify(name)
+        name.downcase.delete(" \t\n\r").gsub(/[[:punct:]]/, "")
+      end
+
       def list_dupes
-        dupes = get_dupe_list
+        dupes = dupe_list
 
         count = dupes.reduce(0) do |memo, obj|
           memo + obj[1].reduce(0) { |a, e| a + e[1].size }
@@ -140,7 +152,7 @@ module Archimate
       end
 
       def merge
-        dupes = get_dupe_list
+        dupes = dupe_list
         if dupes.empty?
           @output.puts "No potential duplicates detected"
           return

@@ -185,3 +185,22 @@
 *** TODO Refactor DataModel classes to use enumeration classes for appropriate values
 *** TODO Add a test to produce SVG output for the "everything.archimate" file
 *** TODO Add a test to produce a badges diagram
+
+
+* Refactor of data model for diff/merge purposes
+
+** Validation
+*** Identifiable objects exist one place in model
+*** 
+** Join:
+   - Organizable Id (An Organizable is an Identifiable that can be contained in a Folder
+   - Folder
+   - Position in Folder - index isn't good here ... should that position really be a linked list?
+* Introduce the idea of archimate modules
+  - Allow creation of a focused model by including archimate modules - which are self-contained packages of elements and relationships
+  - Allow inheritance of a module to permit showing changes to an existing model.
+** How to implement?
+   - Break things down automatically?
+   - By Layer?
+   - How to Deal with relationships across module boundaries?
+* Need to have model merge capability
