@@ -14,6 +14,17 @@ module Archimate
       attribute :style, Style.optional
       attribute :child_type, Coercible::Int.optional
 
+      def replace(entity, with_entity)
+        if (archimate_element == entity.id)
+          @archimate_element = with_entity.id
+          @element = with_entity
+        end
+        if (model == entity.id)
+          @model = with_entity.id
+          @model_element = with_entity
+        end
+      end
+
       def to_s
         "Child[#{name || ''}](#{in_model.lookup(archimate_element) if archimate_element && in_model})"
       end

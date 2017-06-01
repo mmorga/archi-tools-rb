@@ -29,115 +29,54 @@ module Archimate
           return
         end
 
-        dupes.each do |element_type, name, ids|
-          handle_duplicate(element_type, name, ids)
+        dupes.each do |element_type, name, entities|
+          handle_duplicate(element_type, name, entities)
         end
 
-        @output.write(@model.doc)
-      end
-
-      # Belongs to handle_duplicate
-      protected def merge_duplicates(original_id, dupe_ids)
-        copies_ids = dupe_ids.reject { |id| id == original_id }
-        merge_copies(original_id, copies_ids)
-        remove_copies(copies_ids)
-        update_associations(original_id, copies_ids)
-      end
-
-      # Belongs to handle_duplicate
-      protected def display_elements(ids)
-        ids.each_with_index do |id, idx|
-          puts "#{idx}. #{@model.lookup(id).to_s}\n"
-        end
-      end
-
-      # Belongs to handle_duplicate
-      protected def choices(element_type, name, ids)
-        if @mergeall
-          :mergeall
-        elsif @skipall
-          :skipall
-        else
-          @cli.choose do |menu|
-            # TODO: set up a layout that permits showing a repr of the copies
-            # to permit making the choice of the original
-            menu.header = "There are #{ids.size} #{element_type}s with the name #{name}"
-            menu.prompt = "What to do with potential duplicates?"
-            menu.choice(:merge, help: "Merge elements into a single element", text: "Merge elements")
-            menu.choice(:mergeall, help: "Merge all elements from here on", text: "Merge all elements")
-            # menu.choices(:rename, "Rename to eliminate duplicates", "Rename element(s)")
-            menu.choice(:skip, help: "Don't change the elements", text: "Skip")
-            menu.choice(:skipall, help: "Skip the rest of the duplicates", text: "Skip the rest")
-            menu.select_by = :index_or_name
-            menu.help("Help", "don't panic")
-          end
-        end
+        # TODO: make the output writer be from AIO
+        Archimate::FileFormats::ArchiFileWriter.new(@model).write(@output)
       end
 
       # Belongs to merge
       # 1. Determine which one is the *original*
-      protected def handle_duplicate(element_type, name, ids)
-        display_elements(ids)
-        choice = choices(element_type, name, ids)
-        @mergeall = true if choice == :mergeall
+      protected def handle_duplicate(element_type, name, entities)
+        return if @skipall
+        choice = @mergeall ? entities.first : choices(element_type, name, entities)
 
         case choice
-        when :merge, :mergeall
-          original_id = ids.first # TODO: let the user choose this
-          merge_duplicates(original_id, ids)
-        when :skip, :skipall
+        when :mergeall
+          @mergeall = true
+          choice = entities.first
+        when :skip
+          choice = nil
+          @cli.say("Skipping")
+        when :skipall
+          @skipall = true
+          choice = nil
           @cli.say("Skipping")
         end
+
+        return unless choice
+        @model.merge_entities(choice, entities)
       end
 
-      # Belongs to merge_copies
-      protected def merge_into(original, copy)
-        copy.elements.each do |child|
-          # TODO: is there a better test than this?
-          if original.children.none? { |original_child| child.to_xml == original_child.to_xml }
-            child.parent = original
+      # Belongs to handle_duplicate
+      protected def choices(element_type, name, entities)
+        @cli.choose do |menu|
+          # TODO: set up a layout that permits showing a repr of the copies
+          # to permit making the choice of the original
+          menu.header = "There are #{entities.size} #{element_type}s that are potentially duplicate"
+          menu.prompt = "What to do with potential duplicates?"
+          entities.each_with_index do |entity, idx|
+            menu.choice(entity, help: "Merge entities into this entity")
           end
-        end
-      end
-
-      # 2. Copy any attributes/docs, etc. from each of the others into the original.
-      #     1. Child `label`s with different `xml:lang` attribute values
-      #     2. Child `documentation` (and different `xml:lang` attribute values)
-      #     3. Child `properties`
-      #     4. Any other elements
-      # Belongs to merge_duplicates
-      protected def merge_copies(original_id, copies_ids)
-        original = @model.lookup(original_id)
-        copies_ids.each do |copy_id|
-          copy = @model.lookup(copy_id)
-          merge_into(original, copy)
-        end
-      end
-
-      # 3. Delete the copy element from the document
-      # Belongs to merge_duplicates
-      protected def remove_copies(copies_ids)
-        copies_ids.each do |copy_id|
-          @model.lookup(copy_id).remove
-        end
-      end
-
-      # 4. For each copy, change references from copy id to original id
-      #     1. `relationship`: `source` & `target` attributes
-      #     2. `property`: `identifierref` attribute
-      #     3. `item`: `identifierref` attribute
-      #     4. `node`: `elementref` attribute
-      #     5. `connection`: `relationshipref`, `source`, `target` attributes
-      # Belongs to merge_duplicates
-      protected def update_associations(original_id, copies_ids)
-        copies_ids.each do |copy_id|
-          @model.elements_with_attribute_value(copy_id).each do |node|
-            attrs = node.attributes
-            attrs.delete("identifier") # We shouldn't get a match here, but would be a bug
-            attrs.each do |_attr_name, attr|
-              attr.value = original_id if attr.value == copy_id
-            end
-          end
+          # menu.choice(:merge, help: "Merge elements into a single element", text: "Merge elements")
+          menu.choice(:mergeall, help: "Merge all elements from here on", text: "Merge all elements")
+          # menu.choices(:rename, "Rename to eliminate duplicates", "Rename element(s)")
+          menu.choice(:skip, help: "Don't change the elements", text: "Skip")
+          menu.choice(:skipall, help: "Skip the rest of the duplicates", text: "Skip the rest")
+          menu.select_by = :index_or_name
+          menu.help("Help", "don't panic")
         end
       end
     end

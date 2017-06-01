@@ -8,6 +8,12 @@ module Archimate
       attribute :bendpoints, BendpointList
       attribute :style, Style.optional
 
+      def replace(entity, with_entity)
+        @relationship = with_entity.id if (relationship == entity.id)
+        @source = with_entity.id if (source == entity.id)
+        @target = with_entity.id if (target == entity.id)
+      end
+
       def type_name
         HighLine.color("#{AIO.data_model('SourceConnection')}[#{HighLine.color(@name || '', [:white, :underline])}]", :on_light_magenta)
       end

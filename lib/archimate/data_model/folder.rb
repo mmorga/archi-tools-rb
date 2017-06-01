@@ -18,6 +18,10 @@ module Archimate
           a.concat(e.referenced_identified_nodes)
         end
       end
+
+      def remove(id)
+        items.delete(id)
+      end
     end
     Dry::Types.register_class(Folder)
   end

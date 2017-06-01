@@ -35,6 +35,7 @@ module Archimate
       autoload :Deliverable, 'archimate/svg/entity/deliverable'
       autoload :Device, 'archimate/svg/entity/device'
       autoload :DiagramModelReference, 'archimate/svg/entity/diagram_model_reference'
+      autoload :DiagramObject, 'archimate/svg/entity/diagram_object'
       autoload :DistributionNetwork, 'archimate/svg/entity/distribution_network'
       autoload :Driver, 'archimate/svg/entity/driver'
       autoload :Equipment, 'archimate/svg/entity/equipment'

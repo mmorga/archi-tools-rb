@@ -14,14 +14,6 @@ module Archimate
       def test_new
         refute_nil @duper
       end
-
-      def test_simplify
-        assert_nil(@duper.simplify(nil))
-        assert_equal(@duper.simplify("hello"), "hello")
-        assert_equal(@duper.simplify("HellO"), "hello")
-        assert_equal(@duper.simplify(" \tHello World\n"), "helloworld")
-        assert_equal(@duper.simplify("&Jello-World;yeah!right?"), "jelloworldyeahright")
-      end
     end
   end
 end

@@ -170,6 +170,23 @@ module Archimate
         super.uniq
       end
 
+      def merge_entities(master_entity, copies)
+        copies.delete(master_entity)
+        copies.each do |copy|
+          entities.each do |entity|
+            case entity
+            when entity == master_entity
+              master_entity.merge(copy)
+            when Folder
+              entity.remove(copy.id)
+            when Child, Relationship, SourceConnection
+              entity.replace(copy, master_entity)
+            end
+          end
+          deregister(copy)
+        end
+      end
+
       private
 
       def random_id

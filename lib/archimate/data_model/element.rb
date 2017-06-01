@@ -44,6 +44,18 @@ module Archimate
       def folder
         in_model.lookup(folder_id)
       end
+
+      # Copy any attributes/docs, etc. from each of the others into the original.
+      #     1. Child `label`s with different `xml:lang` attribute values
+      #     2. Child `documentation` (and different `xml:lang` attribute values)
+      #     3. Child `properties`
+      #     4. Any other elements
+      def merge(element)
+        super
+        element.diagrams.each { |diagram| diagram.replace(element, self) }
+        element.relationships.each { |relationship| relationship.replace(element, self) }
+        element.folder.remove(element.id)
+      end
     end
     Dry::Types.register_class(Element)
   end

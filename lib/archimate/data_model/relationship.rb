@@ -6,6 +6,11 @@ module Archimate
       attribute :target, Strict::String
       attribute :access_type, Coercible::Int.optional # TODO: turn this into an enum
 
+      def replace(entity, with_entity)
+        @source = with_entity.id if (source == entity.id)
+        @target = with_entity.id if (target == entity.id)
+      end
+
       def to_s
         HighLine.color(
           "#{AIO.data_model(type)}<#{id}>[#{HighLine.color(name&.strip || '', [:black, :underline])}]",
@@ -37,6 +42,17 @@ module Archimate
         @diagrams ||= in_model.diagrams.select do |diagram|
           diagram.relationship_ids.include?(id)
         end
+      end
+
+      # Copy any attributes/docs, etc. from each of the others into the original.
+      #     1. Child `label`s with different `xml:lang` attribute values
+      #     2. Child `documentation` (and different `xml:lang` attribute values)
+      #     3. Child `properties`
+      #     4. Any other elements
+      # source and target don't change on a merge
+      def merge(relationship)
+        super
+        access_type ||= relationship.access_type
       end
     end
     Dry::Types.register_class(Relationship)
