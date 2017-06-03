@@ -5,16 +5,12 @@ module Archimate
   module Diff
     class Conflicts
       class DeletedItemsReferencedConflictTest < Minitest::Test
-        def setup
-          @aio = Archimate::AIO.new(verbose: false, interactive: false)
-        end
-
         def test_element_deleted_referenced_in_relationship
           model = build_model(with_elements: 1, with_relationships: 1)
           thing = model.lookup(model.relationships.first.source)
           diff1 = Diff::Delete.new(ArchimateArrayReference.new(thing.parent, thing.parent_attribute_name))
           diff2 = Diff::Insert.new(ArchimateArrayReference.new(model.relationships, 0))
-          subject = DeletedItemsReferencedConflict.new([diff1], [diff2], @aio)
+          subject = DeletedItemsReferencedConflict.new([diff1], [diff2])
 
           assert subject.diff_conflicts(diff1, diff2)
         end
@@ -39,7 +35,7 @@ module Archimate
           non_folder_diffs1 = diffs1.reject { |diff| diff.target.path =~ /^folders/ }
           assert_equal 1, non_folder_diffs1.size
 
-          subject = DeletedItemsReferencedConflict.new(diffs1, diffs2, @aio)
+          subject = DeletedItemsReferencedConflict.new(diffs1, diffs2)
 
           assert subject.diff_conflicts(non_folder_diffs1[0], non_folder_diffs2[0])
         end

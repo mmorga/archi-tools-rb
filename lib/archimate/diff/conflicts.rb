@@ -11,7 +11,6 @@ module Archimate
     class Conflicts
       extend Forwardable
 
-      attr_reader :aio
       attr_reader :base_local_diffs
       attr_reader :base_remote_diffs
 
@@ -21,14 +20,14 @@ module Archimate
       def_delegator :@conflicts, :map
       def_delegator :@conflicts, :each
 
-      def initialize(base_local_diffs, base_remote_diffs, aio)
+      def initialize(base_local_diffs, base_remote_diffs)
         @base_local_diffs = base_local_diffs
         @base_remote_diffs = base_remote_diffs
-        @aio = aio
         @conflict_finders = [PathConflict, DeletedItemsChildUpdatedConflict, DeletedItemsReferencedConflict]
         @conflicts = nil
         @conflicting_diffs = nil
         @unconflicted_diffs = nil
+        @conflict_resolver = Cli::ConflictResolver.new
       end
 
       # TODO: refactor this method elsewhere
@@ -38,15 +37,15 @@ module Archimate
       # To keep diffs reasonably human readable in logs, the local diffs should
       # be applied first followed by the remote diffs.
       def resolve
-        aio.debug "Filtering out #{conflicts.size} conflicts from #{base_local_diffs.size + base_remote_diffs.size} diffs"
+        Archimate.logger.debug "Filtering out #{conflicts.size} conflicts from #{base_local_diffs.size + base_remote_diffs.size} diffs"
 
-        aio.debug "Remaining diffs #{unconflicted_diffs.size}"
+        Archimate.logger.debug "Remaining diffs #{unconflicted_diffs.size}"
 
         conflicts.each_with_object(unconflicted_diffs) do |conflict, diffs|
           # TODO: this will result in diffs being out of order from their
           # original order. diffs should be flagged as conflicted and
           # this method should instead remove the conflicted flag.
-          diffs.concat(aio.resolve_conflict(conflict))
+          diffs.concat(@conflict_resolver.resolve(conflict))
           # TODO: if the conflict is resolved, it should be removed from the
           # @conflicts array.
         end
@@ -74,8 +73,8 @@ module Archimate
       def find_conflicts
         @conflicts = []
         @conflict_finders.each do |cf_class|
-          cf = cf_class.new(base_local_diffs, base_remote_diffs, aio)
-          aio.debug cf.describe
+          cf = cf_class.new(base_local_diffs, base_remote_diffs)
+          Archimate.logger.debug cf.describe
           @conflicts.concat(cf.conflicts)
         end
         @conflicts

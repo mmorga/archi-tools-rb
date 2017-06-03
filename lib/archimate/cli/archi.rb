@@ -3,6 +3,17 @@ module Archimate
   module Cli
     require "thor"
 
+    def self.output_io(output_io, force)
+      if output_io.is_a?(String)
+        if !force && File.exist?(output_io)
+          # TODO: This needs to be handled with more grace
+          return nil unless @hl.agree("File #{output_io} exists. Overwrite?")
+        end
+        output_io = File.open(output_io, "w")
+      end
+      output_io
+    end
+
     class Archi < Thor
       desc "stats ARCHIFILE", "Show some statistics about the model"
       option :noninteractive,
@@ -57,12 +68,10 @@ module Archimate
              default: false,
              desc: "Don't provide interactive feedback"
       def svg(archifile)
+        # interactive: !options.fetch("noninteractive", false)
         Archimate::Cli::Svger.export_svgs(
           archifile,
-          Archimate::AIO.new(
-            output_dir: options.fetch("output", Dir.pwd),
-            interactive: !options.fetch("noninteractive", false)
-          )
+          options.fetch("output", Dir.pwd)
         )
       end
 
@@ -81,16 +90,15 @@ module Archimate
       def clean(archifile)
         outfile = options.key?(:output) ? options[:output] : archifile
         Archimate::MaybeIO.new(options.fetch(:saveremoved, nil)) do |removed_element_io|
-          Archimate::Cli::Cleanup.new(archifile, outfile, removed_element_io)
+          Archimate::Cli::Cleanup.new(Archimate.read(archifile), outfile, removed_element_io)
         end
       end
 
       desc "dupes ARCHIFILE", "List (potential) duplicate elements in Archi file"
       def dupes(archifile)
         Archimate::Cli::Duper.new(
-          AIO.new(
-            input_io: archifile
-          )
+          archimate.read(archifile),
+          STDOUT
         ).list
       end
 
@@ -114,12 +122,12 @@ module Archimate
              default: false,
              desc: "Don't provide interactive feedback"
       def dedupe(archifile)
+        Config.instance.interactive = !options[:noninteractive]
         Archimate::Cli::Duper.new(
-          AIO.new(
-            input_io: archifile,
-            output_io: options.fetch("output", archifile),
-            force: options[:force],
-            interactive: !options[:noninteractive]
+          Archimate.read(archifile),
+          Cli.output_io(
+            options.fetch("output", archifile),
+            options[:force]
           ),
           options[:mergeall]
         ).merge

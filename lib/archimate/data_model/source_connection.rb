@@ -15,7 +15,7 @@ module Archimate
       end
 
       def type_name
-        HighLine.color("#{AIO.data_model('SourceConnection')}[#{HighLine.color(@name || '', [:white, :underline])}]", :on_light_magenta)
+        Archimate::Color.color("#{Archimate::Color.data_model('SourceConnection')}[#{Archimate::Color.color(@name || '', [:white, :underline])}]", :on_light_magenta)
       end
 
       def relationship_element

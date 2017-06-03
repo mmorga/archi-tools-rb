@@ -5,11 +5,10 @@ module Archimate
       # BaseConflict
       # @abstract
       class BaseConflict
-        def initialize(base_local_diffs, base_remote_diffs, aio)
+        def initialize(base_local_diffs, base_remote_diffs)
           @base_local_diffs = base_local_diffs
           @base_remote_diffs = base_remote_diffs
           @associative = false
-          @aio = aio
           @diff_iterations = nil
         end
 
@@ -22,17 +21,17 @@ module Archimate
         end
 
         def conflicts
-          progressbar = @aio.create_progressbar(total: diff_iterations.size, title: "Analyzing Conflicts")
-          diff_iterations.each_with_object([]) do |(md1, md2), a|
+          progressbar = ProgressIndicator.new(total: diff_iterations.size, title: "Analyzing Conflicts")
+          diff_iterations.each_with_object([]) do |(md1, md2), conflicts|
             progressbar.increment
-            a.concat(
+            conflicts.concat(
               md1.map { |diff1| [diff1, md2.select(&method(:diff_conflicts).curry[diff1])] }
                 .reject { |_diff1, diff2| diff2.empty? }
                 .map { |diff1, diff2_ary| Conflict.new(diff1, diff2_ary, describe) }
             )
           end
         ensure
-          progressbar&.finish
+          progressbar.finish
         end
 
         def diff_combinations
@@ -44,8 +43,8 @@ module Archimate
         # [local, remote] and [remote, local] through the tests.
         def diff_iterations
           @diff_iterations ||=
-            diff_combinations.map do |d1, d2|
-              [d1.select(&filter1), d2.select(&filter2)]
+            diff_combinations.map do |local_diffs, remote_diffs|
+              [local_diffs.select(&filter1), remote_diffs.select(&filter2)]
             end
         end
       end

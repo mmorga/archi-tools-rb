@@ -4,26 +4,25 @@ module Archimate
     class Diff
       attr_reader :local, :remote
 
-      def self.diff(local_file, remote_file, aio)
-        local = Archimate.read(local_file, aio)
-        remote = Archimate.read(remote_file, aio)
+      def self.diff(local_file, remote_file)
+        local = Archimate.read(local_file)
+        remote = Archimate.read(remote_file)
 
-        my_diff = Diff.new(local, remote, aio)
+        my_diff = Diff.new(local, remote)
         my_diff.diff
       end
 
-      def initialize(local, remote, aio)
+      def initialize(local, remote)
         @local = local
         @remote = remote
-        @aio = aio
       end
 
       def diff
         diffs = Archimate.diff(local, remote)
 
-        diffs.each { |d| @aio.puts d }
+        diffs.each { |d| puts d }
 
-        @aio.puts "\n\n#{diffs.size} Differences"
+        puts "\n\n#{diffs.size} Differences"
 
         diffs
       end

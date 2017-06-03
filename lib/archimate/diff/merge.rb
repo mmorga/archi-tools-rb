@@ -5,21 +5,15 @@ module Archimate
     class Merge
       using DataModel::DiffableArray
 
-      attr_reader :aio
-
-      def initialize(aio)
-        @aio = aio
-      end
-
       def three_way(base, local, remote)
-        aio.debug "Computing base:local diffs"
+        Archimate.logger.debug "Computing base:local diffs"
         base_local_diffs = base.diff(local)
 
-        aio.debug "Computing base:remote diffs"
+        Archimate.logger.debug "Computing base:remote diffs"
         base_remote_diffs = base.diff(remote)
 
-        aio.debug "Finding Conflicts in #{base_local_diffs.size + base_remote_diffs.size} diffs"
-        conflicts = Conflicts.new(base_local_diffs, base_remote_diffs, aio)
+        Archimate.logger.debug "Finding Conflicts in #{base_local_diffs.size + base_remote_diffs.size} diffs"
+        conflicts = Conflicts.new(base_local_diffs, base_remote_diffs)
         resolved_diffs = conflicts.resolve
 
         [apply_diffs(resolved_diffs, base.clone), conflicts]
@@ -28,8 +22,8 @@ module Archimate
       # Applies the set of diffs to the model returning a
       # new model with the diffs applied.
       def apply_diffs(diffs, model)
-        aio.debug "Applying #{diffs.size} diffs"
-        progressbar = @aio.create_progressbar(total: diffs.size, title: "Applying diffs")
+        Archimate.logger.debug "Applying #{diffs.size} diffs"
+        progressbar = ProgressIndicator.new(total: diffs.size, title: "Applying diffs")
         diffs
           .inject(model) do |model_a, diff|
             progressbar.increment
@@ -52,9 +46,9 @@ module Archimate
       #       end
       #       next if found.empty?
       #       a[diff] = found
-      #       aio.debug "\nFound potential de-duplication:"
-      #       aio.debug "\t#{diff}"
-      #       aio.debug "Might be replaced with:\n\t#{found.map(&:to_s).join("\n\t")}\n\n"
+      #       Archimate.logger.debug "\nFound potential de-duplication:"
+      #       Archimate.logger.debug "\t#{diff}"
+      #       Archimate.logger.debug "Might be replaced with:\n\t#{found.map(&:to_s).join("\n\t")}\n\n"
       #     end
       #   end
       # end

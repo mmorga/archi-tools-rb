@@ -6,7 +6,6 @@ module Archimate
     class Conflicts
       class DeletedItemsChildUpdatedConflictTest < Minitest::Test
         def setup
-          @aio = Archimate::AIO.new(verbose: false, interactive: false)
           @model = build_model(
             elements: [
               build_element(
@@ -19,7 +18,7 @@ module Archimate
 
           @diff1 = Diff::Delete.new(ArchimateArrayReference.new(@model.elements, 0))
           @diff2 = Diff::Insert.new(ArchimateArrayReference.new(@model.elements[0].documentation, 0))
-          @subject = DeletedItemsChildUpdatedConflict.new([@diff1], [@diff2], @aio)
+          @subject = DeletedItemsChildUpdatedConflict.new([@diff1], [@diff2])
         end
 
         def test_describe

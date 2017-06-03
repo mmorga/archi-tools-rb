@@ -10,7 +10,7 @@ module Archimate
       attribute :folders, Strict::Array.member(Folder).default([])
 
       def to_s
-        "#{AIO.data_model('Folder')}<#{id}>[#{HighLine.color(name, [:white, :underline])}]"
+        "#{Archimate::Color.data_model('Folder')}<#{id}>[#{Archimate::Color.color(name, [:white, :underline])}]"
       end
 
       def referenced_identified_nodes

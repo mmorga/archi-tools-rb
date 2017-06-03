@@ -3,18 +3,30 @@
 module Archimate
   module DataModel
     # Model is the top level parent of an ArchiMate model.
+    # ReferenceableType
+    #   - name : LangString,  0-unbounded
+    #   - documentation : PreservedLangStringType, 0-unbounded
+    #   - grp.any
+    #   - identifier : xs:ID
+    #   - any attribute
+    #   NamedReferenceableType
+    #     - name : LangString, 1-unbounded
     class Model < IdentifiedNode
       using DataModel::DiffableArray
       using DataModel::DiffablePrimitive
 
       ARRAY_RE = Regexp.compile(/\[(\d+)\]/)
 
-      # TODO: add original file name and file format
       # TODO: add metadata & property_defs as in Model Exchange Format
+      attribute :metadata, Metadata.optional
       attribute :elements, Strict::Array.member(Element).default([])
-      attribute :folders, Strict::Array.member(Folder).default([])
       attribute :relationships, Strict::Array.member(Relationship).default([])
+      attribute :folders, Strict::Array.member(Folder).default([])
       attribute :diagrams, Strict::Array.member(Diagram).default([])
+      attribute :filename, Strict::String.optional
+      attribute :file_format, Strict::Symbol.enum(*Archimate::SUPPORTED_FORMATS).optional
+      attribute :archimate_version, Strict::Symbol.default(:archimate_3_0).enum(*Archimate::ARCHIMATE_VERSIONS)
+      attribute :version, Strict::String.optional
 
       def initialize(attributes)
         super
@@ -37,7 +49,7 @@ module Archimate
       end
 
       def rebuild_index(missing_id = :model_creation_event)
-        return self if missing_id.nil?
+        return self unless missing_id
         @index_hash = build_index
         self
       end
@@ -57,7 +69,7 @@ module Archimate
       end
 
       def to_s
-        "#{AIO.data_model('Model')}<#{id}>[#{HighLine.color(name, [:white, :underline])}]"
+        "#{Archimate::Color.data_model('Model')}<#{id}>[#{Archimate::Color.color(name, [:white, :underline])}]"
       end
 
       # TODO: make these DSL like things added dynamically
@@ -168,6 +180,14 @@ module Archimate
 
       def referenced_identified_nodes
         super.uniq
+      end
+
+      def identified_nodes
+        @index_hash.values.select { |node| node.is_a? IdentifiedNode }
+      end
+
+      def unreferenced_nodes
+        identified_nodes - referenced_identified_nodes
       end
 
       def merge_entities(master_entity, copies)

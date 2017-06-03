@@ -21,6 +21,11 @@ require 'pp'
 require 'archimate'
 require_relative 'examples/factories'
 
+config = Archimate::Config.instance
+config.interactive = false
+test_log_stringio = StringIO.new
+config.logger = Logger.new(test_log_stringio)
+
 Minitest::Test.make_my_diffs_pretty!
 
 module Minitest

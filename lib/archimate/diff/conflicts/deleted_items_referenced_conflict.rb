@@ -39,7 +39,7 @@ module Archimate
 
         # Determine the set of conflicts between the given diffs
         # def conflicts
-        #   progressbar = @aio.create_progressbar(total: diff_iterations.size)
+        #   progressbar = ProgressIndicator.new(total: diff_iterations.size)
         #   diff_iterations.each_with_object([]) do |(md1, md2), a|
         #     progressbar.increment
         #     a.concat(

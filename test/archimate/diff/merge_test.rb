@@ -19,7 +19,6 @@ module Archimate
     class MergeTest < Minitest::Test
       using DataModel::DiffableArray
 
-      attr_reader :aio
       attr_reader :base
       attr_reader :base_el1
       attr_reader :base_el2
@@ -27,13 +26,12 @@ module Archimate
       attr_reader :base_rel2
 
       def setup
-        @aio = Archimate::AIO.new(verbose: false, interactive: false)
         @base = build_model(with_relationships: 2, with_diagrams: 1)
         @base_el1 = base.elements.first
         @base_el2 = base.elements.last
         @base_rel1 = base.relationships.first
         @base_rel2 = base.relationships.last
-        @subject = Merge.new(@aio)
+        @subject = Merge.new
       end
 
       def test_independent_changes_element

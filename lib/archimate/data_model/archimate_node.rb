@@ -121,7 +121,7 @@ module Archimate
       end
 
       def delete(attrname)
-        if attrname.nil? || attrname.empty?
+        if !attrname || attrname.empty?
           raise(
             ArgumentError,
             "attrname was blank must be one of: #{struct_instance_variables.map(&:to_s).join(',')}"
@@ -133,7 +133,7 @@ module Archimate
       end
 
       def set(attrname, value)
-        if attrname.nil?
+        if !attrname
           raise(
             ArgumentError,
             "attrname was blank must be one of: #{struct_instance_variables.map(&:to_s).join(',')}"
@@ -152,7 +152,7 @@ module Archimate
       end
 
       def element_by_id(element_id)
-        return nil if element_id.nil?
+        return nil unless element_id
         in_model&.lookup(element_id)
       end
 

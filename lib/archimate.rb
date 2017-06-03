@@ -1,16 +1,25 @@
 # frozen_string_literal: true
-require "highline"
+
 require "dry-types"
 require "dry-struct"
-require "archimate/version"
-require 'archimate/data_model'
-require 'archimate/diff'
-require 'archimate/aio'
 
 module Archimate
+  SUPPORTED_FORMATS = %i[
+    archi_3
+    archi_4
+    archimate_2_1
+    archimate_3_0
+  ].freeze
+
+  ARCHIMATE_VERSIONS = %i[
+    archimate_2_1
+    archimate_3_0
+  ].freeze
+
   module Cli
     autoload :Archi, 'archimate/cli/archi'
     autoload :Cleanup, 'archimate/cli/cleanup'
+    autoload :ConflictResolver, 'archimate/cli/conflict_resolver'
     autoload :Convert, 'archimate/cli/convert'
     autoload :Diff, 'archimate/cli/diff'
     autoload :DiffSummary, 'archimate/cli/diff_summary'
@@ -21,6 +30,10 @@ module Archimate
     autoload :Merger, 'archimate/cli/merger'
     autoload :Stats, 'archimate/cli/stats'
     autoload :Svger, 'archimate/cli/svger'
+  end
+
+  module Dsl
+    autoload :Parser, 'archimate/dsl/parser'
   end
 
   module Export
@@ -53,7 +66,6 @@ module Archimate
     autoload :Diagram, 'archimate/svg/diagram'
     autoload :Entity, 'archimate/svg/entity'
     autoload :EntityFactory, 'archimate/svg/entity_factory'
-    autoload :Export, 'archimate/svg/export'
     autoload :Extents, 'archimate/svg/extents'
     autoload :Point, 'archimate/svg/point'
     autoload :SvgTemplate, 'archimate/svg/svg_template'
@@ -61,6 +73,14 @@ module Archimate
 
   autoload :FileFormat, 'archimate/file_format'
   autoload :MaybeIO, 'archimate/maybe_io'
+  autoload :ProgressIndicator, 'archimate/progress_indicator'
+
+  require "archimate/version"
+  require "archimate/config"
+  require "archimate/color"
+  require 'archimate/data_model'
+  require 'archimate/diff'
+  require 'archimate/aio'
 
   def self.diff(base, remote)
     base.diff(remote)
@@ -70,16 +90,20 @@ module Archimate
   #
   # @param filename File name of the file to read
   # @return Archimate::DataModel::Model of ArchiMate model in the file
-  def self.read(filename, aio)
-    FileFormat.read(filename, aio)
+  def self.read(filename)
+    FileFormat.read(filename)
   end
 
   # Reads the given file and returns the Archimate model
   #
   # @param filename File name of the file to read
   # @return Archimate::DataModel::Model of ArchiMate model in the file
-  def self.parse(filename, aio)
-    FileFormat.parse(filename, aio)
+  def self.parse(filename)
+    FileFormat.parse(filename)
+  end
+
+  def self.logger
+    Config.instance.logger
   end
 
   using DataModel::DiffablePrimitive

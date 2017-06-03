@@ -11,8 +11,8 @@ module Archimate
 
       def test_to_s
         assert_equal(
-          HighLine.uncolor("DELETE: name from #{@model}"),
-          HighLine.uncolor(@subject.to_s)
+          Color.uncolor("DELETE: name from #{@model}"),
+          Color.uncolor(@subject.to_s)
         )
       end
 
@@ -20,8 +20,8 @@ module Archimate
         @subject = Delete.new(ArchimateArrayReference.new(@model.elements, 0))
 
         assert_equal(
-          HighLine.uncolor("DELETE: #{@model.elements.first} from #{@model}/elements"),
-          HighLine.uncolor(@subject.to_s)
+          Color.uncolor("DELETE: #{@model.elements.first} from #{@model}/elements"),
+          Color.uncolor(@subject.to_s)
         )
       end
 

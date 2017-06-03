@@ -16,8 +16,8 @@ module Archimate
       def header_row(widths, headers)
         titles = []
         widths.each_with_index { |w, i| titles << "%-#{w}s" % headers[i] }
-        @output.puts titles.map { |t| HighLine.color(t.capitalize, [:bold, :blue]) }.join(HighLine.color(COL_DIVIDER, :light_black))
-        @output.puts HighLine.color(widths.map { |w| "-" * w }.join("-+-"), :light_black)
+        @output.puts titles.map { |t| Color.color(t.capitalize, [:bold, :blue]) }.join(Color.color(COL_DIVIDER, :light_black))
+        @output.puts Color.color(widths.map { |w| "-" * w }.join("-+-"), :light_black)
       end
 
       def process_diagrams(diagrams)
@@ -32,7 +32,7 @@ module Archimate
                    else
                      row[3]
                    end
-          row[0] = HighLine.color("#{row[0]}.png", :underline)
+          row[0] = Color.color("#{row[0]}.png", :underline)
           row
         end
       end
@@ -41,7 +41,7 @@ module Archimate
         initial_widths = headers.map(&:size)
         diagrams.each_with_object(initial_widths) do |diagram, memo|
           diagram.slice(0, headers.size).each_with_index do |o, i|
-            memo[i] = !o.nil? && HighLine.uncolor(o).size > memo[i] ? HighLine.uncolor(o).size : memo[i]
+            memo[i] = !o.nil? && Color.uncolor(o).size > memo[i] ? Color.uncolor(o).size : memo[i]
           end
           memo
         end
@@ -51,7 +51,7 @@ module Archimate
         diagrams.sort { |a, b| a[1] <=> b[1] }.each do |m|
           row = []
           m.slice(0, widths.size).each_with_index { |c, i| row << "%-#{widths[i]}s" % c }
-          @output.puts row.join(HighLine.color(COL_DIVIDER, :light_black))
+          @output.puts row.join(Color.color(COL_DIVIDER, :light_black))
         end
       end
 
@@ -71,7 +71,7 @@ module Archimate
         folder_paths.keys.sort.each do |folder_name|
           diagrams = folder_paths[folder_name].items.map { |i| model.lookup(i) }.select { |i| i.is_a?(DataModel::Diagram) }
           next if diagrams.empty?
-          @output.puts(HighLine.color(format("%-#{adjusted_widths}s", folder_name), [:bold, :green, :on_light_black]))
+          @output.puts(Color.color(format("%-#{adjusted_widths}s", folder_name), [:bold, :green, :on_light_black]))
           output_diagrams(process_diagrams(diagrams), widths)
         end
 

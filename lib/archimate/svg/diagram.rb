@@ -7,9 +7,8 @@ module Archimate
     class Diagram
       attr_reader :diagram
 
-      def initialize(diagram, aio)
+      def initialize(diagram)
         @diagram = diagram
-        @aio = aio
         @svg_template = Nokogiri::XML::Document.parse(SvgTemplate.new.to_s).freeze
       end
 
@@ -53,13 +52,13 @@ module Archimate
       def render_elements(svg_node)
         diagram
           .children
-          .reduce(svg_node) { |svg, child| Child.new(child, @aio).render_elements(svg) }
+          .reduce(svg_node) { |svg, child| Child.new(child).render_elements(svg) }
       end
 
       def render_connections(svg_node)
         diagram
           .children
-          .reduce(svg_node) { |svg, child| Child.new(child, @aio).render_connections(svg) }
+          .reduce(svg_node) { |svg, child| Child.new(child).render_connections(svg) }
       end
     end
   end

@@ -44,7 +44,7 @@
 module Archimate
   module Export
     class Cypher
-      attr_reader :aio
+      attr_reader :output_io
 
       WEIGHTS = {
         'GroupingRelationship' => 0,
@@ -62,8 +62,8 @@ module Archimate
         'CompositionRelationship' => 10
       }
 
-      def initialize(aio)
-        @aio = aio
+      def initialize(output_io)
+        @output_io = output_io
       end
 
       def to_cypher(model)
@@ -164,7 +164,7 @@ module Archimate
       end
 
       def write(str)
-        @aio.output_io.puts(str)
+        @output_io.puts(str)
       end
     end
   end

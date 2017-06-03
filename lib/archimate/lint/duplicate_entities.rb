@@ -39,6 +39,9 @@ module Archimate
           yours yourself yourselves zero).freeze
 
     class DuplicateEntities
+      attr_reader :word_count
+      # TODO: Add option to permit additional project specific stop words
+      # TODO: Do relationships after elements are merged
       def initialize(model)
         @model = model
         @dupes = nil
@@ -78,9 +81,7 @@ module Archimate
           hash[tag] = hash.fetch(tag, []) << entity
         end
         @dupes.delete_if { |_tag, entities| entities.size <= 1 }
-        # puts "\n\nWords I found:"
         # @word_count.sort_by(&:last).reverse.each { |ak, av| puts "#{ak}: #{av}" }
-        # puts "\n\n"
         @dupes
       end
 
@@ -103,12 +104,15 @@ module Archimate
       # 4. names differ only in punctuation
       # 5. names differ only by stop-words (list of words such as "the", "api", etc.)
       def simplify(entity)
-        name = entity.name || ""
-        name = name.sub("(copy)", "") # (copy) is a special 
-        name = name.downcase.gsub(/[[:punct:]]/, "").strip
-        # name.split(/\s/).each { |word| @word_count[word] = @word_count.fetch(word, 0) + 1 }
-        name = name.split(/\s/).reject { |word| STOP_WORDS.include?(word) }.join("")
-        name = name.delete(" \t\n\r")
+        name = entity.name.dup || ""
+        name.sub!("(copy)", "") # (copy) is a special case inserted by the Archi tool
+        name.downcase!
+        name.gsub!(/[[:punct:]]/, "") unless entity.is_a?(DataModel::Relationship)
+        name.strip!
+        words = name.split(/\s/)
+        words.each { |word| @word_count[word] = @word_count.fetch(word, 0) + 1 }
+        name = words.reject { |word| STOP_WORDS.include?(word) }.join("")
+        name.delete!(" \t\n\r")
         name = "#{name}:#{entity.source}:#{entity.target}" if entity.is_a?(DataModel::Relationship)
         name
       end

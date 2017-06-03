@@ -34,7 +34,7 @@ module Archimate
       private
 
       def diff_type
-        HighLine.color('DELETE:', :delete)
+        Color.color('DELETE:', :delete)
       end
     end
   end

@@ -75,8 +75,8 @@ module Archimate
           ]
         )
         assert_equal(
-          HighLine.uncolor("AssociationRelationship<abc123>[friends] #{src_el} -> #{target_el}"),
-          HighLine.uncolor(model.relationships[0].to_s)
+          Archimate::Color.uncolor("AssociationRelationship<abc123>[friends] #{src_el} -> #{target_el}"),
+          Archimate::Color.uncolor(model.relationships[0].to_s)
         )
       end
 

@@ -12,8 +12,8 @@ module Archimate
       end
 
       def to_s
-        HighLine.color(
-          "#{AIO.data_model(type)}<#{id}>[#{HighLine.color(name&.strip || '', [:black, :underline])}]",
+        Archimate::Color.color(
+          "#{Archimate::Color.data_model(type)}<#{id}>[#{Archimate::Color.color(name&.strip || '', [:black, :underline])}]",
           :on_light_magenta
         ) + " #{source_element} -> #{target_element}"
       end

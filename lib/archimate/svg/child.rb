@@ -5,9 +5,8 @@ module Archimate
       attr_reader :todos
       attr_reader :child
 
-      def initialize(child, aio)
+      def initialize(child)
         @child = child
-        @aio = aio
         @todos = Hash.new(0)
       end
 

@@ -5,18 +5,18 @@ require "highline"
 module Archimate
   module Cli
     class Duper
-      def initialize(aio, mergeall = false)
-        @output = aio.output_io
-        @cli = HighLine.new
-        @model = aio.model
-        @skipall = false
+      def initialize(model, output, mergeall = false)
+        @model = model
+        @output = output
         @mergeall = mergeall
+        @cli = HighLine.new
+        @skipall = false
       end
 
       def list
         dupes = Archimate::Lint::DuplicateEntities.new(@model)
 
-        dupes.each do |element_type, name, entities|
+        dupes.each do |element_type, _name, entities|
           @output.puts "#{element_type} has potential duplicates: \n\t#{entities.join(",\n\t")}\n"
         end
         @output.puts "Total Possible Duplicates: #{dupes.count}"
@@ -41,12 +41,13 @@ module Archimate
       # 1. Determine which one is the *original*
       protected def handle_duplicate(element_type, name, entities)
         return if @skipall
-        choice = @mergeall ? entities.first : choices(element_type, name, entities)
+        first_entity = entities.first
+        choice = @mergeall ? first_entity : choices(element_type, name, entities)
 
         case choice
         when :mergeall
           @mergeall = true
-          choice = entities.first
+          choice = first_entity
         when :skip
           choice = nil
           @cli.say("Skipping")

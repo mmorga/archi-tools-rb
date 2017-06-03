@@ -54,7 +54,11 @@ module Archimate
           elements: elements,
           folders: folders,
           relationships: relationships,
-          diagrams: diagrams
+          diagrams: diagrams,
+          filename: options.fetch(:filename, nil),
+          file_format: options.fetch(:file_format, nil),
+          archimate_version: options.fetch(:archimate_version, :archimate_3_0),
+          version: options.fetch(:version, nil)
         ).organize
       end
 

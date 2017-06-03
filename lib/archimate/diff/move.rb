@@ -18,7 +18,7 @@ module Archimate
       def to_s
         # Note - the explicit to_s is required to access the DiffableArray
         #        implementation if the parent is an Array.
-        "#{diff_type} #{changed_from.parent&.to_s} #{HighLine.color(target.to_s, :change)} moved to #{target.array_index}"
+        "#{diff_type} #{changed_from.parent&.to_s} #{Color.color(target.to_s, :change)} moved to #{target.array_index}"
       end
 
       # TODO: patch is a better name than apply
@@ -44,7 +44,7 @@ module Archimate
       private
 
       def diff_type
-        HighLine.color('MOVE:', :move)
+        Color.color('MOVE:', :move)
       end
     end
   end

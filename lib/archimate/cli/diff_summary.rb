@@ -9,36 +9,29 @@ module Archimate
 
       DIFF_KINDS = %w(Delete Change Insert).freeze
 
-      extend Forwardable
-
-      def_delegator :@aio, :puts
-      def_delegator :@aio, :debug
-
       attr_reader :local, :remote
 
       def self.diff(local_file, remote_file, options = { verbose: true })
-        aio = AIO.new(options)
-        aio.debug "Reading #{local_file}"
-        local = Archimate.read(local_file, aio)
-        aio.debug "Reading #{remote_file}"
-        remote = Archimate.read(remote_file, aio)
+        logger.info "Reading #{local_file}"
+        local = Archimate.read(local_file)
+        logger.info "Reading #{remote_file}"
+        remote = Archimate.read(remote_file)
 
-        my_diff = DiffSummary.new(local, remote, aio)
+        my_diff = DiffSummary.new(local, remote)
         my_diff.diff
       end
 
-      def initialize(local, remote, aio)
+      def initialize(local, remote)
         @local = local
         @remote = remote
-        @aio = aio
         @summary = Hash.new { |hash, key| hash[key] = Hash.new { |k_hash, k_key| k_hash[k_key] = 0 } }
       end
 
       def diff
-        debug "Calculating differences"
+        logger.info "Calculating differences"
         diffs = Archimate.diff(local, remote)
 
-        puts HighLine.color("Summary of differences", :headline)
+        puts Color.color("Summary of differences", :headline)
         puts "\n"
 
         summary_element_diffs = diffs.group_by { |diff| diff.summary_element.class.to_s.split("::").last }
@@ -75,7 +68,7 @@ module Archimate
 
       def summarize_elements(diffs)
         return if diffs.nil? || diffs.empty?
-        puts HighLine.color("Elements", :headline)
+        puts Color.color("Elements", :headline)
         by_layer = diffs.group_by { |diff| diff.summary_element.layer }
         summarize "Business", by_layer["Business"]
         summarize "Application", by_layer["Application"]
@@ -87,7 +80,7 @@ module Archimate
 
       def summarize_diagrams(diffs)
         return if diffs.nil? || diffs.empty?
-        puts HighLine.color("Diagrams", :headline)
+        puts Color.color("Diagrams", :headline)
 
         by_kind = diffs_by_kind(diffs)
         %w(Delete Change Insert).each do |kind|
@@ -101,7 +94,7 @@ module Archimate
       end
 
       def color(kind)
-        HighLine.color(kind, kind)
+        Color.color(kind, kind)
       end
     end
   end

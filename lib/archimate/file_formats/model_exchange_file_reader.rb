@@ -4,6 +4,17 @@ require "nokogiri"
 module Archimate
   module FileFormats
     class ModelExchangeFileReader
+      def self.read(archifile)
+        new.read(
+          case archifile
+          when IO
+            archifile
+          when String
+            File.read(archifile)
+          end
+        )
+      end
+
       def self.parse(model_exchange_io)
         new.parse(model_exchange_io)
       end

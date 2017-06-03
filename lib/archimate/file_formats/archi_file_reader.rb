@@ -4,8 +4,8 @@ require "nokogiri"
 module Archimate
   module FileFormats
     class ArchiFileReader
-      def self.read(archifile, aio)
-        new(aio).read(
+      def self.read(archifile)
+        new.read(
           case archifile
           when IO
             archifile
@@ -15,13 +15,12 @@ module Archimate
         )
       end
 
-      def self.parse(archi_string, aio)
-        reader = new(aio)
+      def self.parse(archi_string)
+        reader = new
         reader.read(archi_string)
       end
 
-      def initialize(aio)
-        @aio = aio
+      def initialize
         @progress = nil
       end
 
@@ -32,7 +31,7 @@ module Archimate
       def parse(doc)
         @size = 0
         doc.traverse { |_n| @size += 1 }
-        @progress = @aio.create_progressbar(total: @size, title: "Parsing")
+        @progress = ProgressIndicator.new(total: @size, title: "Parsing")
         tick
         DataModel::Model.new(
           id: doc.root["id"],

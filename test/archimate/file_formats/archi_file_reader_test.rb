@@ -8,12 +8,12 @@ module Archimate
       attr_accessor :model
 
       def setup
-        @model = ArchiFileReader.parse(ARCHISURANCE_SOURCE, TEST_AIO)
+        @model = ArchiFileReader.parse(ARCHISURANCE_SOURCE)
       end
 
       def xtest_reader_profile
         RubyProf.start
-        ArchiFileReader.parse(ARCHISURANCE_SOURCE, TEST_AIO)
+        ArchiFileReader.parse(ARCHISURANCE_SOURCE)
         result = RubyProf.stop
         result.eliminate_methods!(
           [

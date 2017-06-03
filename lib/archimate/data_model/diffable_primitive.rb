@@ -55,6 +55,10 @@ module Archimate
         end
       end
 
+      refine Symbol do
+        include DiffablePrimitiveMethods
+      end
+
       refine String do
         include DiffablePrimitiveMethods
       end

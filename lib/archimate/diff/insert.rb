@@ -36,7 +36,7 @@ module Archimate
       private
 
       def diff_type
-        HighLine.color('INSERT:', :insert)
+        Color.color('INSERT:', :insert)
       end
     end
   end

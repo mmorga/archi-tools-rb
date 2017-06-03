@@ -14,7 +14,7 @@ module Archimate
       end
 
       def statistics
-        puts HighLine.color("#{model.name} ArchiMate Model Statistics\n", :headline)
+        puts Color.color("#{model.name} ArchiMate Model Statistics\n", :headline)
 
         puts "Elements:"
         elements_by_layer.each do |layer, elements|
@@ -37,7 +37,7 @@ module Archimate
         @title_format_str ||= "%#{title_width}s"
         @count_format_str ||= "%7d"
 
-        HighLine.color(format(@title_format_str, title), color) + format(@count_format_str, size)
+        Color.color(format(@title_format_str, title), color) + format(@count_format_str, size)
       end
     end
   end

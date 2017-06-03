@@ -13,8 +13,8 @@ module Archimate
 
       def test_to_s
         assert_equal(
-          HighLine.uncolor("INSERT: #{@subject.target} into #{@model}"),
-          HighLine.uncolor(@subject.to_s)
+          Color.uncolor("INSERT: #{@subject.target} into #{@model}"),
+          Color.uncolor(@subject.to_s)
         )
       end
 
@@ -22,8 +22,8 @@ module Archimate
         @subject = Insert.new(ArchimateArrayReference.new(@model.elements, 0))
 
         assert_equal(
-          HighLine.uncolor("INSERT: #{@model.elements.first} into #{@model}/elements"),
-          HighLine.uncolor(@subject.to_s)
+          Color.uncolor("INSERT: #{@model.elements.first} into #{@model}/elements"),
+          Color.uncolor(@subject.to_s)
         )
       end
 

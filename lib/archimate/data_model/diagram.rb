@@ -38,7 +38,7 @@ module Archimate
       end
 
       def to_s
-        "#{AIO.data_model('Diagram')}<#{id}>[#{HighLine.color(name, [:white, :underline])}]"
+        "#{Archimate::Color.data_model('Diagram')}<#{id}>[#{Archimate::Color.color(name, [:white, :underline])}]"
       end
 
       def total_viewpoint?

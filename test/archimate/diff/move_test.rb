@@ -24,8 +24,8 @@ module Archimate
 
       def test_to_s
         assert_equal(
-          HighLine.uncolor("MOVE: #{@from_model}/elements #{@subject.target.value} moved to 0"),
-          HighLine.uncolor(@subject.to_s)
+          Color.uncolor("MOVE: #{@from_model}/elements #{@subject.target.value} moved to 0"),
+          Color.uncolor(@subject.to_s)
         )
       end
 

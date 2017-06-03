@@ -1,18 +1,20 @@
 # frozen_string_literal: true
+
 module Archimate
   module Cli
     class Convert
-      SUPPORTED_FORMATS = %w(meff2.1 archi nquads graphml csv cypher).freeze
+      SUPPORTED_FORMATS = %w[meff2.1 archi nquads graphml csv cypher].freeze
 
       def initialize(io = AIO.new)
         @io = io
       end
 
       def convert(export_format)
-        return unless @io.output_io
-        return if @io.model.nil?
         model = @io.model
         output = @io.output_io
+        output_dir = @io.output_dir
+        return unless output
+        return unless model
 
         case export_format
         when "archi"
@@ -24,11 +26,11 @@ module Archimate
         when "graphml"
           output.write(Archimate::Export::GraphML.new(model).to_graphml)
         when "csv"
-          Archimate::Export::CSVExport.new(model).to_csv(output_dir: @io.output_dir)
+          Archimate::Export::CSVExport.new(model).to_csv(output_dir: output_dir)
         when "cypher"
-          Archimate::Export::Cypher.new(@io).to_cypher(@io.model)
+          Archimate::Export::Cypher.new(output_io).to_cypher(model)
         else
-          @io.error "Export to '#{export_format}' is not supported yet."
+          Archimate.logger.error "Export to '#{export_format}' is not supported yet."
         end
       end
     end

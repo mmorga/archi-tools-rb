@@ -38,12 +38,12 @@ module Archimate
 
       def test_to_s
         assert_match("SourceConnection", subject.to_s)
-        assert_match("[#{subject.name}]", HighLine.uncolor(subject.to_s))
+        assert_match("[#{subject.name}]", Archimate::Color.uncolor(subject.to_s))
       end
 
       def test_to_s_with_no_model
         @subject = build_source_connection
-        assert_match("[#{subject.name}]", HighLine.uncolor(subject.to_s))
+        assert_match("[#{subject.name}]", Archimate::Color.uncolor(subject.to_s))
       end
 
       def test_referenced_identified_nodes

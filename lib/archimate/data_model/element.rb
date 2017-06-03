@@ -5,7 +5,7 @@ module Archimate
       attribute :folder_id, Strict::String.optional
 
       def to_s
-        AIO.layer_color(layer, "#{type}<#{id}>[#{name}]")
+        Archimate::Color.layer_color(layer, "#{type}<#{id}>[#{name}]")
       end
 
       def layer

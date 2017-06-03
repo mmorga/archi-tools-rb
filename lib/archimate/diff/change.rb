@@ -17,7 +17,7 @@ module Archimate
       def to_s
         # Note - the explicit to_s is required to access the DiffableArray
         #        implementation if the parent is an Array.
-        "#{diff_type} #{changed_from.parent&.to_s} #{HighLine.color(target.to_s, :change)} changed to #{target.value}"
+        "#{diff_type} #{changed_from.parent&.to_s} #{Color.color(target.to_s, :change)} changed to #{target.value}"
       end
 
       def apply(to_model)
@@ -42,7 +42,7 @@ module Archimate
       private
 
       def diff_type
-        HighLine.color('CHANGE:', :change)
+        Color.color('CHANGE:', :change)
       end
     end
   end

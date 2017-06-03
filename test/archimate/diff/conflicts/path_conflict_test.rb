@@ -30,7 +30,7 @@ module Archimate
           @diff1 = Archimate::Diff::Insert.new(ArchimateArrayReference.new(@model.relationships, 0))
           @diff2 = Archimate::Diff::Insert.new(ArchimateArrayReference.new(@model.relationships, 1))
 
-          @subject = PathConflict.new([@diff1, @diff_name], [@diff2], @aio)
+          @subject = PathConflict.new([@diff1, @diff_name], [@diff2])
         end
 
         def test_two_inserted_elements_with_diff_ids_shouldnt_conflict
