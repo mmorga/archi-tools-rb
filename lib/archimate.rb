@@ -73,10 +73,12 @@ module Archimate
 
   require "archimate/version"
   require "archimate/config"
+  require "archimate/logging"
   require "archimate/color"
   require 'archimate/data_model'
   require 'archimate/diff'
 
+  # Computes the set of differences between base and remote models
   def self.diff(base, remote)
     base.diff(remote)
   end
@@ -95,10 +97,6 @@ module Archimate
   # @return Archimate::DataModel::Model of ArchiMate model in the file
   def self.parse(filename)
     FileFormat.parse(filename)
-  end
-
-  def self.logger
-    Config.instance.logger
   end
 
   using DataModel::DiffablePrimitive

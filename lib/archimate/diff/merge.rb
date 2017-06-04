@@ -3,16 +3,17 @@
 module Archimate
   module Diff
     class Merge
+      include Archimate::Logging
       using DataModel::DiffableArray
 
       def three_way(base, local, remote)
-        Archimate.logger.debug "Computing base:local diffs"
+        debug { "Computing base:local diffs" }
         base_local_diffs = base.diff(local)
 
-        Archimate.logger.debug "Computing base:remote diffs"
+        debug { "Computing base:remote diffs" }
         base_remote_diffs = base.diff(remote)
 
-        Archimate.logger.debug "Finding Conflicts in #{base_local_diffs.size + base_remote_diffs.size} diffs"
+        debug "Finding Conflicts in #{base_local_diffs.size + base_remote_diffs.size} diffs"
         conflicts = Conflicts.new(base_local_diffs, base_remote_diffs)
         resolved_diffs = conflicts.resolve
 
@@ -22,7 +23,7 @@ module Archimate
       # Applies the set of diffs to the model returning a
       # new model with the diffs applied.
       def apply_diffs(diffs, model)
-        Archimate.logger.debug "Applying #{diffs.size} diffs"
+        debug { "Applying #{diffs.size} diffs" }
         progressbar = ProgressIndicator.new(total: diffs.size, title: "Applying diffs")
         diffs
           .inject(model) do |model_a, diff|
@@ -46,9 +47,9 @@ module Archimate
       #       end
       #       next if found.empty?
       #       a[diff] = found
-      #       Archimate.logger.debug "\nFound potential de-duplication:"
-      #       Archimate.logger.debug "\t#{diff}"
-      #       Archimate.logger.debug "Might be replaced with:\n\t#{found.map(&:to_s).join("\n\t")}\n\n"
+      #       debug { "\nFound potential de-duplication:" }
+      #       debug { "\t#{diff}" }
+      #       debug { "Might be replaced with:\n\t#{found.map(&:to_s).join(" }\n\t")}\n\n"
       #     end
       #   end
       # end

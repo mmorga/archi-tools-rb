@@ -3,6 +3,8 @@
 module Archimate
   module Cli
     class Convert
+      include Archimate::Logging
+
       SUPPORTED_FORMATS = %w[meff2.1 archi nquads graphml csv cypher].freeze
 
       attr_reader :model
@@ -27,7 +29,7 @@ module Archimate
         when "cypher"
           Archimate::Export::Cypher.new(output_io).to_cypher(model)
         else
-          Archimate.logger.error "Export to '#{export_format}' is not supported yet."
+          error { "Export to '#{export_format}' is not supported yet." }
         end
       end
     end

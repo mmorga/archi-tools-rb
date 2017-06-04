@@ -20,6 +20,8 @@ module Archimate
       def_delegator :@conflicts, :map
       def_delegator :@conflicts, :each
 
+      include Archimate::Logging
+
       def initialize(base_local_diffs, base_remote_diffs)
         @base_local_diffs = base_local_diffs
         @base_remote_diffs = base_remote_diffs
@@ -37,9 +39,12 @@ module Archimate
       # To keep diffs reasonably human readable in logs, the local diffs should
       # be applied first followed by the remote diffs.
       def resolve
-        Archimate.logger.debug "Filtering out #{conflicts.size} conflicts from #{base_local_diffs.size + base_remote_diffs.size} diffs"
-
-        Archimate.logger.debug "Remaining diffs #{unconflicted_diffs.size}"
+        debug do
+          <<~MSG
+            Filtering out #{conflicts.size} conflicts from #{base_local_diffs.size + base_remote_diffs.size} diffs
+            Remaining diffs #{unconflicted_diffs.size}
+          MSG
+        end
 
         conflicts.each_with_object(unconflicted_diffs) do |conflict, diffs|
           # TODO: this will result in diffs being out of order from their
@@ -74,7 +79,7 @@ module Archimate
         @conflicts = []
         @conflict_finders.each do |cf_class|
           cf = cf_class.new(base_local_diffs, base_remote_diffs)
-          Archimate.logger.debug cf.describe
+          debug { cf.describe }
           @conflicts.concat(cf.conflicts)
         end
         @conflicts
