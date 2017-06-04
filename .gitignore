@@ -18,3 +18,4 @@ tags
 *.sublime-*
 .byebug_history
 *.xlsx
+Gemfile.lock

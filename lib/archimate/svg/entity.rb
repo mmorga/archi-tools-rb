@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Archimate
   module Svg
     module Entity
@@ -45,6 +46,7 @@ module Archimate
       autoload :Gap, 'archimate/svg/entity/gap'
       autoload :Goal, 'archimate/svg/entity/goal'
       autoload :Group, 'archimate/svg/entity/group'
+      autoload :ImplementationEvent, 'archimate/svg/entity/implementation_event'
       autoload :InfrastructureEvent, 'archimate/svg/entity/infrastructure_event'
       autoload :InfrastructureFunction, 'archimate/svg/entity/infrastructure_function'
       autoload :InfrastructureInterface, 'archimate/svg/entity/infrastructure_interface'

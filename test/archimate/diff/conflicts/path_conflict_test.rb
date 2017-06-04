@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'test_helper'
 
 module Archimate
@@ -6,7 +7,6 @@ module Archimate
     class Conflicts
       class PathConflictTest < Minitest::Test
         def setup
-          @aio = Archimate::AIO.new(verbose: false, interactive: false)
           elements = build_element_list(with_elements: 2)
           relationships = build_relationship_list(
             with_relationships: 2,

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Archimate
   module Svg
     Extents = Struct.new(:min_x, :max_x, :min_y, :max_y) do

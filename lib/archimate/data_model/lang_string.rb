@@ -7,6 +7,6 @@ module Archimate
       attribute :lang, Strict::String.optional
     end
 
-    Dry::Types.register_class(Bounds)
+    Dry::Types.register_class(LangString)
   end
 end

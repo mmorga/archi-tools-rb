@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "erb"
 require "nokogiri"
 
@@ -35,7 +36,7 @@ module Archimate
         node_vals =
           doc
           .xpath("//*[@x or @y]")
-          .map { |node| %w(x y width height).map { |attr| node.attr(attr).to_i } }
+          .map { |node| %w[x y width height].map { |attr| node.attr(attr).to_i } }
         Extents.new(
           node_vals.map(&:first).min,
           node_vals.map { |v| v[0] + v[2] }.max,

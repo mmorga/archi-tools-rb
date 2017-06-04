@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 module Archimate
   module FileFormats
     module ArchimateV2
       LAYER_ENTITIES = {
-        "Business" => %w(
+        "Business" => %w[
           BusinessActor
           BusinessCollaboration
           BusinessEvent
@@ -20,8 +21,8 @@ module Archimate
           Value
           Product
           Representation
-        ).freeze,
-        "Application" => %w(
+        ].freeze,
+        "Application" => %w[
           ApplicationCollaboration
           ApplicationComponent
           ApplicationFunction
@@ -29,8 +30,8 @@ module Archimate
           ApplicationInterface
           ApplicationService
           DataObject
-        ).freeze,
-        "Technology" => %w(
+        ].freeze,
+        "Technology" => %w[
           Artifact
           CommunicationPath
           Device
@@ -40,8 +41,8 @@ module Archimate
           Network
           Node
           SystemSoftware
-        ).freeze,
-        "Motivation" => %w(
+        ].freeze,
+        "Motivation" => %w[
           Assessment
           Constraint
           Driver
@@ -49,28 +50,28 @@ module Archimate
           Principle
           Requirement
           Stakeholder
-        ).freeze,
-        "Implementation and Migration" => %w(
+        ].freeze,
+        "Implementation and Migration" => %w[
           Deliverable
           Gap
           Plateau
           WorkPackage
-        ).freeze
+        ].freeze
       }.freeze
 
       ENTITIES = LAYER_ENTITIES.values.flatten.freeze
 
-      CORE_ELEMENTS = %w(Business Application Technology)
+      CORE_ELEMENTS = %w[Business Application Technology]
                       .map { |layer| LAYER_ENTITIES[layer] }
                       .inject([]) { |memo, obj| memo.concat(obj) }
 
-      CONNECTORS = %w(
+      CONNECTORS = %w[
         AndJunction
         Junction
         OrJunction
-      )
+      ].freeze
 
-      RELATIONS = %w(
+      RELATIONS = %w[
         AccessRelationship
         AggregationRelationship
         AssignmentRelationship
@@ -82,9 +83,9 @@ module Archimate
         SpecialisationRelationship
         TriggeringRelationship
         UsedByRelationship
-      ).freeze
+      ].freeze
 
-      DEFAULT_RELATIONS = %w(
+      DEFAULT_RELATIONS = %w[
         AccessRelationship
         AggregationRelationship
         AssignmentRelationship
@@ -95,7 +96,7 @@ module Archimate
         SpecialisationRelationship
         TriggeringRelationship
         UsedByRelationship
-      ).freeze
+      ].freeze
 
       RELATION_VERBS = {
         "AccessRelationship" => "accesses",
@@ -114,17 +115,17 @@ module Archimate
       VIEWPOINTS = {
         "Introductory" => { entities: CORE_ELEMENTS, relations: RELATIONS },
         "Organization" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             BusinessActor
             BusinessCollaboration
             BusinessInterface
             BusinessRole
             Location
-          ),
-          relations: DEFAULT_RELATIONS - %w(AccessRelationship RealisationRelationship)
+          ],
+          relations: DEFAULT_RELATIONS - %w[AccessRelationship RealisationRelationship]
         },
         "Actor Co-operation" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             ApplicationComponent
             ApplicationInterface
             ApplicationService
@@ -133,19 +134,19 @@ module Archimate
             BusinessInterface
             BusinessRole
             BusinessService
-          ),
-          relations: DEFAULT_RELATIONS - %w(AccessRelationship)
+          ],
+          relations: DEFAULT_RELATIONS - %w[AccessRelationship]
         },
         "Business Function" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             BusinessActor
             BusinessFunction
             BusinessRole
-          ),
-          relations: DEFAULT_RELATIONS - %w(AccessRelationship RealisationRelationship)
+          ],
+          relations: DEFAULT_RELATIONS - %w[AccessRelationship RealisationRelationship]
         },
         "Business Process" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             ApplicationService
             BusinessActor
             BusinessCollaboration
@@ -158,11 +159,11 @@ module Archimate
             BusinessService
             Location
             Representation
-          ),
+          ],
           relations: DEFAULT_RELATIONS
         },
         "Business Process Co-operation" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             ApplicationService
             BusinessActor
             BusinessCollaboration
@@ -175,11 +176,11 @@ module Archimate
             BusinessService
             Location
             Representation
-          ),
+          ],
           relations: DEFAULT_RELATIONS
         },
         "Product" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             ApplicationComponent
             ApplicationInterface
             ApplicationService
@@ -194,11 +195,11 @@ module Archimate
             Contract
             Product
             Value
-          ),
+          ],
           relations: DEFAULT_RELATIONS
         },
         "Application Behavior" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             ApplicationCollaboration
             ApplicationComponent
             ApplicationFunction
@@ -206,11 +207,11 @@ module Archimate
             ApplicationInterface
             ApplicationService
             DataObject
-          ),
+          ],
           relations: DEFAULT_RELATIONS
         },
         "Application Co-operation" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             ApplicationCollaboration
             ApplicationComponent
             ApplicationFunction
@@ -219,20 +220,20 @@ module Archimate
             ApplicationService
             DataObject
             Location
-          ),
+          ],
           relations: DEFAULT_RELATIONS
         },
         "Application Structure" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             ApplicationCollaboration
             ApplicationComponent
             ApplicationInterface
             DataObject
-          ),
-          relations: DEFAULT_RELATIONS - %w(RealisationRelationship)
+          ],
+          relations: DEFAULT_RELATIONS - %w[RealisationRelationship]
         },
         "Application Usage" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             ApplicationCollaboration
             ApplicationComponent
             ApplicationInterface
@@ -244,11 +245,11 @@ module Archimate
             BusinessProcess
             BusinessRole
             DataObject
-          ),
+          ],
           relations: DEFAULT_RELATIONS
         },
         "Infrastructure" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             Artifact
             CommunicationPath
             Device
@@ -259,11 +260,11 @@ module Archimate
             Network
             Node
             SystemSoftware
-          ),
+          ],
           relations: DEFAULT_RELATIONS
         },
         "Infrastructure Usage" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             ApplicationComponent
             ApplicationFunction
             CommunicationPath
@@ -274,11 +275,11 @@ module Archimate
             Network
             Node
             SystemSoftware
-          ),
+          ],
           relations: DEFAULT_RELATIONS
         },
         "Implementation and Deployment" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             ApplicationCollaboration
             ApplicationComponent
             Artifact
@@ -289,21 +290,21 @@ module Archimate
             Network
             Node
             SystemSoftware
-          ),
+          ],
           relations: DEFAULT_RELATIONS
         },
         "Information Structure" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             Artifact
             BusinessObject
             DataObject
             Meaning
             Representation
-          ),
-          relations: DEFAULT_RELATIONS - %w(AssignmentRelationship UsedByRelationship)
+          ],
+          relations: DEFAULT_RELATIONS - %w[AssignmentRelationship UsedByRelationship]
         },
         "Service Realization" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             ApplicationCollaboration
             ApplicationComponent
             ApplicationService
@@ -317,7 +318,7 @@ module Archimate
             BusinessRole
             BusinessService
             DataObject
-          ),
+          ],
           relations: DEFAULT_RELATIONS
         },
         "Layered" => {
@@ -329,76 +330,76 @@ module Archimate
           relations: RELATIONS
         },
         "Stakeholder" => {
-          entities: %w(
+          entities: %w[
             Assessment
             Driver
             Goal
             Stakeholder
-          ),
-          relations: %w(
+          ],
+          relations: %w[
             AggregationRelationship
             AssociationRelationship
             CompositionRelationship
             InfluenceRelationship
             SpecialisationRelationship
-          )
+          ]
         },
         "Goal Realization" => {
-          entities: %w(
+          entities: %w[
             Constraint
             Goal
             Principle
             Requirement
-          ),
-          relations: %w(
+          ],
+          relations: %w[
             AggregationRelationship
             AssociationRelationship
             CompositionRelationship
             InfluenceRelationship
             RealisationRelationship
             SpecialisationRelationship
-          )
+          ]
         },
         "Goal Contribution" => {
-          entities: %w(
+          entities: %w[
             Constraint
             Goal
             Principle
             Requirement
-          ),
-          relations: %w(
+          ],
+          relations: %w[
             AggregationRelationship
             AssociationRelationship
             CompositionRelationship
             InfluenceRelationship
             RealisationRelationship
             SpecialisationRelationship
-          )
+          ]
         },
         "Principles" => {
-          entities: %w(
+          entities: %w[
             Goal
             Principle
-          ),
-          relations: %w(
+          ],
+          relations: %w[
             AggregationRelationship
             AssociationRelationship
             CompositionRelationship
             InfluenceRelationship
             RealisationRelationship
             SpecialisationRelationship
-          )
+          ]
         },
         "Requirements Realization" => {
-          entities: CORE_ELEMENTS + CONNECTORS + %w(
+          entities: CORE_ELEMENTS + CONNECTORS + %w[
             Constraint
             Goal
             Requirement
-          ),
+          ],
           relations: DEFAULT_RELATIONS
         },
         "Motivation" => {
-          entities: %w(
+          entities: %w[
             Assessment
             Constraint
             Driver
@@ -406,8 +407,8 @@ module Archimate
             Principle
             Requirement
             Stakeholder
-          ),
-          relations: %w(
+          ],
+          relations: %w[
             AggregationRelationship
             AssociationRelationship
             CompositionRelationship
@@ -415,21 +416,21 @@ module Archimate
             InfluenceRelationship
             RealisationRelationship
             SpecialisationRelationship
-          )
+          ]
         },
         "Project" => {
-          entities: CONNECTORS + %w(
+          entities: CONNECTORS + %w[
             BusinessActor
             BusinessRole
             Deliverable
             Goal
             WorkPackage
-          ),
-          relations: DEFAULT_RELATIONS - %w(AccessRelationship)
+          ],
+          relations: DEFAULT_RELATIONS - %w[AccessRelationship]
         },
         "Migration" => {
-          entities: CONNECTORS + %w(Gap Plateau),
-          relations: %w(
+          entities: CONNECTORS + %w[Gap Plateau],
+          relations: %w[
             AndJunction
             AssociationRelationship
             CompositionRelationship
@@ -437,10 +438,10 @@ module Archimate
             Junction
             OrJunction
             TriggeringRelationship
-          )
+          ]
         },
         "Implementation and Migration" => {
-          entities: CORE_ELEMENTS + CONNECTORS + %w(
+          entities: CORE_ELEMENTS + CONNECTORS + %w[
             Location
             Requirement
             Constraint
@@ -451,7 +452,7 @@ module Archimate
             BusinessActor
             Plateau
             Gap
-          ),
+          ],
           relations: DEFAULT_RELATIONS
         }
       }.freeze
