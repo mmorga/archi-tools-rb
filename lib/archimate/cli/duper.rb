@@ -33,7 +33,7 @@ module Archimate
           handle_duplicate(element_type, name, entities)
         end
 
-        # TODO: make the output writer be from AIO
+        # TODO: make the output writer be an argument
         Archimate::FileFormats::ArchiFileWriter.new(@model).write(@output)
       end
 

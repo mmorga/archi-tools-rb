@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Archimate
   module Cli
     require "thor"
@@ -22,11 +23,10 @@ module Archimate
              default: false,
              desc: "Don't provide interactive feedback"
       def stats(archifile)
+        Config.instance.interactive = !options.fetch("noninteractive", false)
         Archimate::Cli::Stats.new(
-          Archimate::AIO.new(
-            input_io: archifile,
-            interactive: !options.fetch("noninteractive", false)
-          )
+          Archimate.read(archifile),
+          $stdout
         ).statistics
       end
 
@@ -40,12 +40,10 @@ module Archimate
              default: false,
              desc: "Don't provide interactive feedback"
       def map(archifile)
+        Config.instance.interactive = !options.fetch("noninteractive", false)
         Archimate::Cli::Mapper.new(
-          Archimate::AIO.new(
-            input_io: archifile,
-            output_io: options.fetch("output", $stdout),
-            interactive: !options.fetch("noninteractive", false)
-          )
+          Archimate.read(archifile),
+          Cli.output_io(options.fetch("output", $stdout), false)
         ).map
       end
 
@@ -68,7 +66,7 @@ module Archimate
              default: false,
              desc: "Don't provide interactive feedback"
       def svg(archifile)
-        # interactive: !options.fetch("noninteractive", false)
+        Config.instance.interactive = !options.fetch("noninteractive", false)
         Archimate::Cli::Svger.export_svgs(
           archifile,
           options.fetch("output", Dir.pwd)
@@ -88,6 +86,7 @@ module Archimate
              default: false,
              desc: "Don't provide interactive feedback"
       def clean(archifile)
+        Config.instance.interactive = !options.fetch("noninteractive", false)
         outfile = options.key?(:output) ? options[:output] : archifile
         Archimate::MaybeIO.new(options.fetch(:saveremoved, nil)) do |removed_element_io|
           Archimate::Cli::Cleanup.new(Archimate.read(archifile), outfile, removed_element_io)
@@ -122,7 +121,7 @@ module Archimate
              default: false,
              desc: "Don't provide interactive feedback"
       def dedupe(archifile)
-        Config.instance.interactive = !options[:noninteractive]
+        Config.instance.interactive = !options.fetch("noninteractive", false)
         Archimate::Cli::Duper.new(
           Archimate.read(archifile),
           Cli.output_io(
@@ -160,15 +159,15 @@ module Archimate
              default: false,
              desc: "Don't provide interactive feedback"
       def convert(archifile)
+        output_dir = options.fetch("outputdir", Dir.pwd)
+        output_io = Cli.output_io(
+          options.fetch("output", $stdout),
+          options.fetch("force", false)
+        )
+        Config.instance.interactive = !options.fetch("noninteractive", false)
         Archimate::Cli::Convert.new(
-          Archimate::AIO.new(
-            input_io: archifile,
-            output_dir: options.fetch("outputdir", Dir.pwd),
-            force: options.fetch("force", false),
-            output_io: options.fetch("output", $stdout),
-            interactive: !options.fetch("noninteractive", false)
-          )
-        ).convert(options[:to])
+          Archimate.read(archifile)
+        ).convert(options[:to], output_io, output_dir)
       end
 
       desc "lint ARCHIFILE", "Examine the ArchiMate file for potential problems"
@@ -176,11 +175,13 @@ module Archimate
              aliases: :o,
              desc: "Write output to FILE instead of STDOUT"
       def lint(archifile)
+        output_io = Cli.output_io(
+          options.fetch("output", $stdout),
+          options.fetch("force", false)
+        )
         Archimate::Cli::Lint.new(
-          Archimate::AIO.new(
-            input_io: archifile,
-            output_io: options.fetch("output", $stdout)
-          )
+          Archimate.read(archifile),
+          output_io
         ).lint
       end
     end

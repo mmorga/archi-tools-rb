@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'test_helper'
 
 module Archimate
@@ -7,9 +8,8 @@ module Archimate
       def test_initialize
         model = build_model
         output_io = StringIO.new
-        aio = AIO.new(model: model, output_io: output_io)
 
-        mapper = Mapper.new(aio)
+        mapper = Mapper.new(model, output_io)
 
         assert_equal model, mapper.model
         assert_equal output_io, mapper.instance_variable_get(:@output)

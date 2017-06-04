@@ -1,28 +1,23 @@
 # frozen_string_literal: true
-require 'forwardable'
 
 module Archimate
   module Cli
     class Stats
-      extend Forwardable
-
-      def_delegator :@aio, :model
-      def_delegator :@aio, :puts
-
-      def initialize(aio)
-        @aio = aio
+      def initialize(model, output_io)
+        @model = model
+        @output_io = output_io
       end
 
       def statistics
-        puts Color.color("#{model.name} ArchiMate Model Statistics\n", :headline)
+        output_io.puts Color.color("#{model.name} ArchiMate Model Statistics\n", :headline)
 
-        puts "Elements:"
+        output_io.puts "Elements:"
         elements_by_layer.each do |layer, elements|
-          puts row(layer, elements.size, layer)
+          output_io.puts row(layer, elements.size, layer)
         end
-        puts row("Total Elements", model.elements.size, :horizontal_line)
-        puts row("Relationships", model.relationships.size, :Relationship)
-        puts row("Diagrams", model.diagrams.size, :Diagram)
+        output_io.puts row("Total Elements", model.elements.size, :horizontal_line)
+        output_io.puts row("Relationships", model.relationships.size, :Relationship)
+        output_io.puts row("Diagrams", model.diagrams.size, :Diagram)
       end
 
       def elements_by_layer

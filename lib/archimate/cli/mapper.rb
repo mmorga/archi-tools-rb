@@ -1,22 +1,22 @@
 # frozen_string_literal: true
+
 module Archimate
   module Cli
     class Mapper
-      HEADERS = %w(id name viewpoint).freeze
+      HEADERS = %w[id name viewpoint].freeze
       COL_DIVIDER = " | "
 
       attr_reader :model
 
-      def initialize(aio)
-        @aio = aio
-        @model = aio.model
-        @output = aio.output_io
+      def initialize(model, output_io)
+        @model = model
+        @output = output_io
       end
 
       def header_row(widths, headers)
         titles = []
-        widths.each_with_index { |w, i| titles << "%-#{w}s" % headers[i] }
-        @output.puts titles.map { |t| Color.color(t.capitalize, [:bold, :blue]) }.join(Color.color(COL_DIVIDER, :light_black))
+        widths.each_with_index { |w, i| titles << format("%-#{w}s", headers[i]) }
+        @output.puts titles.map { |t| Color.color(t.capitalize, %i[bold blue]) }.join(Color.color(COL_DIVIDER, :light_black))
         @output.puts Color.color(widths.map { |w| "-" * w }.join("-+-"), :light_black)
       end
 
@@ -48,9 +48,9 @@ module Archimate
       end
 
       def output_diagrams(diagrams, widths)
-        diagrams.sort { |a, b| a[1] <=> b[1] }.each do |m|
+        diagrams.sort_by { |a| a[1] }.each do |m|
           row = []
-          m.slice(0, widths.size).each_with_index { |c, i| row << "%-#{widths[i]}s" % c }
+          m.slice(0, widths.size).each_with_index { |c, i| row << format("%-#{widths[i]}s", c) }
           @output.puts row.join(Color.color(COL_DIVIDER, :light_black))
         end
       end
@@ -71,7 +71,7 @@ module Archimate
         folder_paths.keys.sort.each do |folder_name|
           diagrams = folder_paths[folder_name].items.map { |i| model.lookup(i) }.select { |i| i.is_a?(DataModel::Diagram) }
           next if diagrams.empty?
-          @output.puts(Color.color(format("%-#{adjusted_widths}s", folder_name), [:bold, :green, :on_light_black]))
+          @output.puts(Color.color(format("%-#{adjusted_widths}s", folder_name), %i[bold green on_light_black]))
           output_diagrams(process_diagrams(diagrams), widths)
         end
 

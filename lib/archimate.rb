@@ -32,10 +32,6 @@ module Archimate
     autoload :Svger, 'archimate/cli/svger'
   end
 
-  module Dsl
-    autoload :Parser, 'archimate/dsl/parser'
-  end
-
   module Export
     autoload :NQuads, 'archimate/export/n_quads'
     autoload :GraphML, 'archimate/export/graph_ml'
@@ -80,7 +76,6 @@ module Archimate
   require "archimate/color"
   require 'archimate/data_model'
   require 'archimate/diff'
-  require 'archimate/aio'
 
   def self.diff(base, remote)
     base.diff(remote)

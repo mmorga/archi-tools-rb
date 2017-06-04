@@ -1,28 +1,28 @@
 # frozen_string_literal: true
+
 module Archimate
   module Cli
     class Merge
-      attr_reader :base, :local, :remote, :merged_file, :aio
+      attr_reader :base, :local, :remote, :merged_file
 
-      def self.merge(base_file, remote_file, local_file, merged_file, aio = Archimate::AIO.new(verbose: true))
+      def self.merge(base_file, remote_file, local_file, merged_file)
         Archimate.logger.debug "Reading base file: #{base_file}"
-        base = Archimate.read(base_file, aio)
+        base = Archimate.read(base_file)
         Archimate.logger.debug "Reading local file: #{local_file}"
-        local = Archimate.read(local_file, aio)
+        local = Archimate.read(local_file)
         Archimate.logger.debug "Reading remote file: #{remote_file}"
-        remote = Archimate.read(remote_file, aio)
+        remote = Archimate.read(remote_file)
         Archimate.logger.debug "Merged file is #{merged_file}"
 
-        Merge.new(base, local, remote, merged_file, aio).run_merge
+        Merge.new(base, local, remote, merged_file).run_merge
       end
 
-      def initialize(base, local, remote, merged_file, aio)
+      def initialize(base, local, remote, merged_file)
         @base = base
         @local = local
         @remote = remote
         @merged_file = merged_file
-        @aio = aio
-        @merge = Archimate::Diff::Merge.new(@aio)
+        @merge = Archimate::Diff::Merge.new
       end
 
       def run_merge

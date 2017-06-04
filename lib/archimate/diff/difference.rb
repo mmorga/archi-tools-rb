@@ -1,4 +1,7 @@
 # frozen_string_literal: true
+
+require "forwardable"
+
 module Archimate
   module Diff
     class Difference
@@ -7,7 +10,7 @@ module Archimate
       extend Forwardable
 
       ARRAY_RE = Regexp.compile(/\[(\d+)\]/)
-      PATH_ROOT_SORT_ORDER = %w(elements relationships diagrams folders).freeze
+      PATH_ROOT_SORT_ORDER = %w[elements relationships diagrams folders].freeze
 
       # delete: something responds to parent, child attribute (which is thing deleted - and could be sym for archimate nodes or index for array), value
       # insert: something responds to parent, child attribute (or index), value, after value (to help with inserts)
