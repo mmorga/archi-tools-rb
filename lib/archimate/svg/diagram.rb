@@ -10,16 +10,15 @@ module Archimate
 
       def initialize(diagram)
         @diagram = diagram
-        @svg_template = Nokogiri::XML::Document.parse(SvgTemplate.new.to_s).freeze
+        @svg_template = Nokogiri::XML(SvgTemplate.new.to_s).freeze
       end
 
       def to_svg
         svg_doc = @svg_template.clone
-        update_viewbox(
-          render_connections(
-            render_elements(svg_doc.at_css("svg"))
-          )
+        render_connections(
+          render_elements(svg_doc.at_css("#archimate-diagram"))
         )
+        update_viewbox(svg_doc.at_css("svg"))
         svg_doc.to_xml(encoding: 'UTF-8', indent: 2)
       end
 
