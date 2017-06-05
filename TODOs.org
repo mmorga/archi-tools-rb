@@ -204,3 +204,6 @@
    - By Layer?
    - How to Deal with relationships across module boundaries?
 * Need to have model merge capability
+* TODO Refactor to use a Decorator approach using SimpleDelegator
+* TODO Remove Dry-Types dependency
+* TODO Scan git history and inject metadata for concepts created by git author

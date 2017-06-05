@@ -3,8 +3,12 @@
 module Archimate
   module DataModel
     class LangString < ArchimateNode
-      attribute :content, Strict::String
-      attribute :lang, Strict::String.optional
+      attribute :text, Strict::String
+      attribute :lang, Strict::String.default("en") # TODO: by the spec should be optional
+
+      def to_s
+        "#{self.class.name.split('::').last}<#{object_id}>[#{[lang, text].compact.join(',')}]"
+      end
     end
 
     Dry::Types.register_class(LangString)

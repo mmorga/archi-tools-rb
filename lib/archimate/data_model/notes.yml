@@ -1,0 +1,157 @@
+- archimate_node:
+    - bendpoint
+    - bounds
+    - color
+    - documentation
+    - font
+    - identified_node:
+        - child
+        - diagram
+        - element
+        - folder # rename to organization
+        - model
+        - relationship
+        - source_connection
+    - lang_string
+    - metadata
+    - property
+    - schema_info
+    - style
+
+# TODO: Constants shouldn't be in DataModel - or should they?
+# Diffable Array and Diffable Primitive should be decorators for diff only
+
+simple types:
+  - DataType : string, boolean, currency, date, time, number
+  - AccessTypeEnum
+  - InfluenceStrengthEnum
+  - InfluenceModifierType
+  - ElementTypeEnum
+  - RelationshipConnectorEnum
+  - CompositeTypeEnum
+  - ElementEnumType
+  - RelationshipTypeEnum
+
+complex types:
+  - ElementsType
+  - LangStringType:
+      - PreservedLangStringType
+  - ReferenceableType:
+      - NamedReferenceableType:
+          - ModelType
+          - PropertyDefinitionType
+      - ConceptType:
+          - ElementType:
+              - CompositeType:
+                  - Grouping
+                  - Location
+              - RealElementType:
+                  - BusinessActor
+                  - BusinessRole
+                  - BusinessCollaboration
+                  - BusinessInterface
+                  - BusinessProcess
+                  - BusinessFunction
+                  - BusinessInteraction
+                  - BusinessEvent
+                  - BusinessService
+                  - BusinessObject
+                  - Contract
+                  - Representation
+                  - Product
+                  - ApplicationComponent
+                  - ApplicationCollaboration
+                  - ApplicationInterface
+                  - ApplicationFunction
+                  - ApplicationInteraction
+                  - ApplicationProcess
+                  - ApplicationEvent
+                  - ApplicationService
+                  - DataObject
+                  - Node
+                  - Device
+                  - SystemSoftware
+                  - TechnologyCollaboration
+                  - TechnologyInterface
+                  - Path
+                  - CommunicationNetwork
+                  - TechnologyFunction
+                  - TechnologyProcess
+                  - TechnologyInteraction
+                  - TechnologyEvent
+                  - TechnologyService
+                  - Artifact
+                  - Equipment
+                  - Facility
+                  - DistributionNetwork
+                  - Material
+                  - Stakeholder
+                  - Driver
+                  - Assessment
+                  - Goal
+                  - Outcome
+                  - Principle
+                  - Requirement
+                  - Constraint
+                  - Meaning
+                  - Value
+                  - Resource
+                  - Capability
+                  - CourseOfAction
+                  - WorkPackage
+                  - Deliverable
+                  - ImplementationEvent
+                  - Plateau
+                  - Gap
+              - RelationshipConnectorType:
+                  - AndJunction
+                  - OrJunction
+          - RelationshipType:
+              - Composition
+              - Aggregation
+              - Assignment
+              - Realization
+              - Serving
+              - Access
+              - Influence
+              - Triggering
+              - Flow
+              - Specialization
+              - Association
+  - ReferenceType
+  - MetadataType
+  - OrganizationsType
+  - OrganizationType
+  - PropertiesType
+  - PropertyDefinitionsType
+  - PropertyType
+  - RelationshipsType
+  - SchemaInfoType
+
+groups:
+  - ConceptGroup
+  - NameGroup
+  - LabelGroup
+  - DocumentationGroup
+  - PropertiesGroup
+  - ElementRefGroup
+  - RelationshipRefGroup
+  - ConceptRefGroup
+  - PropertyDefinitionRefGroup
+  - SchemaInfoGroup
+  - StereotypeRefGroup
+  - grp.any
+
+attribute groups:
+  - ConceptAttributeGroup
+  - IdentifierGroup
+  - OptionalIdentifierGroup
+  - ElementRefAttributeGroup
+  - RelationshipRefAttributeGroup
+  - ConceptRefAttributeGroup
+  - PropertyDefinitionRefAttributeGroup
+  - StereotypeRefAttributeGroup
+
+elements:
+  - model : ModelType
+

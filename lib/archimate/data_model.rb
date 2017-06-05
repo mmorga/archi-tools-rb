@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Archimate
   module DataModel
     include Dry::Types.module
@@ -6,10 +7,18 @@ module Archimate
     Coercible = Archimate::DataModel::Coercible
     Strict = Archimate::DataModel::Strict
 
+    # Identifiers in the ArchiMate exchange format standard are of type
+    # xsd:ID which must match the pattern given below.
+    # This means that it must start with a letter or underscore, and can only contain
+    # letters, digits, underscores, hyphens, and periods.
+    Identifier = Strict::String.constrained(format: /[[[:alpha:]]_][\w\-\.]*/)
+
     require 'archimate/data_model/diffable_primitive'
     require 'archimate/data_model/diffable_array'
     require 'archimate/data_model/constants'
     require 'archimate/data_model/archimate_node'
+    require 'archimate/data_model/lang_string'
+    require 'archimate/data_model/preserved_lang_string'
     require 'archimate/data_model/schema_info'
     require 'archimate/data_model/metadata'
     require 'archimate/data_model/color'

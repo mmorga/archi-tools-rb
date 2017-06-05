@@ -5,7 +5,7 @@ module Archimate
       using DiffablePrimitive
       using DiffableArray
 
-      constructor_type :schema
+      constructor_type :schema # specifies constructor style for Dry::Struct
 
       attr_writer :parent_attribute_name
       attr_reader :struct_instance_variables
