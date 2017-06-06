@@ -15,10 +15,12 @@ module Archimate
 
       def to_svg
         svg_doc = @svg_template.clone
+        top_group = svg_doc.at_css("#archimate-diagram")
         render_connections(
-          render_elements(svg_doc.at_css("#archimate-diagram"))
+          render_elements(top_group)
         )
         update_viewbox(svg_doc.at_css("svg"))
+        format_node(top_group)
         svg_doc.to_xml(encoding: 'UTF-8', indent: 2)
       end
 
@@ -29,6 +31,14 @@ module Archimate
         svg.set_attribute(:height, extents.height)
         svg.set_attribute("viewBox", "#{extents.min_x} #{extents.min_y} #{extents.width} #{extents.height}")
         svg
+      end
+
+      def format_node(node, depth = 4)
+        node.children.each do |child|
+          child.add_previous_sibling("\n#{ ' ' * depth }")
+          format_node(child, depth + 2)
+          child.add_next_sibling("\n#{ ' ' * (depth - 2) }") if node.children.last == child
+        end
       end
 
       def calculate_max_extents(doc)
