@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class SourceConnection < IdentifiedNode
+    class SourceConnection < Referenceable
       attribute :source, Strict::String
       attribute :target, Strict::String
       attribute :relationship, Strict::String.optional
       attribute :bendpoints, BendpointList
       attribute :style, Style.optional
+      attribute :properties, PropertiesList # Note: this is not in the model under element
+      # it's added under Real Element
 
       def replace(entity, with_entity)
         @relationship = with_entity.id if (relationship == entity.id)

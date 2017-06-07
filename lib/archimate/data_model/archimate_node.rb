@@ -15,6 +15,8 @@ module Archimate
         @struct_instance_variables = self.class.schema.keys
       end
 
+      # TODO: Schedule this for eliminations
+      # Outside of test code, this is only used for the Bounds class
       def with(options = {})
         self.class.new(
           struct_instance_variables
@@ -25,7 +27,7 @@ module Archimate
       end
 
       # Note: my clone method does one non-idiomatic thing - it does not clone the
-      # frozen state. TODO: respeect the frozen state of the clone'd object.
+      # frozen state. TODO: respect the frozen state of the clone'd object.
       def clone
         self.class.new(
           struct_instance_variables
@@ -53,6 +55,8 @@ module Archimate
         @parent if defined?(@parent)
       end
 
+      # TODO: this is used only such that every item has an id for sticking in the index.
+      # Is this really needed still?
       def id
         object_id
       end

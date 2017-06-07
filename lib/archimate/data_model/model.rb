@@ -2,36 +2,28 @@
 
 module Archimate
   module DataModel
-    # Model is the top level parent of an ArchiMate model.
-    # ReferenceableType
-    #   - name : LangString,  0-unbounded
-    #   - documentation : PreservedLangStringType, 0-unbounded
-    #   - grp.any
-    #   - identifier : xs:ID
-    #   - any attribute
-    #   NamedReferenceableType
-    #     - name : LangString, 1-unbounded
-    class Model < IdentifiedNode
+    # This is the root model type.
+    # It is a container for the elements, relationships, diagrams and organizations of the model.
+    class Model < NamedReferenceable
       using DataModel::DiffableArray
       using DataModel::DiffablePrimitive
 
       ARRAY_RE = Regexp.compile(/\[(\d+)\]/)
 
-      # TODO: add metadata & property_defs as in Model Exchange Format
-      # attribute :properties, Strict::Array.member(Property).default([]) # Properties.optional
+      attribute :properties, Strict::Array.member(Property).default([]) # Properties.optional
       attribute :metadata, Metadata.optional
       attribute :elements, Strict::Array.member(Element).default([])
       attribute :relationships, Strict::Array.member(Relationship).default([])
       attribute :folders, Strict::Array.member(Folder).default([])
       # attribute :organizations, Strict::Array.member(Organization).default([]) # Organizations.optional
-      attribute :diagrams, Strict::Array.member(Diagram).default([])
-      # attribute :propertyDefinitions, PropertyDefinitions.optional
-      # attribute :views, Views.optional
+      attribute :property_definitions, Strict::Array.member(PropertyDefinition).default([])
+      attribute :version, Strict::String.optional
+      attribute :diagrams, Strict::Array.member(Diagram).default([]) # TODO: move under views
+      attribute :views, Views
       # Following attributes are to hold info on where the model came from
       attribute :filename, Strict::String.optional
       attribute :file_format, Strict::Symbol.enum(*Archimate::SUPPORTED_FORMATS).optional
       attribute :archimate_version, Strict::Symbol.default(:archimate_3_0).enum(*Archimate::ARCHIMATE_VERSIONS)
-      attribute :version, Strict::String.optional
 
       def initialize(attributes)
         super
@@ -188,7 +180,7 @@ module Archimate
       end
 
       def identified_nodes
-        @index_hash.values.select { |node| node.is_a? IdentifiedNode }
+        @index_hash.values.select { |node| node.is_a? Referenceable }
       end
 
       def unreferenced_nodes

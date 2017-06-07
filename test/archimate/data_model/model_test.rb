@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'test_helper'
 
 module Archimate
@@ -75,14 +76,14 @@ module Archimate
                   folders: [
                     build_folder(
                       folders: [],
-                      items: %w(a b c)
+                      items: %w[a b c]
                     )
                   ],
-                  items: %w(d e f)
+                  items: %w[d e f]
                 ),
-                build_folder(folders: [], items: %w(g h i))
+                build_folder(folders: [], items: %w[g h i])
               ],
-              items: %w(j k)
+              items: %w[j k]
             )
           ],
           relationships: [
@@ -95,11 +96,11 @@ module Archimate
             build_diagram(
               children: [
                 build_child(
-                  target_connections: %w(n o),
+                  target_connections: %w[n o],
                   archimate_element: "p",
                   children: [
                     build_child(
-                      target_connections: %w(q r),
+                      target_connections: %w[q r],
                       archimate_element: "s"
                     )
                   ],
@@ -293,7 +294,6 @@ module Archimate
       def test_organize
         model = build_model
         assert_empty model.folders
-
 
         layer_els = Archimate::DataModel::Constants::LAYER_ELEMENTS
         (1..layer_els.size).each do |i|

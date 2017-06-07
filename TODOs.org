@@ -207,3 +207,11 @@
 * TODO Refactor to use a Decorator approach using SimpleDelegator
 * TODO Remove Dry-Types dependency
 * TODO Scan git history and inject metadata for concepts created by git author
+* Changes for v3 have borked the model
+** TODO Push through fixes focusing on the issues from factories to see if that works
+** TODO Refactor model to eliminate a lot of cruft by removing things like in_model= and populating model with objects instead of ID refs
+** TODO Refactor model to improve the diffing of arrays and by writing explicit diff decorators rather than domain model magic
+   Both of the last two options risk breaking diffing/merging by making and becoming a long slog
+
+* TODO In mergetool - show diagrams that reference elements and relationships in diff conflicts
+

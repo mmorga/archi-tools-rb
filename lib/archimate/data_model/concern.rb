@@ -1,14 +1,15 @@
+# frozen_string_literal: true
+
 module Archimate
   module DataModel
+    # document attribute holds all the concern information.
     class Concern < ArchimateNode
-      attribute :labels, Strict::Array.members(Label)
-      attribute :properties, Strict::Array.members(Property).default([])
-      attribute :concern, Concern.optional
-      attribute :purpose, ViewpointPurpose.optional
-      attribute :content, ViewpointContent.optional
-      attribute :allowedElementTypes, Strict::Array.members(AllowedElement).default([])
-      attribute :allowedRelationshipTypes, Strict::Array.members(AllowedRelationship).default([])
-      attribute :modelingNotes, Strict::Array.members(ModelingNote).default([])
+      attribute :labels, LabelGroup # .constrained(min_size: 1)
+      attribute :documentation, DocumentationGroup
+      attribute :stakeholders, Stakeholders
     end
+
+    Dry::Types.register_class(Concern)
+    ConcernList = Strict::Array.member(Concern).default([])
   end
 end

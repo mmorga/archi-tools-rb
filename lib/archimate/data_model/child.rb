@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Child < IdentifiedNode
+    class Child < Referenceable
       using DiffableArray
 
       attribute :model, Strict::String.optional
@@ -13,6 +13,8 @@ module Archimate
       attribute :source_connections, SourceConnectionList
       attribute :style, Style.optional
       attribute :child_type, Coercible::Int.optional
+      attribute :properties, PropertiesList # Note: this is not in the model under element
+      # it's added under Real Element
 
       def replace(entity, with_entity)
         if (archimate_element == entity.id)

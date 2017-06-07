@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Diagram < IdentifiedNode
+    class Diagram < Referenceable
       attribute :viewpoint, Coercible::String.optional
       attribute :children, Strict::Array.member(Child).default([])
       attribute :connection_router_type, Coercible::Int.optional # TODO: fill this in, should be an enum
       attribute :background, Coercible::Int.optional # value of 0 on Archi Sketch Model
+      attribute :properties, PropertiesList # Note: this is not in the model under element
+      # it's added under Real Element
 
       def source_connections
         children.each_with_object([]) do |i, a|

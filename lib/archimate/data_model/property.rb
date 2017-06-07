@@ -1,17 +1,29 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
+    # A Property instance type declaring the reference to a Property definition and containing the Property value.
     class Property < ArchimateNode
-      attribute :key, Strict::String
-      attribute :value, Strict::String.optional
-      attribute :lang, Strict::String.default("en")
+      attribute :values, Strict::Array.member(LangString).default([]) # .constrained(min_size: 1)
+      attribute :property_definition_id, Identifier
 
       def to_s
-        "Property(key: #{key}, value: #{value || 'no value'})"
+        "Property(key: #{property_definition.name}, value: #{value || 'no value'})"
       end
 
-      def property_id
-        in_model.property_def_id(key)
+      def key
+        property_definition&.name
+      end
+
+      def value
+        values.first&.text
+      end
+
+      def lang
+        values.first&.lang
+      end
+
+      def property_definition
+        in_model&.lookup(property_definition_id)
       end
     end
 

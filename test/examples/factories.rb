@@ -9,11 +9,21 @@ module Archimate
       end
 
       def build_property(options = {})
-        Archimate::DataModel::Property.new(
-          key: options.fetch(:key, Faker::Company.buzzword),
-          value: options.fetch(:value, Faker::Company.buzzword),
-          lang: nil
+        value = options.fetch(:value, [DataModel::LangString.new(text: Faker::Company.buzzword)])
+        if value.is_a?(String)
+          value = [DataModel::LangString.new(text: value)]
+        end
+        property_def = Archimate::DataModel::PropertyDefinition.new(
+          id: build_id,
+          name: options.fetch(:key, Faker::Company.buzzword),
+          documentation: [],
+          value_type: "string"
         )
+        property = Archimate::DataModel::Property.new(
+          values: value,
+          property_definition_id: property_def.id
+        )
+        [property_def, property]
       end
 
       def build_documentation_list(options = {})
@@ -54,7 +64,9 @@ module Archimate
           elements: elements,
           folders: folders,
           relationships: relationships,
+          property_definitions: options.fetch(:property_definitions, []),
           diagrams: diagrams,
+          views: options.fetch(:views, DataModel::Views.new(viewpoints: [], diagrams: [])),
           filename: options.fetch(:filename, nil),
           file_format: options.fetch(:file_format, nil),
           archimate_version: options.fetch(:archimate_version, :archimate_3_0),

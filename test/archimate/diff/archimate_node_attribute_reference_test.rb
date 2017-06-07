@@ -20,7 +20,7 @@ module Archimate
       end
 
       def test_lookup_in_model_model
-        assert_same @other, ArchimateIdentifiedNodeReference.new(@model).lookup_in_model(@other)
+        assert_same @other, ArchimateReferenceableReference.new(@model).lookup_in_model(@other)
       end
 
       def test_lookup_in_model_name

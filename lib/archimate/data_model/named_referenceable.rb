@@ -3,9 +3,10 @@
 module Archimate
   module DataModel
     class NamedReferenceable < Referenceable
-      attribute :name, Strict::Array.member(NameGroup).constrained(min_size: 1)
-      attribute :documentation, Strict::Array.member(DocumentationGroup).default([])
-      attribute :grp_any, Strict::Array.member(AnyGroup).default([])
+      # Note: minimum 1 name is required for a Named Referenceable
+      # attribute :name, NameGroup.constrained(min_size: 1)
+      # attribute :documentation, DocumentationGroup
+      # attribute :grp_any, Strict::Array.member(AnyGroup).default([])
     end
 
     Dry::Types.register_class(NamedReferenceable)

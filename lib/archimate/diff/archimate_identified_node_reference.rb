@@ -2,14 +2,14 @@
 
 module Archimate
   module Diff
-    class ArchimateIdentifiedNodeReference < ArchimateNodeReference
+    class ArchimateReferenceableReference < ArchimateNodeReference
       using DataModel::DiffableArray
 
       def initialize(archimate_node)
-        unless archimate_node.is_a?(DataModel::IdentifiedNode)
+        unless archimate_node.is_a?(DataModel::Referenceable)
           raise(
             TypeError,
-            "archimate_node is a #{archimate_node.class}, IdentifiedNode was expected"
+            "archimate_node is a #{archimate_node.class}, Referenceable was expected"
           )
         end
         super

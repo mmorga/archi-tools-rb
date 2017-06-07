@@ -102,7 +102,7 @@ module Archimate
         def items_are_changed?(other, other_enum, remaining)
           !remaining.empty? &&
             case remaining[0]
-            when DataModel::IdentifiedNode
+            when DataModel::Referenceable
               remaining[0].id == other_enum.peek[0].id
             when String, DataModel::ArchimateNode
               !other.include?(remaining[0]) && !include?(other_enum.peek[0])
@@ -169,7 +169,7 @@ module Archimate
 
         def smart_find(val = nil)
           case val
-          when IdentifiedNode
+          when Referenceable
             lazy.map(&:id).find_index(val.id)
           else
             find_index(val)
@@ -178,7 +178,7 @@ module Archimate
 
         def smart_include?(val)
           case val
-          when IdentifiedNode
+          when Referenceable
             lazy.map(&:id).include?(val.id)
           else
             include?(val)

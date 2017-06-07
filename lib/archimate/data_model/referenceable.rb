@@ -2,14 +2,27 @@
 
 module Archimate
   module DataModel
-    class Referenceable
-      attribute :identifier, Identifier
-      attribute :name, Strict::Array.member(LangStringType).default([])
-      attribute :documentation, Strict::Array.member(Documentation).default([])
-      attribute :grp_any, Strict::Array.member(AnyNode).default([])
-      attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
-    end
+    # Something that can be referenced in the model.
+    class Referenceable < ArchimateNode
+      attribute :id, Identifier
+      attribute :name, Strict::String.optional # NameGroup - in the future
+      attribute :documentation, DocumentationGroup
+      # attribute :grp_any, Strict::Array.member(AnyNode).default([])
+      # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
+      # attribute :properties, PropertiesList # Note: Referenceable doesn't have properties in the spec
+      attribute :type, Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
 
-    Dry::Types.register_class(Referenceable)
+      private
+
+      def find_my_index
+        id
+      end
+
+      # name isn't merged
+      def merge(node)
+        documentation.concat(node.documentation)
+        properties.concat(node.properties)
+      end
+    end
   end
 end

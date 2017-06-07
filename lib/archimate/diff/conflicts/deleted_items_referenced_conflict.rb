@@ -25,7 +25,7 @@ module Archimate
         #
         # @return [lambda] a filter to limit diffs to Delete type
         def filter1
-          ->(diff) { diff.delete? && diff.target.value.is_a?(DataModel::IdentifiedNode) }
+          ->(diff) { diff.delete? && diff.target.value.is_a?(DataModel::Referenceable) }
         end
 
         # Filters a changeset to potentially conflicting diffs (making the set

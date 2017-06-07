@@ -141,7 +141,7 @@ module Archimate
       end
 
       def serialize_property(xml, property)
-        xml.property(identifierref: property.property_id) do
+        xml.property(identifierref: property.property_definition_id) do
           xml.value("xml:lang" => property.lang) do
             xml.text text_proc(property.value) unless property.value.nil? || property.value.strip.empty?
           end

@@ -31,7 +31,7 @@ module Archimate
         def in_conflict?(local_diff, remote_diff)
           return true if
             local_diff.target.parent.is_a?(Array) &&
-            local_diff.target.value.is_a?(DataModel::IdentifiedNode) &&
+            local_diff.target.value.is_a?(DataModel::Referenceable) &&
             local_diff.target.value.id == remote_diff.target.value.id &&
             local_diff != remote_diff
 

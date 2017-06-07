@@ -53,7 +53,7 @@ module Archimate
         raise TypeError, "model argument must be a Model, was a #{model.class}" unless model.is_a?(DataModel::Model)
         if node.is_a?(DataModel::Model)
           return model
-        elsif node.is_a?(DataModel::IdentifiedNode)
+        elsif node.is_a?(DataModel::Referenceable)
           return model.lookup(node.id)
         else
           node_parent_in_model = recurse_lookup_in_model(node.parent, model)

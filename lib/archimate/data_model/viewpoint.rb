@@ -1,13 +1,20 @@
+# frozen_string_literal: true
+
 module Archimate
   module DataModel
     class Viewpoint < NamedReferenceable
-      attribute :properties, Strict::Array.members(Property).default([])
-      attribute :concern, Concern.optional
-      attribute :purpose, ViewpointPurpose.optional
-      attribute :content, ViewpointContent.optional
-      attribute :allowedElementTypes, Strict::Array.members(AllowedElement).default([])
-      attribute :allowedRelationshipTypes, Strict::Array.members(AllowedRelationship).default([])
-      attribute :modelingNotes, Strict::Array.members(ModelingNote).default([])
+      using DataModel::DiffableArray
+      using DataModel::DiffablePrimitive
+
+      attribute :concern, ConcernList
+      attribute :viewpointPurpose, ViewpointPurpose.optional
+      attribute :viewpointContent, ViewpointContent.optional
+      attribute :allowedElementTypes, AllowedElementTypes
+      attribute :allowedRelationshipTypes, AllowedRelationshipTypes
+      attribute :modelingNotes, Strict::Array.member(ModelingNote).default([])
     end
+
+    Dry::Types.register_class(Viewpoint)
+    ViewpointList = Strict::Array.member(Viewpoint).default([])
   end
 end

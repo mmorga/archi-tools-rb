@@ -3,11 +3,11 @@ require 'test_helper'
 
 module Archimate
   module Diff
-    class ArchimateIdentifiedNodeReferenceTest < Minitest::Test
+    class ArchimateReferenceableReferenceTest < Minitest::Test
       using DataModel::DiffableArray
       def setup
         @model = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 3, with_folders: 4)
-        @subject = ArchimateIdentifiedNodeReference.new(@model.elements.first)
+        @subject = ArchimateReferenceableReference.new(@model.elements.first)
 
         @other = @model.with(elements: [build_element] + @model.elements)
       end

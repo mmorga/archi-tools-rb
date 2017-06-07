@@ -28,7 +28,7 @@ module Archimate
       end
 
       def test_lookup_in_model
-        assert_same @other, ArchimateIdentifiedNodeReference.new(@model).lookup_in_model(@other)
+        assert_same @other, ArchimateReferenceableReference.new(@model).lookup_in_model(@other)
       end
 
       def test_lookup_in_model_string_attribute
@@ -36,7 +36,7 @@ module Archimate
       end
 
       def test_lookup_in_model_documentation
-        assert_same @other, ArchimateIdentifiedNodeReference.new(@model).lookup_in_model(@other)
+        assert_same @other, ArchimateReferenceableReference.new(@model).lookup_in_model(@other)
         assert_same @other.documentation, ArchimateNodeAttributeReference.new(@model, :documentation).lookup_in_model(@other)
         assert_equal 2, @other.documentation.size
         refute_nil @other.documentation[0]

@@ -22,6 +22,12 @@ module Archimate
 
       def initialize
         @progress = nil
+        @random ||= Random.new
+      end
+
+      # TODO: this is a hack - need a permanent fix. Used for creation of PropertyDefinitions
+      def random_id
+        format("%08x", @random.rand(0xffffffff))
       end
 
       def read(archifile)
@@ -32,7 +38,9 @@ module Archimate
         @size = 0
         doc.traverse { |_n| @size += 1 }
         @progress = ProgressIndicator.new(total: @size, title: "Parsing")
+        @property_defs = {}
         tick
+        diagrams = parse_diagrams(doc.root)
         DataModel::Model.new(
           id: doc.root["id"],
           name: doc.root["name"],
@@ -41,7 +49,9 @@ module Archimate
           elements: parse_elements(doc.root),
           folders: parse_folders(doc.root),
           relationships: parse_relationships(doc.root),
-          diagrams: parse_diagrams(doc.root)
+          diagrams: diagrams,
+          views: DataModel::Views.new(viewpoints: [], diagrams: diagrams),
+          property_definitions: @property_defs.values
         )
       ensure
         @progress&.finish
@@ -58,7 +68,24 @@ module Archimate
       def parse_properties(node)
         node.css(">property").each_with_object([]) do |i, a|
           tick
-          a << DataModel::Property.new(key: i["key"], value: i["value"]) unless i["key"].nil?
+          key = i["key"]
+          next unless key
+          if @property_defs.key?(key)
+            prop_def = @property_defs[key]
+          else
+            @property_defs[key] = prop_def = DataModel::PropertyDefinition.new(
+              id: DataModel::PropertyDefinition.identifier_for_key(key),
+              name: key,
+              documentation: [],
+              value_type: "string"
+            )
+          end
+          a << DataModel::Property.new(
+            values: [
+              DataModel::LangString.new(text: i["value"])
+            ],
+            property_definition_id: prop_def.id
+          )
         end
       end
 

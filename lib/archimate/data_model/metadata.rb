@@ -2,14 +2,15 @@
 
 module Archimate
   module DataModel
+    # An instance of the meta-data element contains data structures that declare descriptive information
+    # about a meta-data element's parent only.
+    #
+    # One or more different meta-data models may be declared as child extensions of a meta-data element.
     class Metadata < ArchimateNode
-      using DiffablePrimitive
+      using DataModel::DiffableArray
+      using DataModel::DiffablePrimitive
 
-      attribute :elements, Strict::Array.member(SchemaInfo).default([])
-
-      def to_s
-        "#{type.light_black}[#{data.map(&:to_s).join(', ')}]"
-      end
+      attribute :schemaInfo, Strict::Array.member(SchemaInfo).default([])
     end
     Dry::Types.register_class(Metadata)
   end

@@ -2,6 +2,7 @@
 
 module Archimate
   module DataModel
+    # A base string type for multi-language strings that preserves whitespace.
     class PreservedLangString < LangString
       def initialize(*args)
         super

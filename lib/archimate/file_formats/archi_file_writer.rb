@@ -64,7 +64,6 @@ module Archimate
         ) do
           serialize(xml, folder.folders)
           serialize(xml, folder.documentation)
-          serialize(xml, folder.properties)
           folder.items.each { |i| serialize_item(xml, i) }
         end
       end

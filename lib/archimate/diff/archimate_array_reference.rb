@@ -49,7 +49,7 @@ module Archimate
         @array_ref_path ||= [
           super,
           case value
-          when DataModel::IdentifiedNode
+          when DataModel::Referenceable
             value.id
           else
             array_index

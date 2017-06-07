@@ -36,13 +36,19 @@ module Archimate
           elements: parse_elements(root),
           relationships: parse_relationships(root),
           folders: parse_folders(root.css(">organization>item")),
-          diagrams: parse_diagrams(root)
+          diagrams: parse_diagrams(root),
+          property_definitions: @property_defs.values
         )
       end
 
       def parse_property_defs(node)
         node.css(">propertydefs>propertydef").each_with_object({}) do |i, a|
-          a[i["identifier"]] = { key: i["name"], type: i["type"] }
+          a[i["identifier"]] = DataModel::PropertyDefinition.new(
+            id: i["identifier"],
+            name: i["name"],
+            documentation: parse_documentation(i),
+            type: i["type"]
+          )
         end
       end
 
@@ -68,9 +74,10 @@ module Archimate
         lang = value_node.nil? ? "en" : value_node["xml:lang"]
         value = value_node&.content
         DataModel::Property.new(
-          key: @property_defs[node["identifierref"]][:key],
-          value: value,
-          lang: lang
+          property_definition_id: node["identifierref"],
+          values: [
+            DataModel::LangString.new(text: value, lang: lang)
+          ]
         )
       end
 
