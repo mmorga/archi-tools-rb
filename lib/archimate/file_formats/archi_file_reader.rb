@@ -25,11 +25,6 @@ module Archimate
         @random ||= Random.new
       end
 
-      # TODO: this is a hack - need a permanent fix. Used for creation of PropertyDefinitions
-      def random_id
-        format("%08x", @random.rand(0xffffffff))
-      end
-
       def read(archifile)
         parse(Nokogiri::XML(archifile))
       end

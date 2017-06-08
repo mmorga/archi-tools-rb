@@ -45,7 +45,6 @@ module Archimate
     require 'archimate/data_model/concept'
     require 'archimate/data_model/source_connection'
     require 'archimate/data_model/child'
-    require 'archimate/data_model/diagram'
     require 'archimate/data_model/stakeholder'
     require 'archimate/data_model/folder'
     # require 'archimate/data_model/organization'
@@ -53,7 +52,15 @@ module Archimate
     require 'archimate/data_model/relationship'
     require 'archimate/data_model/concern'
     require 'archimate/data_model/viewpoint'
+    require 'archimate/data_model/view'
+    require 'archimate/data_model/view_concept'
+    require 'archimate/data_model/location'
+    require 'archimate/data_model/view_node'
+    require 'archimate/data_model/connection'
+    require 'archimate/data_model/container'
+    require 'archimate/data_model/diagram'
     require 'archimate/data_model/views'
+    require 'archimate/data_model/label'
     require 'archimate/data_model/model'
   end
 end

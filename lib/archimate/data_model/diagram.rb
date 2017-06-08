@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Diagram < Referenceable
-      attribute :viewpoint, Coercible::String.optional
+    class Diagram < View
+      # attribute :viewpoint, Coercible::String.optional # TODO: now in View as viewpoint_type
       attribute :children, Strict::Array.member(Child).default([])
-      attribute :connection_router_type, Coercible::Int.optional # TODO: fill this in, should be an enum
+      # TODO: attribute :nodes, Strict::Array.member(ViewNode).default([])
+      attribute :connection_router_type, Coercible::Int.optional # TODO: Archi formats only fill this in, should be an enum
       attribute :background, Coercible::Int.optional # value of 0 on Archi Sketch Model
-      attribute :properties, PropertiesList # Note: this is not in the model under element
-      # it's added under Real Element
+      attribute :connections, Strict::Array.member(Connection).default([]) # TODO this is SourceConnection in Archi formats
 
       def source_connections
         children.each_with_object([]) do |i, a|
@@ -44,7 +44,7 @@ module Archimate
       end
 
       def total_viewpoint?
-        viewpoint.nil? || viewpoint.empty?
+        viewpoint_type.nil? || viewpoint_type.empty?
       end
     end
     Dry::Types.register_class(Diagram)
