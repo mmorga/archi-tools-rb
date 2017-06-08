@@ -31,5 +31,25 @@ module Archimate
     def info(progname = nil, &block)
       logger.info(progname, &block)
     end
+
+    def self.logger
+      Archimate::Config.instance.logger
+    end
+
+    def self.debug(progname = nil, &block)
+      logger.debug(progname, &block)
+    end
+
+    def self.error(progname = nil, &block)
+      logger.error(progname, &block)
+    end
+
+    def self.fatal(progname = nil, &block)
+      logger.fatal(progname, &block)
+    end
+
+    def self.info(progname = nil, &block)
+      logger.info(progname, &block)
+    end
   end
 end
