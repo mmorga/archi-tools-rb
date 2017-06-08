@@ -52,4 +52,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "yard"
   spec.add_development_dependency "guard-ctags-bundler"
   spec.add_development_dependency "faker"
+  spec.add_development_dependency "aruba", '~> 0.14.2'
 end
