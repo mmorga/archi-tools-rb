@@ -8,13 +8,13 @@ module Archimate
       attr_reader :base, :local, :remote, :merged_file
 
       def self.merge(base_file, remote_file, local_file, merged_file)
-        debug { "Reading base file: #{base_file}" }
+        Logging.debug { "Reading base file: #{base_file}" }
         base = Archimate.read(base_file)
-        debug { "Reading local file: #{local_file}" }
+        Logging.debug { "Reading local file: #{local_file}" }
         local = Archimate.read(local_file)
-        debug { "Reading remote file: #{remote_file}" }
+        Logging.debug { "Reading remote file: #{remote_file}" }
         remote = Archimate.read(remote_file)
-        debug { "Merged file is #{merged_file}" }
+        Logging.debug { "Merged file is #{merged_file}" }
 
         Merge.new(base, local, remote, merged_file).run_merge
       end
