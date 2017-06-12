@@ -11,9 +11,9 @@ module Archimate
     # An organization has no meaning unless it has at least child organization element.
     #
     # Note that Organization must fit into a tree structure (so strictly nested).
-    class Folder < Referenceable
+    class Organization < Referenceable
       attribute :items, Strict::Array.member(Strict::String).default([])
-      attribute :folders, Strict::Array.member(Folder).default([])
+      attribute :organizations, Strict::Array.member(Organization).default([])
       #       attribute :label, Strict::Array.members(LangString).constrained(:min_size = 1)
       #       attribute :documentation, Strict::Array.members(PreservedLangString).default([])
       #       attribute :item, Strict::Array.members(Organization).default([])
@@ -25,11 +25,11 @@ module Archimate
       # it's added under Real Element
 
       def to_s
-        "#{Archimate::Color.data_model('Folder')}<#{id}>[#{Archimate::Color.color(name, [:white, :underline])}]"
+        "#{Archimate::Color.data_model('Organization')}<#{id}>[#{Archimate::Color.color(name, [:white, :underline])}]"
       end
 
       def referenced_identified_nodes
-        folders.reduce(items) do |a, e|
+        organizations.reduce(items) do |a, e|
           a.concat(e.referenced_identified_nodes)
         end
       end
@@ -38,6 +38,6 @@ module Archimate
         items.delete(id)
       end
     end
-    Dry::Types.register_class(Folder)
+    Dry::Types.register_class(Organization)
   end
 end

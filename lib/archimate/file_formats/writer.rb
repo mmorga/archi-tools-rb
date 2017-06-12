@@ -31,8 +31,8 @@ module Archimate
             serialize_documentation(xml, item)
           when DataModel::Element
             serialize_element(xml, item)
-          when DataModel::Folder
-            serialize_folder(xml, item)
+          when DataModel::Organization
+            serialize_organization(xml, item)
           when DataModel::Font
             serialize_font(xml, item)
           when DataModel::Model

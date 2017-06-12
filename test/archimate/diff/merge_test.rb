@@ -325,23 +325,23 @@ module Archimate
         assert_equal expected_elements, merged.elements
       end
 
-      # This test tests the case when an item is moved to a sub-folder and
-      # the sub-folder is deleted.
-      def test_merge_with_element_moving_folders
+      # This test tests the case when an item is moved to a sub-organization and
+      # the sub-organization is deleted.
+      def test_merge_with_element_moving_organizations
         el_list_1 = build_element_list(with_elements: 3)
         el_list_2 = build_element_list(with_elements: 3)
         moving_element = build_element
         base = build_model(
           elements: el_list_1 + [moving_element] + el_list_2,
-          folders: [
-            build_folder(
-              name: "top level folder",
+          organizations: [
+            build_organization(
+              name: "top level organization",
               items: (el_list_1 + el_list_2).map(&:id),
-              folders: [
-                build_folder(
-                  name: "sub folder",
+              organizations: [
+                build_organization(
+                  name: "sub organization",
                   items: [moving_element.id],
-                  folders: []
+                  organizations: []
                 )
               ]
             )
@@ -350,10 +350,10 @@ module Archimate
 
         local = base.clone
         remote = base.with(
-          folders: [
-            base.folders[0].with(
-              items: base.folders[0].items + [moving_element.id],
-              folders: []
+          organizations: [
+            base.organizations[0].with(
+              items: base.organizations[0].items + [moving_element.id],
+              organizations: []
             )
           ]
         )
@@ -361,9 +361,9 @@ module Archimate
         merged, conflicts = @subject.three_way(base, local, remote)
 
         assert_empty conflicts
-        assert_equal remote.folders.size, merged.folders.size
-        assert_empty merged.folders[0].folders
-        assert_includes merged.folders[0].items, moving_element.id
+        assert_equal remote.organizations.size, merged.organizations.size
+        assert_empty merged.organizations[0].organizations
+        assert_includes merged.organizations[0].items, moving_element.id
         assert_equal remote, merged
       end
     end

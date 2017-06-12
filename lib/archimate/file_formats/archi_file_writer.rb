@@ -52,19 +52,19 @@ module Archimate
           "id" => model.id,
           "version" => @version
         ) do
-          serialize(xml, model.folders)
+          serialize(xml, model.organizations)
           serialize(xml, model.properties)
           model.documentation.each { |d| serialize_documentation(xml, d, "purpose") }
         end
       end
 
-      def serialize_folder(xml, folder)
+      def serialize_organization(xml, organization)
         xml.folder(
-          remove_nil_values(name: folder.name, id: folder.id, type: folder.type)
+          remove_nil_values(name: organization.name, id: organization.id, type: organization.type)
         ) do
-          serialize(xml, folder.folders)
-          serialize(xml, folder.documentation)
-          folder.items.each { |i| serialize_item(xml, i) }
+          serialize(xml, organization.organizations)
+          serialize(xml, organization.documentation)
+          organization.items.each { |i| serialize_item(xml, i) }
         end
       end
 

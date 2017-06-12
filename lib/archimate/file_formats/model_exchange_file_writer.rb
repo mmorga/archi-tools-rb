@@ -39,7 +39,7 @@ module Archimate
           serialize_properties(xml, model)
           serialize_elements(xml)
           serialize_relationships(xml)
-          serialize_organization(xml, model.folders)
+          serialize_organization_root(xml, model.organizations)
           serialize_property_defs(xml)
           serialize_views(xml)
         end
@@ -113,19 +113,19 @@ module Archimate
         end
       end
 
-      def serialize_organization(xml, folders)
+      def serialize_organization_root(xml, organizations)
         xml.organization do
-          serialize(xml, folders)
+          serialize(xml, organizations)
         end
       end
 
-      def serialize_folder(xml, folder)
-        return if folder.items.empty? && folder.documentation.empty? && folder.properties.empty? && folder.folders.empty?
+      def serialize_organization(xml, organization)
+        return if organization.items.empty? && organization.documentation.empty? && organization.properties.empty? && organization.organizations.empty?
         xml.item do
-          serialize_label(xml, folder.name)
-          serialize(xml, folder.documentation)
-          serialize(xml, folder.folders)
-          folder.items.each { |i| serialize_item(xml, i) }
+          serialize_label(xml, organization.name)
+          serialize(xml, organization.documentation)
+          serialize(xml, organization.organizations)
+          organization.items.each { |i| serialize_item(xml, i) }
         end
       end
 

@@ -6,7 +6,7 @@ module Archimate
     class ArchimateReferenceableReferenceTest < Minitest::Test
       using DataModel::DiffableArray
       def setup
-        @model = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 3, with_folders: 4)
+        @model = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 3, with_organizations: 4)
         @subject = ArchimateReferenceableReference.new(@model.elements.first)
 
         @other = @model.with(elements: [build_element] + @model.elements)

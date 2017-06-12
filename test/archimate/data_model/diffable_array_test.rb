@@ -44,7 +44,7 @@ module Archimate
         local = base.with(elements: base.elements + [inserted_element])
 
         diffs = base.diff(local)
-        non_folder_diffs = diffs.reject { |diff| diff.target.path =~ /^folders/ }
+        non_organization_diffs = diffs.reject { |diff| diff.target.path =~ /^organizations/ }
 
         assert_equal(
           [
@@ -55,7 +55,7 @@ module Archimate
               )
             )
           ],
-          non_folder_diffs
+          non_organization_diffs
         )
 
         merged = diffs.inject(base.clone) { |ary, diff| diff.apply(ary) }
@@ -318,7 +318,7 @@ module Archimate
         )
 
         diffs = @model.diff(local)
-        non_folder_diffs = diffs.reject { |diff| diff.target.path =~ /^folders/ }
+        non_organization_diffs = diffs.reject { |diff| diff.target.path =~ /^organizations/ }
 
         assert_equal(
           [
@@ -330,7 +330,7 @@ module Archimate
               Diff::ArchimateArrayReference.new(local.elements, 3)
             )
           ],
-          non_folder_diffs
+          non_organization_diffs
         )
       end
 
@@ -470,22 +470,22 @@ module Archimate
 
       def test_previous_item_index
         base = build_model(
-          folders: [
-            build_folder(
+          organizations: [
+            build_organization(
               items: %w(m n o a b x y z c)
             )
           ]
         )
         local = base.with(
-          folders: [
-            base.folders[0].with(
+          organizations: [
+            base.organizations[0].with(
               items: %w(a c b d)
             )
           ]
         )
 
-        base_items = base.folders[0].items
-        local_items = local.folders[0].items
+        base_items = base.organizations[0].items
+        local_items = local.organizations[0].items
 
         assert_equal(-1, base_items.previous_item_index(local_items, local_items[0]))
         assert_equal(4, base_items.previous_item_index(local_items, local_items[1]))
@@ -495,23 +495,23 @@ module Archimate
 
       def test_previous_item_index_for_reverse_case
         base = build_model(
-          folders: [
-            build_folder(
+          organizations: [
+            build_organization(
               items: %w(a b c)
             )
           ]
         )
         local = base.with(
-          folders: [
-            base.folders[0].with(
+          organizations: [
+            base.organizations[0].with(
               items: %w(c b a)
             )
           ]
         )
 
         merged = base.clone
-        merged_items = merged.folders[0].items
-        local_items = local.folders[0].items
+        merged_items = merged.organizations[0].items
+        local_items = local.organizations[0].items
 
         assert_equal(1, merged_items.previous_item_index(local_items, local_items[0]))
         assert_equal(0, merged_items.previous_item_index(local_items, local_items[1]))
@@ -521,8 +521,8 @@ module Archimate
       private
 
       def array_diff_merge_test_case(base_ary, local_ary, expected)
-        base = build_model(folders: [build_folder(items: base_ary)])
-        local = base.with(folders: [base.folders[0].with(items: local_ary)])
+        base = build_model(organizations: [build_organization(items: base_ary)])
+        local = base.with(organizations: [base.organizations[0].with(items: local_ary)])
 
         diffs = base.diff(local)
 
@@ -531,31 +531,31 @@ module Archimate
         assert_equal expected.call(base, local), diffs
         assert_equal local, merged
 
-        merged_ary = base.folders[0].items.clone.patch(diffs)
+        merged_ary = base.organizations[0].items.clone.patch(diffs)
 
-        assert_equal local.folders[0].items, merged_ary
+        assert_equal local.organizations[0].items, merged_ary
       end
 
       def array_change(local, local_idx, base, base_idx)
         Diff::Change.new(
-          Diff::ArchimateArrayReference.new(local.folders[0].items, local_idx),
-          Diff::ArchimateArrayReference.new(base.folders[0].items, base_idx)
+          Diff::ArchimateArrayReference.new(local.organizations[0].items, local_idx),
+          Diff::ArchimateArrayReference.new(base.organizations[0].items, base_idx)
         )
       end
 
       def array_move(local, local_idx, base, base_idx)
         Diff::Move.new(
-          Diff::ArchimateArrayReference.new(local.folders[0].items, local_idx),
-          Diff::ArchimateArrayReference.new(base.folders[0].items, base_idx)
+          Diff::ArchimateArrayReference.new(local.organizations[0].items, local_idx),
+          Diff::ArchimateArrayReference.new(base.organizations[0].items, base_idx)
         )
       end
 
       def array_delete(base, base_idx)
-        Diff::Delete.new(Diff::ArchimateArrayReference.new(base.folders[0].items, base_idx))
+        Diff::Delete.new(Diff::ArchimateArrayReference.new(base.organizations[0].items, base_idx))
       end
 
       def array_insert(local, local_idx)
-        Diff::Insert.new(Diff::ArchimateArrayReference.new(local.folders[0].items, local_idx))
+        Diff::Insert.new(Diff::ArchimateArrayReference.new(local.organizations[0].items, local_idx))
       end
 
       def validate_model_refs(node, model)

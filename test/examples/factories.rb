@@ -55,14 +55,14 @@ module Archimate
         elements = build_element_list(options)
         relationships = build_relationship_list(options.merge(elements: elements))
         diagrams = options.fetch(:diagrams, build_diagram_list(options.merge(elements: elements, relationships: relationships)))
-        folders = options.fetch(:folders, build_folder_list(options))
+        organizations = options.fetch(:organizations, build_organization_list(options))
         Archimate::DataModel::Model.new(
           id: model_id,
           name: options.fetch(:name, Faker::Company.name),
           documentation: build_documentation_list(options),
           properties: options.fetch(:properties, []),
           elements: elements,
-          folders: folders,
+          organizations: organizations,
           relationships: relationships,
           property_definitions: options.fetch(:property_definitions, []),
           diagrams: diagrams,
@@ -187,25 +187,25 @@ module Archimate
         )
       end
 
-      def build_folder_list(options)
-        count = options.fetch(:with_folders, 0)
+      def build_organization_list(options)
+        count = options.fetch(:with_organizations, 0)
         (1..count).map do
-          build_folder(
+          build_organization(
             items: options.fetch(:items, []),
-            folders: options.fetch(:child_folders, [])
+            organizations: options.fetch(:child_organizations, [])
           )
         end
       end
 
-      def build_folder(options = {})
-        Archimate::DataModel::Folder.new(
+      def build_organization(options = {})
+        Archimate::DataModel::Organization.new(
           id: options.fetch(:id, build_id),
           name: options.fetch(:name, Faker::Commerce.department),
           type: options.fetch(:type, nil),
           documentation: options.fetch(:documentation, []),
           properties: options.fetch(:properties, []),
           items: options.fetch(:items, []),
-          folders: options.fetch(:folders, [])
+          organizations: options.fetch(:organizations, [])
         )
       end
 

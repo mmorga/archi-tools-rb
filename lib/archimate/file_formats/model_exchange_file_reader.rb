@@ -35,7 +35,7 @@ module Archimate
           properties: parse_properties(root),
           elements: parse_elements(root),
           relationships: parse_relationships(root),
-          folders: parse_folders(root.css(">organization>item")),
+          organizations: parse_organizations(root.css(">organization>item")),
           diagrams: parse_diagrams(root),
           property_definitions: @property_defs.values
         )
@@ -94,18 +94,18 @@ module Archimate
         end
       end
 
-      def parse_folders(nodes)
+      def parse_organizations(nodes)
         nodes.map do |i|
           child_items = i.css(">item")
           ref_items = child_items.select { |ci| ci.has_attribute?("identifierref") }
-          DataModel::Folder.new(
-            id: i.at_css(">label")&.content, # TODO: model exchange doesn't assign ids to folder items
+          DataModel::Organization.new(
+            id: i.at_css(">label")&.content, # TODO: model exchange doesn't assign ids to organization items
             name: i.at_css(">label")&.content,
             type: nil,
             documentation: parse_documentation(i),
             properties: parse_properties(i),
             items: ref_items.map { |ri| identifier_to_id(ri["identifierref"]) },
-            folders: parse_folders(child_items.reject { |ci| ci.has_attribute?("identifierref") })
+            organizations: parse_organizations(child_items.reject { |ci| ci.has_attribute?("identifierref") })
           )
         end
       end

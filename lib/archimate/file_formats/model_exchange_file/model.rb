@@ -13,7 +13,7 @@ module Archimate
             properties: parse_properties(root),
             elements: parse_elements(root),
             relationships: parse_relationships(root),
-            folders: parse_folders(root.css(">organization>item")),
+            organizations: parse_organizations(root.css(">organization>item")),
             diagrams: parse_diagrams(root)
           )
         end

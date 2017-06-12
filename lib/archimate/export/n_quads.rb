@@ -5,7 +5,7 @@
 #
 # The approach is to as follows:
 #
-# For each element in the model (not under the "Views" folder)
+# For each element in the model (not under the "Views" organization)
 #   (Which looks like this:
 #     <element xsi:type="archimate:BusinessProcess" id="0f6c2750"
 #       name="Start Provisioning"/>)

@@ -7,12 +7,12 @@ module Archimate
       attr_accessor :model, :to_model
 
       def setup
-        @model = build_model(with_relationships: 2, with_folders: 2, with_diagrams: 2)
+        @model = build_model(with_relationships: 2, with_organizations: 2, with_diagrams: 2)
         @to_model = build_model
       end
 
       def test_change
-        folder = model.folders.first
+        organization = model.organizations.first
         remote = model.with(
           diagrams: [
             model.diagrams[0].with(
@@ -21,7 +21,7 @@ module Archimate
           ]
         )
 
-        change_diff = Change.new(ArchimateNodeAttributeReference.new(folder, :name), ArchimateNodeAttributeReference.new(folder, :name))
+        change_diff = Change.new(ArchimateNodeAttributeReference.new(organization, :name), ArchimateNodeAttributeReference.new(organization, :name))
         insert_diff = Insert.new(ArchimateArrayReference.new(remote.diagrams[0].children, 0))
 
         assert change_diff.change?
@@ -53,17 +53,17 @@ module Archimate
           "Model<bee5a0a7>/diagrams/[121]/children/[4]/children/[0]/archimate_element",
           "Model<bee5a0a7>/diagrams/[121]/children/[4]/archimate_element",
           "Model<bee5a0a7>/relationships/[5689]",
-          "Model<bee5a0a7>/folders/[8]/items/[46]",
-          "Model<bee5a0a7>/folders/[8]/items/[35]",
-          "Model<bee5a0a7>/folders/[8]/folders/[9]/folders/[2]",
-          "Model<bee5a0a7>/folders/[8]/folders/[6]/folders/[5]",
-          "Model<bee5a0a7>/folders/[8]/folders/[6]/folders/[4]",
-          "Model<bee5a0a7>/folders/[8]/folders/[37]",
-          "Model<bee5a0a7>/folders/[8]/folders/[33]/items/[2]",
-          "Model<bee5a0a7>/folders/[8]/folders/[1]/folders/[1]/folders/[0]",
-          "Model<bee5a0a7>/folders/[7]/items/[28]",
-          "Model<bee5a0a7>/folders/[6]/items/[6978]",
-          "Model<bee5a0a7>/folders/[6]/items/[6976]",
+          "Model<bee5a0a7>/organizations/[8]/items/[46]",
+          "Model<bee5a0a7>/organizations/[8]/items/[35]",
+          "Model<bee5a0a7>/organizations/[8]/organizations/[9]/organizations/[2]",
+          "Model<bee5a0a7>/organizations/[8]/organizations/[6]/organizations/[5]",
+          "Model<bee5a0a7>/organizations/[8]/organizations/[6]/organizations/[4]",
+          "Model<bee5a0a7>/organizations/[8]/organizations/[37]",
+          "Model<bee5a0a7>/organizations/[8]/organizations/[33]/items/[2]",
+          "Model<bee5a0a7>/organizations/[8]/organizations/[1]/organizations/[1]/organizations/[0]",
+          "Model<bee5a0a7>/organizations/[7]/items/[28]",
+          "Model<bee5a0a7>/organizations/[6]/items/[6978]",
+          "Model<bee5a0a7>/organizations/[6]/items/[6976]",
           "Model<bee5a0a7>/elements/[1483]"
         ]
         expected_paths = [
@@ -88,17 +88,17 @@ module Archimate
           "Model<bee5a0a7>/diagrams/[90]/children/[7]/archimate_element",
           "Model<bee5a0a7>/diagrams/[121]/children/[4]/archimate_element",
           "Model<bee5a0a7>/diagrams/[121]/children/[4]/children/[0]/archimate_element",
-          "Model<bee5a0a7>/folders/[6]/items/[6976]",
-          "Model<bee5a0a7>/folders/[6]/items/[6978]",
-          "Model<bee5a0a7>/folders/[7]/items/[28]",
-          "Model<bee5a0a7>/folders/[8]/folders/[1]/folders/[1]/folders/[0]",
-          "Model<bee5a0a7>/folders/[8]/folders/[6]/folders/[4]",
-          "Model<bee5a0a7>/folders/[8]/folders/[6]/folders/[5]",
-          "Model<bee5a0a7>/folders/[8]/folders/[9]/folders/[2]",
-          "Model<bee5a0a7>/folders/[8]/folders/[33]/items/[2]",
-          "Model<bee5a0a7>/folders/[8]/folders/[37]",
-          "Model<bee5a0a7>/folders/[8]/items/[35]",
-          "Model<bee5a0a7>/folders/[8]/items/[46]"
+          "Model<bee5a0a7>/organizations/[6]/items/[6976]",
+          "Model<bee5a0a7>/organizations/[6]/items/[6978]",
+          "Model<bee5a0a7>/organizations/[7]/items/[28]",
+          "Model<bee5a0a7>/organizations/[8]/organizations/[1]/organizations/[1]/organizations/[0]",
+          "Model<bee5a0a7>/organizations/[8]/organizations/[6]/organizations/[4]",
+          "Model<bee5a0a7>/organizations/[8]/organizations/[6]/organizations/[5]",
+          "Model<bee5a0a7>/organizations/[8]/organizations/[9]/organizations/[2]",
+          "Model<bee5a0a7>/organizations/[8]/organizations/[33]/items/[2]",
+          "Model<bee5a0a7>/organizations/[8]/organizations/[37]",
+          "Model<bee5a0a7>/organizations/[8]/items/[35]",
+          "Model<bee5a0a7>/organizations/[8]/items/[46]"
         ]
         diffs = paths.map { |p| Delete.new(p, model, "n/a") }
 

@@ -8,7 +8,7 @@ module Archimate
       ELEMENT_COUNT = 4
 
       def setup
-        @subject = build_model(with_relationships: 2, with_diagrams: 2, with_elements: ELEMENT_COUNT, with_folders: 4)
+        @subject = build_model(with_relationships: 2, with_diagrams: 2, with_elements: ELEMENT_COUNT, with_organizations: 4)
       end
 
       def test_build_model
@@ -30,7 +30,7 @@ module Archimate
       def test_lookup
         @subject.relationships.each { |r| assert_equal r, @subject.lookup(r.id) }
         @subject.elements.each { |e| assert_equal e, @subject.lookup(e.id) }
-        @subject.folders.each { |f| assert_equal f, @subject.lookup(f.id) }
+        @subject.organizations.each { |f| assert_equal f, @subject.lookup(f.id) }
         @subject.diagrams.each do |d|
           assert_equal d, @subject.lookup(d.id)
           refute d.children.empty?
@@ -69,19 +69,19 @@ module Archimate
 
       def test_referenced_identified_nodes
         subject = build_model(
-          folders: [
-            build_folder(
-              folders: [
-                build_folder(
-                  folders: [
-                    build_folder(
-                      folders: [],
+          organizations: [
+            build_organization(
+              organizations: [
+                build_organization(
+                  organizations: [
+                    build_organization(
+                      organizations: [],
                       items: %w[a b c]
                     )
                   ],
                   items: %w[d e f]
                 ),
-                build_folder(folders: [], items: %w[g h i])
+                build_organization(organizations: [], items: %w[g h i])
               ],
               items: %w[j k]
             )
@@ -125,146 +125,146 @@ module Archimate
         end
       end
 
-      def xtest_find_in_folders_with_no_folders
-        subject = @subject.with(folders: [])
+      def xtest_find_in_organizations_with_no_organizations
+        subject = @subject.with(organizations: [])
         index_hash = subject.instance_variable_get(:@index_hash)
         index_hash.values.each do |item|
-          refute subject.find_in_folders(item)
+          refute subject.find_in_organizations(item)
         end
       end
 
-      def test_find_in_folders
+      def test_find_in_organizations
         @subject.elements.each do |el|
-          assert_kind_of DataModel::Folder, @subject.find_in_folders(el)
+          assert_kind_of DataModel::Organization, @subject.find_in_organizations(el)
         end
         @subject.relationships.each do |el|
-          assert_equal "Relations", @subject.find_in_folders(el).name
+          assert_equal "Relations", @subject.find_in_organizations(el).name
         end
         @subject.diagrams.each do |el|
-          assert_equal "Views", @subject.find_in_folders(el).name
+          assert_equal "Views", @subject.find_in_organizations(el).name
         end
       end
 
-      def test_default_folder_for_with_no_initial_folders
-        folder = @subject.default_folder_for(build_element(type: "BusinessActor"))
-        assert_equal "Business", folder.name
+      def test_default_organization_for_with_no_initial_organizations
+        organization = @subject.default_organization_for(build_element(type: "BusinessActor"))
+        assert_equal "Business", organization.name
 
-        folder = @subject.default_folder_for(build_element(type: "ApplicationComponent"))
-        assert_equal "Application", folder.name
+        organization = @subject.default_organization_for(build_element(type: "ApplicationComponent"))
+        assert_equal "Application", organization.name
 
-        folder = @subject.default_folder_for(build_element(type: "Node"))
-        assert_equal "Technology", folder.name
+        organization = @subject.default_organization_for(build_element(type: "Node"))
+        assert_equal "Technology", organization.name
 
-        folder = @subject.default_folder_for(build_element(type: "Goal"))
-        assert_equal "Motivation", folder.name
+        organization = @subject.default_organization_for(build_element(type: "Goal"))
+        assert_equal "Motivation", organization.name
 
-        folder = @subject.default_folder_for(build_element(type: "Gap"))
-        assert_equal "Implementation & Migration", folder.name
+        organization = @subject.default_organization_for(build_element(type: "Gap"))
+        assert_equal "Implementation & Migration", organization.name
 
-        folder = @subject.default_folder_for(build_element(type: "Junction"))
-        assert_equal "Connectors", folder.name
+        organization = @subject.default_organization_for(build_element(type: "Junction"))
+        assert_equal "Connectors", organization.name
 
-        folder = @subject.default_folder_for(build_relationship)
-        assert_equal "Relations", folder.name
+        organization = @subject.default_organization_for(build_relationship)
+        assert_equal "Relations", organization.name
 
-        folder = @subject.default_folder_for(build_diagram)
-        assert_equal "Views", folder.name
+        organization = @subject.default_organization_for(build_diagram)
+        assert_equal "Views", organization.name
       end
 
-      def test_default_folder_for_with_initial_folders_by_type
+      def test_default_organization_for_with_initial_organizations_by_type
         subject = @subject.with(
-          folders: [
-            build_folder(type: "business"),
-            build_folder(type: "application"),
-            build_folder(type: "technology"),
-            build_folder(type: "motivation"),
-            build_folder(type: "implementation_migration"),
-            build_folder(type: "connectors"),
-            build_folder(type: "relations"),
-            build_folder(type: "diagrams")
+          organizations: [
+            build_organization(type: "business"),
+            build_organization(type: "application"),
+            build_organization(type: "technology"),
+            build_organization(type: "motivation"),
+            build_organization(type: "implementation_migration"),
+            build_organization(type: "connectors"),
+            build_organization(type: "relations"),
+            build_organization(type: "diagrams")
           ]
         )
-        folder = subject.default_folder_for(build_element(type: "BusinessActor"))
-        assert_equal "business", folder.type
+        organization = subject.default_organization_for(build_element(type: "BusinessActor"))
+        assert_equal "business", organization.type
 
-        folder = subject.default_folder_for(build_element(type: "ApplicationComponent"))
-        assert_equal "application", folder.type
+        organization = subject.default_organization_for(build_element(type: "ApplicationComponent"))
+        assert_equal "application", organization.type
 
-        folder = subject.default_folder_for(build_element(type: "Node"))
-        assert_equal "technology", folder.type
+        organization = subject.default_organization_for(build_element(type: "Node"))
+        assert_equal "technology", organization.type
 
-        folder = subject.default_folder_for(build_element(type: "Goal"))
-        assert_equal "motivation", folder.type
+        organization = subject.default_organization_for(build_element(type: "Goal"))
+        assert_equal "motivation", organization.type
 
-        folder = subject.default_folder_for(build_element(type: "Gap"))
-        assert_equal "implementation_migration", folder.type
+        organization = subject.default_organization_for(build_element(type: "Gap"))
+        assert_equal "implementation_migration", organization.type
 
-        folder = subject.default_folder_for(build_element(type: "Junction"))
-        assert_equal "connectors", folder.type
+        organization = subject.default_organization_for(build_element(type: "Junction"))
+        assert_equal "connectors", organization.type
 
-        folder = subject.default_folder_for(build_relationship)
-        assert_equal "relations", folder.type
+        organization = subject.default_organization_for(build_relationship)
+        assert_equal "relations", organization.type
 
-        folder = subject.default_folder_for(build_diagram)
-        assert_equal "diagrams", folder.type
+        organization = subject.default_organization_for(build_diagram)
+        assert_equal "diagrams", organization.type
       end
 
-      def test_default_folder_for_with_initial_folders_by_name
+      def test_default_organization_for_with_initial_organizations_by_name
         subject = @subject.with(
-          folders: [
-            build_folder(name: "Business"),
-            build_folder(name: "Application"),
-            build_folder(name: "Technology"),
-            build_folder(name: "Motivation"),
-            build_folder(name: "Implementation & Migration"),
-            build_folder(name: "Connectors"),
-            build_folder(name: "Relations"),
-            build_folder(name: "Diagrams")
+          organizations: [
+            build_organization(name: "Business"),
+            build_organization(name: "Application"),
+            build_organization(name: "Technology"),
+            build_organization(name: "Motivation"),
+            build_organization(name: "Implementation & Migration"),
+            build_organization(name: "Connectors"),
+            build_organization(name: "Relations"),
+            build_organization(name: "Diagrams")
           ]
         )
-        folder = subject.default_folder_for(build_element(type: "BusinessActor"))
-        assert_equal "Business", folder.name
+        organization = subject.default_organization_for(build_element(type: "BusinessActor"))
+        assert_equal "Business", organization.name
 
-        folder = subject.default_folder_for(build_element(type: "ApplicationComponent"))
-        assert_equal "Application", folder.name
+        organization = subject.default_organization_for(build_element(type: "ApplicationComponent"))
+        assert_equal "Application", organization.name
 
-        folder = subject.default_folder_for(build_element(type: "Node"))
-        assert_equal "Technology", folder.name
+        organization = subject.default_organization_for(build_element(type: "Node"))
+        assert_equal "Technology", organization.name
 
-        folder = subject.default_folder_for(build_element(type: "Goal"))
-        assert_equal "Motivation", folder.name
+        organization = subject.default_organization_for(build_element(type: "Goal"))
+        assert_equal "Motivation", organization.name
 
-        folder = subject.default_folder_for(build_element(type: "Gap"))
-        assert_equal "Implementation & Migration", folder.name
+        organization = subject.default_organization_for(build_element(type: "Gap"))
+        assert_equal "Implementation & Migration", organization.name
 
-        folder = subject.default_folder_for(build_element(type: "Junction"))
-        assert_equal "Connectors", folder.name
+        organization = subject.default_organization_for(build_element(type: "Junction"))
+        assert_equal "Connectors", organization.name
 
-        folder = subject.default_folder_for(build_relationship)
-        assert_equal "Relations", folder.name
+        organization = subject.default_organization_for(build_relationship)
+        assert_equal "Relations", organization.name
 
-        folder = subject.default_folder_for(build_diagram)
-        assert_equal "Views", folder.name
+        organization = subject.default_organization_for(build_diagram)
+        assert_equal "Views", organization.name
       end
 
       def test_make_unique_id
         assert_match(/^[a-f0-9]{8}$/, @subject.make_unique_id)
       end
 
-      def test_element_move_folders
+      def test_element_move_organizations
         base = build_model(
           elements: [
             build_element(id: "1234abcd", type: "BusinessActor")
           ],
-          folders: [
-            build_folder(
+          organizations: [
+            build_organization(
               id: "ffff1111",
               name: "Business",
               type: "business",
-              folders: [
-                build_folder(
+              organizations: [
+                build_organization(
                   id: "ffff2222",
-                  name: "Red Shirt Folder",
+                  name: "Red Shirt Organization",
                   items: ["1234abcd"]
                 )
               ]
@@ -272,10 +272,10 @@ module Archimate
           ]
         )
         local = base.with(
-          folders: [
-            base.folders[0].with(
+          organizations: [
+            base.organizations[0].with(
               items: ["1234abcd"],
-              folders: []
+              organizations: []
             )
           ]
         )
@@ -284,8 +284,8 @@ module Archimate
 
         assert_equal(
           [
-            Diff::Insert.new(Diff::ArchimateArrayReference.new(local.folders[0].items, 0)),
-            Diff::Delete.new(Diff::ArchimateArrayReference.new(base.folders[0].folders, 0))
+            Diff::Insert.new(Diff::ArchimateArrayReference.new(local.organizations[0].items, 0)),
+            Diff::Delete.new(Diff::ArchimateArrayReference.new(base.organizations[0].organizations, 0))
           ],
           result
         )
@@ -293,7 +293,7 @@ module Archimate
 
       def test_organize
         model = build_model
-        assert_empty model.folders
+        assert_empty model.organizations
 
         layer_els = Archimate::DataModel::Constants::LAYER_ELEMENTS
         (1..layer_els.size).each do |i|
@@ -302,7 +302,7 @@ module Archimate
               build_element(type: layer_els[layer_els.keys[idx]][0])
             end
           )
-          assert_equal i, model.folders.size
+          assert_equal i, model.organizations.size
         end
       end
     end

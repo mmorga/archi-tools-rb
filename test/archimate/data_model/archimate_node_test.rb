@@ -59,7 +59,7 @@ module Archimate
         assert_equal @base[:properties], m2[:properties]
         assert_nil m2[:type]
         assert_equal @base[:elements], m2[:elements]
-        assert_equal @base[:folders], m2[:folders]
+        assert_equal @base[:organizations], m2[:organizations]
         assert_equal @base[:relationships], m2[:relationships]
         assert_equal @base[:diagrams], m2[:diagrams]
       end
@@ -102,7 +102,7 @@ module Archimate
       end
 
       def test_diff_with_changed_name
-        m1 = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_folders: 4)
+        m1 = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_organizations: 4)
         m2 = m1.with(name: "#{m1.name}-changed")
 
         diffs = m1.diff(m2)
@@ -112,7 +112,7 @@ module Archimate
       end
 
       def test_that_with_clones_passed_in_attributes
-        m1 = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_folders: 4)
+        m1 = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_organizations: 4)
         _m2 = m1.with(elements: m1.elements)
 
         assert_same m1, m1.elements.parent

@@ -10,7 +10,7 @@ module Archimate
       extend Forwardable
 
       ARRAY_RE = Regexp.compile(/\[(\d+)\]/)
-      PATH_ROOT_SORT_ORDER = %w[elements relationships diagrams folders].freeze
+      PATH_ROOT_SORT_ORDER = %w[elements relationships diagrams organizations].freeze
 
       # delete: something responds to parent, child attribute (which is thing deleted - and could be sym for archimate nodes or index for array), value
       # insert: something responds to parent, child attribute (or index), value, after value (to help with inserts)
@@ -54,7 +54,7 @@ module Archimate
       end
 
       # Difference sorting is based on the path.
-      # Top level components are sorted in this order: (elements, relationships, diagrams, folders)
+      # Top level components are sorted in this order: (elements, relationships, diagrams, organizations)
       # Array entries are sorted by numeric order
       # Others are sorted alphabetically
       # TODO: this isn't complete
@@ -103,7 +103,7 @@ module Archimate
       end
 
       def summary_element
-        summary_elements = [DataModel::Element, DataModel::Folder, DataModel::Relationship, DataModel::Diagram, DataModel::Model]
+        summary_elements = [DataModel::Element, DataModel::Organization, DataModel::Relationship, DataModel::Diagram, DataModel::Model]
         se = target.value.primitive? ? target.parent : target.value
         se = se.parent while summary_elements.none? { |c| se.is_a?(c) }
         se

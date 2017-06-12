@@ -29,14 +29,14 @@ module Archimate
         assert_equal 17, model.diagrams.size
       end
 
-      def test_folders
-        folders = model.folders
-        assert_equal 8, folders.size
-        assert folders.all? { |e| e.is_a? DataModel::Folder }
-        assert_equal 5, folders.find { |i| i.id == '8c90fdfa' }.folders.size
-        assert_equal 30, folders.find { |i| i.id == '8c90fdfa' }.folders.find { |i| i.id == 'fa63373b' }.items.size
-        assert folders.find { |i| i.id == '8c90fdfa' }.folders.find { |i| i.id == 'fa63373b' }.items.all? { |e| e.is_a? String }
-        assert_equal "1544", folders.find { |i| i.id == '8c90fdfa' }.folders.find { |i| i.id == 'fa63373b' }.items[0]
+      def test_organizations
+        organizations = model.organizations
+        assert_equal 8, organizations.size
+        assert organizations.all? { |e| e.is_a? DataModel::Organization }
+        assert_equal 5, organizations.find { |i| i.id == '8c90fdfa' }.organizations.size
+        assert_equal 30, organizations.find { |i| i.id == '8c90fdfa' }.organizations.find { |i| i.id == 'fa63373b' }.items.size
+        assert organizations.find { |i| i.id == '8c90fdfa' }.organizations.find { |i| i.id == 'fa63373b' }.items.all? { |e| e.is_a? String }
+        assert_equal "1544", organizations.find { |i| i.id == '8c90fdfa' }.organizations.find { |i| i.id == 'fa63373b' }.items[0]
       end
     end
   end

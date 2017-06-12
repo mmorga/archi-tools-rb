@@ -78,10 +78,10 @@ module Archimate
         )
       end
 
-      def test_folders
-        folders = model.folders
-        assert_equal 6, folders.size
-        assert folders.all? { |e| e.is_a? DataModel::Folder }
+      def test_organizations
+        organizations = model.organizations
+        assert_equal 6, organizations.size
+        assert organizations.all? { |e| e.is_a? DataModel::Organization }
       end
 
       def test_diagrams

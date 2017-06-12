@@ -55,11 +55,11 @@ module Archimate
         end
       end
 
-      def build_folder_hash(folders, parent = "", hash = {})
-        folders.each_with_object(hash) do |i, a|
-          folder_path = [parent, i.name].join("/")
-          a[folder_path] = i
-          build_folder_hash(i.folders, folder_path, a)
+      def build_organization_hash(organizations, parent = "", hash = {})
+        organizations.each_with_object(hash) do |i, a|
+          organization_path = [parent, i.name].join("/")
+          a[organization_path] = i
+          build_organization_hash(i.organizations, organization_path, a)
         end
       end
 
@@ -67,11 +67,11 @@ module Archimate
         widths = compute_column_widths(process_diagrams(model.diagrams), HEADERS)
         adjusted_widths = widths.inject(COL_DIVIDER.size * (HEADERS.size - 1), &:+)
         header_row(widths, HEADERS)
-        folder_paths = build_folder_hash(model.folders)
-        folder_paths.keys.sort.each do |folder_name|
-          diagrams = folder_paths[folder_name].items.map { |i| model.lookup(i) }.select { |i| i.is_a?(DataModel::Diagram) }
+        organization_paths = build_organization_hash(model.organizations)
+        organization_paths.keys.sort.each do |organization_name|
+          diagrams = organization_paths[organization_name].items.map { |i| model.lookup(i) }.select { |i| i.is_a?(DataModel::Diagram) }
           next if diagrams.empty?
-          @output.puts(Color.color(format("%-#{adjusted_widths}s", folder_name), %i[bold green on_light_black]))
+          @output.puts(Color.color(format("%-#{adjusted_widths}s", organization_name), %i[bold green on_light_black]))
           output_diagrams(process_diagrams(diagrams), widths)
         end
 

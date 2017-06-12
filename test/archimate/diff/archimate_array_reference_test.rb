@@ -7,7 +7,7 @@ module Archimate
       using DataModel::DiffableArray
 
       def setup
-        @model = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 3, with_folders: 4)
+        @model = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 3, with_organizations: 4)
         @subject = ArchimateArrayReference.new(@model.elements, 1)
         @other = @model.clone
       end
@@ -39,71 +39,71 @@ module Archimate
 
       def test_move_with_primitive
         base = build_model(
-          folders: [
-            build_folder(
+          organizations: [
+            build_organization(
               items: %w(a b c)
             )
           ]
         )
 
-        local = base.with(folders: [ base.folders[0].with(items: %w(a c b))])
+        local = base.with(organizations: [ base.organizations[0].with(items: %w(a c b))])
 
-        subject = ArchimateArrayReference.new(local.folders[0].items, 1)
+        subject = ArchimateArrayReference.new(local.organizations[0].items, 1)
 
         result = base.clone
 
-        assert_same result.folders[0].items, subject.lookup_parent_in_model(result)
-        refute_same local.folders[0].items, subject.lookup_parent_in_model(result)
-        subject.move(result, ArchimateArrayReference.new(base.folders[0].items, 2))
+        assert_same result.organizations[0].items, subject.lookup_parent_in_model(result)
+        refute_same local.organizations[0].items, subject.lookup_parent_in_model(result)
+        subject.move(result, ArchimateArrayReference.new(base.organizations[0].items, 2))
 
         assert_equal local, result
       end
 
       def test_move_with_primitive_to_reverse_order
         base = build_model(
-          folders: [
-            build_folder(
+          organizations: [
+            build_organization(
               items: %w(a b c)
             )
           ]
         )
 
-        local = base.with(folders: [ base.folders[0].with(items: %w(c b a))])
+        local = base.with(organizations: [ base.organizations[0].with(items: %w(c b a))])
         result = base.clone
 
         ArchimateArrayReference.new(
-          local.folders[0].items, 0
-        ).move(result, ArchimateArrayReference.new(base.folders[0].items, 2))
+          local.organizations[0].items, 0
+        ).move(result, ArchimateArrayReference.new(base.organizations[0].items, 2))
 
         ArchimateArrayReference.new(
-          local.folders[0].items, 1
-        ).move(result, ArchimateArrayReference.new(base.folders[0].items, 1))
+          local.organizations[0].items, 1
+        ).move(result, ArchimateArrayReference.new(base.organizations[0].items, 1))
 
         ArchimateArrayReference.new(
-          local.folders[0].items, 2
-        ).move(result, ArchimateArrayReference.new(base.folders[0].items, 0))
+          local.organizations[0].items, 2
+        ).move(result, ArchimateArrayReference.new(base.organizations[0].items, 0))
 
         assert_equal local, result
       end
 
       def test_move_with_primitive2
         base = build_model(
-          folders: [
-            build_folder(
+          organizations: [
+            build_organization(
               items: %w(a c b)
             )
           ]
         )
 
-        local = base.with(folders: [ base.folders[0].with(items: %w(a b c))])
+        local = base.with(organizations: [ base.organizations[0].with(items: %w(a b c))])
 
-        subject = ArchimateArrayReference.new(local.folders[0].items, 1)
+        subject = ArchimateArrayReference.new(local.organizations[0].items, 1)
 
         result = base.clone
 
-        assert_same result.folders[0].items, subject.lookup_parent_in_model(result)
-        refute_same local.folders[0].items, subject.lookup_parent_in_model(result)
-        subject.move(result, ArchimateArrayReference.new(base.folders[0].items, 2))
+        assert_same result.organizations[0].items, subject.lookup_parent_in_model(result)
+        refute_same local.organizations[0].items, subject.lookup_parent_in_model(result)
+        subject.move(result, ArchimateArrayReference.new(base.organizations[0].items, 2))
 
         assert_equal local, result
       end

@@ -14,7 +14,7 @@ module Archimate
       attribute :metadata, Metadata.optional
       attribute :elements, Strict::Array.member(Element).default([])
       attribute :relationships, Strict::Array.member(Relationship).default([])
-      attribute :folders, Strict::Array.member(Folder).default([])
+      attribute :organizations, Strict::Array.member(Organization).default([])
       # attribute :organizations, Strict::Array.member(Organization).default([]) # Organizations.optional
       attribute :property_definitions, Strict::Array.member(PropertyDefinition).default([])
       attribute :version, Strict::String.optional
@@ -100,73 +100,73 @@ module Archimate
       end
 
       # Iterate through the model and ensure that elements, relationships, and
-      # diagrams are all present in the model's folders. If an item is missing
+      # diagrams are all present in the model's organizations. If an item is missing
       # then move it into the default top-level element for the item type.
       def organize
         []
           .concat(elements)
           .concat(relationships)
           .concat(diagrams).each do |item|
-            if find_in_folders(item).nil?
-              default_folder = default_folder_for(item)
-              default_folder.items.push(item.id) unless default_folder.items.include?(item.id)
+            if find_in_organizations(item).nil?
+              default_organization = default_organization_for(item)
+              default_organization.items.push(item.id) unless default_organization.items.include?(item.id)
             end
           end
         self
       end
 
-      def find_in_folders(item, _fs = nil)
-        result = find_by_class(DataModel::Folder).select { |f| f.items.include?(item.id) }
-        # raise "Program Error! #{item.id} is located in more than one folder. #{result.map(&:to_s).inspect}\n#{item}\n" if result.size > 1
+      def find_in_organizations(item, _fs = nil)
+        result = find_by_class(DataModel::Organization).select { |f| f.items.include?(item.id) }
+        # raise "Program Error! #{item.id} is located in more than one organization. #{result.map(&:to_s).inspect}\n#{item}\n" if result.size > 1
         result.empty? ? nil : result.first
       end
 
-      def default_folder_for(item)
+      def default_organization_for(item)
         case item
         when Element
           case item.layer
           when "Strategy"
-            find_default_folder("strategy", "Strategy")
+            find_default_organization("strategy", "Strategy")
           when "Business"
-            find_default_folder("business", "Business")
+            find_default_organization("business", "Business")
           when "Application"
-            find_default_folder("application", "Application")
+            find_default_organization("application", "Application")
           when "Technology"
-            find_default_folder("technology", "Technology")
+            find_default_organization("technology", "Technology")
           when "Physical"
-            find_default_folder("physical", "Physical")
+            find_default_organization("physical", "Physical")
           when "Motivation"
-            find_default_folder("motivation", "Motivation")
+            find_default_organization("motivation", "Motivation")
           when "Implementation and Migration"
-            find_default_folder("implementation_migration", "Implementation & Migration")
+            find_default_organization("implementation_migration", "Implementation & Migration")
           when "Connectors"
-            find_default_folder("connectors", "Connectors")
+            find_default_organization("connectors", "Connectors")
           else
             raise StandardError, "Unexpected Element Layer: #{item.layer.inspect} for item type #{item.type.inspect}"
           end
         when Relationship
-          find_default_folder("relations", "Relations")
+          find_default_organization("relations", "Relations")
         when Diagram
-          find_default_folder("diagrams", "Views")
+          find_default_organization("diagrams", "Views")
         else
           raise StandardError, "Unexpected item type #{item.class}"
         end
       end
 
-      def find_default_folder(type, name)
-        result = folders.find { |f| f.type == type }
+      def find_default_organization(type, name)
+        result = organizations.find { |f| f.type == type }
         return result unless result.nil?
-        result = folders.find { |f| f.name == name }
+        result = organizations.find { |f| f.name == name }
         return result unless result.nil?
-        add_folder(type, name)
+        add_organization(type, name)
       end
 
-      def add_folder(type, name)
-        raise "Program Error: #{folders.inspect}" unless folders.none? { |f| f.type == type || f.name == name }
-        folder = Folder.new(id: make_unique_id, name: name, type: type, items: [], folders: [])
-        register(folder, folders)
-        folders.push(folder)
-        folder
+      def add_organization(type, name)
+        raise "Program Error: #{organizations.inspect}" unless organizations.none? { |f| f.type == type || f.name == name }
+        organization = Organization.new(id: make_unique_id, name: name, type: type, items: [], organizations: [])
+        register(organization, organizations)
+        organizations.push(organization)
+        organization
       end
 
       def make_unique_id
@@ -194,7 +194,7 @@ module Archimate
             case entity
             when entity == master_entity
               master_entity.merge(copy)
-            when Folder
+            when Organization
               entity.remove(copy.id)
             when Child, Relationship, SourceConnection
               entity.replace(copy, master_entity)

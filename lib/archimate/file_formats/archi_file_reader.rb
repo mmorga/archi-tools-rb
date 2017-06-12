@@ -42,7 +42,7 @@ module Archimate
           documentation: parse_documentation(doc.root, "purpose"),
           properties: parse_properties(doc.root),
           elements: parse_elements(doc.root),
-          folders: parse_folders(doc.root),
+          organizations: parse_organizations(doc.root),
           relationships: parse_relationships(doc.root),
           diagrams: diagrams,
           views: DataModel::Views.new(viewpoints: [], diagrams: diagrams),
@@ -90,7 +90,7 @@ module Archimate
           DataModel::Element.new(
             id: i["id"],
             name: i["name"],
-            folder_id: i.parent["id"],
+            organization_id: i.parent["id"],
             type: i["xsi:type"].sub("archimate:", ""),
             documentation: parse_documentation(i),
             properties: parse_properties(i)
@@ -98,17 +98,17 @@ module Archimate
         end
       end
 
-      def parse_folders(node)
+      def parse_organizations(node)
         node.css("> folder").each_with_object([]) do |i, a|
           tick
-          a << DataModel::Folder.new(
+          a << DataModel::Organization.new(
             id: i.attr("id"),
             name: i.attr("name"),
             type: i.attr("type"),
             documentation: parse_documentation(i),
             properties: parse_properties(i),
             items: child_element_ids(i),
-            folders: parse_folders(i)
+            organizations: parse_organizations(i)
           )
         end
       end

@@ -36,7 +36,7 @@ module Archimate
 
         summary_element_diffs = diffs.group_by { |diff| diff.summary_element.class.to_s.split("::").last }
         summarize_elements summary_element_diffs["Element"]
-        summarize "Folder", summary_element_diffs["Folder"]
+        summarize "Organization", summary_element_diffs["Organization"]
         summarize "Relationship", summary_element_diffs["Relationship"]
         summarize_diagrams summary_element_diffs["Diagram"]
 

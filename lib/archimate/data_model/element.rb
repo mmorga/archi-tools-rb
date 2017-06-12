@@ -28,7 +28,7 @@ module Archimate
     # by having a tag name of "element" and an attribute of xsi:type="BusinessRole" where BusinessRole is
     # a derived type from ElementType.
     class Element < Referenceable
-      attribute :folder_id, Strict::String.optional # Note: this is not from the model
+      attribute :organization_id, Strict::String.optional # Note: this is not from the model
       attribute :properties, PropertiesList # Note: this is not in the model under element
                                             # it's added under Real Element
 
@@ -69,8 +69,8 @@ module Archimate
         end
       end
 
-      def folder
-        in_model.lookup(folder_id)
+      def organization
+        in_model.lookup(organization_id)
       end
 
       # Copy any attributes/docs, etc. from each of the others into the original.
@@ -82,7 +82,7 @@ module Archimate
         super
         element.diagrams.each { |diagram| diagram.replace(element, self) }
         element.relationships.each { |relationship| relationship.replace(element, self) }
-        element.folder.remove(element.id)
+        element.organization.remove(element.id)
       end
     end
     Dry::Types.register_class(Element)

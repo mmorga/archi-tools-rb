@@ -3,31 +3,31 @@ require 'test_helper'
 
 module Archimate
   module DataModel
-    class FolderTest < Minitest::Test
+    class OrganizationTest < Minitest::Test
       def setup
-        @child_folders = build_folder_list(with_folders: 3)
-        @f1 = build_folder(id: "123", name: "Sales", type: "Business", folders: @child_folders)
-        @f2 = build_folder(id: "123", name: "Sales", type: "Business", folders: @child_folders)
+        @child_organizations = build_organization_list(with_organizations: 3)
+        @f1 = build_organization(id: "123", name: "Sales", type: "Business", organizations: @child_organizations)
+        @f2 = build_organization(id: "123", name: "Sales", type: "Business", organizations: @child_organizations)
       end
 
       def test_new
         assert_equal "123", @f1.id
         assert_equal "Sales", @f1.name
         assert_equal "Business", @f1.type
-        assert_equal @child_folders, @f1.folders
+        assert_equal @child_organizations, @f1.organizations
         assert_empty @f1.items
         assert_empty @f1.documentation
         assert_empty @f1.properties
       end
 
-      def test_build_folders_empty
-        result = build_folder_list(with_folders: 0)
+      def test_build_organizations_empty
+        result = build_organization_list(with_organizations: 0)
         assert result.is_a?(Array)
         assert_empty(result)
       end
 
-      def test_build_folder
-        f = build_folder(type: "testtype")
+      def test_build_organization
+        f = build_organization(type: "testtype")
         [:id, :name, :type].each do |sym|
           assert_instance_of String, f[sym]
           refute_empty f[sym]
@@ -37,8 +37,8 @@ module Archimate
           assert_empty f[sym]
         end
 
-        assert_instance_of Array, f.folders
-        assert_empty f.folders
+        assert_instance_of Array, f.organizations
+        assert_empty f.organizations
       end
 
       def test_clone
@@ -60,27 +60,27 @@ module Archimate
       end
 
       def test_operator_eqleql_false
-        refute @f1 == Folder.new(id: "234", name: "Sales", type: "Business")
+        refute @f1 == Organization.new(id: "234", name: "Sales", type: "Business")
       end
 
       def test_to_s
-        assert_match "Folder", @f1.to_s
+        assert_match "Organization", @f1.to_s
         assert_match @f1.name, @f1.to_s
       end
 
       def test_referenced_identified_nodes
-        subject = build_folder(
-          folders: [
-            build_folder(
-              folders: [
-                build_folder(
-                  folders: [],
+        subject = build_organization(
+          organizations: [
+            build_organization(
+              organizations: [
+                build_organization(
+                  organizations: [],
                   items: %w(k l m)
                 )
               ],
               items: %w(a b c)
             ),
-            build_folder(folders: [], items: %w(d e f))
+            build_organization(organizations: [], items: %w(d e f))
           ],
           items: %w(g h i j)
         )
