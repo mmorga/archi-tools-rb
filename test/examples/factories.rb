@@ -114,6 +114,7 @@ module Archimate
           documentation: options.fetch(:documentation, build_documentation_list),
           properties: options.fetch(:properties, []),
           children: options.fetch(:children, build_children),
+          connections: [],
           connection_router_type: nil,
           type: options.fetch(:type, nil),
           background: options.fetch(:background, nil)

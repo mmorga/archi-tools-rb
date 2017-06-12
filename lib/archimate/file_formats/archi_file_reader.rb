@@ -152,6 +152,7 @@ module Archimate
             documentation: parse_documentation(i),
             properties: parse_properties(i),
             children: parse_children(i),
+            connections: [],
             connection_router_type: i["connectionRouterType"],
             type: i.attr("xsi:type"),
             background: i.attr("background")

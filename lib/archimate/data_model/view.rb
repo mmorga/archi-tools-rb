@@ -6,7 +6,7 @@ module Archimate
     class View < NamedReferenceable
       attribute :properties, PropertiesList
       attribute :viewpoint_type, ViewpointType.optional
-      attribute :viewpoint, Identifier
+      attribute :viewpoint, Identifier.optional
     end
   end
 end
