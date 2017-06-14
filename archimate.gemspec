@@ -29,11 +29,12 @@ Gem::Specification.new do |spec|
   spec.metadata["yard.run"] = "yri" # use "yard" to build full HTML docs.
   spec.required_ruby_version = '>= 2.3.0'
 
-  spec.add_runtime_dependency "dry-struct", "~> 0.1.0"
+  spec.add_runtime_dependency "dry-struct", "~> 0.3.0"
   spec.add_runtime_dependency "nokogiri", "~> 1.6"
   spec.add_runtime_dependency "thor", "~> 0.19"
   spec.add_runtime_dependency "highline", "~> 1.7"
   spec.add_runtime_dependency "ruby-progressbar", "~>1.8.1"
+  spec.add_runtime_dependency "parallel", "~> 1.11"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"
@@ -48,8 +49,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "guard-bundler"
   spec.add_development_dependency "ruby-prof"
   spec.add_development_dependency "simplecov"
+  spec.add_development_dependency "simplecov-json"
   spec.add_development_dependency "kramdown"
   spec.add_development_dependency "yard"
   spec.add_development_dependency "guard-ctags-bundler"
   spec.add_development_dependency "faker"
+  spec.add_development_dependency "rsense"
 end

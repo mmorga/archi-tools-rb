@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "parallel"
+
 module Archimate
   module Cli
     class Merge
@@ -8,12 +10,10 @@ module Archimate
       attr_reader :base, :local, :remote, :merged_file
 
       def self.merge(base_file, remote_file, local_file, merged_file)
-        Logging.debug { "Reading base file: #{base_file}" }
-        base = Archimate.read(base_file)
-        Logging.debug { "Reading local file: #{local_file}" }
-        local = Archimate.read(local_file)
-        Logging.debug { "Reading remote file: #{remote_file}" }
-        remote = Archimate.read(remote_file)
+        debug { "Reading base file: #{base_file}, local file: #{local_file}, remote file: #{remote_file}" }
+        base, local, remote = Parallel.map([base_file, local_file, remote_file], in_processes: 3) do |file|
+          Archimate.read(file)
+        end
         Logging.debug { "Merged file is #{merged_file}" }
 
         Merge.new(base, local, remote, merged_file).run_merge

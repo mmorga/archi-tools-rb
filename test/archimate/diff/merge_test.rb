@@ -112,7 +112,7 @@ module Archimate
             ArchimateNodeAttributeReference.new(remote.elements[0], :name),
             ArchimateNodeAttributeReference.new(base_el1, :name)
           ),
-          "Differences in one change set conflict with changes in other change set at the same path"
+          "Checking for Differences in one change set that conflict with changes in other change set at the same path"
         )
         assert_equal expected, conflicts.first
         assert_equal base, merged

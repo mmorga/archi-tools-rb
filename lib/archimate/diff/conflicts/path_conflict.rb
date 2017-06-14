@@ -9,7 +9,7 @@ module Archimate
         end
 
         def describe
-          "Differences in one change set conflict with changes in other change set at the same path"
+          "Checking for Differences in one change set that conflict with changes in other change set at the same path"
         end
 
         def diff_conflicts(diff1, diff2)

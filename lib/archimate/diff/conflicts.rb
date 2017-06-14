@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'forwardable'
+require 'parallel'
 require 'archimate/diff/conflicts/base_conflict'
 require 'archimate/diff/conflicts/deleted_items_child_updated_conflict'
 require 'archimate/diff/conflicts/deleted_items_referenced_conflict'
@@ -29,6 +30,7 @@ module Archimate
         @conflicts = nil
         @conflicting_diffs = nil
         @unconflicted_diffs = nil
+        # TODO: consider making this an argument
         @conflict_resolver = Cli::ConflictResolver.new
       end
 
@@ -76,13 +78,11 @@ module Archimate
       private
 
       def find_conflicts
-        @conflicts = []
-        @conflict_finders.each do |cf_class|
-          cf = cf_class.new(base_local_diffs, base_remote_diffs)
-          debug { cf.describe }
-          @conflicts.concat(cf.conflicts)
-        end
-        @conflicts
+        # TODO: Running this in parallel breaks currently.
+        # @conflicts = Parallel.map(@conflict_finders, in_processes: 3) { |cf_class|
+        @conflicts = @conflict_finders.map { |cf_class|
+          cf_class.new(base_local_diffs, base_remote_diffs).conflicts
+        }.flatten
       end
     end
   end

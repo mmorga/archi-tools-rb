@@ -215,3 +215,72 @@
 
 * TODO In mergetool - show diagrams that reference elements and relationships in diff conflicts
 
+* Notes
+
+Generic type - not used directly
+ReferenceType <xs:attribute name="ref" type="xs:IDREF
+
+ElementRefGroup <xs:attribute name="elementRef" type="xs:IDREF
+RelationshipRefGroup <xs:attribute name="relationshipRef" type="xs:IDREF
+ConceptRefGroup <xs:attribute name="ConceptRef" type="xs:IDREF
+PropertyDefinitionRefGroup <xs:attribute name="propertyDefinitionRef" type="xs:IDREF
+StereotypeRefGroup <xs:attribute name="stereotypeRef" type="xs:IDREF
+PropertyDefinitionRefAttributeGroup <xs:attribute name="propertyDefinitionRef" type="xs:IDREF
+
+RelationshipType <xs:attribute name="source" type="xs:IDREF
+RelationshipType <xs:attribute name="target" type="xs:IDREF
+
+OrganizationType        <xs:attribute name="identifierRef" type="xs:IDREF
+
+
+RelationshipType.source -> ConceptType?
+RelationshipType.target -> ConceptType?
+ViewType.viewpointRef -> Viewpoint
+
+Label.conceptRef -> ConceptType
+Element (Diagram).elementRef -> ElementType
+ConnectionType.source -> ConceptType
+ConnectionType.target -> ConceptType
+Relationship (Diagram).relationshipRef -> RelationshipType
+
+
+ModelType
+PropertyDefinitionType
+ConceptType > [RelationshipType > Access, Influence], ElementType > RealElementType, RelationshipConnectorType, CompositeType
+ViewType > Diagram
+
+
+ViewConceptType > [ViewNodeType > Label, Container], [ConnectionType  > Line, SourcedConnectionType > Relationship > NestingRelationship]
+Child is a ViewNodeType
+
+
+
+ViewpointType
+
+* More Notes
+
+background_class -> used by entity_shape
+badge -> entity_badge -> to_svg
+entity_shape
+
+
+text_bounds (I think this is only set in entity_shape)
+DiagramModelReference assigns the entity from the child.model_element
+badge_bounds in Gap, MotivationEntity, RectEntity, RoundedRectEntity
+text_align in Note
+
+some shapes are dependent on child.child_type
+
+badge should be controlled by the entity_shape method
+  check that badge_bounds is set by shape (I think it is)
+
+text_bounds is controlled by entity_shape
+
+background_class : string (default: layer_background_class)
+badge : string option
+entity_shape : (child -> element_name_type -> bounds -> Svg.elt wrap)
+effective_entity : (child -> element_name_type)
+
+get effective entity
+
+that's used to match the rest:

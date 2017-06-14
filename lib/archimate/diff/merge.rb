@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "parallel"
+
 module Archimate
   module Diff
     class Merge
@@ -7,11 +9,11 @@ module Archimate
       using DataModel::DiffableArray
 
       def three_way(base, local, remote)
-        debug { "Computing base:local diffs" }
-        base_local_diffs = base.diff(local)
-
-        debug { "Computing base:remote diffs" }
-        base_remote_diffs = base.diff(remote)
+        debug { "Computing base:local & base:remote diffs" }
+        base_local_diffs, base_remote_diffs = Parallel.map([[base, local], [base, remote]],
+          in_processes: 2) do |base_model, other_model|
+          base_model.diff(other_model)
+        end
 
         debug "Finding Conflicts in #{base_local_diffs.size + base_remote_diffs.size} diffs"
         conflicts = Conflicts.new(base_local_diffs, base_remote_diffs)

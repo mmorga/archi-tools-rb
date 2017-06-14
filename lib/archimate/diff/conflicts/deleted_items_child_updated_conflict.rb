@@ -4,7 +4,7 @@ module Archimate
     class Conflicts
       class DeletedItemsChildUpdatedConflict < BaseConflict
         def describe
-          "Deleted items in one change set have children that are inserted or changed in the other change set"
+          "Checking for Deleted items in one change set have children that are inserted or changed in the other change set"
         end
 
         def filter1

@@ -17,7 +17,7 @@ module Archimate
         using DataModel::DiffablePrimitive
 
         def describe
-          "Deleted items in one change set are referenced in the other change set"
+          "Checking for Deleted items in one change set are referenced in the other change set"
         end
 
         # Filters a changeset to potentially conflicting diffs (making the set
