@@ -46,6 +46,12 @@ module Archimate
           doc
           .xpath("//*[@x or @y]")
           .map { |node| %w[x y width height].map { |attr| node.attr(attr).to_i } }
+        doc.css(".archimate-relationship")
+          .each { |path|
+            path.attr("d").split(" ").each_slice(3) do |point|
+              node_vals << [point[1].to_i, point[2].to_i, 0, 0]
+            end
+          }
         Extents.new(
           node_vals.map(&:first).min,
           node_vals.map { |v| v[0] + v[2] }.max,
