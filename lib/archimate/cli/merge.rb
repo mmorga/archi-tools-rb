@@ -10,7 +10,7 @@ module Archimate
       attr_reader :base, :local, :remote, :merged_file
 
       def self.merge(base_file, remote_file, local_file, merged_file)
-        debug { "Reading base file: #{base_file}, local file: #{local_file}, remote file: #{remote_file}" }
+        Logging.debug { "Reading base file: #{base_file}, local file: #{local_file}, remote file: #{remote_file}" }
         base, local, remote = Parallel.map([base_file, local_file, remote_file], in_processes: 3) do |file|
           Archimate.read(file)
         end
