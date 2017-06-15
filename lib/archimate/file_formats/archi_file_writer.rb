@@ -122,7 +122,7 @@ module Archimate
             "background" => diagram.background
           )
         ) do
-          serialize(xml, diagram.children)
+          serialize(xml, diagram.nodes)
           serialize(xml, diagram.documentation)
           serialize(xml, diagram.properties)
         end
@@ -140,7 +140,7 @@ module Archimate
         }
       end
 
-      def serialize_child(xml, child)
+      def serialize_view_node(xml, child)
         style_hash = archi_style_hash(child.style)
         fill_color = style_hash.delete("fillColor")
         xml.child(
@@ -163,7 +163,7 @@ module Archimate
           serialize(xml, child.bounds) unless child.bounds.nil?
           serialize(xml, child.connections)
           xml.content { xml.text child.content } unless child.content.nil?
-          serialize(xml, child.children)
+          serialize(xml, child.nodes)
           serialize(xml, child.documentation)
           serialize(xml, child.properties)
         end

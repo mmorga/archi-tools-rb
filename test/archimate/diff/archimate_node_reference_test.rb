@@ -76,7 +76,7 @@ module Archimate
       end
 
       def test_path
-        assert_equal "diagrams/#{@model.diagrams.first.id}/children/#{@model.diagrams.first.children.first.id}/bounds", @subject.path
+        assert_equal "diagrams/#{@model.diagrams.first.id}/nodes/#{@model.diagrams.first.nodes.first.id}/bounds", @subject.path
       end
     end
   end

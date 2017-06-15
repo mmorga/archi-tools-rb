@@ -210,12 +210,12 @@ module Archimate
             base.diagrams.map do |diagram|
               if diagram == base.diagrams.first
                 diagram.with(
-                  children:
-                    diagram.children.map do |child|
-                      if child == diagram.children.first
-                        child.with(name: child.name.to_s + "-modified")
+                  nodes:
+                    diagram.nodes.map do |view_node|
+                      if view_node == diagram.nodes.first
+                        view_node.with(name: view_node.name.to_s + "-modified")
                       else
-                        child
+                        view_node
                       end
                     end
                 )
@@ -237,21 +237,21 @@ module Archimate
       # TODO: this sort of implies that the diagram changes are already applied
       def xtest_delete_element_when_still_referenced_in_remaining_diagrams
         diagram = base.diagrams.first
-        child = diagram.children.first
+        view_node = diagram.nodes.first
 
-        # update diagram that references child
+        # update diagram that references view_node
         remote = base.with(
           diagrams: base.diagrams + [
             build_diagram(
-              children:
-                [build_child(archimate_element: child.archimate_element)]
+              nodes:
+                [build_view_node(archimate_element: view_node.archimate_element)]
             )
           ]
         )
 
         # delete element from local
         local = base.with(
-          elements: base.elements.reject { |e| e.id == child.archimate_element }
+          elements: base.elements.reject { |e| e.id == view_node.archimate_element }
         )
 
         merged, conflicts = @subject.three_way(base, local, remote)
@@ -284,8 +284,8 @@ module Archimate
 
       def test_handle_bounds_changes
         diagram = base.diagrams.first.clone
-        bounds = diagram.children[0].bounds
-        diagram.children[0] = diagram.children[0].with(bounds: bounds.with(x: bounds.x + 10.0, y: bounds.y + 10.0))
+        bounds = diagram.nodes[0].bounds
+        diagram.nodes[0] = diagram.nodes[0].with(bounds: bounds.with(x: bounds.x + 10.0, y: bounds.y + 10.0))
         updated_diagrams = base.diagrams.reject { |d| d.id == diagram.id }.unshift(diagram)
         local = base.with(diagrams: updated_diagrams)
 

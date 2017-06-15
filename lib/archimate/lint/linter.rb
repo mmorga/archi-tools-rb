@@ -65,7 +65,7 @@ module Archimate
       end
 
       def empty_views
-        model.diagrams.select { |diagram| diagram.children.empty? }
+        model.diagrams.select { |diagram| diagram.nodes.empty? }
       end
 
       def duplicate_elements
@@ -97,7 +97,7 @@ module Archimate
           next if diagram.total_viewpoint?
           valid_entity_types = VIEWPOINTS[diagram.viewpoint][:entities]
           valid_relation_types = VIEWPOINTS[diagram.viewpoint][:relations]
-          invalid_elements = diagram.all_children.reject do |child|
+          invalid_elements = diagram.all_nodes.reject do |child|
             child.element&.type.nil? || valid_entity_types.include?(child.element&.type)
           end
           invalid_relations = diagram.connections.reject do |sc|
@@ -119,7 +119,7 @@ module Archimate
       # * AssignmentRelationship
       def nesting_without_relation
         model.find_by_class(DataModel::ViewNode).each_with_object([]) do |parent, errors|
-          missing_relations = parent.children.reject do |child|
+          missing_relations = parent.nodes.reject do |child|
             model.relationships.any? do |rel|
               parent.archimate_element.nil? ||
                 child.archimate_element.nil? ||

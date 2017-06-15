@@ -162,36 +162,36 @@ module Archimate
           )
         ) do
           elementbase(xml, diagram)
-          serialize(xml, diagram.children)
+          serialize(xml, diagram.nodes)
           serialize(xml, diagram.connections)
         end
       end
 
-      def serialize_child(xml, child, x_offset = 0, y_offset = 0)
-        child_attrs = {
-          identifier: "id-#{child.id}",
+      def serialize_view_node(xml, view_node, x_offset = 0, y_offset = 0)
+        view_node_attrs = {
+          identifier: "id-#{view_node.id}",
           elementref: nil,
-          x: child.bounds ? (child.bounds&.x + x_offset).round : nil,
-          y: child.bounds ? (child.bounds&.y + y_offset).round : nil,
-          w: child.bounds&.width&.round,
-          h: child.bounds&.height&.round,
+          x: view_node.bounds ? (view_node.bounds&.x + x_offset).round : nil,
+          y: view_node.bounds ? (view_node.bounds&.y + y_offset).round : nil,
+          w: view_node.bounds&.width&.round,
+          h: view_node.bounds&.height&.round,
           type: nil
         }
-        if child.archimate_element
-          child_attrs[:elementref] = "id-#{child.archimate_element}"
-        elsif child.model
+        if view_node.archimate_element
+          view_node_attrs[:elementref] = "id-#{view_node.archimate_element}"
+        elsif view_node.model
           # Since it doesn't seem to be forbidden, we just assume we can use
           # the elementref for views in views
-          child_attrs[:elementref] = child.model
-          child_attrs[:type] = "model"
+          view_node_attrs[:elementref] = view_node.model
+          view_node_attrs[:type] = "model"
         else
-          child_attrs[:type] = "group"
+          view_node_attrs[:type] = "group"
         end
-        xml.node(remove_nil_values(child_attrs)) do
-          serialize_label(xml, child.name) if child_attrs[:type] == "group"
-          serialize(xml, child.style) if child.style
-          child.children.each do |c|
-            serialize_child(xml, c) # , child_attrs[:x].to_f, child_attrs[:y].to_f)
+        xml.node(remove_nil_values(view_node_attrs)) do
+          serialize_label(xml, view_node.name) if view_node_attrs[:type] == "group"
+          serialize(xml, view_node.style) if view_node.style
+          view_node.nodes.each do |c|
+            serialize_view_node(xml, c) # , view_node_attrs[:x].to_f, view_node_attrs[:y].to_f)
           end
         end
       end

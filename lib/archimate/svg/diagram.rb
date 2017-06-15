@@ -73,7 +73,7 @@ module Archimate
 
       def render_elements(svg_node)
         diagram
-          .children
+          .nodes
           .reduce(svg_node) { |svg, child| Child.new(child).render_elements(svg) }
       end
 

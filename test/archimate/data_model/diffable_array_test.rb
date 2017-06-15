@@ -81,8 +81,8 @@ module Archimate
         assert_equal(
           [
             Diff::Change.new(
-              Diff::ArchimateNodeAttributeReference.new(local.diagrams[0].children[0].connections[0].bendpoints[1], :x),
-              Diff::ArchimateNodeAttributeReference.new(base.diagrams[0].children[0].connections[0].bendpoints[1], :x)
+              Diff::ArchimateNodeAttributeReference.new(local.diagrams[0].nodes[0].connections[0].bendpoints[1], :x),
+              Diff::ArchimateNodeAttributeReference.new(base.diagrams[0].nodes[0].connections[0].bendpoints[1], :x)
             )
           ], diffs
         )
@@ -193,8 +193,8 @@ module Archimate
         base = build_model(
           diagrams: [
             build_diagram(
-              children: [
-                build_child(
+              nodes: [
+                build_view_node(
                   connections: [
                     build_connection(
                       bendpoints: (1..3).map { build_location }
@@ -205,15 +205,15 @@ module Archimate
             )
           ]
         )
-        bendpoints = base.diagrams[0].children[0].connections[0].bendpoints
+        bendpoints = base.diagrams[0].nodes[0].connections[0].bendpoints
         changed_bendpoint = bendpoints[1].with(x: bendpoints[1].x + 10)
         local = base.with(
           diagrams: [
             base.diagrams[0].with(
-              children: [
-                base.diagrams[0].children[0].with(
+              nodes: [
+                base.diagrams[0].nodes[0].with(
                   connections: [
-                    base.diagrams[0].children[0].connections[0].with(
+                    base.diagrams[0].nodes[0].connections[0].with(
                       bendpoints: [
                         bendpoints[0],
                         changed_bendpoint,

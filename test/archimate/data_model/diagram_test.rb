@@ -11,7 +11,7 @@ module Archimate
         assert_equal "my diagram", diagram.name
         assert_equal docs, diagram.documentation
         assert_empty diagram.properties
-        assert_empty diagram.children
+        assert_empty diagram.nodes
       end
     end
   end

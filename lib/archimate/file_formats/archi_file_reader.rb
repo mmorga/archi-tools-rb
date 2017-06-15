@@ -151,7 +151,7 @@ module Archimate
             viewpoint: viewpoint,
             documentation: parse_documentation(i),
             properties: parse_properties(i),
-            children: parse_children(i),
+            nodes: parse_nodes(i),
             connections: parse_all_connections(i),
             connection_router_type: i["connectionRouterType"],
             type: i.attr("xsi:type"),
@@ -160,7 +160,7 @@ module Archimate
         end
       end
 
-      def parse_children(node)
+      def parse_nodes(node)
         node.css("> child").each_with_object([]) do |child_node, a|
           tick
           a << DataModel::ViewNode.new(
@@ -171,7 +171,7 @@ module Archimate
             target_connections: parse_target_connections(child_node.attr("targetConnections")),
             archimate_element: child_node.attr("archimateElement"),
             bounds: parse_bounds(child_node),
-            children: parse_children(child_node),
+            nodes: parse_nodes(child_node),
             connections: parse_connections(child_node),
             documentation: parse_documentation(child_node),
             properties: parse_properties(child_node),

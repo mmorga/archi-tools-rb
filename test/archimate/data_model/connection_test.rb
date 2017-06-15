@@ -16,8 +16,8 @@ module Archimate
           ],
           diagrams: [
             build_diagram(
-              children: [
-                build_child(
+              nodes: [
+                build_view_node(
                   connections: [
                     build_connection(
                       id: "abc123",
@@ -33,7 +33,7 @@ module Archimate
             )
           ]
         )
-        @subject = @model.diagrams[0].children[0].connections[0]
+        @subject = @model.diagrams[0].nodes[0].connections[0]
       end
 
       def test_to_s

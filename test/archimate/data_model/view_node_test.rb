@@ -6,8 +6,8 @@ module Archimate
     class ViewNodeTest < Minitest::Test
       def setup
         @element = build_element
-        @subject = build_child(
-          with_children: 3,
+        @subject = build_view_node(
+          with_nodes: 3,
           element: @element,
           relationships: build_relationship_list(with_relationships: 2)
         )
@@ -15,7 +15,7 @@ module Archimate
           elements: [@element],
           diagrams: [
             build_diagram(
-              children: [@subject]
+              nodes: [@subject]
             )
           ]
         )
@@ -23,16 +23,16 @@ module Archimate
         assert @model.instance_variable_get(:@index_hash).include?(@element.id)
         assert_equal @element, @model.elements[0]
         assert_equal @element.id, @subject.archimate_element
-        assert_equal @model.diagrams[0].children[0], @subject
+        assert_equal @model.diagrams[0].nodes[0], @subject
       end
 
       def test_new_defaults
-        child = ViewNode.new(id: "abc123", type: "Sagitarius")
-        assert_equal "abc123", child.id
-        assert_equal "Sagitarius", child.type
+        view_node = ViewNode.new(id: "abc123", type: "Sagitarius")
+        assert_equal "abc123", view_node.id
+        assert_equal "Sagitarius", view_node.type
         [:id, :type, :model, :name,
-         :target_connections, :archimate_element, :bounds, :children,
-         :connections].each { |sym| assert child.respond_to?(sym) }
+         :target_connections, :archimate_element, :bounds, :nodes,
+         :connections].each { |sym| assert view_node.respond_to?(sym) }
       end
 
       def test_clone
@@ -46,7 +46,7 @@ module Archimate
         assert_match("[#{@subject.name}]", @subject.to_s)
       end
 
-      def test_child_element
+      def test_view_node_element
         assert_equal @element, @subject.element
       end
 
@@ -54,12 +54,12 @@ module Archimate
         assert_kind_of Array, @subject.target_connections
         connections = @model.find_by_class(Connection)
         assert connections.size.positive?
-        children = @model.find_by_class(ViewNode)
-        assert children.size.positive?
+        nodes = @model.find_by_class(ViewNode)
+        assert nodes.size.positive?
 
-        children.each do |child|
-          # assert child.connections.size > 0
-          assert child.connections.all? do |connection_id|
+        nodes.each do |view_node|
+          # assert view_node.connections.size > 0
+          assert view_node.connections.all? do |connection_id|
             assert_kind_of String, connection_id
             assert_kind_of Connection, @model.lookup(connection_id)
           end
@@ -67,11 +67,11 @@ module Archimate
       end
 
       def test_referenced_identified_nodes
-        subject = build_child(
+        subject = build_view_node(
           target_connections: %w(a b c),
           archimate_element: "d",
-          children: [
-            build_child(
+          nodes: [
+            build_view_node(
               target_connections: %w(e),
               archimate_element: "f",
               connections: [

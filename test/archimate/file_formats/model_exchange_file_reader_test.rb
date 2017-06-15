@@ -91,7 +91,7 @@ module Archimate
         assert_equal "Layered View", d.name
         assert_equal "4056", d.id
         assert_equal "Layered", d.viewpoint
-        assert_equal 7, d.children.size
+        assert_equal 7, d.nodes.size
         assert_equal 28, d.connections.size
       end
     end

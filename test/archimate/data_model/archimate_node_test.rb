@@ -89,8 +89,8 @@ module Archimate
           relationships: [@rel],
           diagrams: [
             build_diagram(
-              children: [
-                build_child(
+              nodes: [
+                build_view_node(
                   connections: [@subject]
                 )
               ]
@@ -153,9 +153,9 @@ module Archimate
         assert_equal "elements/#{@base.elements[0].id}", @base.elements[0].path
         assert_equal(
           "diagrams/#{@base.diagrams[0].id}" \
-          "/children/#{@base.diagrams[0].children[0].id}" \
+          "/nodes/#{@base.diagrams[0].nodes[0].id}" \
           "/bounds",
-          @base.diagrams[0].children[0].bounds.path
+          @base.diagrams[0].nodes[0].bounds.path
         )
       end
 

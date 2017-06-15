@@ -22,8 +22,8 @@ module Archimate
           remote = base.with(
             diagrams: [
               build_diagram(
-                children:
-                  [build_child(archimate_element: deleted_element_id)]
+                nodes:
+                  [build_view_node(archimate_element: deleted_element_id)]
               )
             ]
           )

@@ -10,7 +10,7 @@ class FactoriesTest < Minitest::Test
       diagrams: [
         build_diagram(
           children: [
-            build_child(
+            build_view_node(
               connections: [
                 build_connection(
                   bendpoints: (1..3).map { build_location }
@@ -25,8 +25,8 @@ class FactoriesTest < Minitest::Test
     assert_equal base, base.diagrams.in_model
     base.diagrams.each do |diagram|
     	assert_equal base, diagram.in_model
-    	assert_equal base, diagram.children.in_model
-    	diagram.children.each do |child|
+    	assert_equal base, diagram.nodes.in_model
+    	diagram.nodes.each do |child|
 	    	assert_equal base, child.in_model
 	    	assert_equal base, child.connections.in_model
 	    	child.connections.each do |connection|

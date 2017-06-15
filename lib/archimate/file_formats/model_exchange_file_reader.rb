@@ -132,9 +132,9 @@ module Archimate
 
       def parse_diagrams(model)
         model.css(">views>view").map do |i|
-          children = parse_children(i)
+          nodes = parse_nodes(i)
           connections = parse_connections(i)
-          child_id_hash = children.each_with_object({}) { |i2, a| a.merge!(i2.child_id_hash) }
+          child_id_hash = nodes.each_with_object({}) { |i2, a| a.merge!(i2.child_id_hash) }
           connections.each do |c|
             child_id_hash[c.source].connections << c
           end
@@ -144,7 +144,7 @@ module Archimate
             viewpoint: i["viewpoint"],
             documentation: parse_documentation(i),
             properties: parse_properties(i),
-            children: children,
+            nodes: nodes,
             connections: connections,
             connection_router_type: i["connectionRouterType"],
             type: i.attr("xsi:type"),
@@ -153,7 +153,7 @@ module Archimate
         end
       end
 
-      def parse_children(node)
+      def parse_nodes(node)
         node.css("> node").map do |i|
           DataModel::ViewNode.new(
             id: identifier_to_id(i["identifier"]),
@@ -163,7 +163,7 @@ module Archimate
             target_connections: [], # TODO: needed? "targetConnections",
             archimate_element: identifier_to_id(i["elementref"]),
             bounds: parse_bounds(i),
-            children: parse_children(i),
+            nodes: parse_nodes(i),
             connections: parse_connections(i),
             documentation: parse_documentation(i),
             properties: parse_properties(i),

@@ -19,7 +19,7 @@ module Archimate
       end
 
       def to_svg(xml)
-        return if connection.source_element.children.include?(connection.target_element)
+        return if connection.source_element.nodes.include?(connection.target_element)
         xml.path(path_attrs) do
           xml.title @connection.description
         end

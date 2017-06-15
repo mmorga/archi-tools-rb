@@ -48,7 +48,7 @@ module Archimate
             entity_shape(xml, child.bounds)
             entity_badge(xml)
             entity_label(xml)
-            child.children.each { |c| Svg::EntityFactory.make_entity(c, child.bounds).to_svg(xml) }
+            child.nodes.each { |c| Svg::EntityFactory.make_entity(c, child.bounds).to_svg(xml) }
           end
         end
 

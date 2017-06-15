@@ -33,8 +33,8 @@ module Archimate
         @subject.organizations.each { |f| assert_equal f, @subject.lookup(f.id) }
         @subject.diagrams.each do |d|
           assert_equal d, @subject.lookup(d.id)
-          refute d.children.empty?
-          d.children.each do |c|
+          refute d.nodes.empty?
+          d.nodes.each do |c|
             assert_equal c, @subject.lookup(c.id)
             c.connections.each do |s|
               assert_equal s, @subject.lookup(s.id)
@@ -94,12 +94,12 @@ module Archimate
           ],
           diagrams: [
             build_diagram(
-              children: [
-                build_child(
+              nodes: [
+                build_view_node(
                   target_connections: %w[n o],
                   archimate_element: "p",
-                  children: [
-                    build_child(
+                  nodes: [
+                    build_view_node(
                       target_connections: %w[q r],
                       archimate_element: "s"
                     )

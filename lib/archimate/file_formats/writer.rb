@@ -22,7 +22,7 @@ module Archimate
           when DataModel::Bounds
             serialize_bounds(xml, item)
           when DataModel::ViewNode
-            serialize_child(xml, item)
+            serialize_view_node(xml, item)
           when DataModel::Color
             serialize_color(xml, item)
           when DataModel::Diagram

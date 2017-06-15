@@ -12,7 +12,7 @@ module Archimate
               build_diagram
             ]
           )
-          @child = @model.diagrams.first.children.first
+          @child = @model.diagrams.first.nodes.first
           @subject = Material.new(@child, build_bounds)
         end
 

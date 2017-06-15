@@ -29,7 +29,7 @@ module Archimate
       attribute :target_connections, Strict::Array.member(Strict::String).default([])
       attribute :archimate_element, Strict::String.optional
       attribute :bounds, Bounds.optional
-      attribute :children, Strict::Array.member(ViewNode).default([])
+      attribute :nodes, Strict::Array.member(ViewNode).default([])
       attribute :connections, ConnectionList
       attribute :style, Style.optional
       attribute :child_type, Coercible::Int.optional
@@ -67,20 +67,16 @@ module Archimate
         @model_element ||= in_model.lookup(model)
       end
 
-      def all_children
-        children.inject(Array.new(children)) { |child_ary, child| child_ary.concat(child.all_children) }
+      def all_nodes
+        nodes.inject(Array.new(nodes)) { |child_ary, child| child_ary.concat(child.all_nodes) }
       end
 
-      # def all_connections
-      #   connections + children.each_with_object([]) { |i, a| a.concat(i.all_connections) }
-      # end
-
       def child_id_hash
-        children.each_with_object(id => self) { |i, a| a.merge!(i.child_id_hash) }
+        nodes.each_with_object(id => self) { |i, a| a.merge!(i.child_id_hash) }
       end
 
       def referenced_identified_nodes
-        (children + connections).reduce(
+        (nodes + connections).reduce(
           (target_connections + [archimate_element]).compact
         ) do |a, e|
           a.concat(e.referenced_identified_nodes)

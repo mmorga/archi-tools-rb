@@ -99,10 +99,10 @@ module Archimate
         count = options.fetch(:with_diagrams, 0)
         (1..count).map do
           child_list = relationships.map do |rel|
-            [build_child(element: elements.find { |i| i.id == rel.source }, relationships: [rel]),
-             build_child(element: elements.find { |i| i.id == rel.target }, relationships: [])]
+            [build_view_node(element: elements.find { |i| i.id == rel.source }, relationships: [rel]),
+             build_view_node(element: elements.find { |i| i.id == rel.target }, relationships: [])]
           end.flatten
-          build_diagram(children: child_list)
+          build_diagram(nodes: child_list)
         end
       end
 
@@ -113,7 +113,7 @@ module Archimate
           viewpoint: options.fetch(:viewpoint, nil),
           documentation: options.fetch(:documentation, build_documentation_list),
           properties: options.fetch(:properties, []),
-          children: options.fetch(:children, build_children),
+          nodes: options.fetch(:nodes, build_nodes),
           connections: [],
           connection_router_type: nil,
           type: options.fetch(:type, nil),
@@ -121,14 +121,14 @@ module Archimate
         )
       end
 
-      def build_children(options = {})
-        (1..options.fetch(:count, 3)).map { build_child }
+      def build_nodes(options = {})
+        (1..options.fetch(:count, 3)).map { build_view_node }
       end
 
-      def build_child(options = {})
+      def build_view_node(options = {})
         node_element = options.fetch(:element, build_element)
         relationships = options.fetch(:relationships, {})
-        with_children = build_children(count: options.delete(:with_children) || 0)
+        with_nodes = build_nodes(count: options.delete(:with_nodes) || 0)
         connections = options.fetch(
           :connections,
           relationships.map { |rel| build_connection(for_relationship: rel) }
@@ -137,7 +137,7 @@ module Archimate
           id: options.fetch(:id, build_id),
           type: "archimate:DiagramObject",
           name: options[:name],
-          children: options.fetch(:children, with_children),
+          nodes: options.fetch(:nodes, with_nodes),
           archimate_element: options.fetch(:archimate_element, node_element.id),
           bounds: build_bounds,
           connections: connections,
