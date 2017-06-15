@@ -15,6 +15,7 @@ module Archimate
 
       def to_svg
         svg_doc = @svg_template.clone
+        set_title(svg_doc)
         top_group = svg_doc.at_css("#archimate-diagram")
         render_connections(
           render_elements(top_group)
@@ -22,6 +23,11 @@ module Archimate
         update_viewbox(svg_doc.at_css("svg"))
         format_node(top_group)
         svg_doc.to_xml(encoding: 'UTF-8', indent: 2)
+      end
+
+      def set_title(svg)
+        svg.at_css("title").content = diagram.name || "untitled"
+        svg.at_css("desc").content = diagram.documentation.first&.text || ""
       end
 
       # Scan the SVG and figure out min & max
