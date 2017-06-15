@@ -3,7 +3,7 @@ require 'test_helper'
 
 module Archimate
   module DataModel
-    class SourceConnectionTest < Minitest::Test
+    class ConnectionTest < Minitest::Test
       attr_reader :subject
 
       def setup
@@ -18,8 +18,8 @@ module Archimate
             build_diagram(
               children: [
                 build_child(
-                  source_connections: [
-                    build_source_connection(
+                  connections: [
+                    build_connection(
                       id: "abc123",
                       type: "three",
                       name: "test_name",
@@ -33,21 +33,21 @@ module Archimate
             )
           ]
         )
-        @subject = @model.diagrams[0].children[0].source_connections[0]
+        @subject = @model.diagrams[0].children[0].connections[0]
       end
 
       def test_to_s
-        assert_match("SourceConnection", subject.to_s)
+        assert_match("Connection", subject.to_s)
         assert_match("[#{subject.name}]", Archimate::Color.uncolor(subject.to_s))
       end
 
       def test_to_s_with_no_model
-        @subject = build_source_connection
+        @subject = build_connection
         assert_match("[#{subject.name}]", Archimate::Color.uncolor(subject.to_s))
       end
 
       def test_referenced_identified_nodes
-        subject = build_source_connection(
+        subject = build_connection(
           source: "a",
           target: "b",
           relationship: "c"

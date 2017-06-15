@@ -24,20 +24,6 @@ module Archimate
         end
         svg
       end
-
-      def render_connections(svg)
-        Nokogiri::XML::Builder.with(svg) do |xml|
-          child.all_source_connections.each do |source_connection|
-            conn = Connection.new(source_connection)
-            if conn.nil?
-              puts "Unable to make an SVG Connection for Source Connection:\n#{source_connection}"
-            else
-              conn.to_svg(xml)
-            end
-          end
-        end
-        svg
-      end
     end
   end
 end

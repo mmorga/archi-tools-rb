@@ -36,7 +36,7 @@ module Archimate
           refute d.children.empty?
           d.children.each do |c|
             assert_equal c, @subject.lookup(c.id)
-            c.source_connections.each do |s|
+            c.connections.each do |s|
               assert_equal s, @subject.lookup(s.id)
             end
           end
@@ -104,8 +104,8 @@ module Archimate
                       archimate_element: "s"
                     )
                   ],
-                  source_connections: [
-                    build_source_connection(
+                  connections: [
+                    build_connection(
                       source: "t",
                       target: "u",
                       relationship: "v"

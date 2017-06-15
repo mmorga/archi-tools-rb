@@ -76,7 +76,7 @@ module Archimate
         @src_el = build_element
         @target_el = build_element
         @rel = build_relationship(source: @src_el.id, target: @src_el.id)
-        @subject = build_source_connection(
+        @subject = build_connection(
           id: "abc123",
           type: "three",
           name: "test_name",
@@ -91,7 +91,7 @@ module Archimate
             build_diagram(
               children: [
                 build_child(
-                  source_connections: [@subject]
+                  connections: [@subject]
                 )
               ]
             )

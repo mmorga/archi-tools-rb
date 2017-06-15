@@ -152,7 +152,7 @@ module Archimate
             documentation: parse_documentation(i),
             properties: parse_properties(i),
             children: parse_children(i),
-            connections: [],
+            connections: parse_all_connections(i),
             connection_router_type: i["connectionRouterType"],
             type: i.attr("xsi:type"),
             background: i.attr("background")
@@ -163,7 +163,7 @@ module Archimate
       def parse_children(node)
         node.css("> child").each_with_object([]) do |child_node, a|
           tick
-          a << DataModel::Child.new(
+          a << DataModel::ViewNode.new(
             id: child_node.attr("id"),
             type: child_node.attr("xsi:type"),
             model: child_node.attr("model"),
@@ -172,7 +172,7 @@ module Archimate
             archimate_element: child_node.attr("archimateElement"),
             bounds: parse_bounds(child_node),
             children: parse_children(child_node),
-            source_connections: parse_source_connections(child_node),
+            connections: parse_connections(child_node),
             documentation: parse_documentation(child_node),
             properties: parse_properties(child_node),
             style: parse_style(child_node),
@@ -213,29 +213,41 @@ module Archimate
         end
       end
 
-      def parse_source_connections(node)
-        node.css("> sourceConnection").each_with_object([]) do |i, a|
+      def parse_all_connections(node)
+        node.css("sourceConnection").each_with_object([]) do |i, a|
           tick
-          a << DataModel::SourceConnection.new(
-            id: i["id"],
-            type: i.attr("xsi:type"),
-            source: i["source"],
-            target: i["target"],
-            relationship: i["relationship"],
-            name: i["name"],
-            style: parse_style(i),
-            bendpoints: parse_bendpoints(i),
-            documentation: parse_documentation(i),
-            properties: parse_properties(i)
-          )
+          a << parse_connection(i)
         end
       end
 
+      def parse_connections(node)
+        node.css("> sourceConnection").each_with_object([]) { |i, a| a << parse_connection(i) }
+      end
+
+      def parse_connection(i)
+        DataModel::Connection.new(
+          id: i["id"],
+          type: i.attr("xsi:type"),
+          source: i["source"],
+          target: i["target"],
+          relationship: i["relationship"],
+          name: i["name"],
+          style: parse_style(i),
+          bendpoints: parse_bendpoints(i),
+          documentation: parse_documentation(i),
+          properties: parse_properties(i)
+          )
+      end
+
+      # startX = location.x - source_attachment.x
+      # startY = location.y - source_attachment.y
+      # endX = location.x - target_attachment.x
+      # endY = location.y - source_attachment.y
       def parse_bendpoints(node)
         node.css("bendpoint").each_with_object([]) do |i, a|
           tick
-          a << DataModel::Bendpoint.new(
-            start_x: i.attr("startX"), start_y: i.attr("startY"),
+          a << DataModel::Location.new(
+            x: i.attr("startX") || 0, y: i.attr("startY") || 0,
             end_x: i.attr("endX"), end_y: i.attr("endY")
           )
         end

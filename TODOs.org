@@ -106,8 +106,8 @@
 
     * Property.key (only after PropertyDefs is introduced)
       - Property referenced deleted key
-    * Child.target_connections -> Array of SourceConnection ids
-      - SourceConnection.id deleted
+    * Child.target_connections -> Array of Connection ids
+      - Connection.id deleted
     * Child.archimate_element -> Element.id
       - Element.id deleted
     * Folder.items -> Array of IdentifiedNode
@@ -116,11 +116,11 @@
       - Element.id deleted
     * Relationship.target -> Element.id
       - Element.id deleted
-    * SourceConnection.source -> Child.id
+    * Connection.source -> Child.id
       - Child.id deleted
-    * SourceConnection.target -> Child.id
+    * Connection.target -> Child.id
       - Child.id deleted
-    * SourceConnection.relationship -> Relationship.id
+    * Connection.relationship -> Relationship.id
       - Relationship.id deleted
 
 

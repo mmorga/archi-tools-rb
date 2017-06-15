@@ -5,7 +5,8 @@ module Archimate
     # Something that can be referenced in the model.
     class Referenceable < ArchimateNode
       attribute :id, Identifier
-      attribute :name, Strict::String.optional # NameGroup - in the future
+      attribute :name, Strict::String.optional # TODO: Strict::Array.member(LangString).constrained(min_size: 1)
+
       attribute :documentation, DocumentationGroup
       # attribute :grp_any, Strict::Array.member(AnyNode).default([])
       # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])

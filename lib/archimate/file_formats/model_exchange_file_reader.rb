@@ -133,10 +133,10 @@ module Archimate
       def parse_diagrams(model)
         model.css(">views>view").map do |i|
           children = parse_children(i)
-          connections = parse_source_connections(i)
+          connections = parse_connections(i)
           child_id_hash = children.each_with_object({}) { |i2, a| a.merge!(i2.child_id_hash) }
           connections.each do |c|
-            child_id_hash[c.source].source_connections << c
+            child_id_hash[c.source].connections << c
           end
           DataModel::Diagram.new(
             id: identifier_to_id(i["identifier"]),
@@ -145,6 +145,7 @@ module Archimate
             documentation: parse_documentation(i),
             properties: parse_properties(i),
             children: children,
+            connections: connections,
             connection_router_type: i["connectionRouterType"],
             type: i.attr("xsi:type"),
             background: i.attr("background")
@@ -154,7 +155,7 @@ module Archimate
 
       def parse_children(node)
         node.css("> node").map do |i|
-          DataModel::Child.new(
+          DataModel::ViewNode.new(
             id: identifier_to_id(i["identifier"]),
             type: i["type"],
             model: nil,
@@ -163,7 +164,7 @@ module Archimate
             archimate_element: identifier_to_id(i["elementref"]),
             bounds: parse_bounds(i),
             children: parse_children(i),
-            source_connections: parse_source_connections(i),
+            connections: parse_connections(i),
             documentation: parse_documentation(i),
             properties: parse_properties(i),
             style: parse_style(i),
@@ -233,9 +234,9 @@ module Archimate
         )
       end
 
-      def parse_source_connections(node)
+      def parse_connections(node)
         node.css("> connection").map do |i|
-          DataModel::SourceConnection.new(
+          DataModel::Connection.new(
             id: identifier_to_id(i["identifier"]),
             type: nil, # i.attr("xsi:type"),
             source: identifier_to_id(i["source"]),
@@ -252,9 +253,8 @@ module Archimate
 
       def parse_bendpoints(node)
         node.css("bendpoint").map do |i|
-          DataModel::Bendpoint.new(
-            start_x: i.attr("x"), start_y: i.attr("y"),
-            end_x: nil, end_y: nil
+          DataModel::Location.new(
+            x: i.attr("x"), y: i.attr("y")
           )
         end
       end

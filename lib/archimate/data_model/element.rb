@@ -16,10 +16,15 @@ module Archimate
                          WorkPackage Deliverable ImplementationEvent Plateau Gap
                          Grouping Location
                          AndJunction OrJunction].freeze
+
     CompositeTypeEnum = %w[Grouping Location].freeze
+
     RelationshipConnectorEnum = %w[AndJunction OrJunction].freeze
+
     ElementEnumType = [].concat(ElementTypeEnum, CompositeTypeEnum, RelationshipConnectorEnum).freeze
+
     ElementType = Strict::String.enum(*ElementEnumType)
+
     AllowedElementTypes = Strict::Array.member(ElementType).default([])
 
     # A base element type that can be extended by concrete ArchiMate types.
@@ -27,10 +32,8 @@ module Archimate
     # Note that ElementType is abstract, so one must have derived types of this type. this is indicated in xml
     # by having a tag name of "element" and an attribute of xsi:type="BusinessRole" where BusinessRole is
     # a derived type from ElementType.
-    class Element < Referenceable
+    class Element < Concept
       attribute :organization_id, Strict::String.optional # Note: this is not from the model
-      attribute :properties, PropertiesList # Note: this is not in the model under element
-                                            # it's added under Real Element
 
       def to_s
         Archimate::Color.layer_color(layer, "#{type}<#{id}>[#{name}]")

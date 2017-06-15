@@ -81,8 +81,8 @@ module Archimate
         assert_equal(
           [
             Diff::Change.new(
-              Diff::ArchimateNodeAttributeReference.new(local.diagrams[0].children[0].source_connections[0].bendpoints[1], :start_x),
-              Diff::ArchimateNodeAttributeReference.new(base.diagrams[0].children[0].source_connections[0].bendpoints[1], :start_x)
+              Diff::ArchimateNodeAttributeReference.new(local.diagrams[0].children[0].connections[0].bendpoints[1], :x),
+              Diff::ArchimateNodeAttributeReference.new(base.diagrams[0].children[0].connections[0].bendpoints[1], :x)
             )
           ], diffs
         )
@@ -173,7 +173,7 @@ module Archimate
 
       def test_referenced_identified_nodes
         subject = [
-          build_source_connection(
+          build_connection(
             source: "a",
             target: "b",
             relationship: "c"
@@ -195,9 +195,9 @@ module Archimate
             build_diagram(
               children: [
                 build_child(
-                  source_connections: [
-                    build_source_connection(
-                      bendpoints: (1..3).map { build_bendpoint }
+                  connections: [
+                    build_connection(
+                      bendpoints: (1..3).map { build_location }
                     )
                   ]
                 )
@@ -205,15 +205,15 @@ module Archimate
             )
           ]
         )
-        bendpoints = base.diagrams[0].children[0].source_connections[0].bendpoints
-        changed_bendpoint = bendpoints[1].with(start_x: bendpoints[1].start_x + 10)
+        bendpoints = base.diagrams[0].children[0].connections[0].bendpoints
+        changed_bendpoint = bendpoints[1].with(x: bendpoints[1].x + 10)
         local = base.with(
           diagrams: [
             base.diagrams[0].with(
               children: [
                 base.diagrams[0].children[0].with(
-                  source_connections: [
-                    base.diagrams[0].children[0].source_connections[0].with(
+                  connections: [
+                    base.diagrams[0].children[0].connections[0].with(
                       bendpoints: [
                         bendpoints[0],
                         changed_bendpoint,

@@ -11,9 +11,9 @@ class FactoriesTest < Minitest::Test
         build_diagram(
           children: [
             build_child(
-              source_connections: [
-                build_source_connection(
-                  bendpoints: (1..3).map { build_bendpoint }
+              connections: [
+                build_connection(
+                  bendpoints: (1..3).map { build_location }
                 )
               ]
             )
@@ -28,11 +28,11 @@ class FactoriesTest < Minitest::Test
     	assert_equal base, diagram.children.in_model
     	diagram.children.each do |child|
 	    	assert_equal base, child.in_model
-	    	assert_equal base, child.source_connections.in_model
-	    	child.source_connections.each do |source_connection|
-		    	assert_equal base, source_connection.in_model
-		    	assert_equal base, source_connection.bendpoints.in_model
-		    	source_connection.bendpoints.each do |bendpoint|
+	    	assert_equal base, child.connections.in_model
+	    	child.connections.each do |connection|
+		    	assert_equal base, connection.in_model
+		    	assert_equal base, connection.bendpoints.in_model
+		    	connection.bendpoints.each do |bendpoint|
 			    	assert_equal base, bendpoint.in_model
 			    end
 			  end

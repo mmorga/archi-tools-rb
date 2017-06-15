@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
+    # RGBColorType in the XSD
+    # RGB Color type.
+    # The r, g, b attributes range from 0 - 255.
+    # The a (alpha) transparency attribute is optional. 0 = full transparency, 100 = opaque.
     class Color < ArchimateNode
       attribute :r, Coercible::Int.constrained(lt: 256, gt: -1)
       attribute :g, Coercible::Int.constrained(lt: 256, gt: -1)

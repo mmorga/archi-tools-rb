@@ -87,7 +87,7 @@ module Archimate
       def in_model=(model)
         @in_model = model unless is_a?(Model)
         struct_instance_variables.each { |attrname|
-          puts "#{attrname} is frozen" if self[attrname].frozen? && self[attrname].is_a?(Array)
+          puts "#{attrname} is frozen in #{self.class}" if self[attrname].frozen? && self[attrname].is_a?(Array)
           self[attrname].in_model = model }
       end
 

@@ -5,7 +5,7 @@ module Archimate
     # This is an abstract super-type of Node and Connection.
     class ViewConcept < ArchimateNode
       attribute :id, Identifier
-      attribute :labels, LabelGroup # .constrained(min_size: 1)
+      attribute :labels, Strict::Array.member(LangString).constrained(min_size: 1)
       attribute :documentation, DocumentationGroup
       attribute :style, Style.optional
       # the "viewRef" of an "Concept" is to a view that allows drill-down diagrams.

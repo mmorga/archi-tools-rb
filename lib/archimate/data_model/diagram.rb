@@ -2,26 +2,19 @@
 module Archimate
   module DataModel
     class Diagram < View
-      # attribute :viewpoint, Coercible::String.optional # TODO: now in View as viewpoint_type
-      attribute :children, Strict::Array.member(Child).default([])
+      attribute :children, Strict::Array.member(ViewNode).default([])
       # TODO: attribute :nodes, Strict::Array.member(ViewNode).default([])
       attribute :connection_router_type, Coercible::Int.optional # TODO: Archi formats only fill this in, should be an enum
       attribute :background, Coercible::Int.optional # value of 0 on Archi Sketch Model
-      attribute :connections, Strict::Array.member(Connection).default([]) # TODO this is SourceConnection in Archi formats
-
-      def source_connections
-        children.each_with_object([]) do |i, a|
-          a.concat(i.all_source_connections)
-        end
-      end
+      attribute :connections, Strict::Array.member(Connection).default([]) # TODO this is Connection in Archi formats
 
       def all_children
         children.inject(Array.new(children)) { |child_ary, child| child_ary.concat(child.all_children) }
       end
 
-      def all_source_connections
-        children.inject([]) { |child_ary, child| child_ary.concat(child.all_source_connections) }
-      end
+      # def all_connections
+      #   children.inject([]) { |child_ary, child| child_ary.concat(child.all_connections) }
+      # end
 
       def elements
         @elements ||= all_children.map(&:element).compact
@@ -32,11 +25,11 @@ module Archimate
       end
 
       def relationships
-        @relationships ||= all_source_connections.map(&:element).compact
+        @relationships ||= connections.map(&:element).compact
       end
 
       def relationship_ids
-        @relationship_ids ||= all_source_connections.map(&:relationship).compact
+        @relationship_ids ||= connections.map(&:relationship).compact
       end
 
       def to_s

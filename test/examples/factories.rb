@@ -129,28 +129,28 @@ module Archimate
         node_element = options.fetch(:element, build_element)
         relationships = options.fetch(:relationships, {})
         with_children = build_children(count: options.delete(:with_children) || 0)
-        source_connections = options.fetch(
-          :source_connections,
-          relationships.map { |rel| build_source_connection(for_relationship: rel) }
+        connections = options.fetch(
+          :connections,
+          relationships.map { |rel| build_connection(for_relationship: rel) }
         )
-        Archimate::DataModel::Child.new(
+        Archimate::DataModel::ViewNode.new(
           id: options.fetch(:id, build_id),
           type: "archimate:DiagramObject",
           name: options[:name],
           children: options.fetch(:children, with_children),
           archimate_element: options.fetch(:archimate_element, node_element.id),
           bounds: build_bounds,
-          source_connections: source_connections,
-          target_connections: options.fetch(:target_connections, source_connections.map(&:target)),
+          connections: connections,
+          target_connections: options.fetch(:target_connections, connections.map(&:target)),
           style: build_style,
           child_type: options.fetch(:child_type, nil)
         )
       end
 
-      def build_source_connection(options = {})
+      def build_connection(options = {})
         relationship = options.fetch(:for_relationship, nil)
 
-        Archimate::DataModel::SourceConnection.new(
+        Archimate::DataModel::Connection.new(
           id: options.fetch(:id, build_id),
           name: options.fetch(:name, Faker::Company.catch_phrase),
           type: options.fetch(:type, random_element_type),
@@ -209,12 +209,10 @@ module Archimate
         )
       end
 
-      def build_bendpoint(options = {})
-        Archimate::DataModel::Bendpoint.new(
-          start_x: options.fetch(:start_x, random(0, 1000)),
-          start_y: options.fetch(:start_y, random(0, 1000)),
-          end_x: options.fetch(:end_x, random(0, 1000)),
-          end_y: options.fetch(:end_y, random(0, 1000))
+      def build_location(options = {})
+        Archimate::DataModel::Location.new(
+          x: options.fetch(:x, random(0, 1000)),
+          y: options.fetch(:y, random(0, 1000))
         )
       end
 

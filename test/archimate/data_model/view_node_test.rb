@@ -3,7 +3,7 @@ require 'test_helper'
 
 module Archimate
   module DataModel
-    class ChildTest < Minitest::Test
+    class ViewNodeTest < Minitest::Test
       def setup
         @element = build_element
         @subject = build_child(
@@ -27,12 +27,12 @@ module Archimate
       end
 
       def test_new_defaults
-        child = Child.new(id: "abc123", type: "Sagitarius")
+        child = ViewNode.new(id: "abc123", type: "Sagitarius")
         assert_equal "abc123", child.id
         assert_equal "Sagitarius", child.type
         [:id, :type, :model, :name,
          :target_connections, :archimate_element, :bounds, :children,
-         :source_connections].each { |sym| assert child.respond_to?(sym) }
+         :connections].each { |sym| assert child.respond_to?(sym) }
       end
 
       def test_clone
@@ -42,7 +42,7 @@ module Archimate
       end
 
       def test_to_s
-        assert_match(/Child/, @subject.to_s)
+        assert_match(/ViewNode/, @subject.to_s)
         assert_match("[#{@subject.name}]", @subject.to_s)
       end
 
@@ -50,18 +50,18 @@ module Archimate
         assert_equal @element, @subject.element
       end
 
-      def test_source_connections
+      def test_connections
         assert_kind_of Array, @subject.target_connections
-        source_connections = @model.find_by_class(SourceConnection)
-        assert source_connections.size.positive?
-        children = @model.find_by_class(Child)
+        connections = @model.find_by_class(Connection)
+        assert connections.size.positive?
+        children = @model.find_by_class(ViewNode)
         assert children.size.positive?
 
         children.each do |child|
-          # assert child.source_connections.size > 0
-          assert child.source_connections.all? do |source_connection_id|
-            assert_kind_of String, source_connection_id
-            assert_kind_of SourceConnection, @model.lookup(source_connection_id)
+          # assert child.connections.size > 0
+          assert child.connections.all? do |connection_id|
+            assert_kind_of String, connection_id
+            assert_kind_of Connection, @model.lookup(connection_id)
           end
         end
       end
@@ -74,8 +74,8 @@ module Archimate
             build_child(
               target_connections: %w(e),
               archimate_element: "f",
-              source_connections: [
-                build_source_connection(
+              connections: [
+                build_connection(
                   source: "g",
                   target: "h",
                   relationship: "i"

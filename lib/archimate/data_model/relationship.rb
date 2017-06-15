@@ -27,8 +27,6 @@ module Archimate
       attribute :source, Strict::String
       attribute :target, Strict::String
       attribute :access_type, Coercible::Int.optional # TODO: turn this into an enum
-      attribute :properties, PropertiesList # Note: this is not in the model under element
-      # it's added under Real Element
 
       def replace(entity, with_entity)
         @source = with_entity.id if source == entity.id

@@ -79,8 +79,8 @@ module Archimate
 
       def render_connections(svg_node)
         diagram
-          .children
-          .reduce(svg_node) { |svg, child| Child.new(child).render_connections(svg) }
+          .connections
+          .reduce(svg_node) { |svg, connection| Connection.new(connection).render(svg) }
       end
     end
   end

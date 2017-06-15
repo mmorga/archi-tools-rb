@@ -196,7 +196,7 @@ module Archimate
               master_entity.merge(copy)
             when Organization
               entity.remove(copy.id)
-            when Child, Relationship, SourceConnection
+            when ViewNode, Relationship, Connection
               entity.replace(copy, master_entity)
             end
           end

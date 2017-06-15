@@ -163,7 +163,7 @@ module Archimate
         ) do
           elementbase(xml, diagram)
           serialize(xml, diagram.children)
-          serialize(xml, diagram.source_connections)
+          serialize(xml, diagram.connections)
         end
       end
 
@@ -233,7 +233,7 @@ module Archimate
         xml.send(sym, h)
       end
 
-      def serialize_source_connection(xml, sc)
+      def serialize_connection(xml, sc)
         xml.connection(
           identifier: "id-#{sc.id}",
           relationshipref: "id-#{sc.relationship}",
@@ -245,8 +245,8 @@ module Archimate
         end
       end
 
-      def serialize_bendpoint(xml, bendpoint)
-        xml.bendpoint(x: bendpoint.start_x.round, y: bendpoint.start_y.round)
+      def serialize_location(xml, location)
+        xml.bendpoint(x: location.x.round, y: location.y.round)
       end
 
       def meff_type(el_type)

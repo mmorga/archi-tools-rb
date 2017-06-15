@@ -17,11 +17,11 @@ module Archimate
       def serialize(xml, collection)
         Array(collection).each do |item|
           case item
-          when DataModel::Bendpoint
-            serialize_bendpoint(xml, item)
+          when DataModel::Location
+            serialize_location(xml, item)
           when DataModel::Bounds
             serialize_bounds(xml, item)
-          when DataModel::Child
+          when DataModel::ViewNode
             serialize_child(xml, item)
           when DataModel::Color
             serialize_color(xml, item)
@@ -41,8 +41,8 @@ module Archimate
             serialize_property(xml, item)
           when DataModel::Relationship
             serialize_relationship(xml, item)
-          when DataModel::SourceConnection
-            serialize_source_connection(xml, item)
+          when DataModel::Connection
+            serialize_connection(xml, item)
           when DataModel::Style
             serialize_style(xml, item)
           else

@@ -3,10 +3,12 @@
 module Archimate
   module DataModel
     # document attribute holds all the concern information.
+    #
+    # This is ConcernType in the XSD
     class Concern < ArchimateNode
-      attribute :labels, LabelGroup # .constrained(min_size: 1)
+      attribute :labels, Strict::Array.member(LangString).constrained(min_size: 1)
       attribute :documentation, DocumentationGroup
-      attribute :stakeholders, Stakeholders
+      attribute :stakeholders, Strict::Array.member(LangString)
     end
 
     Dry::Types.register_class(Concern)

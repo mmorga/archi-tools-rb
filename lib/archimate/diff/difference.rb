@@ -32,7 +32,7 @@ module Archimate
       #   ArchimateNode                 child.bounds
       #   ArchimateNode, attribute      model, "name"
       #   DiffableArray, ArchimateNode  model.elements, element
-      #   bendpoint attributes under source_connection
+      #   bendpoint attributes under connection
       #                                 documentation
       #                                 properties
       #                                 child/style/fill_color

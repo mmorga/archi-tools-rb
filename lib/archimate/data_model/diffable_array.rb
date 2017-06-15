@@ -121,6 +121,7 @@ module Archimate
         end
 
         def in_model=(model)
+          puts "#{self.inspect} is frozen" if self.frozen?
           @in_model = model
           each { |item| item.in_model = model }
         end

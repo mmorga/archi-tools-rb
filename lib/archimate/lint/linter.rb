@@ -100,7 +100,7 @@ module Archimate
           invalid_elements = diagram.all_children.reject do |child|
             child.element&.type.nil? || valid_entity_types.include?(child.element&.type)
           end
-          invalid_relations = diagram.all_source_connections.reject do |sc|
+          invalid_relations = diagram.connections.reject do |sc|
             sc.element&.type.nil? || valid_relation_types.include?(sc.element&.type)
           end
           next unless !invalid_elements.empty? || !invalid_relations.empty?
@@ -118,7 +118,7 @@ module Archimate
       # * AggregationRelationship
       # * AssignmentRelationship
       def nesting_without_relation
-        model.find_by_class(DataModel::Child).each_with_object([]) do |parent, errors|
+        model.find_by_class(DataModel::ViewNode).each_with_object([]) do |parent, errors|
           missing_relations = parent.children.reject do |child|
             model.relationships.any? do |rel|
               parent.archimate_element.nil? ||

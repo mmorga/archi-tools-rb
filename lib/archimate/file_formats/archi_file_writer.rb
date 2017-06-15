@@ -161,7 +161,7 @@ module Archimate
           )
         ) do
           serialize(xml, child.bounds) unless child.bounds.nil?
-          serialize(xml, child.source_connections)
+          serialize(xml, child.connections)
           xml.content { xml.text child.content } unless child.content.nil?
           serialize(xml, child.children)
           serialize(xml, child.documentation)
@@ -180,33 +180,37 @@ module Archimate
         )
       end
 
-      def serialize_source_connection(xml, source_connection)
+      def serialize_connection(xml, connection)
         xml.sourceConnection(
           remove_nil_values(
             {
-              "xsi:type" => source_connection.type,
-              "id" => source_connection.id,
-              "name" => source_connection.name
+              "xsi:type" => connection.type,
+              "id" => connection.id,
+              "name" => connection.name
             }.merge(
-              archi_style_hash(source_connection.style).merge(
-                "source" => source_connection.source,
-                "target" => source_connection.target,
-                "relationship" => source_connection.relationship
+              archi_style_hash(connection.style).merge(
+                "source" => connection.source,
+                "target" => connection.target,
+                "relationship" => connection.relationship
               )
             )
           )
         ) do
-          serialize(xml, source_connection.bendpoints)
-          serialize(xml, source_connection.documentation)
-          serialize(xml, source_connection.properties)
+          serialize(xml, connection.bendpoints)
+          serialize(xml, connection.documentation)
+          serialize(xml, connection.properties)
         end
       end
 
-      def serialize_bendpoint(xml, bendpoint)
+      # startX = location.x - source_attachment.x
+      # startY = location.y - source_attachment.y
+      # endX = location.x - target_attachment.x
+      # endY = location.y - source_attachment.y
+      def serialize_location(xml, bendpoint)
         xml.bendpoint(
           remove_nil_values(
-            startX: bendpoint.start_x&.to_i,
-            startY: bendpoint.start_y&.to_i,
+            startX: bendpoint.x == 0 ? nil : bendpoint.x&.to_i,
+            startY: bendpoint.y == 0 ? nil : bendpoint.y&.to_i,
             endX: bendpoint.end_x&.to_i,
             endY: bendpoint.end_y&.to_i
           )

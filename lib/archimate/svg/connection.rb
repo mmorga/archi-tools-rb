@@ -3,21 +3,28 @@
 module Archimate
   module Svg
     class Connection
-      attr_reader :source_connection
+      attr_reader :connection
       attr_reader :css_style
 
-      def initialize(source_connection)
-        @source_connection = source_connection
-        @css_style = CssStyle.new(source_connection.style)
+      def initialize(connection)
+        @connection = connection
+        @css_style = CssStyle.new(connection.style)
+      end
+
+      def render(svg)
+        Nokogiri::XML::Builder.with(svg) do |xml|
+          to_svg(xml)
+        end
+        svg
       end
 
       def to_svg(xml)
-        return if source_connection.source_element.children.include?(source_connection.target_element)
+        return if connection.source_element.children.include?(connection.target_element)
         xml.path(path_attrs) do
-          xml.title @source_connection.description
+          xml.title @connection.description
         end
 
-        name = source_connection&.relationship_element&.name&.strip
+        name = connection&.relationship_element&.name&.strip
         return if name.nil? || name.empty?
         xml.text_(
           class: "archimate-relationship-name",
@@ -32,7 +39,7 @@ module Archimate
       end
 
       def line_style
-        style = source_connection.style
+        style = connection.style
         return "" if style.nil?
         {
           "stroke": style.line_color&.to_rgba,
@@ -43,7 +50,7 @@ module Archimate
       end
 
       def text_position
-        case source_connection.style
+        case connection.style
         when 0
           "10%"
         when 1
@@ -63,14 +70,14 @@ module Archimate
       end
 
       def id
-        source_connection.relationship_element&.id || source_connection.id
+        connection.relationship_element&.id || connection.id
       end
 
       # Look at the type (if any of the path and set the class appropriately)
       def path_class
         [
           "archimate",
-          css_classify(source_connection&.relationship_element&.type || "default")
+          css_classify(connection&.relationship_element&.type || "default")
         ].join("-") + " archimate-relationship"
       end
 
@@ -95,8 +102,8 @@ module Archimate
       # if left/right range of both overlap, use centerpoint of overlap range as x val
       # if top/bottom range of both overlap, use centerpoint of overlap range as y val
       def path_d
-        source_bounds = source_connection.source_element&.absolute_position || DataModel::Bounds.zero
-        target_bounds = source_connection.target_element&.absolute_position || DataModel::Bounds.zero
+        source_bounds = connection.source_element&.absolute_position || DataModel::Bounds.zero
+        target_bounds = connection.target_element&.absolute_position || DataModel::Bounds.zero
 
         start_point = DataModel::Bounds.new(
           x: source_bounds.left + source_bounds.width / 2.0,
@@ -104,10 +111,10 @@ module Archimate
           width: 0,
           height: 0
         )
-        bp_bounds = source_connection.bendpoints.map do |bp|
+        bp_bounds = connection.bendpoints.map do |bp|
           DataModel::Bounds.new(
-            x: start_point.x + (bp.start_x || 0),
-            y: start_point.y + (bp.start_y || 0),
+            x: start_point.x + (bp.x || 0),
+            y: start_point.y + (bp.y || 0),
             width: 0,
             height: 0
           )
