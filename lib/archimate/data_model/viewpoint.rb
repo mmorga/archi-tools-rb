@@ -62,6 +62,12 @@ module Archimate
                       )
     ViewpointType = Strict::String.enum(*VIEWPOINTS_ENUM)
 
+    ViewpointContentEnum = Strict::String.enum(%w[Details Coherence Overview])
+    ViewpointContent = Strict::Array.member(ViewpointContentEnum).default([])
+
+    ViewpointPurposeEnum = Strict::String.enum(%w[Designing Deciding Informing])
+    ViewpointPurpose = Strict::Array.member(ViewpointPurposeEnum).default([])
+
     class Viewpoint < NamedReferenceable
       using DataModel::DiffableArray
       using DataModel::DiffablePrimitive

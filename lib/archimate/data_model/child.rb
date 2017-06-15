@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
+    # TODO: This is Node in the v3 XSD
     class Child < Referenceable
       using DiffableArray
 

@@ -19,8 +19,6 @@ module Archimate
     # Enumeration of Influence Strength types. These are suggestions.
     InfluenceStrengthEnum = Strict::String.enum(%w[+ ++ - -- 0 1 2 3 4 5 6 7 8 9 10])
 
-    require 'archimate/data_model/viewpoint_content'
-    require 'archimate/data_model/viewpoint_purpose'
     require 'archimate/data_model/diffable_primitive'
     require 'archimate/data_model/diffable_array'
     require 'archimate/data_model/constants'

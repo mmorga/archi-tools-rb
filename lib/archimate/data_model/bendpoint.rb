@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
+    # TODO: This is Archi specific. The spec uses a single x,y point
     class Bendpoint < ArchimateNode
       attribute :start_x, Coercible::Float.optional
       attribute :start_y, Coercible::Float.optional
