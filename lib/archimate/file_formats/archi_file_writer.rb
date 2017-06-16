@@ -103,11 +103,20 @@ module Archimate
             "name" => rel.name,
             "source" => rel.source,
             "target" => rel.target,
-            "accessType" => rel.access_type
+            "accessType" => serialize_access_type(rel.access_type)
           )
         ) do
           serialize(xml, rel.documentation)
           serialize(xml, rel.properties)
+        end
+      end
+
+      def serialize_access_type(val)
+        case val
+        when nil
+          nil
+        else
+          DataModel::AccessType.index(val)
         end
       end
 

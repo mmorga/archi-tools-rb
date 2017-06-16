@@ -74,7 +74,8 @@ module Archimate
         lang = value_node.nil? ? "en" : value_node["xml:lang"]
         value = value_node&.content
         DataModel::Property.new(
-          property_definition_id: node["identifierref"],
+          # TODO: This is one case where version 2.1 differs from version 3.0
+          property_definition_id: node.attr("identifierref") || node.attr("propertyDefinitionRef"),
           values: [
             DataModel::LangString.new(text: value, lang: lang)
           ]

@@ -129,11 +129,18 @@ module Archimate
             source: i.attr("source"),
             target: i.attr("target"),
             name: i["name"],
-            access_type: i["accessType"],
+            access_type: parse_access_type(i["accessType"]),
             documentation: parse_documentation(i),
             properties: parse_properties(i)
           )
         end
+      end
+
+      def parse_access_type(val)
+        return nil unless val && val.size > 0
+        i = val.to_i
+        return nil unless i >= 0 && i < DataModel::AccessType.size
+        DataModel::AccessType[i]
       end
 
       def parse_diagrams(model)

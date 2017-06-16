@@ -18,6 +18,9 @@ module Archimate
     RelationshipType = Strict::String.enum(*RelationshipTypeEnum)
     AllowedRelationshipTypes = Strict::Array.member(RelationshipType).default([])
 
+    AccessType = %w[Access Read Write ReadWrite]
+    AccessTypeEnum = Strict::String.enum(*AccessType)
+
     # A base relationship type that can be extended by concrete ArchiMate types.
     #
     # Note that RelationshipType is abstract, so one must have derived types of this type. this is indicated in xml
@@ -26,7 +29,7 @@ module Archimate
     class Relationship < Concept
       attribute :source, Strict::String
       attribute :target, Strict::String
-      attribute :access_type, Coercible::Int.optional # TODO: turn this into an enum
+      attribute :access_type, AccessTypeEnum.optional
 
       def replace(entity, with_entity)
         @source = with_entity.id if source == entity.id

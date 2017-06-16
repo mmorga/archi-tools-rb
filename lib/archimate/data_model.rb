@@ -13,9 +13,6 @@ module Archimate
     # An enumeration of data types.
     DataType = Strict::String.default("string").enum("string", "boolean", "currency", "date", "time", "number")
 
-    # Enumeration of Element types.
-    AccessType = Strict::String.enum("Access", "Read", "Write", "ReadWrite")
-
     # Enumeration of Influence Strength types. These are suggestions.
     InfluenceStrengthEnum = Strict::String.enum(%w[+ ++ - -- 0 1 2 3 4 5 6 7 8 9 10])
 
