@@ -42,14 +42,20 @@ module Archimate
         end
 
         def to_svg(xml)
-          xml.g(group_attrs) do
-            xml.title { xml.text @entity.name } unless @entity.name.nil? || @entity.name.empty?
-            xml.desc { xml.text(@entity.documentation.map(&:text).join("\n\n")) } unless @entity.documentation.empty?
-            entity_shape(xml, child.bounds)
-            entity_badge(xml)
-            entity_label(xml)
-            child.nodes.each { |c| Svg::EntityFactory.make_entity(c, child.bounds).to_svg(xml) }
-          end
+          optional_link(xml) {
+            xml.g(group_attrs) do
+              xml.title { xml.text @entity.name } unless @entity.name.nil? || @entity.name.empty?
+              xml.desc { xml.text(@entity.documentation.map(&:text).join("\n\n")) } unless @entity.documentation.empty?
+              entity_shape(xml, child.bounds)
+              entity_badge(xml)
+              entity_label(xml)
+              child.nodes.each { |c| Svg::EntityFactory.make_entity(c, child.bounds).to_svg(xml) }
+            end
+          }
+        end
+
+        def optional_link(xml, &block)
+          block.call
         end
 
         def entity_label(xml)
