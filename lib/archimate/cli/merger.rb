@@ -1,7 +1,43 @@
 # frozen_string_literal: true
+
 module Archimate
   module Cli
-    class Merger
+    # Merger is a class that is a decorator on Archimate::DataModel::Model
+    # to provide the capability to merge another model into itself
+    #
+    # TODO: provide for a conflict resolver instance
+    # TODO: provide an option to determine if potential matches are merged
+    #       or if the conflict resolver should be asked.
+    class Merger # < SimpleDelegator
+      # def initialize(primary_model, conflict_resolver)
+      #   super(primary_model)
+      #   @resolver = conflict_resolver
+      # end
+
+      # What merge does:
+      # For all entities: (other than Model...):
+      #   - PropertyDefinition
+      #   - View
+      #   - Viewpoint
+      # Entity:
+      #   look for a matching entity: with result
+      #     1. Found a matching entity: goto entity merge
+      #     2. Found no matching entity, but id conflicts: gen new id, goto add entity
+      #     3. Found no matching entity: goto add entity
+      #   entity merge:
+      #     1. merge (with func from deduper)
+      #   add entity:
+      #     1. add entity to model
+      #   add remapping entry to map from entities other model id to id in this model
+      # Relationship:
+      # def merge(other_model)
+      #   other_model.entities.each do |entity|
+      #     # TODO: matching entity should use the same criteria that DuplicateEntities uses.
+      #     my_entity = find_matching_entity(entity)
+      #     if my_entity
+      #   end
+      # end
+
       # TODO: handle inner text of elements
       # TODO: handle merging by element type
 

@@ -11,18 +11,15 @@ module Archimate
     # An organization has no meaning unless it has at least child organization element.
     #
     # Note that Organization must fit into a tree structure (so strictly nested).
-    class Organization < Referenceable
-      attribute :items, Strict::Array.member(Strict::String).default([])
-      attribute :organizations, Strict::Array.member(Organization).default([])
-      #       attribute :label, Strict::Array.members(LangString).constrained(:min_size = 1)
-      #       attribute :documentation, Strict::Array.members(PreservedLangString).default([])
-      #       attribute :item, Strict::Array.members(Organization).default([])
-      #       attribute :other, Strict::Array.default([])
-      #       attribute :identifier, Strict::String.constrained(format: /[[[:alpha:]]_][w-.]*/).optional
-      #       attribute :identifierRef, Strict::String.constrained(format: /[[[:alpha:]]_][w-.]*/).optional
-      #       attribute :other, Strict::Array.default([])
-      attribute :properties, PropertiesList # Note: this is not in the model under element
-      # it's added under Real Element
+    class Organization < ArchimateNode # was Referenceable
+      attribute :id, Identifier.optional # .constrained(format: /[[[:alpha:]]_][w-.]*/)
+      attribute :name, LangString.optional # LabelGroup in the XSD, TODO: this is a LangString collection
+      attribute :type, Strict::String.optional # I believe this is used only for Archi formats
+      attribute :documentation, DocumentationGroup
+      attribute :items, Strict::Array.member(Identifier).default([])
+      attribute :organizations, Strict::Array.member(Organization).default([]) # item in the XSD
+      # attribute :other_elements, Strict::Array.member(AnyElement).default([])
+      # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
 
       def to_s
         "#{Archimate::Color.data_model('Organization')}<#{id}>[#{Archimate::Color.color(name, [:white, :underline])}]"

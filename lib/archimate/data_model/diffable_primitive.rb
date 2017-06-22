@@ -63,6 +63,10 @@ module Archimate
         include DiffablePrimitiveMethods
       end
 
+      refine Hash do
+        include DiffablePrimitiveMethods
+      end
+
       refine Integer do
         include DiffablePrimitiveMethods
       end

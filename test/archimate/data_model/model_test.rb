@@ -138,37 +138,37 @@ module Archimate
           assert_kind_of DataModel::Organization, @subject.find_in_organizations(el)
         end
         @subject.relationships.each do |el|
-          assert_equal "Relations", @subject.find_in_organizations(el).name
+          assert_equal "Relations", @subject.find_in_organizations(el).name.to_s
         end
         @subject.diagrams.each do |el|
-          assert_equal "Views", @subject.find_in_organizations(el).name
+          assert_equal "Views", @subject.find_in_organizations(el).name.to_s
         end
       end
 
       def test_default_organization_for_with_no_initial_organizations
         organization = @subject.default_organization_for(build_element(type: "BusinessActor"))
-        assert_equal "Business", organization.name
+        assert_equal "Business", organization.name.to_s
 
         organization = @subject.default_organization_for(build_element(type: "ApplicationComponent"))
-        assert_equal "Application", organization.name
+        assert_equal "Application", organization.name.to_s
 
         organization = @subject.default_organization_for(build_element(type: "Node"))
-        assert_equal "Technology", organization.name
+        assert_equal "Technology", organization.name.to_s
 
         organization = @subject.default_organization_for(build_element(type: "Goal"))
-        assert_equal "Motivation", organization.name
+        assert_equal "Motivation", organization.name.to_s
 
         organization = @subject.default_organization_for(build_element(type: "Gap"))
-        assert_equal "Implementation & Migration", organization.name
+        assert_equal "Implementation & Migration", organization.name.to_s
 
         organization = @subject.default_organization_for(build_element(type: "Junction"))
-        assert_equal "Connectors", organization.name
+        assert_equal "Connectors", organization.name.to_s
 
         organization = @subject.default_organization_for(build_relationship)
-        assert_equal "Relations", organization.name
+        assert_equal "Relations", organization.name.to_s
 
         organization = @subject.default_organization_for(build_diagram)
-        assert_equal "Views", organization.name
+        assert_equal "Views", organization.name.to_s
       end
 
       def test_default_organization_for_with_initial_organizations_by_type
@@ -223,28 +223,28 @@ module Archimate
           ]
         )
         organization = subject.default_organization_for(build_element(type: "BusinessActor"))
-        assert_equal "Business", organization.name
+        assert_equal "Business", organization.name.to_s
 
         organization = subject.default_organization_for(build_element(type: "ApplicationComponent"))
-        assert_equal "Application", organization.name
+        assert_equal "Application", organization.name.to_s
 
         organization = subject.default_organization_for(build_element(type: "Node"))
-        assert_equal "Technology", organization.name
+        assert_equal "Technology", organization.name.to_s
 
         organization = subject.default_organization_for(build_element(type: "Goal"))
-        assert_equal "Motivation", organization.name
+        assert_equal "Motivation", organization.name.to_s
 
         organization = subject.default_organization_for(build_element(type: "Gap"))
-        assert_equal "Implementation & Migration", organization.name
+        assert_equal "Implementation & Migration", organization.name.to_s
 
         organization = subject.default_organization_for(build_element(type: "Junction"))
-        assert_equal "Connectors", organization.name
+        assert_equal "Connectors", organization.name.to_s
 
         organization = subject.default_organization_for(build_relationship)
-        assert_equal "Relations", organization.name
+        assert_equal "Relations", organization.name.to_s
 
         organization = subject.default_organization_for(build_diagram)
-        assert_equal "Views", organization.name
+        assert_equal "Views", organization.name.to_s
       end
 
       def test_make_unique_id

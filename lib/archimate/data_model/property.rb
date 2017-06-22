@@ -15,11 +15,7 @@ module Archimate
       end
 
       def value
-        values.first&.text
-      end
-
-      def lang
-        values.first&.lang
+        values.first
       end
 
       def property_definition

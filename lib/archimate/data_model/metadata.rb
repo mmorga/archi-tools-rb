@@ -7,10 +7,7 @@ module Archimate
     #
     # One or more different meta-data models may be declared as child extensions of a meta-data element.
     class Metadata < ArchimateNode
-      using DataModel::DiffableArray
-      using DataModel::DiffablePrimitive
-
-      attribute :schemaInfo, Strict::Array.member(SchemaInfo).default([])
+      attribute :schema_infos, Strict::Array.member(SchemaInfo).default([])
     end
     Dry::Types.register_class(Metadata)
   end

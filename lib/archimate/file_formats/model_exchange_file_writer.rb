@@ -8,7 +8,6 @@ module Archimate
 
       def initialize(model)
         super
-        @version = "2.1"
       end
 
       def write(output_io)
@@ -22,20 +21,24 @@ module Archimate
         str
       end
 
+      # TODO: this should replace namespaces as appropriate for the desired export version
+      def model_namespaces
+        model.namespaces
+      end
+
       def serialize_model(xml)
+        model_attrs = model_namespaces.merge(
+          "xsi:schemaLocation" => model.schema_locations.join(" "),
+          "identifier" => identifier(model.id)
+        )
+        model_attrs["version"] = model.version if model.archimate_version == :archimate_3_0
         xml.model(
-          "xmlns" => "http://www.opengroup.org/xsd/archimate",
-          "xmlns:dc" => "http://purl.org/dc/elements/1.1/",
-          "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
-          "xsi:schemaLocation" => "http://www.opengroup.org/xsd/archimate " \
-            "http://www.opengroup.org/xsd/archimate/archimate_v2p1.xsd " \
-            "http://purl.org/dc/elements/1.1/ " \
-            "http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd",
-          "identifier" => "id-#{model.id}"
+          model_attrs
         ) do
-          serialize_metadata(xml)
+          serialize_metadata(xml) if model.archimate_version == :archimate_2_1
           xml.name("xml:lang" => "en") { xml.text model.name }
           serialize(xml, model.documentation)
+          serialize_metadata(xml) if model.archimate_version == :archimate_3_0
           serialize_properties(xml, model)
           serialize_elements(xml)
           serialize_relationships(xml)
@@ -46,34 +49,92 @@ module Archimate
       end
 
       def serialize_metadata(xml)
+        return unless model.metadata && model.metadata.schema_infos.size > 0
         xml.metadata do
-          xml.schema { xml.text "Dublin Core" }
-          xml.schemaversion { xml.text "1.1" }
-          xml["dc"].title { xml.text "Archisurance Test Exchange Model" }
-          xml["dc"].subject { xml.text "ArchiMate, Testing" }
-          xml["dc"].description { xml.text "Test the Archisurance Exchange Model" }
-          xml["dc"].language { xml.text "en" }
-          xml["dc"].date { xml.text "2015-01-21 17:50" }
-          xml["dc"].creator { xml.text "Phil Beauvoir" }
+          if model.metadata.schema_infos.size == 1
+            serialize_schema_info_body(xml, model.metadata.schema_infos.first)
+          else
+            model.metadata.schema_infos.each do |schema_info|
+              serialize_schema_info(xml, schema_info)
+            end
+          end
+        end
+      end
+
+      def serialize_schema_info(xml, schema_info)
+        xml.schemaInfo do
+          serialize_schema_info_body(xml, schema_info)
+        end
+      end
+
+      def serialize_schema_info_body(xml, schema_info)
+        xml.schema { xml.text (schema_info.schema) } if schema_info.schema
+        xml.schemaversion { xml.text (schema_info.schemaversion) } if schema_info.schemaversion
+        schema_info.elements.each do |el|
+          serialize_any_element(xml, el)
+        end
+      end
+
+      def serialize_any_element(xml, el)
+        if el.prefix && !el.prefix.empty?
+          xml_prefix = xml[el.prefix]
+        else
+          xml_prefix = xml
+        end
+        xml_prefix.send(el.element.to_sym, serialize_any_attributes(el.attributes)) do
+          xml.text(el.content) if el.content&.size > 0
+          el.children.each { |child| serialize_any_element(xml, child) }
+        end
+      end
+
+      def serialize_any_attributes(attrs)
+        attrs.each_with_object({}) do |attr, hash|
+          key = attr.prefix&.size > 0 ? [attr.prefix, attr.attribute].join(":") : attr.attribute
+          hash[key] = attr.value
         end
       end
 
       def serialize_property_defs(xml)
+        return if model.property_definitions.empty?
+        case model.archimate_version
+        when :archimate_3_0
+          serialize_property_defs_30(xml)
+        when :archimate_2_1
+          serialize_property_defs_21(xml)
+        else
+          raise "Unsupported ArchiMate version: #{model.archimate_version}"
+        end
+      end
+
+      def serialize_property_defs_21(xml)
         xml.propertydefs do
-          keys = model.property_keys
-          keys << "JunctionType"
-          keys.sort.each do |key|
+          model.property_definitions.each do |property_def|
             xml.propertydef(
-              "identifier" => key == "JunctionType" ? "propid-junctionType" : model.property_def_id(key),
-              "name" => key,
-              "type" => "string"
+              "identifier" => property_def.id,
+              "name" => property_def.name,
+              "type" => property_def.value_type
             )
           end
         end
       end
 
+      def serialize_property_defs_30(xml)
+        return if model.property_definitions.empty?
+        xml.propertyDefinitions do
+          model.property_definitions.each do |property_def|
+            xml.propertyDefinition(
+              "identifier" => property_def.id,
+              "type" => property_def.value_type
+            ) do
+              serialize_lang_string(xml, :name, property_def.name)
+            end
+          end
+        end
+      end
+
       def serialize_documentation(xml, documentation, element_name = "documentation")
-        xml.send(element_name, "xml:lang" => documentation.lang) { xml.text(text_proc(documentation.text)) }
+        doc_attrs = documentation.lang && !documentation.lang.empty? ? {"xml:lang" => documentation.lang} : {}
+        xml.send(element_name, doc_attrs) { xml.text(text_proc(documentation.text)) }
       end
 
       def serialize_elements(xml)
@@ -82,7 +143,7 @@ module Archimate
 
       def serialize_element(xml, element)
         return if element.type == "SketchModel" # TODO: print a warning that data is lost
-        xml.element(identifier: "id-#{element['id']}",
+        xml.element(identifier: identifier(element['id']),
                     "xsi:type" => meff_type(element.type)) do
           elementbase(xml, element)
         end
@@ -95,7 +156,13 @@ module Archimate
       end
 
       def serialize_label(xml, str)
-        xml.label("xml:lang" => "en") { xml.text text_proc(str) } unless str.nil? || str.strip.empty?
+        return if str.nil? || str.strip.empty?
+        name_attrs = str.lang && !str.lang.empty? ? {"xml:lang" => str.lang} : {}
+        if model.archimate_version == :archimate_2_1
+          xml.label(name_attrs) { xml.text text_proc(str) }
+        else
+          xml.name(name_attrs) { xml.text text_proc(str) }
+        end
       end
 
       def serialize_relationships(xml)
@@ -104,9 +171,9 @@ module Archimate
 
       def serialize_relationship(xml, relationship)
         xml.relationship(
-          identifier: "id-#{relationship.id}",
-          source: "id-#{relationship.source}",
-          target: "id-#{relationship.target}",
+          identifier: identifier(relationship.id),
+          source: identifier(relationship.source),
+          target: identifier(relationship.target),
           "xsi:type" => meff_type(relationship.type)
         ) do
           elementbase(xml, relationship)
@@ -114,23 +181,42 @@ module Archimate
       end
 
       def serialize_organization_root(xml, organizations)
-        xml.organization do
-          serialize(xml, organizations)
+        return unless organizations && organizations.size > 0
+        if model.archimate_version == :archimate_3_0
+          xml.organizations do
+            serialize_organization_body(xml, organizations[0])
+          end
+        else
+          xml.organization do
+            serialize(xml, organizations)
+          end
         end
       end
 
       def serialize_organization(xml, organization)
-        return if organization.items.empty? && organization.documentation.empty? && organization.properties.empty? && organization.organizations.empty?
-        xml.item do
-          serialize_label(xml, organization.name)
-          serialize(xml, organization.documentation)
-          serialize(xml, organization.organizations)
-          organization.items.each { |i| serialize_item(xml, i) }
+        return if organization.items.empty? && organization.documentation.empty? && organization.organizations.empty?
+        item_attrs = organization.id.nil? || organization.id.empty? ? {} : {identifier: organization.id}
+        xml.item(item_attrs) do
+          serialize_organization_body(xml, organization)
         end
       end
 
+      def serialize_organization_body(xml, organization)
+        return if organization.items.empty? && organization.documentation.empty? && organization.organizations.empty?
+        str = organization.name
+        label_attrs = organization.name&.lang && !organization.name.lang.empty? ? {"xml:lang" => organization.name.lang} : {}
+        xml.label(label_attrs) { xml.text text_proc(str) } unless str.nil? || str.strip.empty?
+        serialize(xml, organization.documentation)
+        serialize(xml, organization.organizations)
+        organization.items.each { |i| serialize_item(xml, i) }
+      end
+
       def serialize_item(xml, item)
-        xml.item(identifierref: "id-#{item}")
+        if model.archimate_version == :archimate_3_0
+          xml.item(identifierRef: identifier(item))
+        else
+          xml.item(identifierref: identifier(item))
+        end
       end
 
       def serialize_properties(xml, element)
@@ -141,14 +227,20 @@ module Archimate
       end
 
       def serialize_property(xml, property)
-        xml.property(identifierref: property.property_definition_id) do
-          xml.value("xml:lang" => property.lang) do
-            xml.text text_proc(property.value) unless property.value.nil? || property.value.strip.empty?
-          end
+        property_ref_attr = model.archimate_version == :archimate_3_0 ? "propertyDefinitionRef" : "identifierref"
+        xml.property(property_ref_attr => property.property_definition_id) do
+          serialize_lang_string(xml, :value, property.value)
         end
       end
 
+      def serialize_lang_string(xml, tag_name, lang_str)
+        return unless lang_str
+        attrs = lang_str.lang && !lang_str.lang.empty? ? {"xml:lang" => lang_str.lang} : {}
+        xml.send(tag_name, attrs) { xml.text text_proc(lang_str) }
+      end
+
       def serialize_views(xml)
+        return if model.views.diagrams.empty?
         xml.views do
           serialize(xml, model.diagrams)
         end
@@ -157,7 +249,7 @@ module Archimate
       def serialize_diagram(xml, diagram)
         xml.view(
           remove_nil_values(
-            identifier: "id-#{diagram.id}",
+            identifier: identifier(diagram.id),
             viewpoint: diagram.viewpoint
           )
         ) do
@@ -169,7 +261,7 @@ module Archimate
 
       def serialize_view_node(xml, view_node, x_offset = 0, y_offset = 0)
         view_node_attrs = {
-          identifier: "id-#{view_node.id}",
+          identifier: identifier(view_node.id),
           elementref: nil,
           x: view_node.bounds ? (view_node.bounds&.x + x_offset).round : nil,
           y: view_node.bounds ? (view_node.bounds&.y + y_offset).round : nil,
@@ -178,7 +270,7 @@ module Archimate
           type: nil
         }
         if view_node.archimate_element
-          view_node_attrs[:elementref] = "id-#{view_node.archimate_element}"
+          view_node_attrs[:elementref] = identifier(view_node.archimate_element)
         elsif view_node.model
           # Since it doesn't seem to be forbidden, we just assume we can use
           # the elementref for views in views
@@ -235,10 +327,10 @@ module Archimate
 
       def serialize_connection(xml, sc)
         xml.connection(
-          identifier: "id-#{sc.id}",
-          relationshipref: "id-#{sc.relationship}",
-          source: "id-#{sc.source}",
-          target: "id-#{sc.target}"
+          identifier: identifier(sc.id),
+          relationshipref: identifier(sc.relationship),
+          source: identifier(sc.source),
+          target: identifier(sc.target)
         ) do
           serialize(xml, sc.bendpoints)
           serialize(xml, sc.style)
@@ -262,6 +354,13 @@ module Archimate
       # # Processes text for text elements
       def text_proc(str)
         str.strip.tr("\r", "\n")
+      end
+
+      # TODO: Archi uses hex numbers for ids which may not be valid for
+      # identifer. If we are converting from Archi, decorate the IDs here.
+      def identifier(str)
+        return "id-#{str}" if str =~ /^\d/
+        str
       end
     end
   end

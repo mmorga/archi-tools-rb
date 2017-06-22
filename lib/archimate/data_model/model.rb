@@ -15,7 +15,6 @@ module Archimate
       attribute :elements, Strict::Array.member(Element).default([])
       attribute :relationships, Strict::Array.member(Relationship).default([])
       attribute :organizations, Strict::Array.member(Organization).default([])
-      # attribute :organizations, Strict::Array.member(Organization).default([]) # Organizations.optional
       attribute :property_definitions, Strict::Array.member(PropertyDefinition).default([])
       attribute :version, Strict::String.optional
       attribute :diagrams, Strict::Array.member(Diagram).default([]) # TODO: move under views
@@ -24,6 +23,9 @@ module Archimate
       attribute :filename, Strict::String.optional
       attribute :file_format, Strict::Symbol.enum(*Archimate::SUPPORTED_FORMATS).optional
       attribute :archimate_version, Strict::Symbol.default(:archimate_3_0).enum(*Archimate::ARCHIMATE_VERSIONS)
+
+      attribute :namespaces, Strict::Hash.default({})
+      attribute :schema_locations, Strict::Array.member(Strict::String).default([])
 
       def initialize(attributes)
         super

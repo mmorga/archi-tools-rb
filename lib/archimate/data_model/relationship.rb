@@ -27,8 +27,8 @@ module Archimate
     # by having a tag name of "relationship" and an attribute of xsi:type="AccessRelationship" where AccessRelationship is
     # a derived type from RelationshipType.
     class Relationship < Concept
-      attribute :source, Strict::String
-      attribute :target, Strict::String
+      attribute :source, Identifier
+      attribute :target, Identifier
       attribute :access_type, AccessTypeEnum.optional
 
       def replace(entity, with_entity)

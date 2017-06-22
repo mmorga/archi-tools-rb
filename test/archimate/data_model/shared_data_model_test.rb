@@ -5,7 +5,7 @@ module Archimate
   module DataModel
     class SharedDataModelTest < Minitest::Test
       [
-        Location, Bounds, ViewNode, Color, Diagram, Documentation, Element,
+        Location, Bounds, ViewNode, Color, Diagram, LangString, Documentation, Element,
         Organization, Font, Model, Property, Relationship, Connection, Style
       ].each do |klass|
         [:parent, :in_model].each do |method|

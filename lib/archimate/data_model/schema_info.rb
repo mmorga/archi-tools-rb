@@ -7,7 +7,7 @@ module Archimate
 
       attribute :schema, Strict::String.optional
       attribute :schemaversion, Strict::String.optional
-      # attribute :other, Strict::Array.default([])
+      attribute :elements, Strict::Array.member(AnyElement).default([])
 
       def to_s
         "#{type.light_black}[#{schema} #{schemaversion}]"

@@ -12,8 +12,8 @@ module Archimate
       end
 
       def test_model_simple_attributes
-        assert_equal "Archisurance", model.name
-        assert_equal "11f5304f", model.id
+        assert_equal DataModel::LangString.new("Archisurance"), model.name
+        assert_equal "id-11f5304f", model.id
       end
 
       def test_model_documentation
@@ -42,16 +42,16 @@ module Archimate
         assert_equal 120, model.elements.size
         assert_equal(
           DataModel::Element.new(
-            id: "1544",
+            id: "id-1544",
             type: "BusinessInterface",
-            name: "mail"
+            name: DataModel::LangString.new(text: "mail", lang: "en")
           ), model.elements.first
         )
         assert_equal(
           DataModel::Element.new(
-            id: "3db08b5c",
+            id: "id-3db08b5c",
             type: "Principle",
-            name: "Infrastructure Principle"
+            name: DataModel::LangString.new(text: "Infrastructure Principle", lang: "en")
           ), model.elements.last
         )
       end
@@ -60,18 +60,18 @@ module Archimate
         assert_equal 178, model.relationships.size
         assert_equal(
           DataModel::Relationship.new(
-            id: "693",
-            source: "564",
-            target: "674",
+            id: "id-693",
+            source: "id-564",
+            target: "id-674",
             type: "AccessRelationship",
-            name: "create/ update"
+            name: DataModel::LangString.new(text: "create/ update", lang: "en")
           ), model.relationships.first
         )
         assert_equal(
           DataModel::Relationship.new(
-            id: "dd9c00de",
-            source: "1101",
-            target: "1882",
+            id: "id-dd9c00de",
+            source: "id-1101",
+            target: "id-1882",
             type: "AssociationRelationship",
             name: nil
           ), model.relationships.last
@@ -88,8 +88,8 @@ module Archimate
         assert_equal 17, model.diagrams.size
         d = model.diagrams[1]
 
-        assert_equal "Layered View", d.name
-        assert_equal "4056", d.id
+        assert_equal "Layered View", d.name.to_s
+        assert_equal "id-4056", d.id
         assert_equal "Layered", d.viewpoint
         assert_equal 7, d.nodes.size
         assert_equal 28, d.connections.size

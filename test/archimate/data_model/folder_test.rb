@@ -12,12 +12,11 @@ module Archimate
 
       def test_new
         assert_equal "123", @f1.id
-        assert_equal "Sales", @f1.name
+        assert_equal "Sales", @f1.name.to_s
         assert_equal "Business", @f1.type
         assert_equal @child_organizations, @f1.organizations
         assert_empty @f1.items
         assert_empty @f1.documentation
-        assert_empty @f1.properties
       end
 
       def test_build_organizations_empty
@@ -28,11 +27,13 @@ module Archimate
 
       def test_build_organization
         f = build_organization(type: "testtype")
-        [:id, :name, :type].each do |sym|
+        [:id, :type].each do |sym|
           assert_instance_of String, f[sym]
           refute_empty f[sym]
         end
-        [:documentation, :properties, :items].each do |sym|
+        assert_instance_of LangString, f[:name]
+        refute_empty f[:name]
+        [:documentation, :items].each do |sym|
           assert_instance_of Array, f[sym]
           assert_empty f[sym]
         end

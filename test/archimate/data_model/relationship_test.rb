@@ -8,7 +8,7 @@ module Archimate
         docs = build_documentation_list(count: 2)
         rel = build_relationship(id: "123", name: "my rel", documentation: docs)
         assert_equal "123", rel.id
-        assert_equal "my rel", rel.name
+        assert_equal "my rel", rel.name.to_s
         assert_equal docs, rel.documentation
       end
 
@@ -36,7 +36,7 @@ module Archimate
         r1 = build_relationship
         r2 = r1.with(name: "pablo")
         refute_equal r1, r2
-        assert_equal "pablo", r2.name
+        assert_equal "pablo", r2.name.to_s
       end
 
       def test_attributes

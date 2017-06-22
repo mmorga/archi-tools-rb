@@ -46,7 +46,9 @@ module Archimate
           relationships: parse_relationships(doc.root),
           diagrams: diagrams,
           views: DataModel::Views.new(viewpoints: [], diagrams: diagrams),
-          property_definitions: @property_defs.values
+          property_definitions: @property_defs.values,
+          namespaces: {},
+          schema_locations: []
         )
       ensure
         @progress&.finish

@@ -8,7 +8,7 @@ module Archimate
         docs = build_documentation_list(count: 2)
         diagram = Diagram.new(id: "123", name: "my diagram", documentation: docs)
         assert_equal "123", diagram.id
-        assert_equal "my diagram", diagram.name
+        assert_equal "my diagram", diagram.name.to_s
         assert_equal docs, diagram.documentation
         assert_empty diagram.properties
         assert_empty diagram.nodes

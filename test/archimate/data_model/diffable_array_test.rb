@@ -160,8 +160,8 @@ module Archimate
 
         assert_equal(
           [Diff::Change.new(
-            Diff::ArchimateNodeAttributeReference.new(local.elements.first, :name),
-            Diff::ArchimateNodeAttributeReference.new(base.elements.first, :name)
+            Diff::ArchimateNodeAttributeReference.new(local.elements.first.name, :text),
+            Diff::ArchimateNodeAttributeReference.new(base.elements.first.name, :text)
           )],
           base_local
         )

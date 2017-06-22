@@ -22,32 +22,135 @@ module Archimate
       def parse(model_exchange_io)
         root = Nokogiri::XML(model_exchange_io)&.root
         return nil if root.nil?
-        @property_defs = parse_property_defs(root)
         parse_model(root)
       end
 
+      def archimate_3?
+        return @archimate_version == :archimate_3_0
+      end
+
       def parse_model(root)
+        diagrams = parse_diagrams(root)
+        @archimate_version = parse_archimate_version(root)
+        org_sel = archimate_3? ? ">organizations" : ">organization>item"
         DataModel::Model.new(
           index_hash: {},
           id: identifier_to_id(root["identifier"]),
           name: parse_name(root),
+          version: root["version"],
+          metadata: parse_metadata(root),
           documentation: parse_documentation(root),
           properties: parse_properties(root),
           elements: parse_elements(root),
           relationships: parse_relationships(root),
-          organizations: parse_organizations(root.css(">organization>item")),
-          diagrams: parse_diagrams(root),
-          property_definitions: @property_defs.values
+          organizations: parse_organizations(root.css(org_sel)),
+          diagrams: diagrams,
+          views: DataModel::Views.new(diagrams: diagrams, viewpoints: []),
+          property_definitions: parse_property_defs(root),
+          schema_locations: root.attr("xsi:schemaLocation").split(" "),
+          namespaces: root.namespaces,
+          archimate_version: @archimate_version
         )
       end
 
+      def parse_metadata(root)
+        metadata = root.at_css(">metadata")
+        return nil unless metadata
+        DataModel::Metadata.new(schema_infos: parse_schema_infos(metadata))
+      end
+
+      def parse_schema_infos(metadata)
+        schema_infos = metadata.css(">schemaInfo")
+        if schema_infos.size > 0
+          schema_infos.map { |si| parse_schema_info(si) }
+        else
+          [parse_schema_info(metadata)].compact
+        end
+      end
+
+      def parse_schema_info(node)
+        els = node.element_children
+        return nil if els.empty?
+        schema_info_attrs = {
+          schema: nil,
+          schemaversion: nil,
+          elements: []
+        }
+        els.each do |el|
+          case(el.name)
+          when "schema"
+            schema_info_attrs[:schema] = el.text
+          when "schemaversion"
+            schema_info_attrs[:schemaversion] = el.text
+          else
+            schema_info_attrs[:elements] << parse_any_element(el)
+          end
+        end
+        DataModel::SchemaInfo.new(schema_info_attrs)
+      end
+
+      def parse_any_element(node)
+        return nil unless node && node.is_a?(Nokogiri::XML::Element)
+        DataModel::AnyElement.new(
+          element: node.name,
+          prefix: node.namespace&.prefix,
+          attributes: node.attributes.map { |attr| parse_any_attribute(attr) },
+          content: node.text,
+          children: node.element_children.map { |child| parse_any_element(node) }
+        )
+      end
+
+      def parse_any_attribute(attr)
+        DataModel::AnyAttribute.new(
+          attribute: attr.name,
+          prefix: attr.namepace&.prefix,
+          value: attr.text
+        )
+      end
+
+      def parse_archimate_version(root)
+        case root.namespace.href
+        when "http://www.opengroup.org/xsd/archimate"
+          :archimate_2_1
+        else # assuming: "http://www.opengroup.org/xsd/archimate/3.0/"
+          :archimate_3_0
+        end
+      end
+
+      def property_defs_selector
+        if archimate_3?
+          ">propertyDefinitions>propertyDefinition"
+        else
+          ">propertydefs>propertydef"
+        end
+      end
+
       def parse_property_defs(node)
-        node.css(">propertydefs>propertydef").each_with_object({}) do |i, a|
-          a[i["identifier"]] = DataModel::PropertyDefinition.new(
+        if archimate_3?
+          parse_property_defs_30(node)
+        else
+          parse_property_defs_21(node)
+        end
+      end
+
+      def parse_property_defs_21(node)
+        node.css(property_defs_selector).map do |i|
+          DataModel::PropertyDefinition.new(
             id: i["identifier"],
-            name: i["name"],
+            name: DataModel::LangString.new(text: i["name"]),
             documentation: parse_documentation(i),
-            type: i["type"]
+            value_type: i["type"]
+          )
+        end
+      end
+
+      def parse_property_defs_30(node)
+        node.css(property_defs_selector).map do |i|
+          DataModel::PropertyDefinition.new(
+            id: i["identifier"],
+            name: parse_lang_string(i.at_css("name")),
+            documentation: parse_documentation(i),
+            value_type: i["type"]
           )
         end
       end
@@ -58,8 +161,8 @@ module Archimate
       end
 
       def parse_documentation(node, element_name = "documentation")
-        node.css(">#{element_name}").map do |i|
-          DataModel::Documentation.new(text: i.content, lang: i.attr("lang"))
+        node.css(">#{element_name}").map do |node|
+          DataModel::Documentation.new(text: node.content, lang: node["xml:lang"])
         end
       end
 
@@ -84,10 +187,10 @@ module Archimate
 
       def parse_elements(model)
         model.css(">elements>element").map do |i|
-          label = i.at_css(">label")
+          name = parse_lang_string(i.at_css(">label") || i.at_css(">name"))
           DataModel::Element.new(
             id: identifier_to_id(i["identifier"]),
-            name: label&.content,
+            name: name,
             type: i["xsi:type"],
             documentation: parse_documentation(i),
             properties: parse_properties(i)
@@ -95,18 +198,22 @@ module Archimate
         end
       end
 
+      def parse_lang_string(node)
+        return nil unless node
+        DataModel::LangString.new(text: node.content, lang: node["xml:lang"])
+      end
+
       def parse_organizations(nodes)
         nodes.map do |i|
           child_items = i.css(">item")
-          ref_items = child_items.select { |ci| ci.has_attribute?("identifierref") }
+          identifier_ref_name = archimate_3? ? "identifierRef" : "identifierref"
+          ref_items = child_items.select { |ci| ci.has_attribute?(identifier_ref_name) }
           DataModel::Organization.new(
-            id: i.at_css(">label")&.content, # TODO: model exchange doesn't assign ids to organization items
-            name: i.at_css(">label")&.content,
-            type: nil,
+            id: i["identifier"], # TODO: model exchange doesn't assign ids to organization items
+            name: parse_lang_string(i.at_css(">label")),
             documentation: parse_documentation(i),
-            properties: parse_properties(i),
-            items: ref_items.map { |ri| identifier_to_id(ri["identifierref"]) },
-            organizations: parse_organizations(child_items.reject { |ci| ci.has_attribute?("identifierref") })
+            items: ref_items.map { |ri| identifier_to_id(ri[identifier_ref_name]) },
+            organizations: parse_organizations(child_items.reject { |ci| ci.has_attribute?(identifier_ref_name) })
           )
         end
       end
@@ -117,13 +224,13 @@ module Archimate
 
       def parse_relationships(model)
         model.css(">relationships>relationship").map do |i|
-          label = i.at_css(">label")
+          name = parse_lang_string(i.at_css(">label") || i.at_css(">name"))
           DataModel::Relationship.new(
             id: identifier_to_id(i["identifier"]),
             type: i.attr("xsi:type"),
             source: identifier_to_id(i.attr("source")),
             target: identifier_to_id(i.attr("target")),
-            name: label&.content,
+            name: name,
             access_type: i["accessType"],
             documentation: parse_documentation(i),
             properties: parse_properties(i)
@@ -141,7 +248,7 @@ module Archimate
           end
           DataModel::Diagram.new(
             id: identifier_to_id(i["identifier"]),
-            name: i.at_css("label")&.content,
+            name: parse_lang_string(i.at_css("label")),
             viewpoint: i["viewpoint"],
             documentation: parse_documentation(i),
             properties: parse_properties(i),
@@ -160,7 +267,7 @@ module Archimate
             id: identifier_to_id(i["identifier"]),
             type: i["type"],
             model: nil,
-            name: i.at_css(">label")&.content,
+            name: parse_lang_string(i.at_css(">label")),
             target_connections: [], # TODO: needed? "targetConnections",
             archimate_element: identifier_to_id(i["elementref"]),
             bounds: parse_bounds(i),
@@ -261,7 +368,8 @@ module Archimate
       end
 
       def identifier_to_id(str)
-        str&.sub(/^id-/, "")
+        # str&.sub(/^id-/, "")
+        str
       end
     end
   end

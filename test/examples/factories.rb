@@ -70,7 +70,9 @@ module Archimate
           filename: options.fetch(:filename, nil),
           file_format: options.fetch(:file_format, nil),
           archimate_version: options.fetch(:archimate_version, :archimate_3_0),
-          version: options.fetch(:version, nil)
+          version: options.fetch(:version, nil),
+          namespaces: {},
+          schema_locations: []
         ).organize
       end
 

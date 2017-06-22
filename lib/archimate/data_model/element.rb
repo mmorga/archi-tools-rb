@@ -33,7 +33,7 @@ module Archimate
     # by having a tag name of "element" and an attribute of xsi:type="BusinessRole" where BusinessRole is
     # a derived type from ElementType.
     class Element < Concept
-      attribute :organization_id, Strict::String.optional # Note: this is not from the model
+      attribute :organization_id, Identifier.optional # Note: this is not from the model
 
       def to_s
         Archimate::Color.layer_color(layer, "#{type}<#{id}>[#{name}]")

@@ -105,12 +105,12 @@ module Archimate
 
         expected = Conflict.new(
           Change.new(
-            ArchimateNodeAttributeReference.new(local.elements[0], :name),
-            ArchimateNodeAttributeReference.new(base_el1, :name)
+            ArchimateNodeAttributeReference.new(local.elements[0].name, :text),
+            ArchimateNodeAttributeReference.new(base_el1.name, :text)
           ),
           Change.new(
-            ArchimateNodeAttributeReference.new(remote.elements[0], :name),
-            ArchimateNodeAttributeReference.new(base_el1, :name)
+            ArchimateNodeAttributeReference.new(remote.elements[0].name, :text),
+            ArchimateNodeAttributeReference.new(base_el1.name, :text)
           ),
           "Checking for Differences in one change set that conflict with changes in other change set at the same path"
         )

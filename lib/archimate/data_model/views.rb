@@ -7,5 +7,6 @@ module Archimate
       attribute :viewpoints, Strict::Array.member(Viewpoint).default([])
       attribute :diagrams, Strict::Array.member(Diagram).default([])
     end
+    Dry::Types.register_class(Views)
   end
 end
