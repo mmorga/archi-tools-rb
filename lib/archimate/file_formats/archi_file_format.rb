@@ -2,11 +2,11 @@
 module Archimate
   module FileFormats
     module ArchiFileFormat
-      strategy_folder_xpath = "/archimate:model/folder[@type='strategy']"
+      # strategy_folder_xpath = "/archimate:model/folder[@type='strategy']"
       application_folder_xpath = "/archimate:model/folder[@type='application']"
       business_folder_xpath = "/archimate:model/folder[@type='business']"
       technology_folder_xpath = "/archimate:model/folder[@type='technology']"
-      physical_folder_xpath = "/archimate:model/folder[@type='physical']"
+      # physical_folder_xpath = "/archimate:model/folder[@type='physical']"
       motivation_folder_xpath = "/archimate:model/folder[@type='motivation']"
       implementation_migration_folder_xpath = "/archimate:model/folder[@type='implementation_migration']"
       connectors_folder_xpath = "/archimate:model/folder[@type='connectors']"

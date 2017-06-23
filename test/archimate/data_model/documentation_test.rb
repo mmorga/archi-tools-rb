@@ -9,13 +9,12 @@ module Archimate
       end
 
       def test_to_s
-        assert_match(/Documentation/, @subject.to_s)
         assert_match(@subject.text, @subject.to_s)
       end
 
       def test_to_s_with_lang
         subject = build_documentation(lang: "elvish")
-        assert_match("elvish", subject.to_s)
+        assert_match("elvish", subject.lang)
       end
     end
   end

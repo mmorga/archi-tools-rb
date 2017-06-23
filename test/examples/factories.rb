@@ -66,7 +66,7 @@ module Archimate
           relationships: relationships,
           property_definitions: options.fetch(:property_definitions, []),
           diagrams: diagrams,
-          views: options.fetch(:views, DataModel::Views.new(viewpoints: [], diagrams: [])),
+          viewpoints: [],
           filename: options.fetch(:filename, nil),
           file_format: options.fetch(:file_format, nil),
           archimate_version: options.fetch(:archimate_version, :archimate_3_0),

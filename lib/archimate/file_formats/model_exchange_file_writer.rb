@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 require "nokogiri"
+require 'archimate/file_formats/model_exchange_file/xml_lang_string'
+require 'archimate/file_formats/model_exchange_file/xml_metadata'
+require 'archimate/file_formats/model_exchange_file/xml_property_definitions'
+require 'archimate/file_formats/model_exchange_file/xml_property_defs'
 
 module Archimate
   module FileFormats
@@ -14,16 +18,7 @@ module Archimate
         builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
           serialize_model(xml)
         end
-        output_io.write(process_text(builder.to_xml))
-      end
-
-      def process_text(str)
-        str
-      end
-
-      # TODO: this should replace namespaces as appropriate for the desired export version
-      def model_namespaces
-        model.namespaces
+        output_io.write(builder.to_xml)
       end
 
       def serialize_model(xml)
@@ -35,10 +30,10 @@ module Archimate
         xml.model(
           model_attrs
         ) do
-          serialize_metadata(xml) if model.archimate_version == :archimate_2_1
-          xml.name("xml:lang" => "en") { xml.text model.name }
-          serialize(xml, model.documentation)
-          serialize_metadata(xml) if model.archimate_version == :archimate_3_0
+          ModelExchangeFile::XmlMetadata.new(model.metadata).serialize(xml) if model.archimate_version == :archimate_2_1
+          ModelExchangeFile::XmlLangString.new(model.name, :name).serialize(xml)
+          ModelExchangeFile::XmlLangString.new(model.documentation, :documentation).serialize(xml)
+          ModelExchangeFile::XmlMetadata.new(model.metadata).serialize(xml) if model.archimate_version == :archimate_3_0
           serialize_properties(xml, model)
           serialize_elements(xml)
           serialize_relationships(xml)
@@ -48,93 +43,16 @@ module Archimate
         end
       end
 
-      def serialize_metadata(xml)
-        return unless model.metadata && model.metadata.schema_infos.size > 0
-        xml.metadata do
-          if model.metadata.schema_infos.size == 1
-            serialize_schema_info_body(xml, model.metadata.schema_infos.first)
-          else
-            model.metadata.schema_infos.each do |schema_info|
-              serialize_schema_info(xml, schema_info)
-            end
-          end
-        end
-      end
-
-      def serialize_schema_info(xml, schema_info)
-        xml.schemaInfo do
-          serialize_schema_info_body(xml, schema_info)
-        end
-      end
-
-      def serialize_schema_info_body(xml, schema_info)
-        xml.schema { xml.text (schema_info.schema) } if schema_info.schema
-        xml.schemaversion { xml.text (schema_info.schemaversion) } if schema_info.schemaversion
-        schema_info.elements.each do |el|
-          serialize_any_element(xml, el)
-        end
-      end
-
-      def serialize_any_element(xml, el)
-        if el.prefix && !el.prefix.empty?
-          xml_prefix = xml[el.prefix]
-        else
-          xml_prefix = xml
-        end
-        xml_prefix.send(el.element.to_sym, serialize_any_attributes(el.attributes)) do
-          xml.text(el.content) if el.content&.size > 0
-          el.children.each { |child| serialize_any_element(xml, child) }
-        end
-      end
-
-      def serialize_any_attributes(attrs)
-        attrs.each_with_object({}) do |attr, hash|
-          key = attr.prefix&.size > 0 ? [attr.prefix, attr.attribute].join(":") : attr.attribute
-          hash[key] = attr.value
-        end
-      end
-
       def serialize_property_defs(xml)
         return if model.property_definitions.empty?
         case model.archimate_version
         when :archimate_3_0
-          serialize_property_defs_30(xml)
+          ModelExchangeFile::XmlPropertyDefinitions.new(model.property_definitions).serialize(xml)
         when :archimate_2_1
-          serialize_property_defs_21(xml)
+          ModelExchangeFile::XmlPropertyDefs.new(model.property_definitions).serialize(xml)
         else
           raise "Unsupported ArchiMate version: #{model.archimate_version}"
         end
-      end
-
-      def serialize_property_defs_21(xml)
-        xml.propertydefs do
-          model.property_definitions.each do |property_def|
-            xml.propertydef(
-              "identifier" => property_def.id,
-              "name" => property_def.name,
-              "type" => property_def.value_type
-            )
-          end
-        end
-      end
-
-      def serialize_property_defs_30(xml)
-        return if model.property_definitions.empty?
-        xml.propertyDefinitions do
-          model.property_definitions.each do |property_def|
-            xml.propertyDefinition(
-              "identifier" => property_def.id,
-              "type" => property_def.value_type
-            ) do
-              serialize_lang_string(xml, :name, property_def.name)
-            end
-          end
-        end
-      end
-
-      def serialize_documentation(xml, documentation, element_name = "documentation")
-        doc_attrs = documentation.lang && !documentation.lang.empty? ? {"xml:lang" => documentation.lang} : {}
-        xml.send(element_name, doc_attrs) { xml.text(text_proc(documentation.text)) }
       end
 
       def serialize_elements(xml)
@@ -229,18 +147,12 @@ module Archimate
       def serialize_property(xml, property)
         property_ref_attr = model.archimate_version == :archimate_3_0 ? "propertyDefinitionRef" : "identifierref"
         xml.property(property_ref_attr => property.property_definition_id) do
-          serialize_lang_string(xml, :value, property.value)
+          ModelExchangeFile::XmlLangString.new(property.value, :value).serialize(xml)
         end
       end
 
-      def serialize_lang_string(xml, tag_name, lang_str)
-        return unless lang_str
-        attrs = lang_str.lang && !lang_str.lang.empty? ? {"xml:lang" => lang_str.lang} : {}
-        xml.send(tag_name, attrs) { xml.text text_proc(lang_str) }
-      end
-
       def serialize_views(xml)
-        return if model.views.diagrams.empty?
+        return if model.diagrams.empty?
         xml.views do
           serialize(xml, model.diagrams)
         end
@@ -354,6 +266,11 @@ module Archimate
       # # Processes text for text elements
       def text_proc(str)
         str.strip.tr("\r", "\n")
+      end
+
+      # TODO: this should replace namespaces as appropriate for the desired export version
+      def model_namespaces
+        model.namespaces
       end
 
       # TODO: Archi uses hex numbers for ids which may not be valid for

@@ -17,8 +17,8 @@ module Archimate
       attribute :organizations, Strict::Array.member(Organization).default([])
       attribute :property_definitions, Strict::Array.member(PropertyDefinition).default([])
       attribute :version, Strict::String.optional
-      attribute :diagrams, Strict::Array.member(Diagram).default([]) # TODO: move under views
-      attribute :views, Views
+      attribute :diagrams, Strict::Array.member(Diagram).default([])
+      attribute :viewpoints, Strict::Array.member(Viewpoint).default([])
       # Following attributes are to hold info on where the model came from
       attribute :filename, Strict::String.optional
       attribute :file_format, Strict::Symbol.enum(*Archimate::SUPPORTED_FORMATS).optional

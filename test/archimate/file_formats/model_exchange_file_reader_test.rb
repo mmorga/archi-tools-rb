@@ -12,7 +12,7 @@ module Archimate
       end
 
       def test_model_simple_attributes
-        assert_equal DataModel::LangString.new("Archisurance"), model.name
+        assert_equal DataModel::LangString.new(text: "Archisurance", lang: "en"), model.name
         assert_equal "id-11f5304f", model.id
       end
 

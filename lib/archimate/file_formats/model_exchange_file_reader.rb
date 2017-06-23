@@ -30,13 +30,12 @@ module Archimate
       end
 
       def parse_model(root)
-        diagrams = parse_diagrams(root)
         @archimate_version = parse_archimate_version(root)
         org_sel = archimate_3? ? ">organizations" : ">organization>item"
         DataModel::Model.new(
           index_hash: {},
           id: identifier_to_id(root["identifier"]),
-          name: parse_name(root),
+          name: parse_lang_string(root.at_css(">name")),
           version: root["version"],
           metadata: parse_metadata(root),
           documentation: parse_documentation(root),
@@ -44,8 +43,8 @@ module Archimate
           elements: parse_elements(root),
           relationships: parse_relationships(root),
           organizations: parse_organizations(root.css(org_sel)),
-          diagrams: diagrams,
-          views: DataModel::Views.new(diagrams: diagrams, viewpoints: []),
+          diagrams: parse_diagrams(root),
+          viewpoints: [],
           property_definitions: parse_property_defs(root),
           schema_locations: root.attr("xsi:schemaLocation").split(" "),
           namespaces: root.namespaces,
@@ -155,14 +154,9 @@ module Archimate
         end
       end
 
-      def parse_name(node)
-        name_node = node.at_css(">name")
-        name_node&.content
-      end
-
       def parse_documentation(node, element_name = "documentation")
-        node.css(">#{element_name}").map do |node|
-          DataModel::Documentation.new(text: node.content, lang: node["xml:lang"])
+        node.css(">#{element_name}").map do |doc|
+          DataModel::Documentation.new(text: doc.content, lang: doc["xml:lang"])
         end
       end
 

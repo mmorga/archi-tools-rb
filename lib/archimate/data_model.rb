@@ -48,7 +48,6 @@ module Archimate
     require 'archimate/data_model/view_node'
     require 'archimate/data_model/container'
     require 'archimate/data_model/diagram'
-    require 'archimate/data_model/views'
     require 'archimate/data_model/label'
     require 'archimate/data_model/model'
   end

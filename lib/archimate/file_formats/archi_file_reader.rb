@@ -45,7 +45,7 @@ module Archimate
           organizations: parse_organizations(doc.root),
           relationships: parse_relationships(doc.root),
           diagrams: diagrams,
-          views: DataModel::Views.new(viewpoints: [], diagrams: diagrams),
+          viewpoints: [],
           property_definitions: @property_defs.values,
           namespaces: {},
           schema_locations: []

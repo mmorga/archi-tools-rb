@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'archimate/file_formats/model_exchange_file/xml_lang_string'
+
 module Archimate
   module FileFormats
     class Writer
@@ -28,7 +30,7 @@ module Archimate
           when DataModel::Diagram
             serialize_diagram(xml, item)
           when DataModel::Documentation
-            serialize_documentation(xml, item)
+            ModelExchangeFile::XmlLangString.new(item, :documentation).serialize(xml)
           when DataModel::Element
             serialize_element(xml, item)
           when DataModel::Organization
