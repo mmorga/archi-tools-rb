@@ -32,6 +32,7 @@ module Archimate
       attribute :nodes, Strict::Array.member(ViewNode).default([])
       attribute :connections, ConnectionList
       attribute :style, Style.optional
+      attribute :type, Strict::String.optional
       attribute :child_type, Coercible::Int.optional
       attribute :properties, PropertiesList # Note: this is not in the model under element
       # it's added under Real Element

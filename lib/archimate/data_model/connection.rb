@@ -22,6 +22,7 @@ module Archimate
       attribute :target_attachment, Location.optional
       attribute :source, Identifier.optional
       attribute :target, Identifier.optional
+      attribute :type, Strict::String.optional
 
       # This is under Relationship
       attribute :relationship, Strict::String.optional

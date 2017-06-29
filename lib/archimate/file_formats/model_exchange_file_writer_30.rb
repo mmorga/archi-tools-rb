@@ -7,7 +7,7 @@ require 'archimate/file_formats/model_exchange_file/xml_property_defs'
 
 module Archimate
   module FileFormats
-    class ModelExchangeFileWriter < Writer
+    class ModelExchangeFileWriter30 < Writer
       attr_reader :model
 
       def initialize(model)
@@ -22,18 +22,17 @@ module Archimate
       end
 
       def serialize_model(xml)
-        model_attrs = model_namespaces.merge(
-          "xsi:schemaLocation" => model.schema_locations.join(" "),
-          "identifier" => identifier(model.id)
+        model_attrs = remove_nil_values(
+          model_namespaces.merge(
+            "xsi:schemaLocation" => model.schema_locations.join(" "),
+            "identifier" => identifier(model.id),
+            "version" => model.version
+          )
         )
-        model_attrs["version"] = model.version if model.archimate_version == :archimate_3_0
-        xml.model(
-          model_attrs
-        ) do
-          ModelExchangeFile::XmlMetadata.new(model.metadata).serialize(xml) if model.archimate_version == :archimate_2_1
+        xml.model(model_attrs) do
           ModelExchangeFile::XmlLangString.new(model.name, :name).serialize(xml)
           ModelExchangeFile::XmlLangString.new(model.documentation, :documentation).serialize(xml)
-          ModelExchangeFile::XmlMetadata.new(model.metadata).serialize(xml) if model.archimate_version == :archimate_3_0
+          ModelExchangeFile::XmlMetadata.new(model.metadata).serialize(xml)
           serialize_properties(xml, model)
           serialize_elements(xml)
           serialize_relationships(xml)
@@ -43,20 +42,9 @@ module Archimate
         end
       end
 
-      def archimate_3?
-        return model.archimate_version == :archimate_3_0
-      end
-
       def serialize_property_defs(xml)
         return if model.property_definitions.empty?
-        case model.archimate_version
-        when :archimate_3_0
-          ModelExchangeFile::XmlPropertyDefinitions.new(model.property_definitions).serialize(xml)
-        when :archimate_2_1
-          ModelExchangeFile::XmlPropertyDefs.new(model.property_definitions).serialize(xml)
-        else
-          raise "Unsupported ArchiMate version: #{model.archimate_version}"
-        end
+        ModelExchangeFile::XmlPropertyDefinitions.new(model.property_definitions).serialize(xml)
       end
 
       def serialize_elements(xml)
@@ -77,14 +65,10 @@ module Archimate
         serialize_properties(xml, element)
       end
 
-      def serialize_label(xml, str)
+      def serialize_label(xml, str, tag = :name)
         return if str.nil? || str.strip.empty?
         name_attrs = str.lang && !str.lang.empty? ? {"xml:lang" => str.lang} : {}
-        if model.archimate_version == :archimate_2_1
-          xml.label(name_attrs) { xml.text text_proc(str) }
-        else
-          xml.name(name_attrs) { xml.text text_proc(str) }
-        end
+        xml.send(tag, name_attrs) { xml.text text_proc(str) }
       end
 
       def serialize_relationships(xml)
@@ -92,26 +76,23 @@ module Archimate
       end
 
       def serialize_relationship(xml, relationship)
-        xml.relationship(
+        attrs = {
           identifier: identifier(relationship.id),
           source: identifier(relationship.source),
           target: identifier(relationship.target),
           "xsi:type" => meff_type(relationship.type)
-        ) do
+        }
+        attrs["accessType"] = relationship.access_type if relationship.access_type
+
+        xml.relationship(attrs) do
           elementbase(xml, relationship)
         end
       end
 
       def serialize_organization_root(xml, organizations)
         return unless organizations && organizations.size > 0
-        if model.archimate_version == :archimate_3_0
-          xml.organizations do
-            serialize_organization_body(xml, organizations[0])
-          end
-        else
-          xml.organization do
-            serialize(xml, organizations)
-          end
+        xml.organizations do
+          serialize_organization_body(xml, organizations[0])
         end
       end
 
@@ -134,11 +115,7 @@ module Archimate
       end
 
       def serialize_item(xml, item)
-        if model.archimate_version == :archimate_3_0
-          xml.item(identifierRef: identifier(item))
-        else
-          xml.item(identifierref: identifier(item))
-        end
+        xml.item(identifierRef: identifier(item))
       end
 
       def serialize_properties(xml, element)
@@ -149,8 +126,7 @@ module Archimate
       end
 
       def serialize_property(xml, property)
-        property_ref_attr = model.archimate_version == :archimate_3_0 ? "propertyDefinitionRef" : "identifierref"
-        xml.property(property_ref_attr => property.property_definition_id) do
+        xml.property("propertyDefinitionRef" => property.property_definition_id) do
           ModelExchangeFile::XmlLangString.new(property.value, :value).serialize(xml)
         end
       end
@@ -158,13 +134,9 @@ module Archimate
       def serialize_views(xml)
         return if model.diagrams.empty?
         xml.views do
-          if archimate_3?
-            xml.diagrams {
-              serialize(xml, model.diagrams)
-            }
-          else
+          xml.diagrams {
             serialize(xml, model.diagrams)
-          end
+          }
         end
       end
 
@@ -172,8 +144,8 @@ module Archimate
         xml.view(
           remove_nil_values(
             identifier: identifier(diagram.id),
-            viewpoint: diagram.viewpoint,
-            "xsi:type": diagram.type
+            "xsi:type": diagram.type,
+            viewpoint: diagram.viewpoint
           )
         ) do
           elementbase(xml, diagram)
@@ -185,25 +157,23 @@ module Archimate
       def serialize_view_node(xml, view_node, x_offset = 0, y_offset = 0)
         view_node_attrs = {
           identifier: identifier(view_node.id),
-          elementref: nil,
-          x: view_node.bounds ? (view_node.bounds&.x + x_offset).round : nil,
-          y: view_node.bounds ? (view_node.bounds&.y + y_offset).round : nil,
-          w: view_node.bounds&.width&.round,
-          h: view_node.bounds&.height&.round,
-          type: nil
+          elementRef: nil,
+          "xsi:type" => view_node.type,
+          "x" => view_node.bounds ? (view_node.bounds&.x + x_offset).round : nil,
+          "y" => view_node.bounds ? (view_node.bounds&.y + y_offset).round : nil,
+          "w" => view_node.bounds&.width&.round,
+          "h" => view_node.bounds&.height&.round
         }
         if view_node.archimate_element
-          view_node_attrs[:elementref] = identifier(view_node.archimate_element)
+          view_node_attrs[:elementRef] = identifier(view_node.archimate_element)
         elsif view_node.model
           # Since it doesn't seem to be forbidden, we just assume we can use
           # the elementref for views in views
-          view_node_attrs[:elementref] = view_node.model
+          view_node_attrs[:elementRef] = view_node.model
           view_node_attrs[:type] = "model"
-        else
-          view_node_attrs[:type] = "group"
         end
         xml.node(remove_nil_values(view_node_attrs)) do
-          serialize_label(xml, view_node.name) if view_node_attrs[:type] == "group"
+          serialize_label(xml, view_node.name, :label)
           serialize(xml, view_node.style) if view_node.style
           view_node.nodes.each do |c|
             serialize_view_node(xml, c) # , view_node_attrs[:x].to_f, view_node_attrs[:y].to_f)
@@ -225,13 +195,24 @@ module Archimate
         end
       end
 
+      def style_string(style)
+        case style
+        when 1
+          "italic"
+        when 2
+          "bold"
+        when 3
+          "bold italic"
+        end
+      end
+
       def serialize_font(xml, style)
         return unless style && (style.font || style.font_color)
         xml.font(
           remove_nil_values(
             name: style.font&.name,
             size: style.font&.size&.round,
-            style: style.font&.style_string
+            style: style_string(style.font&.style)
           )
         ) { serialize_color(xml, style&.font_color, :color) }
       end
@@ -251,12 +232,13 @@ module Archimate
       def serialize_connection(xml, sc)
         xml.connection(
           identifier: identifier(sc.id),
-          relationshipref: identifier(sc.relationship),
+          relationshipRef: identifier(sc.relationship),
+          "xsi:type": sc.type,
           source: identifier(sc.source),
           target: identifier(sc.target)
         ) do
-          serialize(xml, sc.bendpoints)
           serialize(xml, sc.style)
+          serialize(xml, sc.bendpoints)
         end
       end
 
@@ -265,13 +247,7 @@ module Archimate
       end
 
       def meff_type(el_type)
-        el_type = el_type.sub(/^/, "")
-        case el_type
-        when 'AndJunction', 'OrJunction'
-          'Junction'
-        else
-          el_type
-        end
+        el_type.sub(/^/, "")
       end
 
       # # Processes text for text elements

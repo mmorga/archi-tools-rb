@@ -32,29 +32,29 @@
   </relationships>
   <views>
     <diagrams>
-      <view identifier="view1" viewpoint="Organization" xsi:type="Diagram">
+      <view identifier="view1" xsi:type="Diagram" viewpoint="Organization">
         <name xml:lang="en">Basic View</name>
         <documentation xml:lang="en">Basic Documentation</documentation>
-        <node elementRef="ba1" h="55" identifier="node1" w="120" x="10" xsi:type="Element" y="10">
+        <node identifier="node1" elementRef="ba1" xsi:type="Element" x="10" y="10" w="120" h="55">
           <style>
-            <lineColor b="45" g="45" r="45"/>
-            <fillColor b="23" g="23" r="23"/>
+            <fillColor r="23" g="23" b="23"/>
+            <lineColor r="45" g="45" b="45"/>
             <font name="Arial" size="12" style="italic"/>
           </style>
         </node>
-        <node elementRef="br1" h="55" identifier="node2" w="120" x="10" xsi:type="Element" y="10"/>
-        <node elementRef="loc1" h="55" identifier="node3" w="120" x="100" xsi:type="Element" y="100"/>
-        <node elementRef="grouping1" h="155" identifier="node4" w="200" x="150" xsi:type="Element" y="150">
-          <node elementRef="ba2" h="55" identifier="node5" w="70" x="160" xsi:type="Element" y="160"/>
+        <node identifier="node2" elementRef="br1" xsi:type="Element" x="10" y="10" w="120" h="55"/>
+        <node identifier="node3" elementRef="loc1" xsi:type="Element" x="100" y="100" w="120" h="55"/>
+        <node identifier="node4" elementRef="grouping1" xsi:type="Element" x="150" y="150" w="200" h="155">
+          <node identifier="node5" elementRef="ba2" xsi:type="Element" x="160" y="160" w="70" h="55"/>
         </node>
-        <connection identifier="conn1" relationshipRef="relation-1" source="node1" target="node2" xsi:type="Relationship">
+        <connection identifier="conn1" relationshipRef="relation-1" xsi:type="Relationship" source="node1" target="node2">
           <style>
-            <lineColor b="255" g="45" r="45"/>
-            <fillColor b="23" g="23" r="23"/>
+            <fillColor r="23" g="23" b="23"/>
+            <lineColor r="45" g="45" b="255"/>
             <font name="Arial" size="12" style="italic"/>
           </style>
         </connection>
-        <connection identifier="conn2" relationshipRef="relation-2" source="node4" target="node2" xsi:type="Relationship"/>
+        <connection identifier="conn2" relationshipRef="relation-2" xsi:type="Relationship" source="node4" target="node2"/>
       </view>
     </diagrams>
   </views>

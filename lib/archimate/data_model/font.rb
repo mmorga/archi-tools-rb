@@ -35,6 +35,8 @@ module Archimate
           ].map(&:to_s).join("|")
       end
 
+      # TODO: this isn't standard
+      # Move to file format
       def style_string
         case style
         when 1

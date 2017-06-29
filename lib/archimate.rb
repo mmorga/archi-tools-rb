@@ -46,7 +46,9 @@ module Archimate
     autoload :ArchiFileWriter, 'archimate/file_formats/archi_file_writer'
     autoload :ModelExchangeFileFormat, 'archimate/file_formats/model_exchange_file_format'
     autoload :ModelExchangeFileReader, 'archimate/file_formats/model_exchange_file_reader'
+    autoload :ModelExchangeFileReader30, 'archimate/file_formats/model_exchange_file_reader_30'
     autoload :ModelExchangeFileWriter, 'archimate/file_formats/model_exchange_file_writer'
+    autoload :ModelExchangeFileWriter30, 'archimate/file_formats/model_exchange_file_writer_30'
     autoload :Writer, 'archimate/file_formats/writer'
   end
 

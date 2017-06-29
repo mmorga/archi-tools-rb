@@ -3,7 +3,7 @@ require "nokogiri"
 
 module Archimate
   module FileFormats
-    class ModelExchangeFileReader
+    class ModelExchangeFileReader30
       def self.read(archifile)
         new.read(
           case archifile
@@ -25,13 +25,9 @@ module Archimate
         parse_model(root)
       end
 
-      def archimate_3?
-        return @archimate_version == :archimate_3_0
-      end
-
       def parse_model(root)
         @archimate_version = parse_archimate_version(root)
-        org_sel = archimate_3? ? ">organizations" : ">organization>item"
+        org_sel = ">organizations"
         DataModel::Model.new(
           index_hash: {},
           id: identifier_to_id(root["identifier"]),
@@ -117,30 +113,11 @@ module Archimate
       end
 
       def property_defs_selector
-        if archimate_3?
           ">propertyDefinitions>propertyDefinition"
-        else
-          ">propertydefs>propertydef"
-        end
       end
 
       def parse_property_defs(node)
-        if archimate_3?
           parse_property_defs_30(node)
-        else
-          parse_property_defs_21(node)
-        end
-      end
-
-      def parse_property_defs_21(node)
-        node.css(property_defs_selector).map do |i|
-          DataModel::PropertyDefinition.new(
-            id: i["identifier"],
-            name: DataModel::LangString.new(text: i["name"]),
-            documentation: parse_documentation(i),
-            value_type: i["type"]
-          )
-        end
       end
 
       def parse_property_defs_30(node)
@@ -200,7 +177,7 @@ module Archimate
       def parse_organizations(nodes)
         nodes.map do |i|
           child_items = i.css(">item")
-          identifier_ref_name = archimate_3? ? "identifierRef" : "identifierref"
+          identifier_ref_name = "identifierRef"
           ref_items = child_items.select { |ci| ci.has_attribute?(identifier_ref_name) }
           DataModel::Organization.new(
             id: i["identifier"], # TODO: model exchange doesn't assign ids to organization items
@@ -233,11 +210,7 @@ module Archimate
       end
 
       def parse_diagrams(model)
-        if archimate_3?
-          parse_diagrams_30(model)
-        else
-          parse_diagrams_21(model)
-        end
+        parse_diagrams_30(model)
       end
 
       def parse_diagrams_30(model)
@@ -287,8 +260,8 @@ module Archimate
       end
 
       def parse_nodes(node)
-        element_ref = archimate_3? ? "elementRef" : "elementref"
-        type_attr = archimate_3? ? "xsi:type" : "type"
+        element_ref = "elementRef"
+        type_attr = "xsi:type"
         node.css("> node").map do |i|
           DataModel::ViewNode.new(
             id: identifier_to_id(i["identifier"]),
@@ -342,7 +315,7 @@ module Archimate
           1
         when "bold"
           2
-        when "bold|italic"
+        when "bold italic"
           3
         else
           raise "Broken for value: #{str}"
@@ -371,8 +344,8 @@ module Archimate
       end
 
       def parse_connections(node)
-        relationship_ref = archimate_3? ? "relationshipRef" : "relationshipref"
-        type_attr = archimate_3? ? "xsi:type" : "type"
+        relationship_ref = "relationshipRef"
+        type_attr = "xsi:type"
         node.css("> connection").map do |i|
           DataModel::Connection.new(
             id: identifier_to_id(i["identifier"]),

@@ -35,13 +35,13 @@ module Archimate
 
       def verify_read_write(filename)
         test_file = File.join(TEST_EXAMPLES_FOLDER, filename)
-        puts "Reading file #{test_file}"
         source = File.read(test_file)
-        model = Archimate::FileFormats::ModelExchangeFileReader.parse(source)
-        source.gsub!(" />", "/>")
+        model = Archimate::FileFormats::ModelExchangeFileReader30.parse(source)
+        source = source.gsub(" />", "/>").gsub("\r", "")
         result_io = StringIO.new
-        ModelExchangeFileWriter.write(model, result_io)
-        assert_equal source, result_io.string
+        ModelExchangeFileWriter30.write(model, result_io)
+        written_output = result_io.string
+        assert_equal source, written_output
       end
     end
   end
