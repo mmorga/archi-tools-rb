@@ -26,14 +26,14 @@ module Archimate
 
       def test_model_properties
         assert_equal 2, model.properties.size
-        pd1 = model.properties.first.property_definition_id
+        pd1 = model.properties.first.property_definition
         assert_equal(
-          DataModel::Property.new(property_definition_id: pd1, values: [DataModel::LangString.new(text: "Value of Property 1", lang: "en")]),
+          DataModel::Property.new(property_definition: pd1, values: [DataModel::LangString.new(text: "Value of Property 1", lang: "en")]),
           model.properties.first
         )
-        pd2 = model.properties.last.property_definition_id
+        pd2 = model.properties.last.property_definition
         assert_equal(
-          DataModel::Property.new(property_definition_id: pd2, values: [DataModel::LangString.new(text: "Value of Property 2", lang: "en")]),
+          DataModel::Property.new(property_definition: pd2, values: [DataModel::LangString.new(text: "Value of Property 2", lang: "en")]),
           model.properties.last
         )
       end

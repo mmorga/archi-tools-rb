@@ -21,7 +21,7 @@ module Archimate
         )
         property = Archimate::DataModel::Property.new(
           values: value,
-          property_definition_id: property_def.id
+          property_definition: property_def
         )
         [property_def, property]
       end

@@ -8,10 +8,12 @@ module Archimate
       # Parses a Nokogiri document into an Archimate::Model
       def parse(doc)
         return unless doc
+        @property_defs = []
         parse_model(doc.root)
       end
 
       def parse_model(root)
+        @property_defs = parse_property_defs(root)
         DataModel::Model.new(
           index_hash: {},
           id: identifier_to_id(root["identifier"]),
@@ -25,13 +27,12 @@ module Archimate
           organizations: parse_organizations(root.css(organizations_root_selector)),
           diagrams: parse_diagrams(root),
           viewpoints: [],
-          property_definitions: parse_property_defs(root),
+          property_definitions: @property_defs,
           schema_locations: root.attr("xsi:schemaLocation").split(" "),
           namespaces: root.namespaces,
           archimate_version: parse_archimate_version(root)
         )
       end
-
 
       def parse_documentation(node, element_name = "documentation")
         node.css(">#{element_name}").map do |doc|
@@ -46,14 +47,15 @@ module Archimate
       end
 
       def parse_property(node)
+        property_def = @property_defs.find { |prop_def| prop_def.id == node.attr(property_def_attr_name) }
         DataModel::Property.new(
-          property_definition_id: node.attr(property_def_attr_name),
+          property_definition: property_def,
           values: [ModelExchangeFile::XmlLangString.parse(node.at_css("value"))].compact
         )
       end
 
       def parse_property_defs(node)
-        node.css(property_defs_selector).map do |i|
+        @property_defs = node.css(property_defs_selector).map do |i|
           DataModel::PropertyDefinition.new(
             id: i["identifier"],
             name: property_def_name(i),

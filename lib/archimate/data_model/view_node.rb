@@ -24,7 +24,7 @@ module Archimate
       # bounding box of a concept.
       # attribute :h, PositiveInteger
 
-      attribute :model, Strict::String.optional
+      attribute :model, Identifier.optional
       attribute :content, Strict::String.optional
       attribute :target_connections, Strict::Array.member(Identifier).default([])
       attribute :archimate_element, Identifier.optional

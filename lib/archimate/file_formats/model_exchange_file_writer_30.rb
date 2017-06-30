@@ -61,7 +61,7 @@ module Archimate
       end
 
       def serialize_property(xml, property)
-        xml.property("propertyDefinitionRef" => property.property_definition_id) do
+        xml.property("propertyDefinitionRef" => property.property_definition.id) do
           ModelExchangeFile::XmlLangString.new(property.value, :value).serialize(xml)
         end
       end

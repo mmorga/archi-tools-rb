@@ -61,7 +61,7 @@ module Archimate
             values: [
               DataModel::LangString.new(text: i["value"] || "en")
             ],
-            property_definition_id: prop_def.id
+            property_definition: prop_def
           )
         end
       end
