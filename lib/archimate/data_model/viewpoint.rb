@@ -56,9 +56,9 @@ module Archimate
     Other_Viewpoints = %w[Stakeholder].freeze
 
     VIEWPOINTS_ENUM = [].concat(
-                        COMPOSITION_VIEWPOINTS, SUPPORT_VIEWPOINTS, COOPERATION_VIEWPOINTS,
-                        REALIZATION_VIEWPOINTS, STRATEGY_VIEWPOINTS,
-                        IMPLEMENTATION_AND_MIGRATION_VIEWPOINTS
+                        [COMPOSITION_VIEWPOINTS, SUPPORT_VIEWPOINTS, COOPERATION_VIEWPOINTS,
+                                                REALIZATION_VIEWPOINTS, STRATEGY_VIEWPOINTS,
+                                                IMPLEMENTATION_AND_MIGRATION_VIEWPOINTS]
                       )
     ViewpointType = Strict::String.enum(*VIEWPOINTS_ENUM)
 
