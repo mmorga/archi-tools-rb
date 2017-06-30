@@ -46,10 +46,18 @@ module Archimate
     autoload :ArchiFileWriter, 'archimate/file_formats/archi_file_writer'
     autoload :ModelExchangeFileFormat, 'archimate/file_formats/model_exchange_file_format'
     autoload :ModelExchangeFileReader, 'archimate/file_formats/model_exchange_file_reader'
+    autoload :ModelExchangeFileReader21, 'archimate/file_formats/model_exchange_file_reader_21'
     autoload :ModelExchangeFileReader30, 'archimate/file_formats/model_exchange_file_reader_30'
     autoload :ModelExchangeFileWriter, 'archimate/file_formats/model_exchange_file_writer'
+    autoload :ModelExchangeFileWriter21, 'archimate/file_formats/model_exchange_file_writer_21'
     autoload :ModelExchangeFileWriter30, 'archimate/file_formats/model_exchange_file_writer_30'
     autoload :Writer, 'archimate/file_formats/writer'
+    module ModelExchangeFile
+      autoload :XmlLangString, 'archimate/file_formats/model_exchange_file/xml_lang_string'
+      autoload :XmlMetadata, 'archimate/file_formats/model_exchange_file/xml_metadata'
+      autoload :XmlPropertyDefinitions, 'archimate/file_formats/model_exchange_file/xml_property_definitions'
+      autoload :XmlPropertyDefs, 'archimate/file_formats/model_exchange_file/xml_property_defs'
+    end
   end
 
   module Lint

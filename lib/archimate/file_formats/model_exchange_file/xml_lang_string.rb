@@ -4,6 +4,11 @@ module Archimate
   module FileFormats
     module ModelExchangeFile
       class XmlLangString
+        def self.parse(node)
+          return nil unless node
+          DataModel::LangString.new(text: node.content, lang: node["xml:lang"])
+        end
+
         def initialize(lang_str, tag_name)
           @tag_name = tag_name
           @lang_strs = Array(lang_str)

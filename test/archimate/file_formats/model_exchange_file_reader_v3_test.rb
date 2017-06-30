@@ -36,7 +36,7 @@ module Archimate
       def verify_read_write(filename)
         test_file = File.join(TEST_EXAMPLES_FOLDER, filename)
         source = File.read(test_file)
-        model = Archimate::FileFormats::ModelExchangeFileReader30.parse(source)
+        model = ModelExchangeFileReader30.new.parse(Nokogiri::XML(source))
         source = source.gsub(" />", "/>").gsub("\r", "")
         result_io = StringIO.new
         ModelExchangeFileWriter30.write(model, result_io)

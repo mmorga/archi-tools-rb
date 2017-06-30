@@ -4,7 +4,7 @@ require 'test_examples'
 
 module Archimate
   module FileFormats
-    class ModelExchangeFileReaderTest < Minitest::Test
+    class ModelExchangeFileReader21Test < Minitest::Test
       attr_accessor :model
 
       def setup

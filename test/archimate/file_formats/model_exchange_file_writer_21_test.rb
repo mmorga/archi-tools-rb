@@ -4,7 +4,7 @@ require 'test_examples'
 
 module Archimate
   module FileFormats
-    class ModelExchangeFileWriterTest < Minitest::Test
+    class ModelExchangeFileWriter21Test < Minitest::Test
       attr_accessor :model
 
       def setup
@@ -17,7 +17,7 @@ module Archimate
 
         assert_equal 2, model.properties.size
 
-        ModelExchangeFileWriter.write(@model, result_io)
+        ModelExchangeFileWriter21.write(@model, result_io)
 
         assert_equal @model_source, result_io.string
       end

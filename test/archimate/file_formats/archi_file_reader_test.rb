@@ -8,7 +8,7 @@ module Archimate
       attr_accessor :model
 
       def setup
-        @model = ArchiFileReader.parse(ARCHISURANCE_SOURCE)
+        @model = ArchiFileReader.new.parse(Nokogiri::XML(ARCHISURANCE_SOURCE))
       end
 
       def xtest_reader_profile

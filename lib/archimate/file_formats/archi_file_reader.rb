@@ -4,29 +4,9 @@ require "nokogiri"
 module Archimate
   module FileFormats
     class ArchiFileReader
-      def self.read(archifile)
-        new.read(
-          case archifile
-          when IO
-            archifile
-          when String
-            File.read(archifile)
-          end
-        )
-      end
-
-      def self.parse(archi_string)
-        reader = new
-        reader.read(archi_string)
-      end
-
       def initialize
         @progress = nil
         @random ||= Random.new
-      end
-
-      def read(archifile)
-        parse(Nokogiri::XML(archifile))
       end
 
       def parse(doc)

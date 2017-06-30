@@ -5,7 +5,7 @@ module Archimate
     class Convert
       include Archimate::Logging
 
-      SUPPORTED_FORMATS = %w[meff2.1 archi nquads graphml csv cypher].freeze
+      SUPPORTED_FORMATS = %w[meff2.1 meff3.0 archi nquads graphml csv cypher].freeze
 
       attr_reader :model
 
@@ -19,7 +19,9 @@ module Archimate
         when "archi"
           Archimate::FileFormats::ArchiFileWriter.new(model).write(output_io)
         when "meff2.1"
-          Archimate::FileFormats::ModelExchangeFileWriter.new(model).write(output_io)
+          Archimate::FileFormats::ModelExchangeFileWriter21.new(model).write(output_io)
+        when "meff3.0"
+          Archimate::FileFormats::ModelExchangeFileWriter30.new(model).write(output_io)
         when "nquads"
           output_io.write(Archimate::Export::NQuads.new(model).to_nq)
         when "graphml"

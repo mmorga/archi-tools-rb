@@ -3,54 +3,55 @@ require "nokogiri"
 
 module Archimate
   module FileFormats
-    class ModelExchangeFileReader30 < ModelExchangeFileReader
+    # This class implements a file reader for ArchiMate 2.1 Model Exchange Format
+    class ModelExchangeFileReader21 < ModelExchangeFileReader
       def parse_archimate_version(root)
         case root.namespace.href
-        when "http://www.opengroup.org/xsd/archimate/3.0/"
-          :archimate_3_0
+        when "http://www.opengroup.org/xsd/archimate"
+          :archimate_2_1
         else
-          raise "Unexpected namespace version: #{root.namespace.href}"
+          raise "Unexpected namespace: #{root.namespace.href}"
         end
       end
 
       def organizations_root_selector
-        ">organizations"
+        ">organization>item"
       end
 
       def property_defs_selector
-          ">propertyDefinitions>propertyDefinition"
+        ">propertydefs>propertydef"
       end
 
       def property_def_attr_name
-        "propertyDefinitionRef"
+        "identifierref"
       end
 
       def property_def_name(node)
-        ModelExchangeFile::XmlLangString.parse(node.at_css("name"))
+        node["name"]
       end
 
       def parse_element_name(el)
-        ModelExchangeFile::XmlLangString.parse(el.at_css(">name"))
+        ModelExchangeFile::XmlLangString.parse(el.at_css(">label"))
       end
 
       def identifier_ref_name
-        "identifierRef"
+        "identifierref"
       end
 
       def diagrams_path
-        ">views>diagrams>view"
+        ">views>view"
       end
 
       def view_node_element_ref
-        "elementRef"
+        "elementref"
       end
 
       def view_node_type_attr
-        "xsi:type"
+        "type"
       end
 
       def connection_relationship_ref
-        "relationshipRef"
+        "relationshipref"
       end
 
       def style_to_int(str)
@@ -61,7 +62,7 @@ module Archimate
           1
         when "bold"
           2
-        when "bold italic"
+        when "bold|italic"
           3
         else
           raise "Broken for value: #{str}"

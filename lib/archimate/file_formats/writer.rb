@@ -25,8 +25,6 @@ module Archimate
             serialize_bounds(xml, item)
           when DataModel::ViewNode
             serialize_view_node(xml, item)
-          when DataModel::Color
-            serialize_color(xml, item)
           when DataModel::Diagram
             serialize_diagram(xml, item)
           when DataModel::Documentation
@@ -35,10 +33,6 @@ module Archimate
             serialize_element(xml, item)
           when DataModel::Organization
             serialize_organization(xml, item)
-          when DataModel::Font
-            serialize_font(xml, item)
-          when DataModel::Model
-            serialize_model(xml, item)
           when DataModel::Property
             serialize_property(xml, item)
           when DataModel::Relationship
@@ -55,6 +49,7 @@ module Archimate
 
       def remove_nil_values(h)
         h.delete_if { |_k, v| v.nil? }
+        h
       end
     end
   end

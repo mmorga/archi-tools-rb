@@ -34,22 +34,6 @@ module Archimate
           Regexp.new(Regexp.escape(@text)) =~ other
         end
       end
-
-      # def <=>(other)
-      #   if other.is_a?(String)
-      #     return @text <=> other
-      #   else
-      #     super
-      #   end
-      # end
-
-      # def ==(other)
-      #   if other.is_a?(String)
-      #     return @text == other
-      #   else
-      #     super
-      #   end
-      # end
     end
 
     Dry::Types.register_class(LangString)
