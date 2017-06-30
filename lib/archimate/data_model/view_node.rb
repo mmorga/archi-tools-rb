@@ -26,8 +26,8 @@ module Archimate
 
       attribute :model, Strict::String.optional
       attribute :content, Strict::String.optional
-      attribute :target_connections, Strict::Array.member(Strict::String).default([])
-      attribute :archimate_element, Strict::String.optional
+      attribute :target_connections, Strict::Array.member(Identifier).default([])
+      attribute :archimate_element, Identifier.optional
       attribute :bounds, Bounds.optional
       attribute :nodes, Strict::Array.member(ViewNode).default([])
       attribute :connections, ConnectionList

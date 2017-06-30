@@ -21,7 +21,7 @@ module Archimate
 
     RelationshipConnectorEnum = %w[AndJunction OrJunction].freeze
 
-    ElementEnumType = [].concat(ElementTypeEnum, CompositeTypeEnum, RelationshipConnectorEnum).freeze
+    ElementEnumType = [].concat([ElementTypeEnum, CompositeTypeEnum, RelationshipConnectorEnum]).freeze
 
     ElementType = Strict::String.enum(*ElementEnumType)
 
