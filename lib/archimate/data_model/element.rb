@@ -33,8 +33,6 @@ module Archimate
     # by having a tag name of "element" and an attribute of xsi:type="BusinessRole" where BusinessRole is
     # a derived type from ElementType.
     class Element < Concept
-      attribute :organization_id, Identifier.optional # Note: this is not from the model
-
       def to_s
         Archimate::Color.layer_color(layer, "#{type}<#{id}>[#{name}]")
       end
@@ -70,10 +68,6 @@ module Archimate
         @relationships ||= in_model.relationships.select do |relationship|
           relationship.source == id || relationship.target == id
         end
-      end
-
-      def organization
-        in_model.lookup(organization_id)
       end
 
       # Copy any attributes/docs, etc. from each of the others into the original.

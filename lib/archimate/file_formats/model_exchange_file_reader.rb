@@ -9,11 +9,13 @@ module Archimate
       def parse(doc)
         return unless doc
         @property_defs = []
+        @viewpoints = []
         parse_model(doc.root)
       end
 
       def parse_model(root)
         @property_defs = parse_property_defs(root)
+        @viewpoints = parse_viewpoints(root)
         DataModel::Model.new(
           index_hash: {},
           id: identifier_to_id(root["identifier"]),
@@ -26,12 +28,16 @@ module Archimate
           relationships: parse_relationships(root),
           organizations: parse_organizations(root.css(organizations_root_selector)),
           diagrams: parse_diagrams(root),
-          viewpoints: [],
+          viewpoints: @viewpoints,
           property_definitions: @property_defs,
           schema_locations: root.attr("xsi:schemaLocation").split(" "),
           namespaces: root.namespaces,
           archimate_version: parse_archimate_version(root)
         )
+      end
+
+      def parse_viewpoints(_node)
+        return []
       end
 
       def parse_documentation(node, element_name = "documentation")
@@ -117,7 +123,8 @@ module Archimate
           DataModel::Diagram.new(
             id: identifier_to_id(i["identifier"]),
             name: parse_element_name(i),
-            viewpoint: i["viewpoint"],
+            viewpoint_type: i["viewpoint"],
+            viewpoint: nil, # TODO: support this for ArchiMate v3
             documentation: parse_documentation(i),
             properties: parse_properties(i),
             nodes: nodes,

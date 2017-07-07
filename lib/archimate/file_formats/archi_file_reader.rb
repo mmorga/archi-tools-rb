@@ -133,18 +133,20 @@ module Archimate
           tick
           viewpoint_idx = i["viewpoint"]
           viewpoint_idx = viewpoint_idx.to_i unless viewpoint_idx.nil?
-          viewpoint = viewpoint_idx.nil? ? nil : ArchiFileFormat::VIEWPOINTS[viewpoint_idx]
+          viewpoint_type = viewpoint_idx.nil? ? nil : ArchiFileFormat::VIEWPOINTS[viewpoint_idx]
           DataModel::Diagram.new(
             id: i["id"],
             name: i["name"],
-            viewpoint: viewpoint,
+            viewpoint_type: viewpoint_type,
+            viewpoint: nil,
             documentation: parse_documentation(i),
             properties: parse_properties(i),
             nodes: parse_nodes(i),
             connections: parse_all_connections(i),
             connection_router_type: i["connectionRouterType"],
             type: i.attr("xsi:type"),
-            background: i.attr("background")
+            background: i.attr("background"),
+            organization_id: nil
           )
         end
       end

@@ -16,7 +16,7 @@ module Archimate
       attribute :name, LangString.optional # LabelGroup in the XSD, TODO: this is a LangString collection
       attribute :type, Strict::String.optional # I believe this is used only for Archi formats
       attribute :documentation, DocumentationGroup
-      attribute :items, Strict::Array.member(Identifier).default([])
+      attribute :items, Strict::Array.member(Identifier).default([]) # TODO: Convert this to referenceable
       attribute :organizations, Strict::Array.member(Organization).default([]) # item in the XSD
       # attribute :other_elements, Strict::Array.member(AnyElement).default([])
       # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])

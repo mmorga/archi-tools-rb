@@ -80,7 +80,7 @@ module Archimate
           remove_nil_values(
             identifier: identifier(diagram.id),
             "xsi:type": diagram.type,
-            viewpoint: diagram.viewpoint
+            viewpoint: diagram.viewpoint_type
           )
         ) do
           elementbase(xml, diagram)

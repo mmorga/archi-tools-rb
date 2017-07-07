@@ -57,10 +57,11 @@ module Archimate
 
     VIEWPOINTS_ENUM = [].concat(
                         [COMPOSITION_VIEWPOINTS, SUPPORT_VIEWPOINTS, COOPERATION_VIEWPOINTS,
-                                                REALIZATION_VIEWPOINTS, STRATEGY_VIEWPOINTS,
-                                                IMPLEMENTATION_AND_MIGRATION_VIEWPOINTS]
+                         REALIZATION_VIEWPOINTS, STRATEGY_VIEWPOINTS,
+                         IMPLEMENTATION_AND_MIGRATION_VIEWPOINTS].flatten
                       )
-    ViewpointType = Strict::String.enum(*VIEWPOINTS_ENUM)
+
+    ViewpointType = Strict::String.enum(*VIEWPOINTS_ENUM).optional
 
     ViewpointContentEnum = Strict::String.enum(%w[Details Coherence Overview])
     ViewpointContent = Strict::Array.member(ViewpointContentEnum).default([])

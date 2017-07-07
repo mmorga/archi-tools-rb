@@ -67,6 +67,68 @@ module Archimate
           raise "Broken for value: #{str}"
         end
       end
+
+      # <xs:simpleType name="ViewpointPurposeEnum">
+      #     <xs:restriction base="xs:NMTOKEN">
+      #         <xs:enumeration value="Designing" />
+      #         <xs:enumeration value="Deciding" />
+      #         <xs:enumeration value="Informing" />
+      #     </xs:restriction>
+      # </xs:simpleType>
+
+      # <xs:simpleType name="ViewpointPurposeType">
+      #     <xs:list itemType="ViewpointPurposeEnum" />
+      # </xs:simpleType>
+
+      # <xs:simpleType name="ViewpointContentEnum">
+      #     <xs:restriction base="xs:NMTOKEN">
+      #         <xs:enumeration value="Details" />
+      #         <xs:enumeration value="Coherence" />
+      #         <xs:enumeration value="Overview" />
+      #     </xs:restriction>
+      # </xs:simpleType>
+
+      # <xs:simpleType name="ViewpointContentType">
+      #     <xs:list itemType="ViewpointContentEnum" />
+      # </xs:simpleType>
+
+      # <xs:complexType name="ViewpointType">
+      #     <xs:complexContent>
+      #         <xs:extension base="NamedReferenceableType">
+      #             <xs:sequence>
+      #                 <xs:group ref="PropertiesGroup" />
+      #                 <xs:element name="concern" type="ConcernType" minOccurs="0" maxOccurs="unbounded" />
+      #                 <xs:element name="viewpointPurpose" type="ViewpointPurposeType" minOccurs="0" maxOccurs="1" />
+      #                 <xs:element name="viewpointContent" type="ViewpointContentType" minOccurs="0" maxOccurs="1" />
+      #                 <xs:element name="allowedElementType" type="AllowedElementTypeType" minOccurs="0" maxOccurs="unbounded" />
+      #                 <xs:element name="allowedRelationshipType" type="AllowedRelationshipTypeType" minOccurs="0" maxOccurs="unbounded" />
+      #                 <xs:element name="modelingNote" type="ModelingNoteType" minOccurs="0" maxOccurs="unbounded" />
+      #             </xs:sequence>
+      #         </xs:extension>
+      #     </xs:complexContent>
+      # </xs:complexType>
+      def parse_viewpoints(model)
+        []
+        # model.css("views > viewpoints").map do |i|
+          # attribute :concern, ConcernList
+          # attribute :viewpointPurpose, ViewpointPurpose.optional
+          # attribute :viewpointContent, ViewpointContent.optional
+          # attribute :allowedElementTypes, AllowedElementTypes
+          # attribute :allowedRelationshipTypes, AllowedRelationshipTypes
+          # attribute :modelingNotes, Strict::Array.member(ModelingNote).default([])
+          # DataModel::Viewpoint.new(
+            #     id: identifier_to_id(i["identifier"]),
+            #     name: parse_element_name(i),
+            #     documentation: parse_documentation(i),
+            #     properties: parse_properties(i),
+            #     nodes: nodes,
+            #     connections: connections,
+            #     connection_router_type: i["connectionRouterType"],
+            #     type: i.attr("xsi:type"),
+            #     background: i.attr("background")
+          # )
+        # end
+      end
     end
   end
 end
