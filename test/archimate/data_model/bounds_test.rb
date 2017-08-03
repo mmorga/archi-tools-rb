@@ -9,6 +9,14 @@ module Archimate
         @b2 = build_bounds(x: 0, y: 10, width: 500, height: 700)
       end
 
+      def test_factory
+        subject = build_bounds
+        assert subject.x >= 0
+        assert subject.y >= 0
+        assert subject.width >= 0
+        assert subject.height >= 0
+      end
+
       def test_new
         assert_equal 0, @b1.x
         assert_equal 10, @b1.y

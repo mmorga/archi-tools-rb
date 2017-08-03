@@ -5,10 +5,13 @@ require 'test_helper'
 module Archimate
   module DataModel
     class ModelTest < Minitest::Test
-      ELEMENT_COUNT = 4
-
       def setup
-        @subject = build_model(with_relationships: 2, with_diagrams: 2, with_elements: ELEMENT_COUNT, with_organizations: 4)
+        @subject = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_organizations: 4)
+      end
+
+      def test_bare_factory
+        subject = build_model
+        refute_nil subject
       end
 
       def test_build_model
@@ -23,7 +26,8 @@ module Archimate
       end
 
       def test_equality_operator_false
-        m2 = @subject.with(name: "felix")
+        m2 = @subject.clone
+        m2.instance_variable_set(:@name, LangString.string("felix"))
         refute_equal @subject, m2
       end
 
@@ -50,16 +54,9 @@ module Archimate
       end
 
       def test_application_components
-        el = build_element(type: "ApplicationComponent")
-        elements = @subject.elements + [el]
-        model = @subject.with(elements: elements)
-        expected = model.elements.select { |e| e.type == "ApplicationComponent" }
-
-        assert_equal expected, model.application_components
-      end
-
-      def test_property_keys
-        assert [], @subject.property_keys
+        @subject.elements << build_element(type: "ApplicationComponent")
+        expected = @subject.elements.select { |e| e.type == "ApplicationComponent" }
+        assert_equal expected, @subject.application_components
       end
 
       def test_find_by_class
@@ -68,6 +65,7 @@ module Archimate
       end
 
       def test_referenced_identified_nodes
+        skip("Until referenced_identified_nodes for model is needed")
         subject = build_model(
           organizations: [
             build_organization(
@@ -76,39 +74,40 @@ module Archimate
                   organizations: [
                     build_organization(
                       organizations: [],
-                      items: %w[a b c]
+                      items: %w[a b c].map { |id| build_element(id: id) }
                     )
                   ],
-                  items: %w[d e f]
+                  items: %w[d e f].map { |id| build_element(id: id) }
                 ),
-                build_organization(organizations: [], items: %w[g h i])
+                build_organization(organizations: [], items: %w[g h i].map { |id| build_element(id: id) })
               ],
-              items: %w[j k]
+              items: %w[j k].map { |id| build_element(id: id) }
             )
           ],
           relationships: [
             build_relationship(
-              source: "l",
-              target: "m"
+              source: build_element(id: "l"),
+              target: build_element(id: "m")
             )
           ],
           diagrams: [
             build_diagram(
               nodes: [
                 build_view_node(
-                  target_connections: %w[n o],
-                  archimate_element: "p",
+                  # target_connections: %w[l m].map { |id| build_connection(id: id) },
+                  element: build_element(id: "n"),
                   nodes: [
                     build_view_node(
-                      target_connections: %w[q r],
-                      archimate_element: "s"
+                      # target_connections: %w[o p].map { |id| build_connection(id: id) },
+                      element: build_element(id: "q")
                     )
                   ],
                   connections: [
                     build_connection(
-                      source: "t",
-                      target: "u",
-                      relationship: "v"
+                      id: "r",
+                      source: build_element(id: "s"),
+                      target: build_element(id: "t"),
+                      relationship: build_relationship(id: "u")
                     )
                   ]
                 )
@@ -117,15 +116,14 @@ module Archimate
           ]
         )
 
-        # assert_equal ('a'..'v').to_a + subject.elements.map(&:id), subject.referenced_identified_nodes.sort
-        result = subject.referenced_identified_nodes.sort
-        # assert_equal ('a'..'v').to_a, subject.referenced_identified_nodes.sort
-        ('a'..'v').to_a.each do |id|
+        result = subject.referenced_identified_nodes.map(&:id).sort
+        ('a'..'u').to_a.each do |id|
           assert_includes result, id
         end
       end
 
-      def xtest_find_in_organizations_with_no_organizations
+      def test_find_in_organizations_with_no_organizations
+        skip("Until implement or deprecate find_in_organizations")
         subject = @subject.with(organizations: [])
         index_hash = subject.instance_variable_get(:@index_hash)
         index_hash.values.each do |item|
@@ -172,7 +170,7 @@ module Archimate
       end
 
       def test_default_organization_for_with_initial_organizations_by_type
-        subject = @subject.with(
+        subject = build_model(
           organizations: [
             build_organization(type: "business"),
             build_organization(type: "application"),
@@ -210,16 +208,16 @@ module Archimate
       end
 
       def test_default_organization_for_with_initial_organizations_by_name
-        subject = @subject.with(
+        subject = build_model(
           organizations: [
-            build_organization(name: "Business"),
-            build_organization(name: "Application"),
-            build_organization(name: "Technology"),
-            build_organization(name: "Motivation"),
-            build_organization(name: "Implementation & Migration"),
-            build_organization(name: "Connectors"),
-            build_organization(name: "Relations"),
-            build_organization(name: "Diagrams")
+            build_organization(name: LangString.string("Business")),
+            build_organization(name: LangString.string("Application")),
+            build_organization(name: LangString.string("Technology")),
+            build_organization(name: LangString.string("Motivation")),
+            build_organization(name: LangString.string("Implementation & Migration")),
+            build_organization(name: LangString.string("Connectors")),
+            build_organization(name: LangString.string("Relations")),
+            build_organization(name: LangString.string("Diagrams"))
           ]
         )
         organization = subject.default_organization_for(build_element(type: "BusinessActor"))
@@ -251,47 +249,8 @@ module Archimate
         assert_match(/^[a-f0-9]{8}$/, @subject.make_unique_id)
       end
 
-      def test_element_move_organizations
-        base = build_model(
-          elements: [
-            build_element(id: "1234abcd", type: "BusinessActor")
-          ],
-          organizations: [
-            build_organization(
-              id: "ffff1111",
-              name: "Business",
-              type: "business",
-              organizations: [
-                build_organization(
-                  id: "ffff2222",
-                  name: "Red Shirt Organization",
-                  items: ["1234abcd"]
-                )
-              ]
-            )
-          ]
-        )
-        local = base.with(
-          organizations: [
-            base.organizations[0].with(
-              items: ["1234abcd"],
-              organizations: []
-            )
-          ]
-        )
-
-        result = base.diff(local)
-
-        assert_equal(
-          [
-            Diff::Insert.new(Diff::ArchimateArrayReference.new(local.organizations[0].items, 0)),
-            Diff::Delete.new(Diff::ArchimateArrayReference.new(base.organizations[0].organizations, 0))
-          ],
-          result
-        )
-      end
-
       def test_organize
+        # skip("Until I either re-implement or remove the organize method")
         model = build_model
         assert_empty model.organizations
 

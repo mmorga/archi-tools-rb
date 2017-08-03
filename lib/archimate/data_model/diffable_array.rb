@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
+    # TODO: Should be obsolete at this point pending Diff re-write
     module DiffableArray
       using DiffablePrimitive
 
@@ -19,13 +20,6 @@ module Archimate
 
         def id
           object_id.to_s
-        end
-
-        def ancestors
-          result = [self]
-          p = self
-          result << p until (p = p.parent).nil?
-          result
         end
 
         def primitive?

@@ -16,7 +16,7 @@ module Archimate
               xml.propertydef(
                 "identifier" => property_def.id,
                 "name" => property_def.name,
-                "type" => property_def.value_type
+                "type" => property_def.type
               )
             end
           end

@@ -5,11 +5,14 @@ module Archimate
     # RGB Color type.
     # The r, g, b attributes range from 0 - 255.
     # The a (alpha) transparency attribute is optional. 0 = full transparency, 100 = opaque.
-    class Color < ArchimateNode
+    class Color < Dry::Struct
+      # specifies constructor style for Dry::Struct
+      constructor_type :strict_with_defaults
+
       attribute :r, Coercible::Int.constrained(lt: 256, gt: -1)
       attribute :g, Coercible::Int.constrained(lt: 256, gt: -1)
       attribute :b, Coercible::Int.constrained(lt: 256, gt: -1)
-      attribute :a, Coercible::Int.constrained(lt: 101, gt: -1).optional
+      attribute :a, Coercible::Int.constrained(lt: 101, gt: -1).optional.default(nil)
 
       def self.rgba(str)
         return nil if str.nil?

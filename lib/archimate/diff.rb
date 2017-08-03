@@ -3,7 +3,7 @@ module Archimate
   module Diff
     require 'archimate/diff/difference'
     require 'archimate/diff/archimate_node_reference'
-    require 'archimate/diff/archimate_identified_node_reference'
+    require 'archimate/diff/archimate_referenceable_reference'
     require 'archimate/diff/archimate_array_reference'
     require 'archimate/diff/archimate_node_attribute_reference'
     require 'archimate/diff/change'

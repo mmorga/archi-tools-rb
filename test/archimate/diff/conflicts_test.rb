@@ -5,6 +5,7 @@ module Archimate
   module Diff
     class ConflictsTest < Minitest::Test
       def test_new
+        skip("Diff re-write")
         subject = Conflicts.new([], [])
 
         assert_empty subject.conflicting_diffs

@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Style < ArchimateNode
+    class Style < Dry::Struct
+      # specifies constructor style for Dry::Struct
+      constructor_type :strict_with_defaults
+
       attribute :text_alignment, Coercible::Int.optional # TODO: make this an enum
       attribute :fill_color, Color.optional
       attribute :line_color, Color.optional
@@ -11,7 +14,8 @@ module Archimate
       attribute :text_position, Coercible::Int.optional # TODO: make this an enum
 
       def to_s
-        attr_name_vals = struct_instance_variables.map { |k| "#{k}: #{self[k]}" }.join(", ")
+        attr_name_vals = [:text_alignment, :fill_color, :line_color, :font_color, :line_width,
+        :font, :text_position].map { |k| "#{k}: #{self[k]}" }.join(", ")
         "Style(#{attr_name_vals})"
       end
 

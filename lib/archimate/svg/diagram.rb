@@ -27,7 +27,7 @@ module Archimate
 
       def set_title(svg)
         svg.at_css("title").content = diagram.name || "untitled"
-        svg.at_css("desc").content = diagram.documentation.first&.text || ""
+        svg.at_css("desc").content = diagram.documentation.to_s || ""
       end
 
       # Scan the SVG and figure out min & max

@@ -27,7 +27,7 @@ module Archimate
       end
 
       def property_def_name(node)
-        node["name"]
+        DataModel::LangString.string(node["name"])
       end
 
       def parse_element_name(el)

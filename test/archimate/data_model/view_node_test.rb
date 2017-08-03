@@ -19,19 +19,25 @@ module Archimate
             )
           ]
         )
-        assert_equal @element.instance_variable_get(:@in_model), @model
-        assert @model.instance_variable_get(:@index_hash).include?(@element.id)
-        assert_equal @element, @model.elements[0]
-        assert_equal @element.id, @subject.archimate_element
-        assert_equal @model.diagrams[0].nodes[0], @subject
+        # assert_equal @element.instance_variable_get(:@in_model), @model
+        # assert @model.instance_variable_get(:@index_hash).include?(@element.id)
+        # assert_equal @element, @model.elements[0]
+        # assert_equal @element, @subject.element
+        # assert_equal @model.diagrams[0].nodes[0], @subject
+      end
+
+      def test_factory
+        build_view_node
       end
 
       def test_new_defaults
-        view_node = ViewNode.new(id: "abc123", type: "Sagitarius")
+        diagram = build_diagram
+        view_node = ViewNode.new(id: "abc123", type: "Sagitarius", diagram: diagram)
         assert_equal "abc123", view_node.id
         assert_equal "Sagitarius", view_node.type
-        [:id, :type, :model, :name,
-         :target_connections, :archimate_element, :bounds, :nodes,
+        [:id, :type, :view_refs, :name,
+         # :target_connections,
+         :element, :bounds, :nodes,
          :connections].each { |sym| assert view_node.respond_to?(sym) }
       end
 
@@ -51,7 +57,6 @@ module Archimate
       end
 
       def test_connections
-        assert_kind_of Array, @subject.target_connections
         connections = @model.find_by_class(Connection)
         assert connections.size.positive?
         nodes = @model.find_by_class(ViewNode)
@@ -67,25 +72,26 @@ module Archimate
       end
 
       def test_referenced_identified_nodes
+        source = build_element(id: "g")
+        target = build_element(id: "h")
+        relationship = build_relationship(id: "i")
         subject = build_view_node(
-          target_connections: %w(a b c),
-          archimate_element: "d",
+          element: build_element(id: "d"),
           nodes: [
             build_view_node(
-              target_connections: %w(e),
-              archimate_element: "f",
+              element: build_element(id: "f"),
               connections: [
                 build_connection(
-                  source: "g",
-                  target: "h",
-                  relationship: "i"
+                  source: source,
+                  target: target,
+                  relationship: relationship
                 )
               ]
             )
           ]
         )
 
-        assert_equal %w(a b c d e f g h i), subject.referenced_identified_nodes.sort
+        assert_equal %w(d f g h i), subject.referenced_identified_nodes.map(&:id).sort
       end
     end
   end

@@ -4,24 +4,33 @@ module Archimate
   module DataModel
     # This is the root model type.
     # It is a container for the elements, relationships, diagrams and organizations of the model.
-    class Model < NamedReferenceable
+    class Model < Dry::Struct
+      # specifies constructor style for Dry::Struct
+      constructor_type :strict_with_defaults
+
       using DataModel::DiffableArray
       using DataModel::DiffablePrimitive
 
       ARRAY_RE = Regexp.compile(/\[(\d+)\]/)
 
+      attribute :id, Identifier
+      attribute :name, LangString
+
+      attribute :documentation, PreservedLangString.optional.default(nil)
+      # attribute :other_elements, Strict::Array.member(AnyElement).default([])
+      # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
       attribute :properties, Strict::Array.member(Property).default([]) # Properties.optional
-      attribute :metadata, Metadata.optional
+      attribute :metadata, Metadata.optional.default(nil)
       attribute :elements, Strict::Array.member(Element).default([])
       attribute :relationships, Strict::Array.member(Relationship).default([])
       attribute :organizations, Strict::Array.member(Organization).default([])
       attribute :property_definitions, Strict::Array.member(PropertyDefinition).default([])
-      attribute :version, Strict::String.optional
+      attribute :version, Strict::String.optional.default(nil)
       attribute :diagrams, Strict::Array.member(Diagram).default([])
       attribute :viewpoints, Strict::Array.member(Viewpoint).default([])
       # Following attributes are to hold info on where the model came from
-      attribute :filename, Strict::String.optional
-      attribute :file_format, Strict::Symbol.enum(*Archimate::SUPPORTED_FORMATS).optional
+      attribute :filename, Strict::String.optional.default(nil)
+      attribute :file_format, Strict::Symbol.enum(*Archimate::SUPPORTED_FORMATS).optional.default(nil)
       attribute :archimate_version, Strict::Symbol.default(:archimate_3_0).enum(*Archimate::ARCHIMATE_VERSIONS)
 
       attribute :namespaces, Strict::Hash.default({})
@@ -29,14 +38,22 @@ module Archimate
 
       def initialize(attributes)
         super
-        self.in_model = self
-        self.parent = nil
+        # self.in_model = self
+        # self.parent = nil
         rebuild_index
       end
 
-      def with(options = {})
-        super.organize
+      def dup
+        raise "no dup dum dum"
       end
+
+      def clone
+        raise "no clone dum dum"
+      end
+
+      # def with(options = {})
+      #   super.organize
+      # end
 
       def lookup(id)
         rebuild_index(id) unless @index_hash.include?(id)
@@ -53,9 +70,36 @@ module Archimate
         self
       end
 
+      # TODO: make this private - maybe move to ViewNode
+      def index_view_nodes(ref)
+        ref.nodes.each do |node|
+          @index_hash[node.id] = index_view_nodes(node)
+        end
+        ref.connections.each { |con| @index_hash[con.id] = con }
+        ref
+      end
+
+      # TODO: make this private - maybe move to Organization
+      def index_organizations(ref)
+        ref.organizations.each do |org|
+          @index_hash[org.id] = index_organizations(org)
+        end
+        ref
+      end
+
+      def build_index
+        @index_hash = {id => self}
+        elements.each { |ref| @index_hash[ref.id] = ref }
+        relationships.each { |ref| @index_hash[ref.id] = ref }
+        diagrams.each { |dia| @index_hash[dia.id] = index_view_nodes(dia) }
+        property_definitions.each { |ref| @index_hash[ref.id] = ref }
+        index_organizations(self)
+        @index_hash
+      end
+
       def register(node, parent)
-        node.in_model = self
-        node.parent = parent
+        # node.in_model = self
+        # node.parent = parent
         @index_hash[node.id] = node
       end
 
@@ -82,23 +126,6 @@ module Archimate
 
       def elements_with_type(el_type)
         elements.select { |element| element.type == el_type }
-      end
-
-      # TODO: make these DSL like things added dynamically
-      def all_properties
-        @index_hash.values.each_with_object([]) do |i, a|
-          a.concat(i.properties) if i.respond_to?(:properties)
-        end
-      end
-
-      # TODO: refactor to use property def structure instead of separate property objects
-      def property_keys
-        all_properties.map(&:key).uniq
-      end
-
-      # TODO: refactor to use property def structure instead of separate property objects
-      def property_def_id(key)
-        "propid-#{property_keys.index(key) + 1}"
       end
 
       # Iterate through the model and ensure that elements, relationships, and
@@ -165,7 +192,7 @@ module Archimate
 
       def add_organization(type, name)
         raise "Program Error: #{organizations.inspect}" unless organizations.none? { |f| f.type == type || f.name == name }
-        organization = Organization.new(id: make_unique_id, name: name, type: type, items: [], organizations: [])
+        organization = Organization.new(id: make_unique_id, name: LangString.create(name), type: type, items: [], organizations: [], documentation: nil)
         register(organization, organizations)
         organizations.push(organization)
         organization
@@ -177,34 +204,47 @@ module Archimate
         unique_id
       end
 
+      def struct_instance_variables
+        self.class.schema.keys
+      end
+
       def referenced_identified_nodes
-        super.uniq
+        classes = [Diagram, ViewNode, Container, Connection, Element, Organization, Relationship].freeze
+        @index_hash
+          .values
+          .select { |entity| classes.include?(entity.class) }
+          .reduce([]) { |entity| entity.referenced_identified_nodes }
+          .flatten
+          .uniq
+        # struct_instance_variables.reduce([]) do |a, e|
+        #   a.concat(self[e].referenced_identified_nodes)
+        # end
       end
 
       def identified_nodes
-        @index_hash.values.select { |node| node.is_a? Referenceable }
+        @index_hash.values.select { |node| node.respond_to? :id }
       end
 
       def unreferenced_nodes
         identified_nodes - referenced_identified_nodes
       end
 
-      def merge_entities(master_entity, copies)
-        copies.delete(master_entity)
-        copies.each do |copy|
-          entities.each do |entity|
-            case entity
-            when entity == master_entity
-              master_entity.merge(copy)
-            when Organization
-              entity.remove(copy.id)
-            when ViewNode, Relationship, Connection
-              entity.replace(copy, master_entity)
-            end
-          end
-          deregister(copy)
-        end
-      end
+      # def merge_entities(master_entity, copies)
+      #   copies.delete(master_entity)
+      #   copies.each do |copy|
+      #     entities.each do |entity|
+      #       case entity
+      #       when entity == master_entity
+      #         master_entity.merge(copy)
+      #       when Organization
+      #         entity.remove(copy.id)
+      #       when ViewNode, Relationship, Connection
+      #         entity.replace(copy, master_entity)
+      #       end
+      #     end
+      #     deregister(copy)
+      #   end
+      # end
 
       private
 

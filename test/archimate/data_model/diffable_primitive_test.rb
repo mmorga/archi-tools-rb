@@ -7,6 +7,7 @@ module Archimate
       using DiffablePrimitive
 
       def setup
+        skip("Diff re-write")
         # @base = build_model(with_relationships: 2, with_diagrams: 1)
         # @diagram = @base.diagrams.first
         # @local = @base.with(name: @base.name + "changed")

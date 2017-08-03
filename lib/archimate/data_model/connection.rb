@@ -9,29 +9,43 @@ module Archimate
     # If the connection is an ArchiMate relationship type, the connection's label, documentation and properties may be determined
     # (i.e inherited) from those in the referenced ArchiMate relationship. Otherwise the connection's label, documentation and properties
     # can be provided and will be additional to (or over-ride) those contained in the referenced ArchiMate relationship.
-    #
-    # This is ConnectionType in the XSD
-    # ViewConceptType > ConnectionType > SourcedConnectionType > Relationship > NestingRelationship
-    #                                  > Line
-    #                 > ViewNodeType >
-    #                                  Label
-    #                                  Container > Element
-    class Connection < Referenceable # ViewConcept
-      using DiffableArray
+    # ViewConceptType
+    # - ConnectionType(
+    #     sourceAttachment
+    #     bendpoint
+    #     targetAttachment
+    #     source
+    #     target)
+    class Connection < Dry::Struct # ViewConceptType
+      # specifies constructor style for Dry::Struct
+      constructor_type :strict_with_defaults
 
-      attribute :source_attachment, Location.optional
-      attribute :bendpoints, LocationList
-      attribute :target_attachment, Location.optional
-      attribute :source, Identifier.optional
-      attribute :target, Identifier.optional
-      attribute :type, Strict::String.optional
+      attribute :id, Identifier
+      attribute :name, LangString.optional
+      attribute :documentation, PreservedLangString.optional.default(nil)
+      # attribute :other_elements, Strict::Array.member(AnyElement).default([])
+      # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
+      attribute :type, Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
+      attribute :source_attachment, Location.optional.default(nil)
+      attribute :bendpoints, Strict::Array.member(Location).default([])
+      attribute :target_attachment, Location.optional.default(nil)
+      attribute :source, Dry::Struct.optional.default(nil) # ViewNode
+      attribute :target, Dry::Struct.optional.default(nil) # ViewNode
+      attribute :relationship, Relationship.optional.default(nil)
+      attribute :style, Style.optional.default(nil)
+      attribute :properties, Strict::Array.member(Property).default([])
 
-      # This is under Relationship
-      attribute :relationship, Strict::String.optional
+      attr_writer :source
+      attr_writer :target
+      attr_writer :relationship
 
-      # Note: this is added under ViewConcept
-      attribute :style, Style.optional
-      attribute :properties, PropertiesList
+      def dup
+        raise "no dup dum dum"
+      end
+
+      def clone
+        raise "no clone dum dum"
+      end
 
       def replace(entity, with_entity)
         @relationship = with_entity.id if (relationship == entity.id)
@@ -43,39 +57,20 @@ module Archimate
         Archimate::Color.color("#{Archimate::Color.data_model('Connection')}[#{Archimate::Color.color(@name || '', [:white, :underline])}]", :on_light_magenta)
       end
 
-      def relationship_element
-        in_model.lookup(relationship)
-      end
-
       def element
-        relationship_element
-      end
-
-      def source_element
-        in_model.lookup(source)
-      end
-
-      def target_element
-        in_model.lookup(target)
+        relationship
       end
 
       def to_s
-        if in_model
-          s = in_model.lookup(source) unless source.nil?
-          t = in_model.lookup(target) unless target.nil?
-        else
-          s = source
-          t = target
-        end
-        "#{type_name} #{s.nil? ? 'nothing' : s} -> #{t.nil? ? 'nothing' : t}"
+        "#{type_name} #{source.nil? ? 'nothing' : source} -> #{target.nil? ? 'nothing' : target}"
       end
 
       def description
         [
           name.nil? ? nil : "#{name}: ",
-          source_element&.description,
-          relationship_element&.description,
-          target_element&.description
+          source&.description,
+          relationship&.description,
+          target&.description
         ].compact.join(" ")
       end
 
@@ -102,6 +97,5 @@ module Archimate
       end
     end
     Dry::Types.register_class(Connection)
-    ConnectionList = Strict::Array.member("archimate.data_model.connection").default([])
   end
 end

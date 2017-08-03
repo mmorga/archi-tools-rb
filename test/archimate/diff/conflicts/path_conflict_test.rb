@@ -7,6 +7,7 @@ module Archimate
     class Conflicts
       class PathConflictTest < Minitest::Test
         def setup
+          skip("Diff re-write")
           elements = build_element_list(with_elements: 2)
           relationships = build_relationship_list(
             with_relationships: 2,
@@ -34,10 +35,12 @@ module Archimate
         end
 
         def test_two_inserted_elements_with_diff_ids_shouldnt_conflict
+          skip("Diff re-write")
           refute @subject.diff_conflicts(@diff1, @diff2)
         end
 
         def test_two_inserts_same_path
+          skip("Diff re-write")
           local = @model.with(relationships: [build_relationship.with(id: @relationship.id)])
           diff2 = Archimate::Diff::Insert.new(
             ArchimateArrayReference.new(local.relationships, 0)
@@ -48,14 +51,15 @@ module Archimate
         end
 
         def test_two_inserted_documentation_nodes_should_not_conflict
+          skip("Diff re-write")
           assert_empty @model.elements.first.documentation
           local = @model.with(
             elements: @model.elements
-              .map { |el| el.id == @model.elements.first.id ? el.with(documentation: [build_documentation]) : el }
+              .map { |el| el.id == @model.elements.first.id ? el.with(documentation: build_documentation) : el }
           )
           remote = @model.with(
             elements: @model.elements
-              .map { |el| el.id == @model.elements.first.id ? el.with(documentation: [build_documentation]) : el }
+              .map { |el| el.id == @model.elements.first.id ? el.with(documentation: build_documentation) : el }
           )
 
           diffs1 = @model.diff(local)

@@ -94,17 +94,18 @@ module Archimate
 
       def documentation(el)
         docs = []
-        el.documentation.each do |doc|
-          docs << make_quad(el.id, "documentation", doc.text)
+        return docs unless el.documentation && !el.documentation.empty?
+        el.documentation.langs.each do |lang|
+          docs << make_quad(el.id, "documentation", el.documentation.by_lang(lang))
         end
         docs
       end
 
       def relationships(el)
         [
-          make_quad(el.source, predicate(el.type), el.target),
-          make_quad(el.id, "sources", el.source),
-          make_quad(el.id, "target", el.target)
+          make_quad(el.source.id, predicate(el.type), el.target.id),
+          make_quad(el.id, "sources", el.source.id),
+          make_quad(el.id, "target", el.target.id)
         ]
       end
 

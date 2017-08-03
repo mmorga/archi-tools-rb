@@ -3,7 +3,10 @@
 module Archimate
   module DataModel
     # An instance of any XML attribute for arbitrary content like metadata
-    class AnyAttribute < ArchimateNode
+    class AnyAttribute < Dry::Struct
+      # specifies constructor style for Dry::Struct
+      constructor_type :strict_with_defaults
+
       attribute :attribute, Strict::String
       attribute :prefix, Strict::String
       attribute :value, Strict::String

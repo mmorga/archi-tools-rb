@@ -8,7 +8,7 @@ module Archimate
       attr_accessor :model
 
       def setup
-        @model = ArchiFileReader.new.parse(Nokogiri::XML(ARCHISURANCE_SOURCE))
+        @model = ArchiFileReader.new(Nokogiri::XML(ARCHISURANCE_SOURCE)).parse
       end
 
       def xtest_reader_profile
@@ -35,8 +35,8 @@ module Archimate
         assert organizations.all? { |e| e.is_a? DataModel::Organization }
         assert_equal 5, organizations.find { |i| i.id == '8c90fdfa' }.organizations.size
         assert_equal 30, organizations.find { |i| i.id == '8c90fdfa' }.organizations.find { |i| i.id == 'fa63373b' }.items.size
-        assert organizations.find { |i| i.id == '8c90fdfa' }.organizations.find { |i| i.id == 'fa63373b' }.items.all? { |e| e.is_a? String }
-        assert_equal "1544", organizations.find { |i| i.id == '8c90fdfa' }.organizations.find { |i| i.id == 'fa63373b' }.items[0]
+        # assert organizations.find { |i| i.id == '8c90fdfa' }.organizations.find { |i| i.id == 'fa63373b' }.items.all? { |e| e.is_a? Archimate::DataModel::Referenceable }
+        assert_equal "1544", organizations.find { |i| i.id == '8c90fdfa' }.organizations.find { |i| i.id == 'fa63373b' }.items[0].id
       end
     end
   end

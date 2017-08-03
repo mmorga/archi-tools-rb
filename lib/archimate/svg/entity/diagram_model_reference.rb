@@ -8,7 +8,7 @@ module Archimate
           super
           @badge = "#archimate-diagram-model-reference-badge"
           @background_class = "archimate-diagram-model-reference-background"
-          @entity = child.model_element
+          @entity = child.view_refs
         end
 
         def optional_link(xml, &block)

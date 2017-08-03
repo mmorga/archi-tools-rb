@@ -10,15 +10,21 @@ module Archimate
         @f2 = build_organization(id: "123", name: "Sales", type: "Business", organizations: @child_organizations)
       end
 
+      def test_factory
+        build_organization
+      end
+
+      # This one is blowing up with stack-too-deep
       def test_new
         assert_equal "123", @f1.id
         assert_equal "Sales", @f1.name.to_s
         assert_equal "Business", @f1.type
         assert_equal @child_organizations, @f1.organizations
         assert_empty @f1.items
-        assert_empty @f1.documentation
+        assert_nil @f1.documentation
       end
 
+      # OK
       def test_build_organizations_empty
         result = build_organization_list(with_organizations: 0)
         assert result.is_a?(Array)
@@ -33,11 +39,9 @@ module Archimate
         end
         assert_instance_of LangString, f[:name]
         refute_empty f[:name]
-        [:documentation, :items].each do |sym|
-          assert_instance_of Array, f[sym]
-          assert_empty f[sym]
-        end
-
+        assert_nil f[:documentation]
+        assert_instance_of Array, f[:items]
+        assert_empty f[:items]
         assert_instance_of Array, f.organizations
         assert_empty f.organizations
       end
@@ -61,7 +65,7 @@ module Archimate
       end
 
       def test_operator_eqleql_false
-        refute @f1 == Organization.new(id: "234", name: "Sales", type: "Business")
+        refute @f1 == Organization.new(id: "234", name: LangString.string("Sales"), type: "Business")
       end
 
       def test_to_s
@@ -76,17 +80,17 @@ module Archimate
               organizations: [
                 build_organization(
                   organizations: [],
-                  items: %w(k l m)
+                  items: %w(k l m).map{ |id| build_element(id: id) }
                 )
               ],
-              items: %w(a b c)
+              items: %w(a b c).map{ |id| build_element(id: id) }
             ),
-            build_organization(organizations: [], items: %w(d e f))
+            build_organization(organizations: [], items: %w(d e f).map{ |id| build_element(id: id) })
           ],
-          items: %w(g h i j)
+          items: %w(g h i j).map{ |id| build_element(id: id) }
         )
 
-        assert_equal %w(a b c d e f g h i j k l m), subject.referenced_identified_nodes.sort
+        assert_equal %w(a b c d e f g h i j k l m), subject.referenced_identified_nodes.map(&:id).sort
       end
     end
   end

@@ -5,45 +5,68 @@ module Archimate
   module FileFormats
     # This class implements common methods for the ArchiMate Model Exchange Format
     class ModelExchangeFileReader
+      attr_reader :index
+
       # Parses a Nokogiri document into an Archimate::Model
       def parse(doc)
         return unless doc
         @property_defs = []
         @viewpoints = []
+        @index = {}
         parse_model(doc.root)
       end
 
       def parse_model(root)
         @property_defs = parse_property_defs(root)
         @viewpoints = parse_viewpoints(root)
-        DataModel::Model.new(
-          index_hash: {},
+        properties = parse_properties(root)
+        elements = parse_elements(root)
+        relationships = parse_relationships(root)
+        diagrams = parse_diagrams(root)
+        organizations = parse_organizations(root.css(organizations_root_selector))
+        model = DataModel::Model.new(
           id: identifier_to_id(root["identifier"]),
           name: ModelExchangeFile::XmlLangString.parse(root.at_css(">name")),
           version: root["version"],
           metadata: ModelExchangeFile::XmlMetadata.parse(root.at_css(">metadata")),
           documentation: parse_documentation(root),
-          properties: parse_properties(root),
-          elements: parse_elements(root),
-          relationships: parse_relationships(root),
-          organizations: parse_organizations(root.css(organizations_root_selector)),
-          diagrams: parse_diagrams(root),
+          properties: properties,
+          elements: elements,
+          relationships: relationships,
+          organizations: organizations,
+          diagrams: diagrams,
           viewpoints: @viewpoints,
           property_definitions: @property_defs,
           schema_locations: root.attr("xsi:schemaLocation").split(" "),
           namespaces: root.namespaces,
           archimate_version: parse_archimate_version(root)
         )
+        @index[model.id] = model
+        model
       end
 
       def parse_viewpoints(_node)
         return []
       end
 
+      # @deprecated
+      # TODO: delete in favor of implementation in Reader
       def parse_documentation(node, element_name = "documentation")
-        node.css(">#{element_name}").map do |doc|
-          DataModel::Documentation.new(text: doc.content, lang: doc["xml:lang"])
-        end
+        lang_hash = node
+          .css(">#{element_name}")
+          .reduce(Hash.new { |h, key| h[key] = [] }) do |h2, doc|
+            h2[doc["xml:lang"]] << doc.content
+            h2
+          end
+          .transform_values { |ary| ary.join("\n") }
+        return nil if lang_hash.empty?
+        default_lang = lang_hash.keys.first
+        default_text = lang_hash[default_lang]
+        DataModel::PreservedLangString.new(
+          lang_hash: lang_hash,
+          default_lang: default_lang,
+          default_text: default_text
+        )
       end
 
       def parse_properties(node)
@@ -56,30 +79,34 @@ module Archimate
         property_def = @property_defs.find { |prop_def| prop_def.id == node.attr(property_def_attr_name) }
         DataModel::Property.new(
           property_definition: property_def,
-          values: [ModelExchangeFile::XmlLangString.parse(node.at_css("value"))].compact
+          value: ModelExchangeFile::XmlLangString.parse(node.at_css("value"))
         )
       end
 
       def parse_property_defs(node)
         @property_defs = node.css(property_defs_selector).map do |i|
-          DataModel::PropertyDefinition.new(
+          property_def = DataModel::PropertyDefinition.new(
             id: i["identifier"],
             name: property_def_name(i),
             documentation: parse_documentation(i),
-            value_type: i["type"]
+            type: i["type"]
           )
+          @index[property_def.id] = property_def
+          property_def
         end
       end
 
       def parse_elements(model)
         model.css(">elements>element").map do |i|
-          DataModel::Element.new(
+          element = DataModel::Element.new(
             id: identifier_to_id(i["identifier"]),
             name: parse_element_name(i),
             type: i["xsi:type"],
             documentation: parse_documentation(i),
             properties: parse_properties(i)
           )
+          @index[element.id] = element
+          element
         end
       end
 
@@ -87,73 +114,78 @@ module Archimate
         nodes.map do |i|
           child_items = i.css(">item")
           ref_items = child_items.select { |ci| ci.has_attribute?(identifier_ref_name) }
-          DataModel::Organization.new(
+          organization = DataModel::Organization.new(
             id: i["identifier"], # TODO: model exchange doesn't assign ids to organization items
             name: ModelExchangeFile::XmlLangString.parse(i.at_css(">label")),
             documentation: parse_documentation(i),
-            items: ref_items.map { |ri| identifier_to_id(ri[identifier_ref_name]) },
+            items: ref_items.map { |ri| index[identifier_to_id(ri[identifier_ref_name])] },
             organizations: parse_organizations(child_items.reject { |ci| ci.has_attribute?(identifier_ref_name) })
           )
+          @index[organization.id] = organization if organization.id
+          organization
         end
       end
 
       def parse_relationships(model)
         model.css(">relationships>relationship").map do |i|
-          DataModel::Relationship.new(
+          relationship = DataModel::Relationship.new(
             id: identifier_to_id(i["identifier"]),
             type: i.attr("xsi:type"),
-            source: identifier_to_id(i.attr("source")),
-            target: identifier_to_id(i.attr("target")),
+            source: index[i.attr("source")],
+            target: index[i.attr("target")],
             name: parse_element_name(i),
             access_type: i["accessType"],
             documentation: parse_documentation(i),
             properties: parse_properties(i)
           )
+          @index[relationship.id] = relationship
+          relationship
         end
       end
 
       def parse_diagrams(model)
         model.css(diagrams_path).map do |i|
-          nodes = parse_nodes(i)
-          connections = parse_connections(i)
-          child_id_hash = nodes.each_with_object({}) { |i2, a| a.merge!(i2.child_id_hash) }
-          connections.each do |c|
-            child_id_hash[c.source].connections << c
-          end
-          DataModel::Diagram.new(
+          diagram = DataModel::Diagram.new(
             id: identifier_to_id(i["identifier"]),
             name: parse_element_name(i),
             viewpoint_type: i["viewpoint"],
             viewpoint: nil, # TODO: support this for ArchiMate v3
             documentation: parse_documentation(i),
             properties: parse_properties(i),
-            nodes: nodes,
-            connections: connections,
+            nodes: [],
+            connections: [],
             connection_router_type: i["connectionRouterType"],
             type: i.attr("xsi:type"),
             background: i.attr("background")
           )
+          @index[diagram.id] = diagram
+          diagram.nodes = parse_view_nodes(i, diagram)
+          diagram.connections = parse_connections(i)
+          diagram
         end
       end
 
-      def parse_nodes(node)
+      def parse_view_nodes(node, diagram)
         node.css("> node").map do |i|
-          DataModel::ViewNode.new(
+          view_node = DataModel::ViewNode.new(
             id: identifier_to_id(i["identifier"]),
             type: i.attr(view_node_type_attr),
-            model: nil,
+            view_refs: nil,
             name: ModelExchangeFile::XmlLangString.parse(i.at_css(">label")),
-            target_connections: [], # TODO: needed? "targetConnections",
-            archimate_element: identifier_to_id(i[view_node_element_ref]),
+            # target_connections: [], # TODO: needed? "targetConnections",
+            element: index[identifier_to_id(i[view_node_element_ref])],
             bounds: parse_bounds(i),
-            nodes: parse_nodes(i),
+            nodes: parse_view_nodes(i, diagram),
             connections: parse_connections(i),
             documentation: parse_documentation(i),
             properties: parse_properties(i),
             style: parse_style(i),
             content: i.at_css("> content")&.text,
-            child_type: nil
+            child_type: nil,
+            diagram: diagram
           )
+          @index[view_node.id] = view_node
+          view_node
         end
       end
 
@@ -205,18 +237,20 @@ module Archimate
 
       def parse_connections(node)
         node.css("> connection").map do |i|
-          DataModel::Connection.new(
+          connection = DataModel::Connection.new(
             id: identifier_to_id(i["identifier"]),
             type: i.attr(view_node_type_attr),
-            source: identifier_to_id(i["source"]),
-            target: identifier_to_id(i["target"]),
-            relationship: identifier_to_id(i[connection_relationship_ref]),
+            source: index[i["source"]],
+            target: index[i["target"]],
+            relationship: index[i[connection_relationship_ref]],
             name: i.at_css("label")&.content,
             style: parse_style(i),
             bendpoints: parse_bendpoints(i),
             documentation: parse_documentation(i),
             properties: parse_properties(i)
           )
+          @index[connection.id] = connection
+          connection
         end
       end
 

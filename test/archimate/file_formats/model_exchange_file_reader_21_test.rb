@@ -12,28 +12,30 @@ module Archimate
       end
 
       def test_model_simple_attributes
-        assert_equal DataModel::LangString.new(text: "Archisurance", lang: "en"), model.name
+        assert_equal DataModel::LangString.new(lang_hash: { "en" => "Archisurance"}, default_lang: "en", default_text: "Archisurance"), model.name
         assert_equal "id-11f5304f", model.id
       end
 
       def test_model_documentation
-        assert_equal 1, model.documentation.size
-        assert_equal(
-          DataModel::Documentation.new(text: "An example of a fictional Insurance company.", lang: "en"),
-          model.documentation.first
-        )
+        assert_equal("An example of a fictional Insurance company.", model.documentation.to_s)
       end
 
       def test_model_properties
         assert_equal 2, model.properties.size
         pd1 = model.properties.first.property_definition
         assert_equal(
-          DataModel::Property.new(property_definition: pd1, values: [DataModel::LangString.new(text: "Value of Property 1", lang: "en")]),
+          DataModel::Property.new(
+            property_definition: pd1,
+            value: DataModel::LangString.new(lang_hash: { "en" => "Value of Property 1"}, default_lang: "en", default_text: "Value of Property 1")
+          ),
           model.properties.first
         )
         pd2 = model.properties.last.property_definition
         assert_equal(
-          DataModel::Property.new(property_definition: pd2, values: [DataModel::LangString.new(text: "Value of Property 2", lang: "en")]),
+          DataModel::Property.new(
+            property_definition: pd2,
+            value: DataModel::LangString.new(lang_hash: { "en" => "Value of Property 2"}, default_lang: "en", default_text: "Value of Property 2")
+          ),
           model.properties.last
         )
       end
@@ -44,14 +46,14 @@ module Archimate
           DataModel::Element.new(
             id: "id-1544",
             type: "BusinessInterface",
-            name: DataModel::LangString.new(text: "mail", lang: "en")
+            name: DataModel::LangString.new(lang_hash: {"en" => "mail"}, default_lang: "en", default_text: "mail")
           ), model.elements.first
         )
         assert_equal(
           DataModel::Element.new(
             id: "id-3db08b5c",
             type: "Principle",
-            name: DataModel::LangString.new(text: "Infrastructure Principle", lang: "en")
+            name: DataModel::LangString.new(lang_hash: {"en" => "Infrastructure Principle"}, default_lang: "en", default_text: "Infrastructure Principle")
           ), model.elements.last
         )
       end
@@ -61,17 +63,17 @@ module Archimate
         assert_equal(
           DataModel::Relationship.new(
             id: "id-693",
-            source: "id-564",
-            target: "id-674",
+            source: model.lookup("id-564"),
+            target: model.lookup("id-674"),
             type: "AccessRelationship",
-            name: DataModel::LangString.new(text: "create/ update", lang: "en")
+            name: DataModel::LangString.new(lang_hash: {"en" => "create/ update"}, default_lang: "en", default_text: "create/ update")
           ), model.relationships.first
         )
         assert_equal(
           DataModel::Relationship.new(
             id: "id-dd9c00de",
-            source: "id-1101",
-            target: "id-1882",
+            source: model.lookup("id-1101"),
+            target: model.lookup("id-1882"),
             type: "AssociationRelationship",
             name: nil
           ), model.relationships.last

@@ -52,6 +52,7 @@ module Archimate
     autoload :ModelExchangeFileWriter, 'archimate/file_formats/model_exchange_file_writer'
     autoload :ModelExchangeFileWriter21, 'archimate/file_formats/model_exchange_file_writer_21'
     autoload :ModelExchangeFileWriter30, 'archimate/file_formats/model_exchange_file_writer_30'
+    autoload :Reader, 'archimate/file_formats/reader'
     autoload :Writer, 'archimate/file_formats/writer'
     module ModelExchangeFile
       autoload :XmlLangString, 'archimate/file_formats/model_exchange_file/xml_lang_string'

@@ -15,7 +15,7 @@ module Archimate
             @property_definitions.each do |property_def|
               xml.propertyDefinition(
                 "identifier" => property_def.id,
-                "type" => property_def.value_type
+                "type" => property_def.type
               ) do
                 ModelExchangeFile::XmlLangString.new(property_def.name, :name).serialize(xml)
               end

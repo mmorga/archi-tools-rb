@@ -104,7 +104,7 @@ module Archimate
       # 4. names differ only in punctuation
       # 5. names differ only by stop-words (list of words such as "the", "api", etc.)
       def simplify(entity)
-        name = entity.name&.dup || ""
+        name = entity.name&.dup.to_s || ""
         name.sub!("(copy)", "") # (copy) is a special case inserted by the Archi tool
         name.downcase!
         name.gsub!(/[[:punct:]]/, "") unless entity.is_a?(DataModel::Relationship)

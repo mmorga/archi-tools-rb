@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'forwardable'
-require 'parallel'
+# require 'parallel'
 require 'archimate/diff/conflicts/base_conflict'
 require 'archimate/diff/conflicts/deleted_items_child_updated_conflict'
 require 'archimate/diff/conflicts/deleted_items_referenced_conflict'

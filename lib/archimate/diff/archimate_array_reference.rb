@@ -24,7 +24,7 @@ module Archimate
         unless array_index >= 0 && array_index < array.size
           raise(
             ArgumentError,
-            "array_index argument a valid index for array #{array_index.inspect}"
+            "array_index argument must be a valid index #{array_index.inspect} for array size #{array.size}"
           )
         end
         super(array)

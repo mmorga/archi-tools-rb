@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
+    # TODO: Should be obsolete at this point pending Diff re-write
     module DiffablePrimitive
       module DiffablePrimitiveMethods
         def diff(other, from_parent, to_parent, attribute, from_attribute = nil)

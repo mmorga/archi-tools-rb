@@ -23,7 +23,7 @@ module Archimate
       when "http://www.opengroup.org/xsd/archimate"
         FileFormats::ModelExchangeFileReader21.new.parse(doc)
       else
-        FileFormats::ArchiFileReader.new.parse(doc)
+        FileFormats::ArchiFileReader.new(doc).parse
       end
     end
   end

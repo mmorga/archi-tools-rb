@@ -9,31 +9,18 @@ module Archimate
       def setup
         src_el = build_element
         target_el = build_element
-        @model = build_model(
-          elements: [src_el, target_el],
-          relationships: [
-            build_relationship(source: src_el.id, target: src_el.id)
-          ],
-          diagrams: [
-            build_diagram(
-              nodes: [
-                build_view_node(
-                  connections: [
-                    build_connection(
-                      id: "abc123",
-                      type: "three",
-                      name: "test_name",
-                      source: src_el.id,
-                      target: target_el.id,
-                      relationship: "complicated"
-                    )
-                  ]
-                )
-              ]
-            )
-          ]
+        @subject = build_connection(
+          id: "abc123",
+          name: LangString.string("test_name"),
+          type: "three",
+          source: nil,
+          target: nil,
+          relationship: build_relationship(source: src_el, target: target_el)
         )
-        @subject = @model.diagrams[0].nodes[0].connections[0]
+      end
+
+      def test_factory
+        build_connection
       end
 
       def test_to_s
@@ -47,13 +34,21 @@ module Archimate
       end
 
       def test_referenced_identified_nodes
+        source = build_view_node(id: "a", element: build_element(id: "d"))
+        target = build_view_node(id: "b", element: build_element(id: "e"))
+        relationship = build_relationship(id: "c", source: source.element, target: target.element)
         subject = build_connection(
-          source: "a",
-          target: "b",
-          relationship: "c"
+          source: source,
+          target: target,
+          relationship: relationship
         )
 
-        assert_equal %w(a b c), subject.referenced_identified_nodes.sort
+        rsrc, rtar, rrel = subject.referenced_identified_nodes
+        assert_equal source, rsrc
+        assert_equal target, rtar
+        assert_equal relationship, rrel
+
+        assert_equal %w(a b c), subject.referenced_identified_nodes.map(&:id).sort
       end
     end
   end

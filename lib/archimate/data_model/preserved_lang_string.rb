@@ -2,13 +2,14 @@
 
 module Archimate
   module DataModel
-    # An element that holds documentation.
     # A base string type for multi-language strings that preserves whitespace.
     # PreservedLangStringType in ArchiMate 3 schema
-    class Documentation < LangString
+    class PreservedLangString < LangString
+      def self.blank
+        super
+      end
     end
 
-    Dry::Types.register_class(Documentation)
-    DocumentationGroup = Strict::Array.member(Documentation).default([])
+    Dry::Types.register_class(PreservedLangString)
   end
 end

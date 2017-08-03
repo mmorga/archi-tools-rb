@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Bounds < ArchimateNode
+    class Bounds < Dry::Struct
+      # include With
+
+      # specifies constructor style for Dry::Struct
+      constructor_type :strict_with_defaults
+
       attribute :x, Coercible::Float.optional
       attribute :y, Coercible::Float.optional
       attribute :width, Coercible::Float

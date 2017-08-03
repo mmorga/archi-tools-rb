@@ -45,7 +45,7 @@ module Archimate
           optional_link(xml) {
             xml.g(group_attrs) do
               xml.title { xml.text @entity.name } unless @entity.name.nil? || @entity.name.empty?
-              xml.desc { xml.text(@entity.documentation.map(&:text).join("\n\n")) } unless @entity.documentation.empty?
+              xml.desc { xml.text(@entity.documentation.to_s) } if @entity.documentation && !@entity.documentation.empty?
               entity_shape(xml, child.bounds)
               entity_badge(xml)
               entity_label(xml)

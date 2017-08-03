@@ -25,35 +25,44 @@ module Archimate
 
     ElementType = Strict::String.enum(*ElementEnumType)
 
-    AllowedElementTypes = Strict::Array.member(ElementType).default([])
-
     # A base element type that can be extended by concrete ArchiMate types.
     #
     # Note that ElementType is abstract, so one must have derived types of this type. this is indicated in xml
     # by having a tag name of "element" and an attribute of xsi:type="BusinessRole" where BusinessRole is
     # a derived type from ElementType.
-    class Element < Concept
+    #
+    # TODO: Possible Make this abstract with concrete implementations for all valid element types
+    class Element < Dry::Struct
+      # Used only for testing
+      # include With
+
+      # specifies constructor style for Dry::Struct
+      constructor_type :strict_with_defaults
+
+      attribute :id, Identifier
+      attribute :name, LangString.optional.default(nil)
+      attribute :documentation, PreservedLangString.optional.default(nil)
+      # attribute :other_elements, Strict::Array.member(AnyElement).default([])
+      # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
+      attribute :type, Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
+      attribute :properties, Strict::Array.member(Property).default([])
+
+      attr_writer :documentation
+
+      def dup
+        raise "no dup dum dum"
+      end
+
+      def clone
+        raise "no clone dum dum"
+      end
+
       def to_s
         Archimate::Color.layer_color(layer, "#{type}<#{id}>[#{name}]")
       end
 
       def layer
         Constants::ELEMENT_LAYER.fetch(type, "None")
-      end
-
-      # TODO: move to dynamic method creation
-      def composed_by
-        in_model
-          .relationships.select { |r| r.type == "CompositionRelationship" && r.target == id }
-          .map { |r| in_model.lookup(r.source) }
-      end
-
-      # TODO: move to dynamic method creation
-      def composes
-        in_model
-          .relationships
-          .select { |r| r.type == "CompositionRelationship" && r.source == id }
-          .map { |r| in_model.lookup(r.target) }
       end
 
       # Diagrams that this element is referenced in.

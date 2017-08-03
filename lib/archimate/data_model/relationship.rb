@@ -2,7 +2,7 @@
 
 module Archimate
   module DataModel
-    RelationshipTypeEnum = %w[
+    RELATIONSHIP_TYPE_ENUM = %w[
       Composition
       Aggregation
       Assignment
@@ -15,21 +15,42 @@ module Archimate
       Specialization
       Association
     ].freeze
-    RelationshipType = Strict::String.enum(*RelationshipTypeEnum)
-    AllowedRelationshipTypes = Strict::Array.member(RelationshipType).default([])
 
-    AccessType = %w[Access Read Write ReadWrite]
-    AccessTypeEnum = Strict::String.enum(*AccessType)
+    RelationshipType = Strict::String.enum(*RELATIONSHIP_TYPE_ENUM)
+
+    ACCESS_TYPE = %w[Access Read Write ReadWrite]
+    AccessTypeEnum = Strict::String.enum(*ACCESS_TYPE)
 
     # A base relationship type that can be extended by concrete ArchiMate types.
     #
     # Note that RelationshipType is abstract, so one must have derived types of this type. this is indicated in xml
     # by having a tag name of "relationship" and an attribute of xsi:type="AccessRelationship" where AccessRelationship is
     # a derived type from RelationshipType.
-    class Relationship < Concept
-      attribute :source, Identifier
-      attribute :target, Identifier
-      attribute :access_type, AccessTypeEnum.optional
+    class Relationship < Dry::Struct
+      # Used only for testing
+      # include With
+
+      # specifies constructor style for Dry::Struct
+      constructor_type :strict_with_defaults
+
+      attribute :id, Identifier
+      attribute :name, LangString.optional.default(nil)
+      attribute :documentation, PreservedLangString.optional.default(nil)
+      # attribute :other_elements, Strict::Array.member(AnyElement).default([])
+      # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
+      attribute :type, Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
+      attribute :properties, Strict::Array.member(Property).default([])
+      attribute :source, Element # TODO: This could be an Element or Relationship, is this optional?
+      attribute :target, Element # TODO: This could be an Element or Relationship, is this optional?
+      attribute :access_type, AccessTypeEnum.optional.default(nil)
+
+      def dup
+        raise "no dup dum dum"
+      end
+
+      def clone
+        raise "no clone dum dum"
+      end
 
       def replace(entity, with_entity)
         @source = with_entity.id if source == entity.id
@@ -40,7 +61,7 @@ module Archimate
         Archimate::Color.color(
           "#{Archimate::Color.data_model(type)}<#{id}>[#{Archimate::Color.color(name&.strip || '', %i[black underline])}]",
           :on_light_magenta
-        ) + " #{source_element} -> #{target_element}"
+        ) + " #{source} -> #{target}"
       end
 
       def description
@@ -50,16 +71,10 @@ module Archimate
         ].compact.join(" ")
       end
 
+      # TODO: remove when it doesn't break diff merge conflicts
+      # @deprecated
       def referenced_identified_nodes
         [@source, @target].compact
-      end
-
-      def source_element
-        element_by_id(source)
-      end
-
-      def target_element
-        element_by_id(target)
       end
 
       # Diagrams that this element is referenced in.

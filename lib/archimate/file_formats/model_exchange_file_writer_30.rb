@@ -57,7 +57,7 @@ module Archimate
       end
 
       def serialize_item(xml, item)
-        xml.item(identifierRef: identifier(item))
+        xml.item(identifierRef: identifier(item.id))
       end
 
       def serialize_property(xml, property)
@@ -99,12 +99,12 @@ module Archimate
           "w" => view_node.bounds&.width&.round,
           "h" => view_node.bounds&.height&.round
         }
-        if view_node.archimate_element
-          attrs[:elementRef] = identifier(view_node.archimate_element)
-        elsif view_node.model
+        if view_node.element
+          attrs[:elementRef] = identifier(view_node.element.id)
+        elsif view_node.view_refs
           # Since it doesn't seem to be forbidden, we just assume we can use
           # the elementref for views in views
-          attrs[:elementRef] = view_node.model
+          attrs[:elementRef] = view_node.view_refs
           attrs[:type] = "model"
         end
         remove_nil_values(attrs)
@@ -135,10 +135,10 @@ module Archimate
       def serialize_connection(xml, sc)
         xml.connection(
           identifier: identifier(sc.id),
-          relationshipRef: identifier(sc.relationship),
+          relationshipRef: identifier(sc.relationship&.id),
           "xsi:type": sc.type,
-          source: identifier(sc.source),
-          target: identifier(sc.target)
+          source: identifier(sc.source&.id),
+          target: identifier(sc.target&.id)
         ) do
           serialize(xml, sc.style)
           serialize(xml, sc.bendpoints)

@@ -10,6 +10,14 @@ module Archimate
       # node B is considered to be in front of node A, node C is considered to be in front of node B, and
       # node C is considered to be in front of nodes A and B.
       attribute :nodes, Strict::Array.member(ViewNode)
+
+      def dup
+        raise "no dup dum dum"
+      end
+
+      def clone
+        raise "no clone dum dum"
+      end
     end
 
     Dry::Types.register_class(Container)

@@ -121,9 +121,9 @@ module Archimate
         model.find_by_class(DataModel::ViewNode).each_with_object([]) do |parent, errors|
           missing_relations = parent.nodes.reject do |child|
             model.relationships.any? do |rel|
-              parent.archimate_element.nil? ||
-                child.archimate_element.nil? ||
-                (rel.source == parent.archimate_element && rel.target == child.archimate_element)
+              parent.element.nil? ||
+                child.element.nil? ||
+                (rel.source == parent.element && rel.target == child.element)
             end
           end
           errors.concat(missing_relations.map { |child| "#{child.element} should not nest in #{parent.element} without valid relationship" })

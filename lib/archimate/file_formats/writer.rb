@@ -27,7 +27,7 @@ module Archimate
             serialize_view_node(xml, item)
           when DataModel::Diagram
             serialize_diagram(xml, item)
-          when DataModel::Documentation
+          when DataModel::PreservedLangString
             ModelExchangeFile::XmlLangString.new(item, :documentation).serialize(xml)
           when DataModel::Element
             serialize_element(xml, item)

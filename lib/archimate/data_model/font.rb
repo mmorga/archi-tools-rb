@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Font < ArchimateNode
+    class Font < Dry::Struct
+      # specifies constructor style for Dry::Struct
+      constructor_type :strict_with_defaults
+
       attribute :name, Strict::String.optional
       attribute :size, Coercible::Float.constrained(gt: 0.0).optional
       attribute :style, Coercible::Int.optional # TODO: make this an enum

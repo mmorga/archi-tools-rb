@@ -4,8 +4,17 @@ require 'test_helper'
 module Archimate
   module DataModel
     class RelationshipTest < Minitest::Test
+      def test_list_factory
+        given_elements = [build_element]
+        given_relationships = [build_relationship]
+        rels = build_relationship_list(elements: given_elements, relationships: given_relationships, with_relationships: 3)
+        assert_equal 4, rels.size
+        assert given_relationships.all? { |rel| rels.include?(rel) }
+        assert rels.all? { |rel| rel.is_a?(Relationship) }
+      end
+
       def test_build_test_helper
-        docs = build_documentation_list(count: 2)
+        docs = PreservedLangString.new(lang_hash: {"en" => "Something", "es" => "Hola"}, default_lang: "en", default_text: "Something")
         rel = build_relationship(id: "123", name: "my rel", documentation: docs)
         assert_equal "123", rel.id
         assert_equal "my rel", rel.name.to_s
@@ -13,16 +22,18 @@ module Archimate
       end
 
       def test_new_with_defaults
+        src = build_element
+        target = build_element
         rel = Relationship.new(
           id: "abc123",
           type: "complicated",
-          source: "src",
-          target: "tar"
+          source: src,
+          target: target
         )
         assert_equal "abc123", rel.id
         assert_equal "complicated", rel.type
-        assert_equal "src", rel.source
-        assert_equal "tar", rel.target
+        assert_equal src, rel.source
+        assert_equal target, rel.target
       end
 
       def test_new_duplicate_passed
@@ -34,7 +45,7 @@ module Archimate
 
       def test_new_duplicate_with_args
         r1 = build_relationship
-        r2 = r1.with(name: "pablo")
+        r2 = r1.with(name: LangString.string("pablo"))
         refute_equal r1, r2
         assert_equal "pablo", r2.name.to_s
       end
@@ -54,7 +65,7 @@ module Archimate
 
       def test_equality_operator_false
         m1 = build_relationship
-        m2 = m1.with(name: "felix")
+        m2 = m1.with(name: LangString.string("felix"))
         refute_equal m1, m2
       end
 
@@ -65,28 +76,13 @@ module Archimate
           id: "abc123",
           type: "AssociationRelationship",
           name: "friends",
-          source: src_el.id,
-          target: target_el.id
-        )
-        model = build_model(
-          elements: [src_el, target_el],
-          relationships: [
-            subject
-          ]
+          source: src_el,
+          target: target_el
         )
         assert_equal(
           Archimate::Color.uncolor("AssociationRelationship<abc123>[friends] #{src_el} -> #{target_el}"),
-          Archimate::Color.uncolor(model.relationships[0].to_s)
+          Archimate::Color.uncolor(subject.to_s)
         )
-      end
-
-      def test_referenced_identified_nodes
-        subject = build_relationship(
-          source: "a",
-          target: "b"
-        )
-
-        assert_equal %w(a b), subject.referenced_identified_nodes.sort
       end
     end
   end

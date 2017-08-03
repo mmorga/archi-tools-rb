@@ -11,15 +11,26 @@ module Archimate
     # An organization has no meaning unless it has at least child organization element.
     #
     # Note that Organization must fit into a tree structure (so strictly nested).
-    class Organization < ArchimateNode # was Referenceable
+    class Organization < Dry::Struct
+      # specifies constructor style for Dry::Struct
+      constructor_type :strict_with_defaults
+
       attribute :id, Identifier.optional # .constrained(format: /[[[:alpha:]]_][w-.]*/)
-      attribute :name, LangString.optional # LabelGroup in the XSD, TODO: this is a LangString collection
-      attribute :type, Strict::String.optional # I believe this is used only for Archi formats
-      attribute :documentation, DocumentationGroup
-      attribute :items, Strict::Array.member(Identifier).default([]) # TODO: Convert this to referenceable
+      attribute :name, LangString.optional.default(nil) # LabelGroup in the XSD
+      attribute :type, Strict::String.optional.default(nil) # I believe this is used only for Archi formats
+      attribute :documentation, PreservedLangString.optional.default(nil)
+      attribute :items, Strict::Array.member(Dry::Struct).default([])
       attribute :organizations, Strict::Array.member(Organization).default([]) # item in the XSD
       # attribute :other_elements, Strict::Array.member(AnyElement).default([])
       # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
+
+      def dup
+        raise "no dup dum dum"
+      end
+
+      def clone
+        raise "no clone dum dum"
+      end
 
       def to_s
         "#{Archimate::Color.data_model('Organization')}<#{id}>[#{Archimate::Color.color(name, [:white, :underline])}]"
@@ -32,7 +43,7 @@ module Archimate
       end
 
       def remove(id)
-        items.delete(id)
+        items.delete_if { |item| item.id == id }
       end
     end
     Dry::Types.register_class(Organization)

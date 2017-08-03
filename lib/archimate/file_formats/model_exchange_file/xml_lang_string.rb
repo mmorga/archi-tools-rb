@@ -6,20 +6,27 @@ module Archimate
       class XmlLangString
         def self.parse(node)
           return nil unless node
-          DataModel::LangString.new(text: node.content, lang: node["xml:lang"])
+          default_lang = node["xml:lang"] #  || Archimate::Config.instance.default_lang
+          default_text = node.content&.strip
+          return nil unless default_text && !default_text.empty?
+          DataModel::LangString.create(
+            lang_hash: { default_lang => default_text },
+            default_lang: default_lang,
+            default_text: default_text
+          )
         end
 
         def initialize(lang_str, tag_name)
           @tag_name = tag_name
-          @lang_strs = Array(lang_str)
+          @lang_str = lang_str
         end
 
         def serialize(xml)
-          return if @lang_strs.empty?
+          return unless @lang_str && !@lang_str.empty?
 
-          @lang_strs.each do |lang_str|
-            attrs = lang_str.lang && !lang_str.lang.empty? ? {"xml:lang" => lang_str.lang} : {}
-            xml.send(@tag_name, attrs) { xml.text text_proc(lang_str) }
+          @lang_str.langs.each do |lang|
+            attrs = lang && !lang.empty? ? {"xml:lang" => lang} : {}
+            xml.send(@tag_name, attrs) { xml.text text_proc(@lang_str.by_lang(lang)) }
           end
         end
 

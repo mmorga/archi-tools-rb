@@ -49,8 +49,8 @@ module Archimate
       def relationship_attributes(relationship)
         {
           identifier: identifier(relationship.id),
-          source: identifier(relationship.source),
-          target: identifier(relationship.target),
+          source: identifier(relationship.source.id),
+          target: identifier(relationship.target.id),
           "xsi:type" => meff_type(relationship.type)
         }
       end
@@ -71,7 +71,11 @@ module Archimate
       end
 
       def serialize_organization(xml, organization)
-        return if organization.items.empty? && organization.documentation.empty? && organization.organizations.empty?
+        if organization.items.empty? &&
+          (!organization.documentation || organization.documentation.empty?) &&
+          organization.organizations.empty?
+          return
+        end
         item_attrs = organization.id.nil? || organization.id.empty? ? {} : {identifier: organization.id}
         xml.item(item_attrs) do
           serialize_organization_body(xml, organization)
@@ -79,7 +83,11 @@ module Archimate
       end
 
       def serialize_organization_body(xml, organization)
-        return if organization.items.empty? && organization.documentation.empty? && organization.organizations.empty?
+        if organization.items.empty? &&
+          (!organization.documentation || organization.documentation.empty?) &&
+          organization.organizations.empty?
+          return
+        end
         str = organization.name
         label_attrs = organization.name&.lang && !organization.name.lang.empty? ? {"xml:lang" => organization.name.lang} : {}
         xml.label(label_attrs) { xml.text text_proc(str) } unless str.nil? || str.strip.empty?

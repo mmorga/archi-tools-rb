@@ -3,6 +3,7 @@
 require "logger"
 require "singleton"
 require "observer"
+require "irb"
 
 module Archimate
   # This is the singleton class that contains application configuration.
@@ -12,10 +13,12 @@ module Archimate
 
     attr_reader :interactive
     attr_reader :logger
+    attr_reader :default_lang
 
     def initialize
       @interactive = true
-      @logger ||= Logger.new(STDERR, progname: "archimate")
+      @logger = Logger.new(STDERR, progname: "archimate")
+      @default_lang = IRB::Locale.new.lang
     end
 
     def interactive=(interactive)

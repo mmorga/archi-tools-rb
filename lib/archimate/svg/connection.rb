@@ -19,12 +19,12 @@ module Archimate
       end
 
       def to_svg(xml)
-        return if connection.source_element.nodes.include?(connection.target_element)
+        return if connection.source.nodes.include?(connection.target)
         xml.path(path_attrs) do
           xml.title @connection.description
         end
 
-        name = connection&.relationship_element&.name&.strip
+        name = connection&.relationship&.name&.strip
         return if name.nil? || name.empty?
         xml.text_(
           class: "archimate-relationship-name",
@@ -70,14 +70,14 @@ module Archimate
       end
 
       def id
-        connection.relationship_element&.id || connection.id
+        connection.relationship&.id || connection.id
       end
 
       # Look at the type (if any of the path and set the class appropriately)
       def path_class
         [
           "archimate",
-          css_classify(connection&.relationship_element&.type || "default")
+          css_classify(connection&.relationship&.type || "default")
         ].join("-") + " archimate-relationship"
       end
 
@@ -102,8 +102,8 @@ module Archimate
       # if left/right range of both overlap, use centerpoint of overlap range as x val
       # if top/bottom range of both overlap, use centerpoint of overlap range as y val
       def path_d
-        source_bounds = connection.source_element&.absolute_position || DataModel::Bounds.zero
-        target_bounds = connection.target_element&.absolute_position || DataModel::Bounds.zero
+        source_bounds = connection.source&.absolute_position || DataModel::Bounds.zero
+        target_bounds = connection.target&.absolute_position || DataModel::Bounds.zero
 
         start_point = DataModel::Bounds.new(
           x: source_bounds.left + source_bounds.width / 2.0,

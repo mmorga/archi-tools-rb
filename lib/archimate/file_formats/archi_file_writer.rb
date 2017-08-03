@@ -54,7 +54,7 @@ module Archimate
         ) do
           serialize(xml, model.organizations)
           serialize(xml, model.properties)
-          model.documentation.each { |d| serialize_documentation(xml, d, "purpose") }
+          serialize_documentation(xml, model.documentation, "purpose")
         end
       end
 
@@ -76,8 +76,7 @@ module Archimate
         xml.send(element_name) { xml.text(documentation.text) }
       end
 
-      def serialize_item(xml, item)
-        item_instance = model.lookup(item)
+      def serialize_item(xml, item_instance)
         $stderr.puts "serialize_item item `#{item.inspect}` could not found." if item_instance.nil?
         serialize(xml, item_instance)
       end
@@ -101,8 +100,8 @@ module Archimate
             "xsi:type" => "archimate:#{rel.type}",
             "id" => rel.id,
             "name" => rel.name,
-            "source" => rel.source,
-            "target" => rel.target,
+            "source" => rel.source.id,
+            "target" => rel.target.id,
             "accessType" => serialize_access_type(rel.access_type)
           )
         ) do
@@ -116,7 +115,7 @@ module Archimate
         when nil
           nil
         else
-          DataModel::AccessType.index(val)
+          DataModel::ACCESS_TYPE.index(val)
         end
       end
 
@@ -131,6 +130,7 @@ module Archimate
             "background" => diagram.background
           )
         ) do
+          # diagram.nodes.each { |view_node| serialize_view_node(xml, view_node, diagram) }
           serialize(xml, diagram.nodes)
           serialize(xml, diagram.documentation)
           serialize(xml, diagram.properties)
@@ -162,8 +162,8 @@ module Archimate
               style_hash.merge(
                 "targetConnections" => child.target_connections.empty? ? nil : child.target_connections.join(" "),
                 "fillColor" => fill_color,
-                "model" => child.model,
-                "archimateElement" => child.archimate_element,
+                "model" => child.view_refs&.id,
+                "archimateElement" => child.element&.id,
                 "type" => child.child_type
               )
             )
@@ -198,9 +198,9 @@ module Archimate
               "name" => connection.name
             }.merge(
               archi_style_hash(connection.style).merge(
-                "source" => connection.source,
-                "target" => connection.target,
-                "relationship" => connection.relationship
+                "source" => connection.source&.id,
+                "target" => connection.target&.id,
+                "relationship" => connection.relationship&.id
               )
             )
           )

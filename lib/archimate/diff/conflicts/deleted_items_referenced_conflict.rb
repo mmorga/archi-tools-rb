@@ -11,7 +11,7 @@ module Archimate
       #
       # In the local change set, an element with id "abc123" is deleted.
       # In the remote change set, a child is inserted into a diagram with
-      # archimate_element = "abc123". These two changes are in conflict.
+      # element = {id: "abc123"...}. These two changes are in conflict.
       class DeletedItemsReferencedConflict < BaseConflict
         using DataModel::DiffableArray
         using DataModel::DiffablePrimitive

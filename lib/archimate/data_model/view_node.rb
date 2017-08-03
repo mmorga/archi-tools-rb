@@ -4,52 +4,89 @@ module Archimate
     PositiveInteger = Strict::Int.constrained(gt: 0)
 
     # Graphical node type. It can contain child node types.
-    # TODO: This is ViewNodeType in the v3 XSD
-    class ViewNode < Referenceable #  < ViewConcept
+    # This can be specialized as Label and Container
+    # In the ArchiMate v3 Schema, the tree of these nodes is:
+    # ViewConceptType(
+    #     LabelGroup (name LangString)
+    #     PreservedLangString
+    #     style (optional)
+    #     viewRefs
+    #     id)
+    # - ViewNodeType(
+    #       LocationGroup (x, y)
+    #       SizeGroup (width, height))
+    #   - Label(
+    #         conceptRef
+    #         attributeRef
+    #         xpathPart (optional)
+    #     )
+    #   - Container(
+    #         nodes (ViewNodeType)
+    #     - Element(
+    #           elementRef)
+    class ViewNode < Dry::Struct
+      # specifies constructor style for Dry::Struct
+      constructor_type :strict_with_defaults
+
       using DiffableArray
 
-      # LocationGroup: TODO: Consider making this a mixin or extract object
-      # The x (towards the right, associated with width) attribute from the Top,Left (i.e. 0,0)
-      # corner of the diagram to the Top, Left corner of the bounding box of the concept.
-      # attribute :x, NonNegativeInteger
-      # The y (towards the bottom, associated with height) attribute from the Top,Left (i.e. 0,0)
-      # corner of the diagram to the Top, Left corner of the bounding box of the concept.
-      # attribute :y, NonNegativeInteger
+      # ViewConceptType
+      attribute :id, Identifier
+      attribute :name, LangString.optional.default(nil)
+      attribute :documentation, PreservedLangString.optional.default(nil)
+      # attribute :other_elements, Strict::Array.member(AnyElement).default([])
+      # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
+      attribute :type, Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
+      attribute :style, Style.optional.default(nil)
 
-      # SizeGroup:
-      # The width (associated with x) attribute from the Left side to the right side of the
-      # bounding box of a concept.
-      # attribute :w, PositiveInteger
-      # The height (associated with y) attribute from the top side to the bottom side of the
-      # bounding box of a concept.
-      # attribute :h, PositiveInteger
+      # TODO: viewRefs are pointers to 0-* Diagrams for diagram drill in defined in abstract View Concept
+      attribute :view_refs, Dry::Struct.optional.default(nil)  # viewRef in XSD for a nested View Concept(s) TODO: Make this an array
 
-      attribute :model, Identifier.optional
-      attribute :content, Strict::String.optional
-      attribute :target_connections, Strict::Array.member(Identifier).default([])
-      attribute :archimate_element, Identifier.optional
-      attribute :bounds, Bounds.optional
+      # TODO: document where this comes from
+      attribute :content, Strict::String.optional.default(nil)
+
+      # ViewNodeType
+      attribute :bounds, Bounds.optional.default(nil)
+
+      # Container - container doesn't distinguish between nodes and connections
       attribute :nodes, Strict::Array.member(ViewNode).default([])
-      attribute :connections, ConnectionList
-      attribute :style, Style.optional
-      attribute :type, Strict::String.optional
-      attribute :child_type, Coercible::Int.optional
-      attribute :properties, PropertiesList # Note: this is not in the model under element
+      attribute :connections, Strict::Array.member(Connection).default([])
+
+      # Note: properties is not in the model under element
       # it's added under Real Element
+      # TODO: Delete this - I think it's not used
+      attribute :properties, Strict::Array.member(Property).default([])
+
+      # Element
+      attribute :element, Element.optional.default(nil)
+      attribute :child_type, Coercible::Int.optional.default(nil) # Archi format, selects the shape of element (for elements that can have two or more shapes)
+
+      attribute :diagram, Dry::Struct # Actually a Diagram, but impossible due to circular reference
+
+      attr_writer :view_refs
+      attr_writer :element
+      attr_writer :nodes
+      attr_writer :connections
+
+      def dup
+        raise "no dup dum dum"
+      end
+
+      def clone
+        raise "no clone dum dum"
+      end
 
       def replace(entity, with_entity)
-        if (archimate_element == entity.id)
-          @archimate_element = with_entity.id
+        if (element.id == entity.id)
           @element = with_entity
         end
-        if (model == entity.id)
-          @model = with_entity.id
-          @model_element = with_entity
+        if (view_refs == entity)
+          @view_refs = with_entity
         end
       end
 
       def to_s
-        "ViewNode[#{name || ''}](#{in_model.lookup(archimate_element) if archimate_element && in_model})"
+        "ViewNode[#{name || ''}](#{element if element})"
       end
 
       def description
@@ -58,14 +95,6 @@ module Archimate
           element.nil? ? nil : element.name,
           element&.type.nil? ? nil : "(#{element.type})"
         ].compact.join(" ")
-      end
-
-      def element
-        @element ||= in_model.lookup(archimate_element)
-      end
-
-      def model_element
-        @model_element ||= in_model.lookup(model)
       end
 
       def all_nodes
@@ -78,14 +107,16 @@ module Archimate
 
       def referenced_identified_nodes
         (nodes + connections).reduce(
-          (target_connections + [archimate_element]).compact
+          (
+            [element]
+          ).compact
         ) do |a, e|
           a.concat(e.referenced_identified_nodes)
         end
       end
 
       def in_diagram
-        @diagram ||= ->(node) { node = node.parent until node.nil? || node.is_a?(Diagram) }.call(self)
+        diagram # ||= ->(node) { node = node.parent until node.nil? || node.is_a?(Diagram) }.call(self)
       end
 
       # TODO: Is this true for all or only Archi models?
@@ -98,6 +129,13 @@ module Archimate
           el = el.parent.parent
         end
         offset
+      end
+
+      def target_connections
+        diagram
+          .connections
+          .select{ |conn| conn.target == self }
+          .map(&:id)
       end
     end
 

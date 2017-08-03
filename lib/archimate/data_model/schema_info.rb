@@ -2,8 +2,11 @@
 
 module Archimate
   module DataModel
-    class SchemaInfo < ArchimateNode
-      using DiffablePrimitive
+    class SchemaInfo < Dry::Struct
+      # specifies constructor style for Dry::Struct
+      constructor_type :strict_with_defaults
+
+      # using DiffablePrimitive
 
       attribute :schema, Strict::String.optional
       attribute :schemaversion, Strict::String.optional

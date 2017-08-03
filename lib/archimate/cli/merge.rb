@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "parallel"
+# require "parallel"
 
 module Archimate
   module Cli
@@ -11,7 +11,10 @@ module Archimate
 
       def self.merge(base_file, remote_file, local_file, merged_file)
         Logging.debug { "Reading base file: #{base_file}, local file: #{local_file}, remote file: #{remote_file}" }
-        base, local, remote = Parallel.map([base_file, local_file, remote_file], in_processes: 3) do |file|
+        # base, local, remote = Parallel.map([base_file, local_file, remote_file], in_processes: 3) do |file|
+        #   Archimate.read(file)
+        # end
+        base, local, remote = [base_file, local_file, remote_file].map |file|
           Archimate.read(file)
         end
         Logging.debug { "Merged file is #{merged_file}" }

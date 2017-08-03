@@ -12,15 +12,15 @@ module Archimate
       end
 
       def test_model_simple_attributes
-        assert_equal DataModel::LangString.new(text: "ArchiSurance V3", lang: "en"), model.name
+        assert_equal DataModel::LangString.new(lang_hash: {"en" => "ArchiSurance V3"}, default_lang: "en", default_text: "ArchiSurance V3"), model.name
         assert_equal "id-LK_OS_TEMPLATE_SYSARCH_Testing_ArchiMate_3.0_Configuration", model.id
       end
 
       def test_model_documentation
         assert_equal 1, model.documentation.size
         assert_equal(
-          DataModel::Documentation.new(text: "An example of a fictional Insurance company.", lang: "en"),
-          model.documentation.first
+          DataModel::LangString.new(lang_hash: {"en" => "An example of a fictional Insurance company."}, default_lang: "en", default_text: "An example of a fictional Insurance company."),
+          model.documentation
         )
       end
 
@@ -34,14 +34,14 @@ module Archimate
           DataModel::Element.new(
             id: "id-4927",
             type: "BusinessActor",
-            name: DataModel::LangString.new(text: "Client", lang: "en")
+            name: DataModel::LangString.new(lang_hash: {"en" => "Client"}, default_lang: "en", default_text: "Client")
           ), model.elements.first
         )
         assert_equal(
           DataModel::Element.new(
             id: "id-5010",
             type: "Principle",
-            name: DataModel::LangString.new(text: "Client Satisfaction Goal", lang: "en")
+            name: DataModel::LangString.new(lang_hash: {"en" => "Client Satisfaction Goal"}, default_lang: "en", default_text: "Client Satisfaction Goal")
           ), model.elements.last
         )
       end
@@ -51,8 +51,8 @@ module Archimate
         assert_equal(
           DataModel::Relationship.new(
             id: "id-4948-110-4942",
-            source: "id-4948",
-            target: "id-4942",
+            source: model.lookup("id-4948"),
+            target: model.lookup("id-4942"),
             type: "Specialization",
             name: nil
           ), model.relationships.first
@@ -60,8 +60,8 @@ module Archimate
         assert_equal(
           DataModel::Relationship.new(
             id: "id-4903-158-4921",
-            source: "id-4903",
-            target: "id-4921",
+            source: model.lookup("id-4903"),
+            target: model.lookup("id-4921"),
             type: "Association",
             name: nil
           ), model.relationships.last

@@ -63,25 +63,35 @@ module Archimate
 
     ViewpointType = Strict::String.enum(*VIEWPOINTS_ENUM).optional
 
-    ViewpointContentEnum = Strict::String.enum(%w[Details Coherence Overview])
-    ViewpointContent = Strict::Array.member(ViewpointContentEnum).default([])
+    VIEWPOINT_CONTENT_ENUM = %w[Details Coherence Overview]
 
-    ViewpointPurposeEnum = Strict::String.enum(%w[Designing Deciding Informing])
-    ViewpointPurpose = Strict::Array.member(ViewpointPurposeEnum).default([])
+    ViewpointContentEnum = Strict::String.enum(*VIEWPOINT_CONTENT_ENUM)
 
-    class Viewpoint < NamedReferenceable
+    VIEWPOINT_PURPOSE_ENUM = %w[Designing Deciding Informing]
+
+    ViewpointPurposeEnum = Strict::String.enum(*VIEWPOINT_PURPOSE_ENUM)
+
+    class Viewpoint < Dry::Struct
+      # specifies constructor style for Dry::Struct
+      constructor_type :strict_with_defaults
+
       using DataModel::DiffableArray
       using DataModel::DiffablePrimitive
 
-      attribute :concern, ConcernList
-      attribute :viewpointPurpose, ViewpointPurpose.optional
-      attribute :viewpointContent, ViewpointContent.optional
-      attribute :allowedElementTypes, AllowedElementTypes
-      attribute :allowedRelationshipTypes, AllowedRelationshipTypes
+      attribute :id, Identifier
+      attribute :name, LangString
+      attribute :documentation, PreservedLangString
+      # attribute :other_elements, Strict::Array.member(AnyElement).default([])
+      # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
+      attribute :type, Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
+      attribute :concern, Strict::Array.member(Concern).default([])
+      attribute :viewpointPurpose, Strict::Array.member(ViewpointPurposeEnum).default([])
+      attribute :viewpointContent, Strict::Array.member(ViewpointContentEnum).default([])
+      attribute :allowedElementTypes, Strict::Array.member(ElementType).default([])
+      attribute :allowedRelationshipTypes, Strict::Array.member(RelationshipType).default([])
       attribute :modelingNotes, Strict::Array.member(ModelingNote).default([])
     end
 
     Dry::Types.register_class(Viewpoint)
-    ViewpointList = Strict::Array.member(Viewpoint).default([])
   end
 end

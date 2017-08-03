@@ -2,8 +2,11 @@
 module Archimate
   module DataModel
     # A Property instance type declaring the reference to a Property definition and containing the Property value.
-    class Property < ArchimateNode
-      attribute :values, Strict::Array.member(LangString).default([]) # .constrained(min_size: 1)
+    class Property < Dry::Struct
+      # specifies constructor style for Dry::Struct
+      constructor_type :strict_with_defaults
+
+      attribute :value, LangString.optional.default(nil)
       attribute :property_definition, PropertyDefinition
 
       def to_s
@@ -13,13 +16,8 @@ module Archimate
       def key
         property_definition.name
       end
-
-      def value
-        values.first
-      end
     end
 
     Dry::Types.register_class(Property)
-    PropertiesList = Strict::Array.member(Property).default([])
   end
 end

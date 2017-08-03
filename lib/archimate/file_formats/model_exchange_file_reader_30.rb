@@ -110,11 +110,11 @@ module Archimate
       def parse_viewpoints(model)
         []
         # model.css("views > viewpoints").map do |i|
-          # attribute :concern, ConcernList
-          # attribute :viewpointPurpose, ViewpointPurpose.optional
-          # attribute :viewpointContent, ViewpointContent.optional
-          # attribute :allowedElementTypes, AllowedElementTypes
-          # attribute :allowedRelationshipTypes, AllowedRelationshipTypes
+          # attribute :concern, Strict::Array.member(Concern).default([])
+          # attribute :viewpointPurpose, Strict::Array.member(ViewpointPurposeEnum).default([])
+          # attribute :viewpointContent, Strict::Array.member(ViewpointContentEnum).default([])
+          # attribute :allowedElementTypes, Strict::Array.member(ElementType).default([])
+          # attribute :allowedRelationshipTypes, Strict::Array.member(RelationshipType).default([])
           # attribute :modelingNotes, Strict::Array.member(ModelingNote).default([])
           # DataModel::Viewpoint.new(
             #     id: identifier_to_id(i["identifier"]),
