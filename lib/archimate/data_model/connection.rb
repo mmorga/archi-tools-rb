@@ -16,35 +16,40 @@ module Archimate
     #     targetAttachment
     #     source
     #     target)
-    class Connection < Dry::Struct # ViewConceptType
-      # specifies constructor style for Dry::Struct
-      constructor_type :strict_with_defaults
+    class Connection
+      include Comparison
 
-      attribute :id, Identifier
-      attribute :name, LangString.optional
-      attribute :documentation, PreservedLangString.optional.default(nil)
-      # attribute :other_elements, Strict::Array.member(AnyElement).default([])
-      # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
-      attribute :type, Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
-      attribute :source_attachment, Location.optional.default(nil)
-      attribute :bendpoints, Strict::Array.member(Location).default([])
-      attribute :target_attachment, Location.optional.default(nil)
-      attribute :source, Dry::Struct.optional.default(nil) # ViewNode
-      attribute :target, Dry::Struct.optional.default(nil) # ViewNode
-      attribute :relationship, Relationship.optional.default(nil)
-      attribute :style, Style.optional.default(nil)
-      attribute :properties, Strict::Array.member(Property).default([])
+      model_attr :id # Identifier
+      model_attr :name # LangString.optional
+      model_attr :documentation # PreservedLangString.optional.default(nil)
+      # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
+      # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
+      model_attr :type # Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
+      model_attr :source_attachment # Location.optional.default(nil)
+      model_attr :bendpoints # Strict::Array.member(Location).default([])
+      model_attr :target_attachment # Location.optional.default(nil)
+      model_attr :source, comparison_attr: :id, writable: true # Dry::Struct.optional.default(nil) # ViewNode
+      model_attr :target, comparison_attr: :id, writable: true # Dry::Struct.optional.default(nil) # ViewNode
+      model_attr :relationship, comparison_attr: :id, writable: true # Relationship.optional.default(nil)
+      model_attr :style # Style.optional.default(nil)
+      model_attr :properties # Strict::Array.member(Property).default([])
 
-      attr_writer :source
-      attr_writer :target
-      attr_writer :relationship
-
-      def dup
-        raise "no dup dum dum"
-      end
-
-      def clone
-        raise "no clone dum dum"
+      def initialize(id:, name: nil, documentation: nil, type: nil,
+                     source_attachment: nil, bendpoints: [], target_attachment: nil,
+                     source: nil, target: nil, relationship: nil, style: nil,
+                     properties: nil)
+        @id = id
+        @name = name
+        @documentation = documentation
+        @type = type
+        @source_attachment = source_attachment
+        @bendpoints = bendpoints
+        @target_attachment = target_attachment
+        @source = source
+        @target = target
+        @relationship = relationship
+        @style = style
+        @properties = properties
       end
 
       def replace(entity, with_entity)
@@ -96,6 +101,5 @@ module Archimate
         offset
       end
     end
-    Dry::Types.register_class(Connection)
   end
 end

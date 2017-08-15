@@ -2,20 +2,22 @@
 
 module Archimate
   module DataModel
-    class SchemaInfo < Dry::Struct
-      # specifies constructor style for Dry::Struct
-      constructor_type :strict_with_defaults
+    class SchemaInfo
+      include Comparison
 
-      # using DiffablePrimitive
+      model_attr :schema # Strict::String.optional
+      model_attr :schemaversion # Strict::String.optional
+      model_attr :elements # Strict::Array.member(AnyElement).default([])
 
-      attribute :schema, Strict::String.optional
-      attribute :schemaversion, Strict::String.optional
-      attribute :elements, Strict::Array.member(AnyElement).default([])
+      def initialize(schema: nil, schemaversion: nil, elements: [])
+        @schema = schema
+        @schemaversion = schemaversion
+        @elements = elements
+      end
 
       def to_s
         "#{type.light_black}[#{schema} #{schemaversion}]"
       end
     end
-    Dry::Types.register_class(SchemaInfo)
   end
 end

@@ -2,9 +2,6 @@
 module Archimate
   module Diff
     class Delete < Difference
-      using DataModel::DiffablePrimitive
-      using DataModel::DiffableArray
-
       # Create a new Delete difference
       #
       # @param target [ArchimateNodeReference] Element that was deleted

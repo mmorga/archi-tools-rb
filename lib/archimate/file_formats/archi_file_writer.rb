@@ -4,9 +4,6 @@ require "nokogiri"
 module Archimate
   module FileFormats
     class ArchiFileWriter < Writer
-      using DataModel::DiffableArray
-      using DataModel::DiffablePrimitive
-
       TEXT_SUBSTITUTIONS = [
         ['&#13;', '&#xD;'],
         ['"', '&quot;'],

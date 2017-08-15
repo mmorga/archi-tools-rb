@@ -23,7 +23,7 @@ module Archimate
 
     ElementEnumType = [].concat([ElementTypeEnum, CompositeTypeEnum, RelationshipConnectorEnum]).freeze
 
-    ElementType = Strict::String.enum(*ElementEnumType)
+    ElementType = String # Strict::String.enum(*ElementEnumType)
 
     # A base element type that can be extended by concrete ArchiMate types.
     #
@@ -32,29 +32,23 @@ module Archimate
     # a derived type from ElementType.
     #
     # TODO: Possible Make this abstract with concrete implementations for all valid element types
-    class Element < Dry::Struct
-      # Used only for testing
-      # include With
+    class Element
+      include Comparison
 
-      # specifies constructor style for Dry::Struct
-      constructor_type :strict_with_defaults
+      model_attr :id # Identifier
+      model_attr :name # LangString.optional.default(nil)
+      model_attr :documentation, writable: true # PreservedLangString.optional.default(nil)
+      # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
+      # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
+      model_attr :type # Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
+      model_attr :properties # Strict::Array.member(Property).default([])
 
-      attribute :id, Identifier
-      attribute :name, LangString.optional.default(nil)
-      attribute :documentation, PreservedLangString.optional.default(nil)
-      # attribute :other_elements, Strict::Array.member(AnyElement).default([])
-      # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
-      attribute :type, Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
-      attribute :properties, Strict::Array.member(Property).default([])
-
-      attr_writer :documentation
-
-      def dup
-        raise "no dup dum dum"
-      end
-
-      def clone
-        raise "no clone dum dum"
+      def initialize(id:, name:, documentation: nil, type: nil, properties: [])
+        @id = id
+        @name = name
+        @documentation = documentation
+        @type = type
+        @properties = properties
       end
 
       def to_s
@@ -91,6 +85,5 @@ module Archimate
         element.organization.remove(element.id)
       end
     end
-    Dry::Types.register_class(Element)
   end
 end

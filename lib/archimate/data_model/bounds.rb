@@ -1,19 +1,25 @@
 # frozen_string_literal: true
 module Archimate
   module DataModel
-    class Bounds < Dry::Struct
-      # include With
+    class Bounds
+      include Comparison
 
-      # specifies constructor style for Dry::Struct
-      constructor_type :strict_with_defaults
-
-      attribute :x, Coercible::Float.optional
-      attribute :y, Coercible::Float.optional
-      attribute :width, Coercible::Float
-      attribute :height, Coercible::Float
+      model_attr :x # Coercible::Float.optional
+      model_attr :y # Coercible::Float.optional
+      model_attr :width # Coercible::Float
+      model_attr :height # Coercible::Float
 
       def self.zero
         Archimate::DataModel::Bounds.new(x: 0, y: 0, width: 0, height: 0)
+      end
+
+      def initialize(x: nil, y: nil, width:, height:)
+        raise "Width expected" unless width
+        raise "Height expected" unless height
+        @x = x.nil? ? nil : x.to_f
+        @y = y.nil? ? nil : y.to_f
+        @width = width.to_f
+        @height = height.to_f
       end
 
       def to_s
@@ -71,7 +77,5 @@ module Archimate
           bottom < other.bottom
       end
     end
-
-    Dry::Types.register_class(Bounds)
   end
 end

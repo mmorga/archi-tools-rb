@@ -4,9 +4,6 @@ require 'forwardable'
 module Archimate
   module Cli
     class DiffSummary
-      using DataModel::DiffableArray
-      using DataModel::DiffablePrimitive
-
       DIFF_KINDS = %w(Delete Change Insert).freeze
 
       attr_reader :local, :remote

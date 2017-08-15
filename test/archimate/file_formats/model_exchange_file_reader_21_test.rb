@@ -8,7 +8,7 @@ module Archimate
       attr_accessor :model
 
       def setup
-        @model = MODEL_EXCHANGE_ARCHISURANCE_MODEL
+        @model = model_exchange_archisurance_model
       end
 
       def test_model_simple_attributes

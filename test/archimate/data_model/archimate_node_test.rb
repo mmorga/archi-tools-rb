@@ -4,8 +4,6 @@ require 'test_helper'
 module Archimate
   module DataModel
     class ArchimateNodeTest < Minitest::Test
-      using DiffableArray
-
       def setup
         skip("Diff re-write")
         @base = build_model(with_elements: 3, with_relationships: 2, with_diagrams: 1)

@@ -2,9 +2,6 @@
 module Archimate
   module Diff
     class Move < Difference
-      using DataModel::DiffablePrimitive
-      using DataModel::DiffableArray
-
       # Create a new Move difference
       #
       # @param target [Archimate::Diff::ArchimateNodeReference] reference to

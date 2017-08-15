@@ -8,7 +8,7 @@ module Archimate
           super
           @background_class = "archimate-implementation2-background"
           @badge = "#archimate-gap-badge"
-          @badge_bounds = child.bounds.with(
+          @badge_bounds = DataModel::Bounds.new(
             x: child.bounds.right - 25,
             y: child.bounds.top + 5,
             width: 20,

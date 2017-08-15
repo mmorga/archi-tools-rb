@@ -14,12 +14,12 @@ module Archimate
         end
 
         def calc_text_bounds(_bounds)
-          @text_bounds = @text_bounds.with(
+          @text_bounds = DataModel::Bounds.new(@text_bounds.to_h.merge(
             x: @text_bounds.left + 10,
             y: @text_bounds.top + 10,
             width: @text_bounds.width - 20,
             height: @text_bounds.height - 20
-          )
+          ))
         end
       end
     end

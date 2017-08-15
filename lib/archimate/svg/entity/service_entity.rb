@@ -9,7 +9,7 @@ module Archimate
         def initialize(child, bounds_offset)
           super
           bounds = child.bounds
-          @text_bounds = bounds.with(
+          @text_bounds = DataModel::Bounds.new(
             x: bounds.left + 7,
             y: bounds.top + 5,
             width: bounds.width - 14,

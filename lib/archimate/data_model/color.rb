@@ -5,14 +5,13 @@ module Archimate
     # RGB Color type.
     # The r, g, b attributes range from 0 - 255.
     # The a (alpha) transparency attribute is optional. 0 = full transparency, 100 = opaque.
-    class Color < Dry::Struct
-      # specifies constructor style for Dry::Struct
-      constructor_type :strict_with_defaults
+    class Color
+      include Comparison
 
-      attribute :r, Coercible::Int.constrained(lt: 256, gt: -1)
-      attribute :g, Coercible::Int.constrained(lt: 256, gt: -1)
-      attribute :b, Coercible::Int.constrained(lt: 256, gt: -1)
-      attribute :a, Coercible::Int.constrained(lt: 101, gt: -1).optional.default(nil)
+      model_attr :r # Coercible::Int.constrained(lt: 256, gt: -1)
+      model_attr :g # Coercible::Int.constrained(lt: 256, gt: -1)
+      model_attr :b # Coercible::Int.constrained(lt: 256, gt: -1)
+      model_attr :a # Coercible::Int.constrained(lt: 101, gt: -1).optional.default(nil)
 
       def self.rgba(str)
         return nil if str.nil?
@@ -30,6 +29,16 @@ module Archimate
         new(r: 0, g: 0, b: 0, a: 100)
       end
 
+      def initialize(r:, g:, b:, a: nil)
+        raise "r, g, b cannot be nil" if [r, g, b].any? { |v| v.nil? }
+        raise "r, g, b must be between 0 and 255" if [r, g, b].any? { |v| v < 0 || v > 255 }
+        raise "a must be between 0 and 100" if a && (a < 0 || a > 100)
+        @r = r
+        @g = g
+        @b = b
+        @a = a
+      end
+
       def to_s
         "Color(r: #{r}, g: #{g}, b: #{b}, a: #{a})"
       end
@@ -44,7 +53,5 @@ module Archimate
         (max * (a / 100.0)).round
       end
     end
-
-    Dry::Types.register_class(Color)
   end
 end

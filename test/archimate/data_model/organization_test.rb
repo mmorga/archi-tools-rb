@@ -34,22 +34,16 @@ module Archimate
       def test_build_organization
         f = build_organization(type: "testtype")
         [:id, :type].each do |sym|
-          assert_instance_of String, f[sym]
-          refute_empty f[sym]
+          assert_instance_of String, f.send(sym)
+          refute_empty f.send(sym)
         end
-        assert_instance_of LangString, f[:name]
-        refute_empty f[:name]
-        assert_nil f[:documentation]
-        assert_instance_of Array, f[:items]
-        assert_empty f[:items]
+        assert_instance_of LangString, f.name
+        refute_empty f.name
+        assert_nil f.documentation
+        assert_instance_of Array, f.items
+        assert_empty f.items
         assert_instance_of Array, f.organizations
         assert_empty f.organizations
-      end
-
-      def test_clone
-        fclone = @f1.clone
-        assert_equal @f1, fclone
-        refute_equal @f1.object_id, fclone.object_id
       end
 
       def test_hash

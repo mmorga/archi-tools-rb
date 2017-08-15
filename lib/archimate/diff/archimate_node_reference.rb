@@ -3,9 +3,6 @@
 module Archimate
   module Diff
     class ArchimateNodeReference
-      using DataModel::DiffablePrimitive
-      using DataModel::DiffableArray
-
       attr_reader :archimate_node
 
       # There should be only a few things that are valid here:

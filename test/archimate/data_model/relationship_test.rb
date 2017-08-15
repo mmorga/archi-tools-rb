@@ -38,14 +38,14 @@ module Archimate
 
       def test_new_duplicate_passed
         r1 = build_relationship
-        r2 = r1.with
+        r2 = Relationship.new(r1.to_h)
         assert_equal r1, r2
         refute_same r1, r2
       end
 
       def test_new_duplicate_with_args
         r1 = build_relationship
-        r2 = r1.with(name: LangString.string("pablo"))
+        r2 = Relationship.new(r1.to_h.merge(name: LangString.string("pablo")))
         refute_equal r1, r2
         assert_equal "pablo", r2.name.to_s
       end
@@ -59,13 +59,13 @@ module Archimate
 
       def test_equality_operator
         m1 = build_relationship
-        m2 = m1.dup
+        m2 = Relationship.new(m1.to_h)
         assert_equal m1, m2
       end
 
       def test_equality_operator_false
         m1 = build_relationship
-        m2 = m1.with(name: LangString.string("felix"))
+        m2 = Relationship.new(m1.to_h.merge(name: LangString.string("felix")))
         refute_equal m1, m2
       end
 

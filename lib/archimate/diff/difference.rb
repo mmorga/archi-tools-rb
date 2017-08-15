@@ -5,8 +5,6 @@ require "forwardable"
 module Archimate
   module Diff
     class Difference
-      using DataModel::DiffableArray
-      using DataModel::DiffablePrimitive
       extend Forwardable
 
       ARRAY_RE = Regexp.compile(/\[(\d+)\]/)

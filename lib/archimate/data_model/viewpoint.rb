@@ -61,37 +61,47 @@ module Archimate
                          IMPLEMENTATION_AND_MIGRATION_VIEWPOINTS].flatten
                       )
 
-    ViewpointType = Strict::String.enum(*VIEWPOINTS_ENUM).optional
+    # ViewpointType = Strict::String.enum(*VIEWPOINTS_ENUM).optional
 
     VIEWPOINT_CONTENT_ENUM = %w[Details Coherence Overview]
 
-    ViewpointContentEnum = Strict::String.enum(*VIEWPOINT_CONTENT_ENUM)
+    # ViewpointContentEnum = Strict::String.enum(*VIEWPOINT_CONTENT_ENUM)
 
     VIEWPOINT_PURPOSE_ENUM = %w[Designing Deciding Informing]
 
-    ViewpointPurposeEnum = Strict::String.enum(*VIEWPOINT_PURPOSE_ENUM)
+    # ViewpointPurposeEnum = Strict::String.enum(*VIEWPOINT_PURPOSE_ENUM)
 
-    class Viewpoint < Dry::Struct
-      # specifies constructor style for Dry::Struct
-      constructor_type :strict_with_defaults
+    class Viewpoint
+      include Comparison
 
-      using DataModel::DiffableArray
-      using DataModel::DiffablePrimitive
+      model_attr :id # Identifier
+      model_attr :name # LangString
+      model_attr :documentation # PreservedLangString
+      # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
+      # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
+      model_attr :type # Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
+      model_attr :concerns # Strict::Array.member(Concern).default([])
+      model_attr :viewpoint_purposes # Strict::Array.member(ViewpointPurposeEnum).default([])
+      model_attr :viewpoint_contents # Strict::Array.member(ViewpointContentEnum).default([])
+      model_attr :allowed_element_types # Strict::Array.member(ElementType).default([])
+      model_attr :allowed_relationship_types # Strict::Array.member(RelationshipType).default([])
+      model_attr :modeling_notes # Strict::Array.member(ModelingNote).default([])
 
-      attribute :id, Identifier
-      attribute :name, LangString
-      attribute :documentation, PreservedLangString
-      # attribute :other_elements, Strict::Array.member(AnyElement).default([])
-      # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
-      attribute :type, Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
-      attribute :concern, Strict::Array.member(Concern).default([])
-      attribute :viewpointPurpose, Strict::Array.member(ViewpointPurposeEnum).default([])
-      attribute :viewpointContent, Strict::Array.member(ViewpointContentEnum).default([])
-      attribute :allowedElementTypes, Strict::Array.member(ElementType).default([])
-      attribute :allowedRelationshipTypes, Strict::Array.member(RelationshipType).default([])
-      attribute :modelingNotes, Strict::Array.member(ModelingNote).default([])
+      def initialize(id:, name:, documentation: nil, type: nil,
+                     concerns: [], viewpoint_purposes: [],
+                     viewpoint_contents: [], allowed_element_types: [],
+                     allowed_relationship_types: [], modeling_notes: [])
+        @id = id
+        @name = name
+        @documentation = documentation
+        @type = type
+        @concerns = concerns
+        @viewpoint_purposes = viewpoint_purposes
+        @viewpoint_contents = viewpoint_contents
+        @allowed_element_types = allowed_element_types
+        @allowed_relationship_types = allowed_relationship_types
+        @modeling_notes = modeling_notes
+      end
     end
-
-    Dry::Types.register_class(Viewpoint)
   end
 end

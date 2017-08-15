@@ -9,7 +9,5 @@ module Archimate
         super
       end
     end
-
-    Dry::Types.register_class(PreservedLangString)
   end
 end

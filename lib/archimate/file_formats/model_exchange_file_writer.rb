@@ -23,7 +23,7 @@ module Archimate
 
       def serialize_element(xml, element)
         return if element.type == "SketchModel" # TODO: print a warning that data is lost
-        xml.element(identifier: identifier(element['id']),
+        xml.element(identifier: identifier(element.id),
                     "xsi:type" => meff_type(element.type)) do
           elementbase(xml, element)
         end

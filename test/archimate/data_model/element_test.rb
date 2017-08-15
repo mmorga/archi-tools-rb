@@ -24,17 +24,17 @@ module Archimate
       def test_layer
         el = build_element(id: "abc123", type: "BusinessRole", name: "Thing")
         assert_equal "Business", el.layer
-        el = el.with(type: "DataObject")
+        el = Element.new(el.to_h.merge(type: "DataObject"))
         assert_equal "Application", el.layer
-        el = el.with(type: "Device")
+        el = Element.new(el.to_h.merge(type: "Device"))
         assert_equal "Technology", el.layer
-        el = el.with(type: "Goal")
+        el = Element.new(el.to_h.merge(type: "Goal"))
         assert_equal "Motivation", el.layer
-        el = el.with(type: "Gap")
+        el = Element.new(el.to_h.merge(type: "Gap"))
         assert_equal "Implementation and Migration", el.layer
-        el = el.with(type: "Junction")
+        el = Element.new(el.to_h.merge(type: "Junction"))
         assert_equal "Connectors", el.layer
-        el = el.with(type: "Bogus")
+        el = Element.new(el.to_h.merge(type: "Bogus"))
         assert_equal "None", el.layer
       end
 

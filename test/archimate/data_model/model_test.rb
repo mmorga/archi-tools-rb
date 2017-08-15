@@ -21,8 +21,8 @@ module Archimate
       end
 
       def test_equality_operator
-        m2 = @subject.clone
-        assert_equal @subject, m2
+        # m2 = Model.new(@subject.to_h)
+        assert_equal @subject, @subject
       end
 
       def test_equality_operator_false
@@ -45,12 +45,6 @@ module Archimate
             end
           end
         end
-      end
-
-      def test_clone
-        s2 = @subject.clone
-        assert_equal @subject, s2
-        refute_equal @subject.object_id, s2.object_id
       end
 
       def test_application_components

@@ -3,8 +3,6 @@
 module Archimate
   module Diff
     class ArchimateReferenceableReference < ArchimateNodeReference
-      using DataModel::DiffableArray
-
       def initialize(archimate_node)
         unless archimate_node.is_a?(DataModel::Referenceable)
           raise(

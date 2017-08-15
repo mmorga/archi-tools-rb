@@ -16,40 +16,40 @@ module Archimate
       Association
     ].freeze
 
-    RelationshipType = Strict::String.enum(*RELATIONSHIP_TYPE_ENUM)
+    RelationshipType = String # Strict::String.enum(*RELATIONSHIP_TYPE_ENUM)
 
     ACCESS_TYPE = %w[Access Read Write ReadWrite]
-    AccessTypeEnum = Strict::String.enum(*ACCESS_TYPE)
+    AccessTypeEnum = String # Strict::String.enum(*ACCESS_TYPE)
 
     # A base relationship type that can be extended by concrete ArchiMate types.
     #
     # Note that RelationshipType is abstract, so one must have derived types of this type. this is indicated in xml
     # by having a tag name of "relationship" and an attribute of xsi:type="AccessRelationship" where AccessRelationship is
     # a derived type from RelationshipType.
-    class Relationship < Dry::Struct
-      # Used only for testing
-      # include With
+    class Relationship
+      include Comparison
 
-      # specifies constructor style for Dry::Struct
-      constructor_type :strict_with_defaults
+      model_attr :id # Identifier
+      model_attr :name # LangString.optional.default(nil)
+      model_attr :documentation # PreservedLangString.optional.default(nil)
+      # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
+      # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
+      model_attr :type # Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
+      model_attr :properties # Strict::Array.member(Property).default([])
+      model_attr :source, comparison_attr: :id # Element # TODO: This could be an Element or Relationship, is this optional?
+      model_attr :target, comparison_attr: :id # Element # TODO: This could be an Element or Relationship, is this optional?
+      model_attr :access_type # AccessTypeEnum.optional.default(nil)
 
-      attribute :id, Identifier
-      attribute :name, LangString.optional.default(nil)
-      attribute :documentation, PreservedLangString.optional.default(nil)
-      # attribute :other_elements, Strict::Array.member(AnyElement).default([])
-      # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
-      attribute :type, Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
-      attribute :properties, Strict::Array.member(Property).default([])
-      attribute :source, Element # TODO: This could be an Element or Relationship, is this optional?
-      attribute :target, Element # TODO: This could be an Element or Relationship, is this optional?
-      attribute :access_type, AccessTypeEnum.optional.default(nil)
-
-      def dup
-        raise "no dup dum dum"
-      end
-
-      def clone
-        raise "no clone dum dum"
+      def initialize(id:, name: nil, documentation: nil, type: nil,
+                     properties: [], source:, target:, access_type: nil)
+        @id = id
+        @name = name
+        @documentation = documentation
+        @type = type
+        @properties = properties
+        @source = source
+        @target = target
+        @access_type = access_type
       end
 
       def replace(entity, with_entity)
@@ -95,6 +95,6 @@ module Archimate
         access_type ||= relationship.access_type
       end
     end
-    Dry::Types.register_class(Relationship)
+     # Dry::Types.register_class(Relationship)
   end
 end

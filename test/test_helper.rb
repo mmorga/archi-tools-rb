@@ -37,8 +37,6 @@ Minitest::Test.make_my_diffs_pretty!
 module Minitest
   class Test
     include Archimate::Examples::Factories
-    include Archimate::DataModel::DiffableArray
-    include Archimate::DataModel::DiffablePrimitive
 
     def clone_with(entity, attrs={})
       entity.class.new(entity.to_hash.merge(attrs).transform_values(&:dup))

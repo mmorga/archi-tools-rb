@@ -2,8 +2,6 @@
 module Archimate
   module Diff
     class Insert < Difference
-      using DataModel::DiffableArray
-
       # Create a new Insert difference
       #
       # @param inserted_element [Archimate::DataModel::ArchimateNode] Element

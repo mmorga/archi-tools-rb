@@ -4,56 +4,59 @@ module Archimate
   module DataModel
     # This is the root model type.
     # It is a container for the elements, relationships, diagrams and organizations of the model.
-    class Model < Dry::Struct
-      # specifies constructor style for Dry::Struct
-      constructor_type :strict_with_defaults
+    class Model
+      include Comparison
 
-      using DataModel::DiffableArray
-      using DataModel::DiffablePrimitive
+      model_attr :id # Identifier
+      model_attr :name # LangString
 
-      ARRAY_RE = Regexp.compile(/\[(\d+)\]/)
-
-      attribute :id, Identifier
-      attribute :name, LangString
-
-      attribute :documentation, PreservedLangString.optional.default(nil)
-      # attribute :other_elements, Strict::Array.member(AnyElement).default([])
-      # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
-      attribute :properties, Strict::Array.member(Property).default([]) # Properties.optional
-      attribute :metadata, Metadata.optional.default(nil)
-      attribute :elements, Strict::Array.member(Element).default([])
-      attribute :relationships, Strict::Array.member(Relationship).default([])
-      attribute :organizations, Strict::Array.member(Organization).default([])
-      attribute :property_definitions, Strict::Array.member(PropertyDefinition).default([])
-      attribute :version, Strict::String.optional.default(nil)
-      attribute :diagrams, Strict::Array.member(Diagram).default([])
-      attribute :viewpoints, Strict::Array.member(Viewpoint).default([])
+      model_attr :documentation # PreservedLangString.optional.default(nil)
+      # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
+      # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
+      model_attr :properties # Strict::Array.member(Property).default([]) # Properties.optional
+      model_attr :metadata # Metadata.optional.default(nil)
+      model_attr :elements # Strict::Array.member(Element).default([])
+      model_attr :relationships # Strict::Array.member(Relationship).default([])
+      model_attr :organizations # Strict::Array.member(Organization).default([])
+      model_attr :property_definitions # Strict::Array.member(PropertyDefinition).default([])
+      model_attr :version # Strict::String.optional.default(nil)
+      model_attr :diagrams # Strict::Array.member(Diagram).default([])
+      model_attr :viewpoints # Strict::Array.member(Viewpoint).default([])
       # Following attributes are to hold info on where the model came from
-      attribute :filename, Strict::String.optional.default(nil)
-      attribute :file_format, Strict::Symbol.enum(*Archimate::SUPPORTED_FORMATS).optional.default(nil)
-      attribute :archimate_version, Strict::Symbol.default(:archimate_3_0).enum(*Archimate::ARCHIMATE_VERSIONS)
+      model_attr :filename # Strict::String.optional.default(nil)
+      model_attr :file_format # Strict::Symbol.enum(*Archimate::SUPPORTED_FORMATS).optional.default(nil)
+      model_attr :archimate_version # Strict::Symbol.default(:archimate_3_0).enum(*Archimate::ARCHIMATE_VERSIONS)
 
-      attribute :namespaces, Strict::Hash.default({})
-      attribute :schema_locations, Strict::Array.member(Strict::String).default([])
+      model_attr :namespaces # Strict::Hash.default({})
+      model_attr :schema_locations # Strict::Array.member(Strict::String).default([])
 
-      def initialize(attributes)
-        super
+      def initialize(id:, name:, documentation: nil, properties: [],
+                     metadata: nil, elements: [], relationships: [],
+                     organizations: [], property_definitions: [],
+                     version: nil, diagrams: [], viewpoints: [],
+                     filename: nil, file_format: nil, archimate_version: :archimate_3_0,
+                     namespaces: {}, schema_locations: [])
+        @id = id
+        @name = name
+        @documentation = documentation
+        @properties = properties
+        @metadata = metadata
+        @elements = elements
+        @relationships = relationships
+        @organizations = organizations
+        @property_definitions = property_definitions
+        @version = version
+        @diagrams = diagrams
+        @viewpoints = viewpoints
+        @filename = filename
+        @file_format = file_format
+        @archimate_version = archimate_version
+        @namespaces = namespaces
+        @schema_locations = schema_locations
         # self.in_model = self
         # self.parent = nil
         rebuild_index
       end
-
-      def dup
-        raise "no dup dum dum"
-      end
-
-      def clone
-        raise "no clone dum dum"
-      end
-
-      # def with(options = {})
-      #   super.organize
-      # end
 
       def lookup(id)
         rebuild_index(id) unless @index_hash.include?(id)
@@ -209,16 +212,13 @@ module Archimate
       end
 
       def referenced_identified_nodes
-        classes = [Diagram, ViewNode, Container, Connection, Element, Organization, Relationship].freeze
+        classes = [Diagram, ViewNode, Connection, Organization, Relationship].freeze
         @index_hash
           .values
           .select { |entity| classes.include?(entity.class) }
-          .reduce([]) { |entity| entity.referenced_identified_nodes }
+          .map { |entity| entity.referenced_identified_nodes }
           .flatten
           .uniq
-        # struct_instance_variables.reduce([]) do |a, e|
-        #   a.concat(self[e].referenced_identified_nodes)
-        # end
       end
 
       def identified_nodes

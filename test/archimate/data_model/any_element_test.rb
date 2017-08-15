@@ -12,6 +12,21 @@ module Archimate
         assert_nil subject.content
     		assert_empty subject.children
     	end
+
+      def test_constructor
+        subject = AnyElement.new(
+          element: "el",
+          prefix: "a",
+          attributes: ["b"],
+          content: "c",
+          children: ["d"]
+        )
+        assert_equal "el", subject.element
+        assert_equal "a", subject.prefix
+        assert_equal ["b"], subject.attributes
+        assert_equal "c", subject.content
+        assert_equal ["d"], subject.children
+      end
     end
   end
 end

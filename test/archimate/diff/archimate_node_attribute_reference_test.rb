@@ -4,8 +4,6 @@ require 'test_helper'
 module Archimate
   module Diff
     class ArchimateNodeAttributeReferenceTest < Minitest::Test
-      using DataModel::DiffableArray
-
       def setup
         skip("Diff re-write")
         @model = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 3, with_organizations: 4)

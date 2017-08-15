@@ -4,8 +4,6 @@ require 'test_helper'
 module Archimate
   module Diff
     class InsertTest < Minitest::Test
-      using Archimate::DataModel::DiffableArray
-
       def setup
         skip("Diff re-write")
         @model = build_model(with_elements: 1)

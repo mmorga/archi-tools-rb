@@ -3,9 +3,6 @@
 module Archimate
   module Diff
     class ArchimateArrayReference < ArchimateNodeReference
-      using DataModel::DiffableArray
-      using DataModel::DiffablePrimitive
-
       attr_reader :array_index
 
       def initialize(array, array_index)

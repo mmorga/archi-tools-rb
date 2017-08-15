@@ -2,8 +2,6 @@
 module Archimate
   module Diff
     class Change < Difference
-      using DataModel::DiffableArray
-
       # Create a new Change difference
       #
       # @param target [Archimate::Diff::ArchimateNodeReference] reference to

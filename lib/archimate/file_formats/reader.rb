@@ -48,7 +48,7 @@ module Archimate
           .css(">#{element_name}")
           .reduce(Hash.new { |hash, key| hash[key] = [] }) do |hash, doc|
             tick
-            lang = doc["xml:lang"] || archimate_default_lang
+            lang = doc["xml:lang"] # || archimate_default_lang
             hash[lang] << doc.content
             hash
           end

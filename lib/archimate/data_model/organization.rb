@@ -11,25 +11,26 @@ module Archimate
     # An organization has no meaning unless it has at least child organization element.
     #
     # Note that Organization must fit into a tree structure (so strictly nested).
-    class Organization < Dry::Struct
-      # specifies constructor style for Dry::Struct
-      constructor_type :strict_with_defaults
+    class Organization
+      include Comparison
 
-      attribute :id, Identifier.optional # .constrained(format: /[[[:alpha:]]_][w-.]*/)
-      attribute :name, LangString.optional.default(nil) # LabelGroup in the XSD
-      attribute :type, Strict::String.optional.default(nil) # I believe this is used only for Archi formats
-      attribute :documentation, PreservedLangString.optional.default(nil)
-      attribute :items, Strict::Array.member(Dry::Struct).default([])
-      attribute :organizations, Strict::Array.member(Organization).default([]) # item in the XSD
-      # attribute :other_elements, Strict::Array.member(AnyElement).default([])
-      # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
+      model_attr :id # Identifier.optional # .constrained(format: /[[[:alpha:]]_][w-.]*/)
+      model_attr :name # LangString.optional.default(nil) # LabelGroup in the XSD
+      model_attr :type # Strict::String.optional.default(nil) # I believe this is used only for Archi formats
+      model_attr :documentation # PreservedLangString.optional.default(nil)
+      model_attr :items # Strict::Array.member(Dry::Struct).default([])
+      model_attr :organizations # Strict::Array.member(Organization).default([]) # item in the XSD
+      # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
+      # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
 
-      def dup
-        raise "no dup dum dum"
-      end
-
-      def clone
-        raise "no clone dum dum"
+      def initialize(id: nil, name: nil, type: nil, documentation: nil,
+                     items: [], organizations: [])
+        @id = id
+        @name = name
+        @type = type
+        @documentation = documentation
+        @items = items
+        @organizations = organizations
       end
 
       def to_s
@@ -46,6 +47,5 @@ module Archimate
         items.delete_if { |item| item.id == id }
       end
     end
-    Dry::Types.register_class(Organization)
   end
 end

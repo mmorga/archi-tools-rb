@@ -13,9 +13,6 @@ module Archimate
       # In the remote change set, a child is inserted into a diagram with
       # element = {id: "abc123"...}. These two changes are in conflict.
       class DeletedItemsReferencedConflict < BaseConflict
-        using DataModel::DiffableArray
-        using DataModel::DiffablePrimitive
-
         def describe
           "Checking for Deleted items in one change set are referenced in the other change set"
         end

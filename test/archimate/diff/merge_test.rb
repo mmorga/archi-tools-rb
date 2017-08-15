@@ -17,8 +17,6 @@ module Archimate
     # Need to also consider - want to guarantee that final merge is in good state.
     # What if local or remote (or base for that matter) isn't?
     class MergeTest < Minitest::Test
-      using Archimate::DataModel::DiffableArray
-
       attr_reader :base
       attr_reader :base_el1
       attr_reader :base_el2

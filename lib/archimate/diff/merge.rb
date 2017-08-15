@@ -6,7 +6,6 @@ module Archimate
   module Diff
     class Merge
       include Archimate::Logging
-      using DataModel::DiffableArray
 
       def three_way(base, local, remote)
         debug { "Computing base:local & base:remote diffs" }

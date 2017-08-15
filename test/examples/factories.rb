@@ -1,14 +1,11 @@
 module Archimate
   module Examples
     module Factories
-      # using DataModel::DiffableArray
-      # using DataModel::DiffablePrimitive
-
       def build_any_attribute(attribute: nil, prefix: "", value: nil)
         DataModel::AnyAttribute.new(
-          attribute: attribute || Faker::Company.buzzword.downcase,
-          prefix: prefix,
-          value: value || Faker::Company.buzzword
+          attribute || Faker::Company.buzzword.downcase,
+          value || Faker::Company.buzzword,
+          prefix: prefix
         )
       end
 
@@ -37,6 +34,14 @@ module Archimate
           g: options.fetch(:g) { random(0, 255) },
           b: options.fetch(:b) { random(0, 255) },
           a: options.fetch(:a) { random(0, 100) }
+        )
+      end
+
+      def build_concern(label: nil, documentation: nil, stakeholders: nil)
+        DataModel::Concern.new(
+          label: label || DataModel::LangString.create(Faker::Company.buzzword),
+          documentation: documentation,
+          stakeholders: stakeholders || []
         )
       end
 
@@ -256,6 +261,7 @@ module Archimate
         DataModel::ViewNode.new(
           id: fetch_or_fake_id(options),
           type: "archimate:DiagramObject",
+          parent: options.fetch(:parent, nil),
           view_refs: nil,
           name: options[:name],
           nodes: options.fetch(:nodes) { with_nodes },

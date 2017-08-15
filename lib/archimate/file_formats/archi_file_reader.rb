@@ -165,7 +165,6 @@ module Archimate
 
       def parse_view_node(child_node)
         tick
-        raise "Hell #{@diagram_stack.last.inspect}" unless @diagram_stack.last.is_a?(Archimate::DataModel::Diagram)
         view_node = register(DataModel::ViewNode.new(
           id: child_node.attr("id"),
           type: child_node.attr("xsi:type"),

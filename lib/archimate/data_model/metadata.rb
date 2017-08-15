@@ -6,12 +6,14 @@ module Archimate
     # about a meta-data element's parent only.
     #
     # One or more different meta-data models may be declared as child extensions of a meta-data element.
-    class Metadata < Dry::Struct
-      # specifies constructor style for Dry::Struct
-      constructor_type :strict_with_defaults
+    class Metadata
+      include Comparison
 
-      attribute :schema_infos, Strict::Array.member(SchemaInfo).default([])
+      model_attr :schema_infos # Strict::Array.member(SchemaInfo).default([])
+
+      def initialize(schema_infos: [])
+        @schema_infos = schema_infos
+      end
     end
-    Dry::Types.register_class(Metadata)
   end
 end

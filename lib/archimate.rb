@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "dry-types"
-require "dry-struct"
-
 module Archimate
   SUPPORTED_FORMATS = %i[
     archi_3
@@ -88,7 +85,7 @@ module Archimate
   require "archimate/logging"
   require "archimate/color"
   require 'archimate/data_model'
-  require 'archimate/diff'
+  # require 'archimate/diff'
 
   # Computes the set of differences between base and remote models
   def self.diff(base, remote)
@@ -110,7 +107,4 @@ module Archimate
   def self.parse(filename)
     FileFormat.parse(filename)
   end
-
-  using DataModel::DiffablePrimitive
-  using DataModel::DiffableArray
 end

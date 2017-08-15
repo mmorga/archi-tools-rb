@@ -8,8 +8,8 @@ module Archimate
       attr_accessor :model
 
       def setup
-        @model_source = ARCHISURANCE_MODEL_EXCHANGE_SOURCE.gsub(" />", "/>")
-        @model = MODEL_EXCHANGE_ARCHISURANCE_MODEL
+        @model_source = archisurance_model_exchange_source.gsub(" />", "/>")
+        @model = model_exchange_archisurance_model
       end
 
       def test_write

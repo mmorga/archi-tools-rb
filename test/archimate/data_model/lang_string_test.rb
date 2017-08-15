@@ -25,8 +25,8 @@ module Archimate
       end
 
       def test_to_hash
-        expected = {lang_hash: {LangString.default_lang => "hello"}, default_lang: LangString.default_lang, default_text: "hello"}
-        assert_equal expected, @subject.to_hash
+        expected = {lang_hash: {nil => "hello"}, default_lang: nil, default_text: "hello"}
+        assert_equal expected, @subject.to_h
       end
 
       def test_with_lang_default
