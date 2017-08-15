@@ -59,7 +59,7 @@ module Archimate
       end
 
       def test_referenced_identified_nodes
-        skip("Until referenced_identified_nodes for model is needed")
+        skip("Need to fix diagram building in subject")
         subject = build_model(
           organizations: [
             build_organization(
@@ -118,7 +118,7 @@ module Archimate
 
       def test_find_in_organizations_with_no_organizations
         skip("Until implement or deprecate find_in_organizations")
-        subject = @subject.with(organizations: [])
+        subject = Model.new(@subject.to_h.merge(organizations: []))
         index_hash = subject.instance_variable_get(:@index_hash)
         index_hash.values.each do |item|
           refute subject.find_in_organizations(item)

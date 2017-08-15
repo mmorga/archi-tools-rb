@@ -252,7 +252,7 @@ module Archimate
       def build_view_node(options = {})
         diagram = options.fetch(:diagram) { build_diagram }
         node_element = options.fetch(:element) { build_element }
-        relationships = options.fetch(:relationships, {})
+        relationships = options.fetch(:relationships, [])
         with_nodes = build_view_nodes(count: options.delete(:with_nodes) || 0)
         connections = options.fetch(
           :connections,

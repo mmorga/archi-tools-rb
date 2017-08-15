@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "forwardable"
 
 module Archimate
@@ -19,19 +20,19 @@ module Archimate
       #   Archimate::Config.instance.default_lang
       # end
 
-      def self.string(str, lang=nil)
+      def self.string(str, lang = nil)
         return nil if !str || str.strip.empty?
         str = str.strip
         lang = nil if !lang || lang.empty?
         new(
-          :lang_hash => {lang => str},
-          :default_lang => lang,
-          :default_text => str
+          lang_hash: { lang => str },
+          default_lang: lang,
+          default_text: str
         )
       end
 
       def self.create(copy)
-        case (copy)
+        case copy
         when String
           string(copy)
         when LangString
@@ -46,8 +47,6 @@ module Archimate
             default_lang: default_lang,
             default_text: default_text
           )
-        else
-          nil
         end
       end
 
@@ -80,11 +79,7 @@ module Archimate
 
       def to_s
         @default_text ||= @lang_hash.fetch(default_lang) do |key|
-          if key
-            @lang_hash.fetch(nil, nil)
-          else
-            nil
-          end
+          @lang_hash.fetch(nil, nil) if key
         end
       end
 

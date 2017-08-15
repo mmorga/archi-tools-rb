@@ -91,7 +91,7 @@ module Archimate
       end
 
       def build_index
-        @index_hash = {id => self}
+        @index_hash = { id => self }
         elements.each { |ref| @index_hash[ref.id] = ref }
         relationships.each { |ref| @index_hash[ref.id] = ref }
         diagrams.each { |dia| @index_hash[dia.id] = index_view_nodes(dia) }
@@ -100,7 +100,7 @@ module Archimate
         @index_hash
       end
 
-      def register(node, parent)
+      def register(node, _parent)
         # node.in_model = self
         # node.parent = parent
         @index_hash[node.id] = node
@@ -115,7 +115,7 @@ module Archimate
       end
 
       def to_s
-        "#{Archimate::Color.data_model('Model')}<#{id}>[#{Archimate::Color.color(name, [:white, :underline])}]"
+        "#{Archimate::Color.data_model('Model')}<#{id}>[#{Archimate::Color.color(name, %i[white underline])}]"
       end
 
       # TODO: make these DSL like things added dynamically
@@ -216,7 +216,7 @@ module Archimate
         @index_hash
           .values
           .select { |entity| classes.include?(entity.class) }
-          .map { |entity| entity.referenced_identified_nodes }
+          .map(&:referenced_identified_nodes)
           .flatten
           .uniq
       end

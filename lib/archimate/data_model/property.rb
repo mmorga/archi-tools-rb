@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Archimate
   module DataModel
     # A Property instance type declaring the reference to a Property definition and containing the Property value.

@@ -18,7 +18,7 @@ module Archimate
 
     RelationshipType = String # Strict::String.enum(*RELATIONSHIP_TYPE_ENUM)
 
-    ACCESS_TYPE = %w[Access Read Write ReadWrite]
+    ACCESS_TYPE = %w[Access Read Write ReadWrite].freeze
     AccessTypeEnum = String # Strict::String.enum(*ACCESS_TYPE)
 
     # A base relationship type that can be extended by concrete ArchiMate types.
@@ -95,6 +95,5 @@ module Archimate
         access_type ||= relationship.access_type
       end
     end
-     # Dry::Types.register_class(Relationship)
   end
 end

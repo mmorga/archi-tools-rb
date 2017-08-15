@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Archimate
   module DataModel
     # PositiveInteger = Strict::Int.constrained(gt: 0)
@@ -63,7 +64,6 @@ module Archimate
 
       model_attr :diagram # Dry::Struct # Actually a Diagram, but impossible due to circular reference
 
-
       # Node type to allow a Label in a Artifact. the "label" element holds the info for the Note.
       # Label View Nodes have the following attributes
 
@@ -100,12 +100,8 @@ module Archimate
       end
 
       def replace(entity, with_entity)
-        if (element.id == entity.id)
-          @element = with_entity
-        end
-        if (view_refs == entity)
-          @view_refs = with_entity
-        end
+        @element = with_entity if element.id == entity.id
+        @view_refs = with_entity if view_refs == entity
       end
 
       def to_s
@@ -130,9 +126,8 @@ module Archimate
 
       def referenced_identified_nodes
         (nodes + connections).reduce(
-          (
-            [element]
-          ).compact
+          [element]
+        .compact
         ) do |a, e|
           a.concat(e.referenced_identified_nodes)
         end
@@ -144,11 +139,11 @@ module Archimate
 
       # TODO: Is this true for all or only Archi models?
       def absolute_position
-        offset = bounds || Archimate::DataModel::Bounds.zero
+        offset = bounds || Bounds.zero
         el = parent
         while el.respond_to?(:bounds) && el.bounds
           bounds = el.bounds
-          offset = offset.with(x: (offset.x || 0) + (bounds.x || 0), y: (offset.y || 0) + (bounds.y || 0))
+          offset = Bounds.new(offset.to_h.merge(x: (offset.x || 0) + (bounds.x || 0), y: (offset.y || 0) + (bounds.y || 0)))
           el = el.parent
         end
         offset
@@ -157,7 +152,7 @@ module Archimate
       def target_connections
         diagram
           .connections
-          .select{ |conn| conn.target == self }
+          .select { |conn| conn.target&.id == id }
           .map(&:id)
       end
     end

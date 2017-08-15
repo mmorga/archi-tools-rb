@@ -19,24 +19,24 @@ module Archimate
       def serialize(xml, collection)
         Array(collection).each do |item|
           case item
+          when DataModel::Element
+            serialize_element(xml, item)
+          when DataModel::Relationship
+            serialize_relationship(xml, item)
+          when DataModel::Organization
+            serialize_organization(xml, item)
+          when DataModel::Diagram
+            serialize_diagram(xml, item)
           when DataModel::Location
             serialize_location(xml, item)
           when DataModel::Bounds
             serialize_bounds(xml, item)
           when DataModel::ViewNode
             serialize_view_node(xml, item)
-          when DataModel::Diagram
-            serialize_diagram(xml, item)
           when DataModel::PreservedLangString
             ModelExchangeFile::XmlLangString.new(item, :documentation).serialize(xml)
-          when DataModel::Element
-            serialize_element(xml, item)
-          when DataModel::Organization
-            serialize_organization(xml, item)
           when DataModel::Property
             serialize_property(xml, item)
-          when DataModel::Relationship
-            serialize_relationship(xml, item)
           when DataModel::Connection
             serialize_connection(xml, item)
           when DataModel::Style

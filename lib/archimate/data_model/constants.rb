@@ -1,10 +1,11 @@
 # frozen_string_literal: true
+
 module Archimate
   module DataModel
     # The Constants module contains constants for ArchiMate standards
     # TODO: This should be namespaced for the ArchiMate version in effect
     module Constants
-      ELEMENTS = %w(BusinessActor BusinessCollaboration BusinessEvent BusinessFunction
+      ELEMENTS = %w[BusinessActor BusinessCollaboration BusinessEvent BusinessFunction
                     BusinessInteraction BusinessInterface BusinessObject BusinessProcess
                     BusinessRole BusinessService Contract Location Meaning Value Product
                     Representation ApplicationCollaboration ApplicationComponent
@@ -19,50 +20,50 @@ module Archimate
                     TechnologyFunction TechnologyProcess TechnologyInteraction
                     TechnologyEvent TechnologyService
                     TechnologyObject Equipment Facility DistributionNetwork Material
-                    Outcome ImplementationEvent).freeze
+                    Outcome ImplementationEvent].freeze
 
-      RELATIONSHIPS = %w(AssociationRelationship AccessRelationship UsedByRelationship
+      RELATIONSHIPS = %w[AssociationRelationship AccessRelationship UsedByRelationship
                          RealisationRelationship AssignmentRelationship AggregationRelationship
                          CompositionRelationship FlowRelationship TriggeringRelationship
-                         GroupingRelationship SpecialisationRelationship InfluenceRelationship).freeze
+                         GroupingRelationship SpecialisationRelationship InfluenceRelationship].freeze
 
       LAYER_ELEMENTS = {
         "Strategy" =>
-          %w(Capability CourseOfAction Resource),
+          %w[Capability CourseOfAction Resource],
         "Business" =>
-          %w(BusinessActor BusinessCollaboration
+          %w[BusinessActor BusinessCollaboration
              BusinessEvent BusinessFunction
              BusinessInteraction BusinessInterface
              BusinessObject BusinessProcess
              BusinessRole BusinessService
              Contract Location
              Meaning Value
-             Product Representation),
+             Product Representation],
         "Application" =>
-          %w(ApplicationCollaboration ApplicationComponent
+          %w[ApplicationCollaboration ApplicationComponent
              ApplicationFunction ApplicationInteraction
              ApplicationInterface ApplicationService
-             DataObject ApplicationProcess ApplicationEvent),
+             DataObject ApplicationProcess ApplicationEvent],
         "Technology" =>
-          %w(Artifact CommunicationPath
+          %w[Artifact CommunicationPath
              Device InfrastructureFunction
              InfrastructureInterface InfrastructureService
              Network Node SystemSoftware TechnologyCollaboration
              TechnologyInterface Path CommunicationNetwork
              TechnologyFunction TechnologyProcess TechnologyInteraction
              TechnologyEvent TechnologyService
-             TechnologyObject),
+             TechnologyObject],
         "Physical" =>
-          %w(Equipment Facility DistributionNetwork Material),
+          %w[Equipment Facility DistributionNetwork Material],
         "Motivation" =>
-          %w(Assessment Constraint Driver
+          %w[Assessment Constraint Driver
              Goal Principle Requirement
-             Stakeholder Outcome),
+             Stakeholder Outcome],
         "Implementation and Migration" =>
-          %w(Deliverable Gap Plateau
-             WorkPackage ImplementationEvent),
+          %w[Deliverable Gap Plateau
+             WorkPackage ImplementationEvent],
         "Connectors" =>
-          %w(AndJunction Junction OrJunction)
+          %w[AndJunction Junction OrJunction]
       }.freeze
 
       ELEMENT_LAYER = LAYER_ELEMENTS.each_with_object({}) do |(layer, elements), el_layer_hash|

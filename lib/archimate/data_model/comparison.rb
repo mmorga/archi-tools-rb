@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Archimate
   module DataModel
     module Comparison
@@ -16,11 +17,10 @@ module Archimate
       end
 
       def dig(*args)
-        ary = Array.new(args)
-        return self if ary.empty?
-        val = send(ary.shift)
-        return val if ary.empty?
-        val&.dig(*ary)
+        return self if args.empty?
+        val = send(args.shift)
+        return val if args.empty?
+        val&.dig(*args)
       end
 
       def to_h
@@ -44,7 +44,7 @@ module Archimate
           class_variable_set(:@@attr_names, attrs.uniq)
           attrs = comparison_attr_paths << (comparison_attr ? [attr_sym, comparison_attr] : attr_sym)
           class_variable_set(:@@comparison_attr_paths, attrs.uniq)
-          if (writable)
+          if writable
             define_method("#{attr_sym}=".to_sym) do |val|
               instance_variable_set(:@hash_key, nil)
               instance_variable_set("@#{attr_sym}".to_sym, val)

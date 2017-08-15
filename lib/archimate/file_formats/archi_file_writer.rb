@@ -49,19 +49,23 @@ module Archimate
           "id" => model.id,
           "version" => @version
         ) do
-          serialize(xml, model.organizations)
-          serialize(xml, model.properties)
+          serialize_organizations(xml, model)
+          serialize_properties(xml, model)
           serialize_documentation(xml, model.documentation, "purpose")
         end
+      end
+
+      def serialize_organizations(xml, obj)
+        obj.organizations.each { |item| serialize_organization(xml, item) }
       end
 
       def serialize_organization(xml, organization)
         xml.folder(
           remove_nil_values(name: organization.name, id: organization.id, type: organization.type)
         ) do
-          serialize(xml, organization.organizations)
-          serialize(xml, organization.documentation)
-          organization.items.each { |i| serialize_item(xml, i) }
+          serialize_organizations(xml, organization)
+          serialize_documentation(xml, organization.documentation)
+          serialize(xml, organization.items)
         end
       end
 
@@ -69,7 +73,12 @@ module Archimate
         xml.property(remove_nil_values(key: property.key, value: property.value))
       end
 
+      def serialize_properties(xml, obj)
+        obj.properties.each { |item| serialize_property(xml, item) }
+      end
+
       def serialize_documentation(xml, documentation, element_name = "documentation")
+        return unless documentation
         xml.send(element_name) { xml.text(documentation.text) }
       end
 
@@ -86,8 +95,8 @@ module Archimate
             "name" => element.name
           )
         ) do
-          serialize(xml, element.documentation)
-          serialize(xml, element.properties)
+          serialize_documentation(xml, element.documentation)
+          serialize_properties(xml, element)
         end
       end
 
@@ -102,8 +111,8 @@ module Archimate
             "accessType" => serialize_access_type(rel.access_type)
           )
         ) do
-          serialize(xml, rel.documentation)
-          serialize(xml, rel.properties)
+          serialize_documentation(xml, rel.documentation)
+          serialize_properties(xml, rel)
         end
       end
 
@@ -127,10 +136,9 @@ module Archimate
             "background" => diagram.background
           )
         ) do
-          # diagram.nodes.each { |view_node| serialize_view_node(xml, view_node, diagram) }
-          serialize(xml, diagram.nodes)
-          serialize(xml, diagram.documentation)
-          serialize(xml, diagram.properties)
+          serialize_view_nodes(xml, diagram)
+          serialize_documentation(xml, diagram.documentation)
+          serialize_properties(xml, diagram)
         end
       end
 
@@ -144,6 +152,10 @@ module Archimate
           "textAlignment" => style&.text_alignment&.to_s,
           "textPosition" => style&.text_position
         }
+      end
+
+      def serialize_view_nodes(xml, obj)
+        obj.nodes.each { |view_node| serialize_view_node(xml, view_node) }
       end
 
       def serialize_view_node(xml, child)
@@ -166,12 +178,12 @@ module Archimate
             )
           )
         ) do
-          serialize(xml, child.bounds) unless child.bounds.nil?
-          serialize(xml, child.connections)
-          xml.content { xml.text child.content } unless child.content.nil?
-          serialize(xml, child.nodes)
-          serialize(xml, child.documentation)
-          serialize(xml, child.properties)
+          serialize_bounds(xml, child.bounds) if child.bounds
+          serialize_connections(xml, child)
+          xml.content { xml.text child.content } if child.content
+          serialize_view_nodes(xml, child)
+          serialize_documentation(xml, child.documentation)
+          serialize_properties(xml, child)
         end
       end
 
@@ -184,6 +196,10 @@ module Archimate
             height: bounds.height&.to_i
           )
         )
+      end
+
+      def serialize_connections(xml, obj)
+        obj.connections.each { |item| serialize_connection(xml, item) }
       end
 
       def serialize_connection(xml, connection)
@@ -202,10 +218,14 @@ module Archimate
             )
           )
         ) do
-          serialize(xml, connection.bendpoints)
-          serialize(xml, connection.documentation)
-          serialize(xml, connection.properties)
+          serialize_locations(xml, connection)
+          serialize_documentation(xml, connection.documentation)
+          serialize_properties(xml, connection)
         end
+      end
+
+      def serialize_locations(xml, obj)
+        obj.bendpoints.each { |item| serialize_location(xml, item) }
       end
 
       # startX = location.x - source_attachment.x

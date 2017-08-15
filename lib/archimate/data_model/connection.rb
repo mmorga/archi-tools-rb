@@ -53,13 +53,13 @@ module Archimate
       end
 
       def replace(entity, with_entity)
-        @relationship = with_entity.id if (relationship == entity.id)
-        @source = with_entity.id if (source == entity.id)
-        @target = with_entity.id if (target == entity.id)
+        @relationship = with_entity.id if relationship == entity.id
+        @source = with_entity.id if source == entity.id
+        @target = with_entity.id if target == entity.id
       end
 
       def type_name
-        Archimate::Color.color("#{Archimate::Color.data_model('Connection')}[#{Archimate::Color.color(@name || '', [:white, :underline])}]", :on_light_magenta)
+        Archimate::Color.color("#{Archimate::Color.data_model('Connection')}[#{Archimate::Color.color(@name || '', %i[white underline])}]", :on_light_magenta)
       end
 
       def element

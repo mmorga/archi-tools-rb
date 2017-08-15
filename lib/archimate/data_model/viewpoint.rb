@@ -56,18 +56,18 @@ module Archimate
     Other_Viewpoints = %w[Stakeholder].freeze
 
     VIEWPOINTS_ENUM = [].concat(
-                        [COMPOSITION_VIEWPOINTS, SUPPORT_VIEWPOINTS, COOPERATION_VIEWPOINTS,
-                         REALIZATION_VIEWPOINTS, STRATEGY_VIEWPOINTS,
-                         IMPLEMENTATION_AND_MIGRATION_VIEWPOINTS].flatten
-                      )
+      [COMPOSITION_VIEWPOINTS, SUPPORT_VIEWPOINTS, COOPERATION_VIEWPOINTS,
+       REALIZATION_VIEWPOINTS, STRATEGY_VIEWPOINTS,
+       IMPLEMENTATION_AND_MIGRATION_VIEWPOINTS].flatten
+    )
 
     # ViewpointType = Strict::String.enum(*VIEWPOINTS_ENUM).optional
 
-    VIEWPOINT_CONTENT_ENUM = %w[Details Coherence Overview]
+    VIEWPOINT_CONTENT_ENUM = %w[Details Coherence Overview].freeze
 
     # ViewpointContentEnum = Strict::String.enum(*VIEWPOINT_CONTENT_ENUM)
 
-    VIEWPOINT_PURPOSE_ENUM = %w[Designing Deciding Informing]
+    VIEWPOINT_PURPOSE_ENUM = %w[Designing Deciding Informing].freeze
 
     # ViewpointPurposeEnum = Strict::String.enum(*VIEWPOINT_PURPOSE_ENUM)
 

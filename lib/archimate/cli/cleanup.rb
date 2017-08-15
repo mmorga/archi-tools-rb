@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require "nokogiri"
+
 #
 # The point of this script is to identify elements that aren't a part of any
 # relationship and not referenced on any diagrams.

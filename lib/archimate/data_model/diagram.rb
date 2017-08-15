@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Archimate
   module DataModel
     class Diagram
@@ -55,7 +56,7 @@ module Archimate
       end
 
       def to_s
-        "#{Archimate::Color.data_model('Diagram')}<#{id}>[#{Archimate::Color.color(name, [:white, :underline])}]"
+        "#{Archimate::Color.data_model('Diagram')}<#{id}>[#{Archimate::Color.color(name, %i[white underline])}]"
       end
 
       def total_viewpoint?

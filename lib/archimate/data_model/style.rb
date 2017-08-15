@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Archimate
   module DataModel
     class Style
@@ -24,8 +25,8 @@ module Archimate
       end
 
       def to_s
-        attr_name_vals = [:text_alignment, :fill_color, :line_color, :font_color, :line_width,
-        :font, :text_position].map { |k| "#{k}: #{self.send(k)}" }.join(", ")
+        attr_name_vals = %i[text_alignment fill_color line_color font_color line_width
+                            font text_position].map { |k| "#{k}: #{send(k)}" }.join(", ")
         "Style(#{attr_name_vals})"
       end
 
@@ -40,7 +41,5 @@ module Archimate
         end
       end
     end
-
-     # Dry::Types.register_class(Style)
   end
 end

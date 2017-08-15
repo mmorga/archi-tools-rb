@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Archimate
   module DataModel
     # An organization element represents a structural node in a particular organization of the model concepts.
@@ -34,7 +35,7 @@ module Archimate
       end
 
       def to_s
-        "#{Archimate::Color.data_model('Organization')}<#{id}>[#{Archimate::Color.color(name, [:white, :underline])}]"
+        "#{Archimate::Color.data_model('Organization')}<#{id}>[#{Archimate::Color.color(name, %i[white underline])}]"
       end
 
       def referenced_identified_nodes

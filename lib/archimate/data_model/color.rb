@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Archimate
   module DataModel
     # RGBColorType in the XSD
@@ -30,7 +31,7 @@ module Archimate
       end
 
       def initialize(r:, g:, b:, a: nil)
-        raise "r, g, b cannot be nil" if [r, g, b].any? { |v| v.nil? }
+        raise "r, g, b cannot be nil" if [r, g, b].any?(&:nil?)
         raise "r, g, b must be between 0 and 255" if [r, g, b].any? { |v| v < 0 || v > 255 }
         raise "a must be between 0 and 100" if a && (a < 0 || a > 100)
         @r = r

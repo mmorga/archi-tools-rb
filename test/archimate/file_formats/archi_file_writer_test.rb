@@ -18,7 +18,6 @@ module Archimate
         ArchiFileWriter.write(@model, result_io)
         doc = Nokogiri::XML.parse(result_io.string)
         written_model = ArchiFileReader.new(doc).parse
-
         assert_equal @model, written_model
       end
 

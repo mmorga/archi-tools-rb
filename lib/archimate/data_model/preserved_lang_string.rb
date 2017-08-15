@@ -5,9 +5,6 @@ module Archimate
     # A base string type for multi-language strings that preserves whitespace.
     # PreservedLangStringType in ArchiMate 3 schema
     class PreservedLangString < LangString
-      def self.blank
-        super
-      end
     end
   end
 end
