@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 require 'test_helper'
 require 'test_examples'
+require 'ruby-prof'
 
 module Archimate
   module FileFormats
@@ -11,14 +12,18 @@ module Archimate
         @model = ArchiFileReader.new(Nokogiri::XML(archisurance_source)).parse
       end
 
-      def xtest_reader_profile
+      def test_reader_profile
+        xml_doc = Nokogiri::XML(archisurance_source)
         RubyProf.start
-        ArchiFileReader.parse(archisurance_source)
+        ArchiFileReader.new(xml_doc).parse
         result = RubyProf.stop
         result.eliminate_methods!(
           [
             /Nokogiri/,
-            /Dry/
+            /Array/,
+            /Hash/
+            # /String/,
+            # /Class/
           ]
         )
         printer = RubyProf::FlatPrinterWithLineNumbers.new(result)

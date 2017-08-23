@@ -45,7 +45,8 @@ module Archimate
 
       def parse_documentation(node, element_name = "documentation")
         lang_hash = node
-          .css(">#{element_name}")
+          .children
+          .filter(element_name)
           .reduce(Hash.new { |hash, key| hash[key] = [] }) do |hash, doc|
             tick
             lang = doc["xml:lang"] # || archimate_default_lang
@@ -64,49 +65,47 @@ module Archimate
       end
 
       def parse_properties(node)
-        node.css(properties_selector).map do |i|
-          parse_property(i)
-        end
+        node
+          .children
+          .filter("property")
+          .map { |i| parse_property(i) }
       end
 
       def parse_elements(model)
         element_nodes(model)
-          .map { |i| lookup_or_parse(i) }
+          .map { |i| parse_element(i) }
       end
 
       def parse_organizations(node)
-        node.css(organizations_selector).map do |i|
-          lookup_or_parse(i)
-        end
-      end
-
-      def organization_items(node)
-        node.css(">element[id]").map do |i, a|
-          tick
-          lookup_or_parse(i.attr("id"))
-        end
+        node
+          .children
+          .filter("folder").map do |i|
+            parse_organization(i)
+          end
       end
 
       def parse_relationships(model)
         relationship_nodes(model)
-          .map { |i| lookup_or_parse(i) }
+          .map { |i| parse_relationship(i) }
       end
 
       def parse_diagrams(model)
         diagram_nodes(model)
-          .map { |i| lookup_or_parse(i) }
+          .map { |i| parse_diagram(i) }
       end
 
       def parse_view_nodes(node)
         node
-          .css(view_nodes_selector)
-          .map { |child_node| lookup_or_parse(child_node) }
+          .children
+          .filter("child")
+          .map { |child_node| parse_view_node(child_node) }
       end
 
       def parse_connections(node)
         node
-          .css(connections_selector)
-          .map { |i| lookup_or_parse(i) }
+          .children
+          .filter("sourceConnection")
+          .map { |i| parse_connection(i) }
       end
     end
   end

@@ -36,8 +36,8 @@ module Archimate
       # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
       model_attr :type # Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
       model_attr :properties # Strict::Array.member(Property).default([])
-      model_attr :source, comparison_attr: :id # Element # TODO: This could be an Element or Relationship, is this optional?
-      model_attr :target, comparison_attr: :id # Element # TODO: This could be an Element or Relationship, is this optional?
+      model_attr :source, comparison_attr: :id, writable: true # Element # TODO: This could be an Element or Relationship, is this optional?
+      model_attr :target, comparison_attr: :id, writable: true # Element # TODO: This could be an Element or Relationship, is this optional?
       model_attr :access_type # AccessTypeEnum.optional.default(nil)
 
       def initialize(id:, name: nil, documentation: nil, type: nil,

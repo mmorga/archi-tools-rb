@@ -7,11 +7,11 @@ module Archimate
 
       model_attr :id # Identifier
       model_attr :name # LangString
-      model_attr :documentation # PreservedLangString.optional.default(nil)
+      model_attr :documentation, writable: true # PreservedLangString.optional.default(nil)
       # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
       # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
       model_attr :type # Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
-      model_attr :properties # Strict::Array.member(Property).default([])
+      model_attr :properties, writable: true # Strict::Array.member(Property).default([])
       model_attr :viewpoint_type # Strict::String.optional.default(nil) # TODO: ViewpointType.optional is better, but is ArchiMate version dependent. Need to figure that out
       model_attr :viewpoint # Viewpoint.optional.default(nil)
       model_attr :nodes, writable: true # Strict::Array.member(ViewNode).default([])

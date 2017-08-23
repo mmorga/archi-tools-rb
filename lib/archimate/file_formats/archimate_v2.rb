@@ -61,6 +61,12 @@ module Archimate
 
       ENTITIES = LAYER_ENTITIES.values.flatten.freeze
 
+      class Entity
+        def self.===(other)
+          ENTITIES.include?(other)
+        end
+      end
+
       CORE_ELEMENTS = %w[Business Application Technology]
                       .map { |layer| LAYER_ENTITIES[layer] }
                       .inject([]) { |memo, obj| memo.concat(obj) }
@@ -84,6 +90,12 @@ module Archimate
         TriggeringRelationship
         UsedByRelationship
       ].freeze
+
+      class Relationship
+        def self.===(other)
+          RELATIONS.include?(other)
+        end
+      end
 
       DEFAULT_RELATIONS = %w[
         AccessRelationship
@@ -111,6 +123,14 @@ module Archimate
         "TriggeringRelationship" => "triggers",
         "UsedByRelationship" => "is used by"
       }.freeze
+
+      DIAGRAM_TYPES = %w[ArchimateDiagramModel SketchModel].freeze
+
+      class Diagram
+        def self.===(other)
+          DIAGRAM_TYPES.include?(other)
+        end
+      end
 
       VIEWPOINTS = {
         "Introductory" => { entities: CORE_ELEMENTS, relations: RELATIONS },

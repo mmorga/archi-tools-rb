@@ -19,7 +19,7 @@ module Archimate
       model_attr :name # LangString.optional.default(nil) # LabelGroup in the XSD
       model_attr :type # Strict::String.optional.default(nil) # I believe this is used only for Archi formats
       model_attr :documentation # PreservedLangString.optional.default(nil)
-      model_attr :items # Strict::Array.member(Dry::Struct).default([])
+      model_attr :items, writable: true # Strict::Array.member(Dry::Struct).default([])
       model_attr :organizations # Strict::Array.member(Organization).default([]) # item in the XSD
       # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
       # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
