@@ -4,15 +4,16 @@ module Archimate
   module FileFormats
     module Archi
       class Diagram < FileFormats::SaxHandler
+        include CaptureDocumentation
+        include CaptureProperties
+
         def initialize(attrs, parent_handler)
           super
-          @documentation = nil
-          @properties = []
           @view_nodes = []
           @connections = []
           @diagram = DataModel::Diagram.new(
             id: @attrs["id"],
-            name: DataModel::LangString.string(@attrs["name"]),
+            name: DataModel::LangString.string(process_text(@attrs["name"])),
             viewpoint_type: parse_viewpoint_type(@attrs["viewpoint"]),
             viewpoint: nil,
             connection_router_type: @attrs["connectionRouterType"],
@@ -22,8 +23,8 @@ module Archimate
         end
 
         def complete
-          @diagram.documentation = @documentation
-          @diagram.properties = @properties
+          @diagram.documentation = documentation
+          @diagram.properties = properties
           @diagram.nodes = @view_nodes
           @diagram.connections = @connections
           [
@@ -34,16 +35,6 @@ module Archimate
 
         def diagram
           @diagram
-        end
-
-        def on_documentation(documentation, source)
-          @documentation = documentation
-          false
-        end
-
-        def on_property(property, source)
-          @properties << property
-          false
         end
 
         def on_view_node(view_node, source)

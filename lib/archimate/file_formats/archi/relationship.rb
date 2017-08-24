@@ -4,10 +4,11 @@ module Archimate
   module FileFormats
     module Archi
       class Relationship < FileFormats::SaxHandler
+        include CaptureDocumentation
+        include CaptureProperties
+
         def initialize(attrs, parent_handler)
           super
-          @documentation = nil
-          @properties = []
         end
 
         def complete
@@ -16,10 +17,10 @@ module Archimate
             type: element_type,
             source: nil,
             target: nil,
-            name: DataModel::LangString.string(@attrs["name"]),
+            name: DataModel::LangString.string(process_text(@attrs["name"])),
             access_type: parse_access_type(@attrs["accessType"]),
-            documentation: @documentation,
-            properties: @properties
+            documentation: documentation,
+            properties: properties
           )
           [
             event(:on_relationship, relationship),
@@ -27,16 +28,6 @@ module Archimate
             event(:on_future, FutureReference.new(relationship, :source, @attrs["source"])),
             event(:on_future, FutureReference.new(relationship, :target, @attrs["target"]))
           ]
-        end
-
-        def on_documentation(documentation, source)
-          @documentation = documentation
-          false
-        end
-
-        def on_property(property, source)
-          @properties << property
-          false
         end
 
         def parse_access_type(val)

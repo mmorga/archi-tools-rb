@@ -7,7 +7,8 @@ module Archimate
       TEXT_SUBSTITUTIONS = [
         ['&#13;', '&#xD;'],
         ['"', '&quot;'],
-        ['&gt;', '>']
+        ['&gt;', '>'],
+        ['&#38;', '&amp;']
       ].freeze
 
       def initialize(model)
@@ -16,7 +17,7 @@ module Archimate
       end
 
       def process_text(doc_str)
-        %w(documentation content).each do |tag|
+        %w(documentation content name).each do |tag|
           TEXT_SUBSTITUTIONS.each do |from, to|
             doc_str.gsub!(%r{<#{tag}>([^<]*#{from}[^<]*)</#{tag}>}) do |str|
               str.gsub(from, to)

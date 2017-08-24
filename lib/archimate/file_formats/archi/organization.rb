@@ -4,9 +4,10 @@ module Archimate
   module FileFormats
     module Archi
       class Organization < FileFormats::SaxHandler
+        include CaptureDocumentation
+
         def initialize(attrs, parent_handler)
           super
-          @documentation = nil
           @child_items = []
           @child_organizations = []
         end
@@ -14,9 +15,9 @@ module Archimate
         def complete
           organization = DataModel::Organization.new(
             id: @attrs["id"],
-            name: DataModel::LangString.string(@attrs["name"]),
+            name: DataModel::LangString.string(process_text(@attrs["name"])),
             type: @attrs["type"],
-            documentation: @documentation,
+            documentation: documentation,
             items: @child_items,
             organizations: @child_organizations
           )
@@ -29,11 +30,6 @@ module Archimate
         def on_diagram(diagram, source)
           @child_items << diagram if source.parent_handler == self
           diagram
-        end
-
-        def on_documentation(documentation, source)
-          @documentation = documentation
-          false
         end
 
         def on_element(element, source)

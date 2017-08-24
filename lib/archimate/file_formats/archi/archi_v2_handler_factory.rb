@@ -9,11 +9,11 @@ module Archimate
           when "model", "archimate:model"
             Model
           when "documentation", "purpose"
-            Documentation
+            PreservedLangString
           when "element"
             element_type = Hash[attrs]["xsi:type"].sub(/archimate:/, '')
             case element_type
-            when ArchimateV2::Entity
+            when ArchimateV2::Entity, ArchimateV2::Junction
               Element
             when ArchimateV2::Relationship
               Relationship
@@ -34,6 +34,8 @@ module Archimate
             Connection
           when "bendpoint"
             Location
+          when "content"
+            Content
           else
             raise "Unhandled element name #{name}"
           end

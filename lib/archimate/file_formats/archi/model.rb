@@ -4,10 +4,11 @@ module Archimate
   module FileFormats
     module Archi
       class Model < FileFormats::SaxHandler
+        include CaptureDocumentation
+        include CaptureProperties
+
         def initialize(attrs, parent_handler)
           super
-          @documentation = nil
-          @properties = []
           @property_definitions = {}
           @elements = []
           @organizations = []
@@ -21,9 +22,9 @@ module Archimate
         def complete
           model = DataModel::Model.new(
             id: @attrs["id"],
-            name: DataModel::LangString.string(@attrs["name"]),
-            documentation: @documentation,
-            properties: @properties,
+            name: DataModel::LangString.string(process_text(@attrs["name"])),
+            documentation: documentation,
+            properties: properties,
             elements: @elements,
             organizations: @organizations,
             relationships: @relationships,
@@ -46,16 +47,6 @@ module Archimate
             )
           end
           [event(:on_model, model)]
-        end
-
-        def on_documentation(doc, source)
-          @documentation = doc
-          false
-        end
-
-        def on_property(property, source)
-          @properties << property
-          false
         end
 
         def on_element(element, source)

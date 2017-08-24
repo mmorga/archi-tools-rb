@@ -16,14 +16,12 @@ module Archimate
       def test_readers
         result_io = StringIO.new
         ArchiFileWriter.write(@model, result_io)
-        # doc = Nokogiri::XML.parse(result_io.string)
-        # written_model = ArchiFileReader.new(doc).parse
-        assert_equal archisurance_source, result_io.string.gsub("#38;", "")
-
-        # assert_equal archisurance_model, model
+        written_model = ArchiFileReaderSax.new(result_io.string).parse
+        assert_equal model, written_model
       end
 
       def test_reader_profile
+        skip("Profile ArchiFileReaderSax")
         RubyProf.start
         ArchiFileReaderSax.new(archisurance_source).parse
         result = RubyProf.stop

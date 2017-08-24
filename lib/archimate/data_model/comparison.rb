@@ -12,7 +12,7 @@ module Archimate
         return true if equal?(other)
         other.is_a?(self.class) &&
           self.class.comparison_attr_paths.all? do |attr|
-            dig(*attr) == other.dig(*attr) # TODO: how to pass array val to var length ruby func
+            dig(*attr) == other.dig(*attr)
           end
       end
 
@@ -31,6 +31,21 @@ module Archimate
         self.class.comparison_attr_paths.each(&blk)
       end
 
+      def pretty_print(pp)
+        pp.object_address_group(self) do
+          pp.seplist(self.class.comparison_attr_paths, proc { pp.text ',' }) do |attr|
+            column_value = dig(*attr)
+            pp.breakable ' '
+            pp.group(1) do
+              pp.text Array(attr).map(&:to_s).join(".")
+              pp.text ':'
+              pp.breakable
+              pp.pp column_value
+            end
+          end
+        end
+      end
+
       def self.included(base)
         base.extend ClassMethods
       end
@@ -42,8 +57,11 @@ module Archimate
           send(:attr_reader, attr_sym)
           attrs = attr_names << attr_sym
           class_variable_set(:@@attr_names, attrs.uniq)
-          attrs = comparison_attr_paths << (comparison_attr ? [attr_sym, comparison_attr] : attr_sym)
-          class_variable_set(:@@comparison_attr_paths, attrs.uniq)
+
+          if comparison_attr != :no_compare
+            attrs = comparison_attr_paths << (comparison_attr ? [attr_sym, comparison_attr] : attr_sym)
+            class_variable_set(:@@comparison_attr_paths, attrs.uniq)
+          end
           if writable
             define_method("#{attr_sym}=".to_sym) do |val|
               instance_variable_set(:@hash_key, nil)

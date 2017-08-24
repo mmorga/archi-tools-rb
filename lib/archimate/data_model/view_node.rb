@@ -38,13 +38,13 @@ module Archimate
       model_attr :style # Style.optional.default(nil)
 
       # TODO: viewRefs are pointers to 0-* Diagrams for diagram drill in defined in abstract View Concept
-      model_attr :view_refs, writable: true # Dry::Struct.optional.default(nil)  # viewRef in XSD for a nested View Concept(s) TODO: Make this an array
+      model_attr :view_refs, comparison_attr: :id, writable: true # Dry::Struct.optional.default(nil)  # viewRef in XSD for a nested View Concept(s) TODO: Make this an array
 
       # TODO: document where this comes from
       model_attr :content # Strict::String.optional.default(nil)
 
       # This is needed for various calculations
-      model_attr :parent # ViewNode
+      model_attr :parent, comparison_attr: :no_compare # ViewNode
 
       # ViewNodeType
       model_attr :bounds # Bounds.optional.default(nil)
@@ -59,10 +59,10 @@ module Archimate
       model_attr :properties # Strict::Array.member(Property).default([])
 
       # Element
-      model_attr :element, writable: true # Element.optional.default(nil)
+      model_attr :element, writable: true, comparison_attr: :id # Element.optional.default(nil)
       model_attr :child_type # Coercible::Int.optional.default(nil) # Archi format, selects the shape of element (for elements that can have two or more shapes)
 
-      model_attr :diagram # Dry::Struct # Actually a Diagram, but impossible due to circular reference
+      model_attr :diagram, comparison_attr: :no_compare # Diagram
 
       # Node type to allow a Label in a Artifact. the "label" element holds the info for the Note.
       # Label View Nodes have the following attributes

@@ -13,6 +13,7 @@ module Archimate
       end
 
       def test_reader_profile
+        skip("ArchiFileReader Profile")
         xml_doc = Nokogiri::XML(archisurance_source)
         RubyProf.start
         ArchiFileReader.new(xml_doc).parse

@@ -6,7 +6,6 @@ module Archimate
       class Property < FileFormats::SaxHandler
         def initialize(attrs, parent_handler)
           super
-          @documentation = nil
         end
 
         def complete
@@ -18,7 +17,7 @@ module Archimate
           else
             prop_def = DataModel::PropertyDefinition.new(
               id: DataModel::PropertyDefinition.identifier_for_key(key),
-              name: DataModel::LangString.string(key),
+              name: DataModel::LangString.string(process_text(key)),
               documentation: nil,
               type: "string"
             )
@@ -26,17 +25,12 @@ module Archimate
             events << event(:on_referenceable, prop_def)
           end
           property = DataModel::Property.new(
-            value: DataModel::LangString.string(@attrs["value"]),
+            value: DataModel::LangString.string(process_text(@attrs["value"])),
             property_definition: prop_def
           )
 
           events << event(:on_property, property)
           events
-        end
-
-        def on_documentation(documentation, source)
-          @documentation = documentation
-          false
         end
       end
     end

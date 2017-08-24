@@ -3,7 +3,7 @@
 module Archimate
   module FileFormats
     module Archi
-      class Documentation < FileFormats::SaxHandler
+      class PreservedLangString < FileFormats::SaxHandler
         def initialize(attrs, parent_handler)
           super
           @characters_stack = []
@@ -14,13 +14,14 @@ module Archimate
         end
 
         def complete
-          [
-            event(
-              :on_documentation,
-              DataModel::PreservedLangString.string(
-                @characters_stack.join(""),
+          doc = DataModel::PreservedLangString.string(
+                process_text(@characters_stack.join("")),
                 @attrs["lang"]
               )
+          [
+            event(
+              :on_preserved_lang_string,
+              doc
             )
           ]
         end

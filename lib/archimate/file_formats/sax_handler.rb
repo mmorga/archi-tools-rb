@@ -44,9 +44,9 @@ module Archimate
         diagram
       end
 
-      # @param [DataModel::Documentation]
+      # @param [DataModel::PreservedLangString]
       # @param source [SaxHandler]
-      def on_documentation(doc, source)
+      def on_preserved_lang_string(doc, source)
         doc
       end
 
@@ -60,6 +60,12 @@ module Archimate
       # @param source [SaxHandler]
       def on_future(future, source)
         future
+      end
+
+      # @param [String]
+      # @param source [SaxHandler]
+      def on_content(location, source)
+        location
       end
 
       # @param [DataModel::Location]
@@ -119,6 +125,10 @@ module Archimate
       # Returns the property definitions hash for this SaxDocument
       def property_definitions
         parent_handler&.property_definitions
+      end
+
+      def process_text(str)
+        str&.gsub("&#38;", "&")
       end
     end
   end

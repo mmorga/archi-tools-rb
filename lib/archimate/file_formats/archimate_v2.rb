@@ -77,6 +77,12 @@ module Archimate
         OrJunction
       ].freeze
 
+      class Junction
+        def self.===(other)
+          CONNECTORS.include?(other)
+        end
+      end
+
       RELATIONS = %w[
         AccessRelationship
         AggregationRelationship

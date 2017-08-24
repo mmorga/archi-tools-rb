@@ -4,42 +4,32 @@ module Archimate
   module FileFormats
     module Archi
       class ViewNode < FileFormats::SaxHandler
+        include CaptureDocumentation
+        include CaptureProperties
+        include Style
+
         def initialize(attrs, parent_handler)
           super
-          @documentation = nil
-          @properties = []
           @view_nodes = []
           @connections = []
-          @characters = []
           @bounds = nil
-          @style = nil
+          @content = nil
         end
 
         def complete
-          style = DataModel::Style.new(
-            text_alignment: @attrs["textAlignment"],
-            fill_color: DataModel::Color.rgba(attrs["fillColor"]),
-            line_color: DataModel::Color.rgba(attrs["lineColor"]),
-            font_color: DataModel::Color.rgba(attrs["fontColor"]),
-            font: DataModel::Font.archi_font_string(attrs["font"]),
-            line_width: attrs["lineWidth"],
-            text_position: attrs["textPosition"]
-          )
-          content = @characters.join("").strip
-          content = nil if content.empty?
           view_node = DataModel::ViewNode.new(
             id: @attrs["id"],
             type: @attrs["xsi:type"],
             view_refs: nil,
-            name: DataModel::LangString.string(@attrs["name"]),
+            name: DataModel::LangString.string(process_text(@attrs["name"])),
             element: nil,
             bounds: @bounds,
             nodes: @view_nodes,
             connections: @connections,
-            documentation: @documentation,
-            properties: @properties,
+            documentation: documentation,
+            properties: properties,
             style: style,
-            content: content,
+            content: @content,
             child_type: @attrs["type"],
             diagram: diagram
           )
@@ -51,16 +41,6 @@ module Archimate
           ]
         end
 
-        def on_documentation(documentation, source)
-          @documentation = documentation
-          false
-        end
-
-        def on_property(property, source)
-          @properties << property
-          false
-        end
-
         def on_view_node(view_node, source)
           @view_nodes << view_node if source.parent_handler == self
           view_node
@@ -69,6 +49,10 @@ module Archimate
         def on_connection(connection, source)
           @connections << connection if source.parent_handler == self
           connection
+        end
+
+        def on_content(string, source)
+          @content = string
         end
 
         def on_bounds(bounds, source)

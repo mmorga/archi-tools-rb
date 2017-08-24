@@ -1,6 +1,6 @@
-# frozen_string_literal: true
+frozen_string_literal: true
 
-# require "parallel"
+require "parallel"
 
 module Archimate
   module Diff
@@ -9,14 +9,14 @@ module Archimate
 
       def three_way(base, local, remote)
         debug { "Computing base:local & base:remote diffs" }
-        # base_local_diffs, base_remote_diffs = Parallel.map([[base, local], [base, remote]],
-        #   in_processes: 2) do |base_model, other_model|
-        #   base_model.diff(other_model)
-        # end
-
-        base_local_diffs, base_remote_diffs = [[base, local], [base, remote]].map do |base_model, other_model|
+        base_local_diffs, base_remote_diffs = Parallel.map([[base, local], [base, remote]],
+          in_processes: 2) do |base_model, other_model|
           base_model.diff(other_model)
         end
+
+        # base_local_diffs, base_remote_diffs = [[base, local], [base, remote]].map do |base_model, other_model|
+        #   base_model.diff(other_model)
+        # end
 
         debug "Finding Conflicts in #{base_local_diffs.size + base_remote_diffs.size} diffs"
         conflicts = Conflicts.new(base_local_diffs, base_remote_diffs)

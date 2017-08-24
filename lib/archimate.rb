@@ -57,15 +57,19 @@ module Archimate
     module Archi
       autoload :ArchiV2HandlerFactory, 'archimate/file_formats/archi/archi_v2_handler_factory'
       autoload :Bounds, 'archimate/file_formats/archi/bounds'
+      autoload :CaptureDocumentation, 'archimate/file_formats/archi/capture_documentation'
+      autoload :CaptureProperties, 'archimate/file_formats/archi/capture_properties'
       autoload :Connection, 'archimate/file_formats/archi/connection'
+      autoload :Content, 'archimate/file_formats/archi/content'
       autoload :Diagram, 'archimate/file_formats/archi/diagram'
-      autoload :Documentation, 'archimate/file_formats/archi/documentation'
       autoload :Element, 'archimate/file_formats/archi/element'
       autoload :Location, 'archimate/file_formats/archi/location'
       autoload :Model, 'archimate/file_formats/archi/model'
       autoload :Organization, 'archimate/file_formats/archi/organization'
+      autoload :PreservedLangString, 'archimate/file_formats/archi/preserved_lang_string'
       autoload :Property, 'archimate/file_formats/archi/property'
       autoload :Relationship, 'archimate/file_formats/archi/relationship'
+      autoload :Style, 'archimate/file_formats/archi/style'
       autoload :ViewNode, 'archimate/file_formats/archi/view_node'
     end
     module ModelExchangeFile

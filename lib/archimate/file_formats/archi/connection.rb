@@ -4,12 +4,13 @@ module Archimate
   module FileFormats
     module Archi
       class Connection < FileFormats::SaxHandler
+        include Style
+        include CaptureDocumentation
+        include CaptureProperties
+
         def initialize(attrs, parent_handler)
           super
           @bendpoints = []
-          @documentation = nil
-          @properties = []
-          @style = nil
         end
 
         def complete
@@ -20,10 +21,10 @@ module Archimate
             target: nil,
             relationship: nil,
             name: @attrs["name"],
-            style: @style,
+            style: style,
             bendpoints: @bendpoints,
-            documentation: @documentation,
-            properties: @properties
+            documentation: documentation,
+            properties: properties
           )
           [
             event(:on_connection, connection),
@@ -34,23 +35,8 @@ module Archimate
           ]
         end
 
-        def on_documentation(documentation, source)
-          @documentation = documentation
-          false
-        end
-
-        def on_property(property, source)
-          @properties << property
-          false
-        end
-
         def on_location(location, source)
           @bendpoints << location
-          false
-        end
-
-        def on_style(style, source)
-          @style = style
           false
         end
       end
