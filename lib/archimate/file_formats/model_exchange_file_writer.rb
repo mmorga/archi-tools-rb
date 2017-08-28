@@ -35,12 +35,6 @@ module Archimate
         serialize_properties(xml, element)
       end
 
-      def serialize_label(xml, str)
-        return if str.nil? || str.strip.empty?
-        name_attrs = str.lang && !str.lang.empty? ? {"xml:lang" => str.lang} : {}
-        xml.label(name_attrs) { xml.text text_proc(str) }
-      end
-
       def serialize_relationships(xml)
         return if model.relationships.empty?
         xml.relationships { serialize(xml, model.relationships) }
@@ -60,13 +54,6 @@ module Archimate
           relationship_attributes(relationship)
         ) do
           elementbase(xml, relationship)
-        end
-      end
-
-      def serialize_organization_root(xml, organizations)
-        return unless organizations && organizations.size > 0
-        xml.organization do
-          serialize(xml, organizations)
         end
       end
 

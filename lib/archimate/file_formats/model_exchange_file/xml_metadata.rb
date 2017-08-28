@@ -4,11 +4,6 @@ module Archimate
   module FileFormats
     module ModelExchangeFile
       class XmlMetadata
-        def self.parse(metadata)
-          return nil unless metadata
-          DataModel::Metadata.new(schema_infos: parse_schema_infos(metadata))
-        end
-
         def initialize(metadata)
           @metadata = metadata
         end
@@ -59,55 +54,6 @@ module Archimate
             key = attr.prefix&.size > 0 ? [attr.prefix, attr.attribute].join(":") : attr.attribute
             hash[key] = attr.value
           end
-        end
-
-        def self.parse_schema_infos(metadata)
-          schema_infos = metadata.css(">schemaInfo")
-          if schema_infos.size > 0
-            schema_infos.map { |si| parse_schema_info(si) }
-          else
-            [parse_schema_info(metadata)].compact
-          end
-        end
-
-        def self.parse_schema_info(node)
-          els = node.element_children
-          return nil if els.empty?
-          schema_info_attrs = {
-            schema: nil,
-            schemaversion: nil,
-            elements: []
-          }
-          els.each do |el|
-            case(el.name)
-            when "schema"
-              schema_info_attrs[:schema] = el.text
-            when "schemaversion"
-              schema_info_attrs[:schemaversion] = el.text
-            else
-              schema_info_attrs[:elements] << parse_any_element(el)
-            end
-          end
-          DataModel::SchemaInfo.new(schema_info_attrs)
-        end
-
-        def self.parse_any_element(node)
-          return nil unless node && node.is_a?(Nokogiri::XML::Element)
-          DataModel::AnyElement.new(
-            element: node.name,
-            prefix: node.namespace&.prefix,
-            attributes: node.attributes.map { |attr| parse_any_attribute(attr) },
-            content: node.text,
-            children: node.element_children.map { |child| parse_any_element(node) }
-          )
-        end
-
-        def self.parse_any_attribute(attr)
-          DataModel::AnyAttribute.new(
-            attribute: attr.name,
-            prefix: attr.namepace&.prefix,
-            value: attr.text
-          )
         end
       end
     end

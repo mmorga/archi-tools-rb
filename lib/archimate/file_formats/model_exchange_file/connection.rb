@@ -17,7 +17,7 @@ module Archimate
         def complete
           connection = DataModel::Connection.new(
             id: @attrs["identifier"],
-            type: @attrs["type"],
+            type: @attrs["xsi:type"] || @attrs["type"],
             source: nil,
             target: nil,
             relationship: nil,
@@ -32,7 +32,7 @@ module Archimate
             event(:on_referenceable, connection),
             event(:on_future, Sax::FutureReference.new(connection, :source, @attrs["source"])),
             event(:on_future, Sax::FutureReference.new(connection, :target, @attrs["target"])),
-            event(:on_future, Sax::FutureReference.new(connection, :relationship, @attrs["relationshipref"]))
+            event(:on_future, Sax::FutureReference.new(connection, :relationship, @attrs["relationshipRef"] || @attrs["relationshipref"]))
           ]
         end
 

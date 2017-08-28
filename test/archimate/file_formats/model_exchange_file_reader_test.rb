@@ -6,24 +6,24 @@ require 'pp'
 
 module Archimate
   module FileFormats
-    class ModelExchangeFileReaderSaxTest < Minitest::Test
+    class ModelExchangeFileReaderTest < Minitest::Test
       attr_accessor :model
 
       def setup
-        @model = ModelExchangeFileReaderSax.new(archisurance_model_exchange_source).parse
+        @model = ModelExchangeFileReader.new(archisurance_model_exchange_source).parse
       end
 
       def test_readers
         result_io = StringIO.new
         ModelExchangeFileWriter21.write(@model, result_io)
-        written_model = ModelExchangeFileReaderSax.new(result_io.string).parse
+        written_model = ModelExchangeFileReader.new(result_io.string).parse
         assert_equal model, written_model
       end
 
       def test_reader_profile
-        skip("Profile ArchiFileReaderSax")
+        skip("Profile ArchiFileReader")
         RubyProf.start
-        ArchiFileReaderSax.new(archisurance_source).parse
+        ArchiFileReader.new(archisurance_source).parse
         result = RubyProf.stop
         result.eliminate_methods!(
           [
@@ -89,6 +89,45 @@ module Archimate
         )
         assert_equal 3, d4056.nodes.first.nodes.size
         assert_equal 28, d4056.connections.size
+      end
+
+      def test_archi_metal_read_write
+        verify_read_write("ArchiMetal V3.xml")
+      end
+
+      def test_archisurance_read_write
+        verify_read_write("ArchiSurance V3.xml")
+      end
+
+      def test_basic_model_read_write
+        verify_read_write("Basic_Model.xml")
+      end
+
+      def test_basic_model_metadata_read_write
+        verify_read_write("Basic_Model_Metadata.xml")
+      end
+
+      def test_basic_model_organization_read_write
+        verify_read_write("Basic_Model_Organization.xml")
+      end
+
+      def test_basic_model_properties_read_write
+        verify_read_write("Basic_Model_Properties.xml")
+      end
+
+      def test_model_view_read_write
+        verify_read_write("Model_View.xml")
+      end
+
+      def verify_read_write(filename)
+        test_file = File.join(TEST_EXAMPLES_FOLDER, filename)
+        source = File.read(test_file)
+        model = ModelExchangeFileReader.new(source).parse
+        source = source.gsub(" />", "/>").gsub("\r", "")
+        result_io = StringIO.new
+        ModelExchangeFileWriter30.write(model, result_io)
+        written_output = result_io.string
+        assert_equal source, written_output
       end
     end
   end

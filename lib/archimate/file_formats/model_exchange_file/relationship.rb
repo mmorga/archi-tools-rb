@@ -19,7 +19,7 @@ module Archimate
             source: nil,
             target: nil,
             name: @rel_name,
-            access_type: parse_access_type(attrs["accessType"]),
+            access_type: attrs["accessType"],
             documentation: documentation,
             properties: properties
           )
@@ -29,13 +29,6 @@ module Archimate
             event(:on_future, Sax::FutureReference.new(relationship, :source, @attrs["source"])),
             event(:on_future, Sax::FutureReference.new(relationship, :target, @attrs["target"]))
           ]
-        end
-
-        def parse_access_type(val)
-          return nil unless val && val.size > 0
-          attrs = val.to_i
-          return nil unless (0..DataModel::ACCESS_TYPE.size-1).include?(attrs)
-          DataModel::ACCESS_TYPE[attrs]
         end
 
         def on_lang_string(name, source)

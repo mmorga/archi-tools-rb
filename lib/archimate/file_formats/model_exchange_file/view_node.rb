@@ -20,7 +20,7 @@ module Archimate
           bounds = DataModel::Bounds.new(x: @attrs["x"], y: @attrs["y"], width: @attrs["w"], height: @attrs["h"])
           view_node = DataModel::ViewNode.new(
             id: @attrs["identifier"],
-            type: @attrs["type"],
+            type: @attrs["xsi:type"] || @attrs["type"],
             view_refs: nil,
             name: @view_node_name,
             element: nil,
@@ -36,7 +36,7 @@ module Archimate
           )
           [
             event(:on_future, Sax::FutureReference.new(view_node, :view_refs, @attrs["model"])),
-            event(:on_future, Sax::FutureReference.new(view_node, :element, @attrs["elementref"])),
+            event(:on_future, Sax::FutureReference.new(view_node, :element, @attrs["elementRef"] || @attrs["elementref"])),
             event(:on_referenceable, view_node),
             event(:on_view_node, view_node)
           ]

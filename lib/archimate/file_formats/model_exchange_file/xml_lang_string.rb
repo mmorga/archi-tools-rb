@@ -4,18 +4,6 @@ module Archimate
   module FileFormats
     module ModelExchangeFile
       class XmlLangString
-        def self.parse(node)
-          return nil unless node
-          default_lang = node["xml:lang"] #  || Archimate::Config.instance.default_lang
-          default_text = node.content&.strip
-          return nil unless default_text && !default_text.empty?
-          DataModel::LangString.create(
-            lang_hash: { default_lang => default_text },
-            default_lang: default_lang,
-            default_text: default_text
-          )
-        end
-
         def initialize(lang_str, tag_name)
           @tag_name = tag_name
           @lang_str = lang_str

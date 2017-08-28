@@ -52,7 +52,7 @@ module Archimate
       def serialize_organization_root(xml, organizations)
         return unless organizations && organizations.size > 0
         xml.organizations do
-          serialize_organization_body(xml, organizations[0])
+          serialize(xml, organizations)
         end
       end
 
@@ -87,6 +87,18 @@ module Archimate
           serialize(xml, diagram.nodes)
           serialize(xml, diagram.connections)
         end
+      end
+
+      def serialize_organization_body(xml, organization)
+        if organization.items.empty? &&
+          (!organization.documentation || organization.documentation.empty?) &&
+          organization.organizations.empty?
+          return
+        end
+        serialize_label(xml, organization.name, :label)
+        serialize(xml, organization.documentation)
+        serialize(xml, organization.organizations)
+        organization.items.each { |i| serialize_item(xml, i) }
       end
 
       def view_node_attrs(view_node, x_offset = 0, y_offset = 0)
