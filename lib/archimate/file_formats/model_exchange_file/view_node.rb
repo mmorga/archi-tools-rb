@@ -2,43 +2,49 @@
 
 module Archimate
   module FileFormats
-    module Archi
-      class ViewNode < FileFormats::SaxHandler
-        include CaptureDocumentation
-        include CaptureProperties
-        include Style
+    module ModelExchangeFile
+      class ViewNode < FileFormats::Sax::Handler
+        include Sax::CaptureDocumentation
+        include Sax::CaptureProperties
 
-        def initialize(attrs, parent_handler)
+        def initialize(name, attrs, parent_handler)
           super
           @view_nodes = []
           @connections = []
-          @bounds = nil
           @content = nil
+          @view_node_name = nil
+          @style = nil
         end
 
         def complete
+          bounds = DataModel::Bounds.new(x: @attrs["x"], y: @attrs["y"], width: @attrs["w"], height: @attrs["h"])
           view_node = DataModel::ViewNode.new(
-            id: @attrs["id"],
-            type: @attrs["xsi:type"],
+            id: @attrs["identifier"],
+            type: @attrs["type"],
             view_refs: nil,
-            name: DataModel::LangString.string(process_text(@attrs["name"])),
+            name: @view_node_name,
             element: nil,
-            bounds: @bounds,
+            bounds: bounds,
             nodes: @view_nodes,
             connections: @connections,
             documentation: documentation,
             properties: properties,
-            style: style,
+            style: @style,
             content: @content,
             child_type: @attrs["type"],
             diagram: diagram
           )
           [
             event(:on_future, Sax::FutureReference.new(view_node, :view_refs, @attrs["model"])),
-            event(:on_future, Sax::FutureReference.new(view_node, :element, @attrs["archimateElement"])),
+            event(:on_future, Sax::FutureReference.new(view_node, :element, @attrs["elementref"])),
             event(:on_referenceable, view_node),
             event(:on_view_node, view_node)
           ]
+        end
+
+        def on_lang_string(name, source)
+          @view_node_name = name
+          false
         end
 
         def on_view_node(view_node, source)
@@ -55,16 +61,9 @@ module Archimate
           @content = string
         end
 
-        def on_bounds(bounds, source)
-          @bounds = bounds
+        def on_style(style, source)
+          @style = style
           false
-        end
-
-        def parse_viewpoint_type(viewpoint_idx)
-          return nil unless viewpoint_idx
-          viewpoint_idx = viewpoint_idx.to_i
-          return nil if viewpoint_idx.nil?
-          ArchiFileFormat::VIEWPOINTS[viewpoint_idx]
         end
       end
     end

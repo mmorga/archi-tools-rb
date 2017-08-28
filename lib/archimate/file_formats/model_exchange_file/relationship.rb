@@ -2,23 +2,24 @@
 
 module Archimate
   module FileFormats
-    module Archi
-      class Relationship < FileFormats::SaxHandler
-        include CaptureDocumentation
-        include CaptureProperties
+    module ModelExchangeFile
+      class Relationship < FileFormats::Sax::Handler
+        include Sax::CaptureDocumentation
+        include Sax::CaptureProperties
 
-        def initialize(attrs, parent_handler)
+        def initialize(name, attrs, parent_handler)
           super
+          @rel_name = nil
         end
 
         def complete
           relationship = DataModel::Relationship.new(
-            id: @attrs["id"],
-            type: element_type,
+            id: attrs["identifier"],
+            type: attrs["xsi:type"],
             source: nil,
             target: nil,
-            name: DataModel::LangString.string(process_text(@attrs["name"])),
-            access_type: parse_access_type(@attrs["accessType"]),
+            name: @rel_name,
+            access_type: parse_access_type(attrs["accessType"]),
             documentation: documentation,
             properties: properties
           )
@@ -32,9 +33,14 @@ module Archimate
 
         def parse_access_type(val)
           return nil unless val && val.size > 0
-          i = val.to_i
-          return nil unless (0..DataModel::ACCESS_TYPE.size-1).include?(i)
-          DataModel::ACCESS_TYPE[i]
+          attrs = val.to_i
+          return nil unless (0..DataModel::ACCESS_TYPE.size-1).include?(attrs)
+          DataModel::ACCESS_TYPE[attrs]
+        end
+
+        def on_lang_string(name, source)
+          @rel_name = name
+          false
         end
       end
     end
