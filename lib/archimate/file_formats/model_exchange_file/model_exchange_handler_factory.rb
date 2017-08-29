@@ -47,8 +47,6 @@ module Archimate
             Style
           when "fillColor", "lineColor", "color"
             Color
-          # when "bounds"
-          #   Bounds
           when "connection"
             Connection
           when "bendpoint"

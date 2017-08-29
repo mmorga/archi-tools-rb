@@ -3,7 +3,7 @@
 module Archimate
   module FileFormats
     module Archi
-      class ArchiV2HandlerFactory
+      class ArchiHandlerFactory
         def handler_for(name, attrs)
           case name
           when "model", "archimate:model"

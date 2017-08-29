@@ -9,8 +9,7 @@ module Archimate
       end
 
       def parse()
-        # TODO: examine the file to determine the proper SaxHandlerFactory
-        handler_factory = Archi::ArchiV2HandlerFactory.new
+        handler_factory = Archi::ArchiHandlerFactory.new
         parser = Nokogiri::XML::SAX::Parser.new(ArchiSaxDocument.new(handler_factory))
         parser.parse(@string_or_io)
         parser.document.model

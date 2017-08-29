@@ -52,7 +52,7 @@ module Archimate
     autoload :SaxHandler, 'archimate/file_formats/sax_handler'
     autoload :Writer, 'archimate/file_formats/writer'
     module Archi
-      autoload :ArchiV2HandlerFactory, 'archimate/file_formats/archi/archi_v2_handler_factory'
+      autoload :ArchiHandlerFactory, 'archimate/file_formats/archi/archi_handler_factory'
       autoload :Bounds, 'archimate/file_formats/archi/bounds'
       autoload :CaptureDocumentation, 'archimate/file_formats/archi/capture_documentation'
       autoload :CaptureProperties, 'archimate/file_formats/archi/capture_properties'

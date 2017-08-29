@@ -27,14 +27,9 @@ module Archimate
           serialize_elements(xml)
           serialize_relationships(xml)
           serialize_organization_root(xml, model.organizations)
-          serialize_property_defs(xml)
+          ModelExchangeFile::XmlPropertyDefinitions.new(model.property_definitions).serialize(xml)
           serialize_views(xml)
         end
-      end
-
-      def serialize_property_defs(xml)
-        return if model.property_definitions.empty?
-        ModelExchangeFile::XmlPropertyDefinitions.new(model.property_definitions).serialize(xml)
       end
 
       def serialize_label(xml, str, tag = :name)
