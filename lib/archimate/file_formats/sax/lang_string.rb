@@ -12,9 +12,9 @@ module Archimate
 
         def complete
           doc = DataModel::LangString.string(
-                process_text(content),
-                @attrs["lang"] || @attrs["xml:lang"]
-              )
+            process_text(content),
+            @attrs["lang"] || @attrs["xml:lang"]
+          )
           [
             event(
               :on_lang_string,

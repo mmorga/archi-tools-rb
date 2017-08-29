@@ -15,28 +15,13 @@ module Archimate
             @connections = []
             @bounds = nil
             @content = nil
+            @view_node = nil
           end
 
           def complete
-            view_node = DataModel::ViewNode.new(
-              id: @attrs["id"],
-              type: @attrs["xsi:type"],
-              view_refs: nil,
-              name: DataModel::LangString.string(process_text(@attrs["name"])),
-              element: nil,
-              bounds: @bounds,
-              nodes: @view_nodes,
-              connections: @connections,
-              documentation: documentation,
-              properties: properties,
-              style: style,
-              content: @content,
-              child_type: @attrs["type"],
-              diagram: diagram
-            )
             [
-              event(:on_future, Sax::FutureReference.new(view_node, :view_refs, @attrs["model"])),
-              event(:on_future, Sax::FutureReference.new(view_node, :element, @attrs["archimateElement"])),
+              event(:on_future, Sax::FutureReference.new(view_node, :view_refs, attrs["model"])),
+              event(:on_future, Sax::FutureReference.new(view_node, :element, attrs["archimateElement"])),
               event(:on_referenceable, view_node),
               event(:on_view_node, view_node)
             ]
@@ -59,6 +44,27 @@ module Archimate
           def on_bounds(bounds, _source)
             @bounds = bounds
             false
+          end
+
+          private
+
+          def view_node
+            @view_node ||= DataModel::ViewNode.new(
+              id: attrs["id"],
+              type: attrs["xsi:type"],
+              view_refs: nil,
+              name: DataModel::LangString.string(process_text(attrs["name"])),
+              element: nil,
+              bounds: @bounds,
+              nodes: @view_nodes,
+              connections: @connections,
+              documentation: documentation,
+              properties: properties,
+              style: style,
+              content: @content,
+              child_type: attrs["type"],
+              diagram: diagram
+            )
           end
 
           def parse_viewpoint_type(viewpoint_idx)

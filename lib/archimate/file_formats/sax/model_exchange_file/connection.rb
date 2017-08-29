@@ -13,43 +13,52 @@ module Archimate
             @bendpoints = []
             @connection_name = nil
             @style = nil
+            @connection = nil
           end
 
           def complete
-            connection = DataModel::Connection.new(
-              id: @attrs["identifier"],
-              type: @attrs["xsi:type"] || @attrs["type"],
-              source: nil,
-              target: nil,
-              relationship: nil,
-              name: @connection_name,
-              style: @style,
-              bendpoints: @bendpoints,
-              documentation: documentation,
-              properties: properties
-            )
             [
               event(:on_connection, connection),
               event(:on_referenceable, connection),
-              event(:on_future, Sax::FutureReference.new(connection, :source, @attrs["source"])),
-              event(:on_future, Sax::FutureReference.new(connection, :target, @attrs["target"])),
-              event(:on_future, Sax::FutureReference.new(connection, :relationship, @attrs["relationshipRef"] || @attrs["relationshipref"]))
+              event(:on_future,
+                    Sax::FutureReference.new(connection, :source, attrs["source"])),
+              event(:on_future,
+                    Sax::FutureReference.new(connection, :target, attrs["target"])),
+              event(:on_future,
+                    Sax::FutureReference.new(connection,
+                                             :relationship,
+                                             attrs["relationshipRef"] || attrs["relationshipref"]))
             ]
           end
 
-          def on_location(location, source)
+          def on_location(location, _source)
             @bendpoints << location
             false
           end
 
-          def on_style(style, source)
+          def on_style(style, _source)
             @style = style
             false
           end
 
-          def on_lang_string(name, source)
+          def on_lang_string(name, _source)
             @connection_name = name
             false
+          end
+
+          private
+
+          def connection
+            @connection ||= DataModel::Connection.new(id: attrs["identifier"],
+                                                      type: attrs["xsi:type"] || attrs["type"],
+                                                      source: nil,
+                                                      target: nil,
+                                                      relationship: nil,
+                                                      name: @connection_name,
+                                                      style: @style,
+                                                      bendpoints: @bendpoints,
+                                                      documentation: documentation,
+                                                      properties: properties)
           end
         end
       end

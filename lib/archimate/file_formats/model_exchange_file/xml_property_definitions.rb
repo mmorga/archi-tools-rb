@@ -12,14 +12,16 @@ module Archimate
         def serialize(xml)
           return if @property_definitions.empty?
           xml.propertyDefinitions do
-            @property_definitions.each do |property_def|
-              xml.propertyDefinition(
-                "identifier" => property_def.id,
-                "type" => property_def.type
-              ) do
-                ModelExchangeFile::XmlLangString.new(property_def.name, :name).serialize(xml)
-              end
-            end
+            @property_definitions.each { |property_def| serialize_property_definition(xml, property_def) }
+          end
+        end
+
+        def serialize_property_definition(xml, property_def)
+          xml.propertyDefinition(
+            "identifier" => property_def.id,
+            "type" => property_def.type
+          ) do
+            ModelExchangeFile::XmlLangString.new(property_def.name, :name).serialize(xml)
           end
         end
       end

@@ -4,7 +4,7 @@ module Archimate
   module FileFormats
     module Archi
       module CaptureDocumentation
-        def on_preserved_lang_string(documentation, source)
+        def on_preserved_lang_string(documentation, _source)
           @documentation = documentation
           false
         end

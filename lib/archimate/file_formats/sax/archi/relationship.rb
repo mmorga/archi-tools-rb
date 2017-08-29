@@ -10,10 +10,22 @@ module Archimate
 
           def initialize(name, attrs, parent_handler)
             super
+            @relationship = nil
           end
 
           def complete
-            relationship = DataModel::Relationship.new(
+            [
+              event(:on_relationship, relationship),
+              event(:on_referenceable, relationship),
+              event(:on_future, Sax::FutureReference.new(relationship, :source, @attrs["source"])),
+              event(:on_future, Sax::FutureReference.new(relationship, :target, @attrs["target"]))
+            ]
+          end
+
+          private
+
+          def relationship
+            @relationship ||= DataModel::Relationship.new(
               id: @attrs["id"],
               type: element_type,
               source: nil,
@@ -23,12 +35,6 @@ module Archimate
               documentation: documentation,
               properties: properties
             )
-            [
-              event(:on_relationship, relationship),
-              event(:on_referenceable, relationship),
-              event(:on_future, Sax::FutureReference.new(relationship, :source, @attrs["source"])),
-              event(:on_future, Sax::FutureReference.new(relationship, :target, @attrs["target"]))
-            ]
           end
 
           def parse_access_type(val)

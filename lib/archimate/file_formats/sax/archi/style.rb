@@ -5,8 +5,20 @@ module Archimate
     module Sax
       module Archi
         module Style
+          def initialize(name, attrs, parent_handler)
+            super
+            @style_hash = nil
+          end
+
           def style
-            style_hash = {
+            return nil if style_hash.empty?
+            DataModel::Style.new(style_hash)
+          end
+
+          private
+
+          def style_hash
+            @style_hash ||= {
               text_alignment: attrs["textAlignment"],
               fill_color: DataModel::Color.rgba(attrs["fillColor"]),
               line_color: DataModel::Color.rgba(attrs["lineColor"]),
@@ -15,8 +27,6 @@ module Archimate
               line_width: attrs["lineWidth"],
               text_position: attrs["textPosition"]
             }.delete_if { |_k, v| v.nil? }
-            return nil if style_hash.empty?
-            DataModel::Style.new(style_hash)
           end
         end
       end

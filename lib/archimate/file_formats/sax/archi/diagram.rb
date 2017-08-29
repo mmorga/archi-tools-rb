@@ -12,7 +12,22 @@ module Archimate
             super
             @view_nodes = []
             @connections = []
-            @diagram = DataModel::Diagram.new(
+            @diagram = nil
+          end
+
+          def complete
+            diagram.documentation = documentation
+            diagram.properties = properties
+            diagram.nodes = @view_nodes
+            diagram.connections = @connections
+            [
+              event(:on_diagram, diagram),
+              event(:on_referenceable, diagram)
+            ]
+          end
+
+          def diagram
+            @diagram ||= DataModel::Diagram.new(
               id: @attrs["id"],
               name: DataModel::LangString.string(process_text(@attrs["name"])),
               viewpoint_type: parse_viewpoint_type(@attrs["viewpoint"]),
@@ -22,19 +37,6 @@ module Archimate
               background: @attrs["background"]
             )
           end
-
-          def complete
-            @diagram.documentation = documentation
-            @diagram.properties = properties
-            @diagram.nodes = @view_nodes
-            @diagram.connections = @connections
-            [
-              event(:on_diagram, diagram),
-              event(:on_referenceable, diagram)
-            ]
-          end
-
-          attr_reader :diagram
 
           def on_view_node(view_node, source)
             @view_nodes << view_node if source.parent_handler == self

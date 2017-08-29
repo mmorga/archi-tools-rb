@@ -15,9 +15,9 @@ module Archimate
 
         def complete
           doc = DataModel::PreservedLangString.string(
-                process_text(@characters_stack.join("")),
-                @attrs["lang"] || @attrs["xml:lang"]
-              )
+            process_text(content),
+            @attrs["lang"] || @attrs["xml:lang"]
+          )
           [
             event(
               :on_preserved_lang_string,

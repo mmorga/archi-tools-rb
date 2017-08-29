@@ -10,20 +10,24 @@ module Archimate
 
           def initialize(name, attrs, parent_handler)
             super
+            @element = nil
           end
 
           def complete
-            element = DataModel::Element.new(
-              id: @attrs["id"],
-              name: DataModel::LangString.string(process_text(@attrs["name"])),
-              type: element_type,
-              documentation: documentation,
-              properties: properties
-            )
             [
               event(:on_element, element),
               event(:on_referenceable, element)
             ]
+          end
+
+          private
+
+          def element
+            @element ||= DataModel::Element.new(id: @attrs["id"],
+                                                name: DataModel::LangString.string(process_text(@attrs["name"])),
+                                                type: element_type,
+                                                documentation: documentation,
+                                                properties: properties)
           end
         end
       end

@@ -13,7 +13,7 @@ module Archimate
           return unless @lang_str && !@lang_str.empty?
 
           @lang_str.langs.each do |lang|
-            attrs = lang && !lang.empty? ? {"xml:lang" => lang} : {}
+            attrs = lang && !lang.empty? ? { "xml:lang" => lang } : {}
             xml.send(@tag_name, attrs) { xml.text text_proc(@lang_str.by_lang(lang)) }
           end
         end

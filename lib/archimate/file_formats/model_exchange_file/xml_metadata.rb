@@ -9,7 +9,7 @@ module Archimate
         end
 
         def serialize(xml)
-          return unless @metadata && @metadata.schema_infos.size > 0
+          return unless @metadata && !@metadata.schema_infos.empty?
           xml.metadata do
             if @metadata.schema_infos.size == 1
               serialize_schema_info_body(xml, @metadata.schema_infos.first)
@@ -30,28 +30,31 @@ module Archimate
         end
 
         def serialize_schema_info_body(xml, schema_info)
-          xml.schema { xml.text (schema_info.schema) } if schema_info.schema
-          xml.schemaversion { xml.text (schema_info.schemaversion) } if schema_info.schemaversion
+          xml.schema { xml.text schema_info.schema } if schema_info.schema
+          xml.schemaversion { xml.text schema_info.schemaversion } if schema_info.schemaversion
           schema_info.elements.each do |el|
             serialize_any_element(xml, el)
           end
         end
 
         def serialize_any_element(xml, el)
-          if el.prefix && !el.prefix.empty?
-            xml_prefix = xml[el.prefix]
-          else
-            xml_prefix = xml
-          end
-          xml_prefix.send(el.element.to_sym, serialize_any_attributes(el.attributes)) do
-            xml.text(el.content) if el.content&.size > 0
+          xml_prefix(xml, el).send(el.element.to_sym, serialize_any_attributes(el.attributes)) do
+            xml.text(el.content) if el.content&.size&.positive?
             el.children.each { |child| serialize_any_element(xml, child) }
+          end
+        end
+
+        def xml_prefix(xml, el)
+          if el.prefix && !el.prefix.empty?
+            xml[el.prefix]
+          else
+            xml
           end
         end
 
         def serialize_any_attributes(attrs)
           attrs.each_with_object({}) do |attr, hash|
-            key = attr.prefix&.size > 0 ? [attr.prefix, attr.attribute].join(":") : attr.attribute
+            key = attr.prefix&.size&.positive? ? [attr.prefix, attr.attribute].join(":") : attr.attribute
             hash[key] = attr.value
           end
         end

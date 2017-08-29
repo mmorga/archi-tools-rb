@@ -10,13 +10,24 @@ module Archimate
           end
 
           def complete
-            color = DataModel::Color.new(
-              r: attrs["r"]&.to_i,
-              g: attrs["g"]&.to_i,
-              b: attrs["b"]&.to_i,
-              a: attrs["a"]&.to_i
-            )
-            [event("on_#{@name}".to_sym, color)]
+            [
+              event(
+                event_name,
+                DataModel::Color.new(
+                  %w[r g b a].each_with_object({}) { |attr, hash| hash[attr.to_sym] = attrs[attr]&.to_i }
+                )
+              )
+            ]
+          end
+
+          private
+
+          def event_name
+            "on_#{snake_case(@name)}".to_sym
+          end
+
+          def snake_case(str)
+            str.gsub(/([A-Z])/, '_\1').downcase
           end
         end
       end

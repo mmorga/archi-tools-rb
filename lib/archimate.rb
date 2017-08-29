@@ -99,6 +99,7 @@ module Archimate
         autoload :PropertyDefinition, 'archimate/file_formats/sax/model_exchange_file/property_definition'
         autoload :Relationship, 'archimate/file_formats/sax/model_exchange_file/relationship'
         autoload :Schema, 'archimate/file_formats/sax/model_exchange_file/schema'
+        autoload :SchemaInfo, 'archimate/file_formats/sax/model_exchange_file/schema_info'
         autoload :Style, 'archimate/file_formats/sax/model_exchange_file/style'
         autoload :ViewNode, 'archimate/file_formats/sax/model_exchange_file/view_node'
       end

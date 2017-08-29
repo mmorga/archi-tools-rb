@@ -11,17 +11,10 @@ module Archimate
             super
             @child_items = []
             @child_organizations = []
+            @organization = nil
           end
 
           def complete
-            organization = DataModel::Organization.new(
-              id: @attrs["id"],
-              name: DataModel::LangString.string(process_text(@attrs["name"])),
-              type: @attrs["type"],
-              documentation: documentation,
-              items: @child_items,
-              organizations: @child_organizations
-            )
             [
               event(:on_organization, organization),
               event(:on_referenceable, organization)
@@ -46,6 +39,19 @@ module Archimate
           def on_relationship(relationship, source)
             @child_items << relationship if source.parent_handler == self
             relationship
+          end
+
+          private
+
+          def organization
+            @organization ||= DataModel::Organization.new(id: @attrs["id"],
+                                                          name: DataModel::LangString.string(
+                                                            process_text(@attrs["name"])
+                                                          ),
+                                                          type: @attrs["type"],
+                                                          documentation: documentation,
+                                                          items: @child_items,
+                                                          organizations: @child_organizations)
           end
         end
       end

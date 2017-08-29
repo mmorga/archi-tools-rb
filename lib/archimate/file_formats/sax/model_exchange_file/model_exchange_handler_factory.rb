@@ -3,63 +3,51 @@
 module Archimate
   module FileFormats
     module Sax
-    module ModelExchangeFile
-      class ModelExchangeHandlerFactory
-        def handler_for(name, attrs)
-          case name
-          when "model"
-            Model
-          when "documentation", "purpose"
-            Sax::PreservedLangString
-          when "metadata"
-            Metadata
-          when "schema", "schemaversion", "textPosition"
-            Sax::ContentElement
-          when "schemaInfo"
-            SchemaInfo
-          when "name", "value", "label"
-            Sax::LangString
-          when "properties",
-               "elements",
-               "relationships",
-               "organization",
-               "organizations",
-               "propertydefs",
-               "propertyDefinitions",
-               "views",
-               "diagrams"
-            Sax::NoOp
-          when "property"
-            Property
-          when "element"
-            Element
-          when "relationship"
-            Relationship
-          when "item"
-            Item
-          when "propertydef",
-               "propertyDefinition"
-            PropertyDefinition
-          when "view"
-            Diagram
-          when "node"
-            ViewNode
-          when "style"
-            Style
-          when "fillColor", "lineColor", "color"
-            Color
-          when "connection"
-            Connection
-          when "bendpoint"
-            Location
-          when "font"
-            Font
-          else
-            Sax::AnyElement
+      module ModelExchangeFile
+        ELEMENT_CLASS = Hash.new(Sax::AnyElement).merge(
+          "model" => Model,
+          "documentation" => Sax::PreservedLangString,
+          "purpose" => Sax::PreservedLangString,
+          "metadata" => Metadata,
+          "schema" => Sax::ContentElement,
+          "schemaversion" => Sax::ContentElement,
+          "textPosition" => Sax::ContentElement,
+          "schemaInfo" => SchemaInfo,
+          "name" => Sax::LangString,
+          "value" => Sax::LangString,
+          "label" => Sax::LangString,
+          "properties" => Sax::NoOp,
+          "elements" => Sax::NoOp,
+          "relationships" => Sax::NoOp,
+          "organization" => Sax::NoOp,
+          "organizations" => Sax::NoOp,
+          "propertydefs" => Sax::NoOp,
+          "propertyDefinitions" => Sax::NoOp,
+          "views" => Sax::NoOp,
+          "diagrams" => Sax::NoOp,
+          "property" => Property,
+          "element" => Element,
+          "relationship" => Relationship,
+          "item" => Item,
+          "propertydef" => PropertyDefinition,
+          "propertyDefinition" => PropertyDefinition,
+          "view" => Diagram,
+          "node" => ViewNode,
+          "style" => Style,
+          "fillColor" => Color,
+          "lineColor" => Color,
+          "color" => Color,
+          "connection" => Connection,
+          "bendpoint" => Location,
+          "font" => Font
+        )
+
+        class ModelExchangeHandlerFactory
+          def handler_for(name, _attrs)
+            ELEMENT_CLASS[name]
           end
         end
       end
     end
   end
-end
 end

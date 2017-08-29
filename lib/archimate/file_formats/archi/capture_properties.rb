@@ -4,7 +4,7 @@ module Archimate
   module FileFormats
     module Archi
       module CaptureProperties
-        def on_property(property, source)
+        def on_property(property, _source)
           @properties ||= []
           @properties << property
           false
