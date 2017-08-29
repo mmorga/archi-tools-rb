@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "scanf"
 
 module Archimate
   module FileFormats
@@ -49,10 +50,14 @@ module Archimate
           end
 
           def parse_viewpoint_type(viewpoint_idx)
-            return nil unless viewpoint_idx
-            viewpoint_idx = viewpoint_idx.to_i
-            return nil if viewpoint_idx.nil?
-            ArchimateV2::VIEWPOINTS[viewpoint_idx]
+            case viewpoint_idx
+            when String
+              idx = viewpoint_idx.scanf("%d").first
+              return nil unless idx
+              ArchimateV2::VIEWPOINTS[idx]
+            else
+              nil
+            end
           end
         end
       end

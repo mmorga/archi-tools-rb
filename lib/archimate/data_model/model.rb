@@ -148,9 +148,7 @@ module Archimate
       end
 
       def find_in_organizations(item, _fs = nil)
-        result = find_by_class(DataModel::Organization).select { |f| f.items.include?(item.id) }
-        # raise "Program Error! #{item.id} is located in more than one organization. #{result.map(&:to_s).inspect}\n#{item}\n" if result.size > 1
-        result.empty? ? nil : result.first
+        find_by_class(DataModel::Organization).select { |f| f.items.include?(item.id) }.first
       end
 
       def default_organization_for(item)

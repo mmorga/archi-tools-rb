@@ -66,13 +66,6 @@ module Archimate
               diagram: diagram
             )
           end
-
-          def parse_viewpoint_type(viewpoint_idx)
-            return nil unless viewpoint_idx
-            viewpoint_idx = viewpoint_idx.to_i
-            return nil if viewpoint_idx.nil?
-            ArchimateV2::VIEWPOINTS[viewpoint_idx]
-          end
         end
       end
     end
