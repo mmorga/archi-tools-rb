@@ -9,8 +9,8 @@ module Archimate
       end
 
       def parse()
-        handler_factory = Archi::ArchiHandlerFactory.new
-        parser = Nokogiri::XML::SAX::Parser.new(ArchiSaxDocument.new(handler_factory))
+        handler_factory = Sax::Archi::ArchiHandlerFactory.new
+        parser = Nokogiri::XML::SAX::Parser.new(Sax::Document.new(handler_factory))
         parser.parse(@string_or_io)
         parser.document.model
       end

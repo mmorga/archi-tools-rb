@@ -9,7 +9,7 @@ module Archimate
       end
 
       def parse()
-        handler_factory = ModelExchangeFile::ModelExchangeHandlerFactory.new
+        handler_factory = Sax::ModelExchangeFile::ModelExchangeHandlerFactory.new
         parser = Nokogiri::XML::SAX::Parser.new(Sax::Document.new(handler_factory))
         parser.parse(@string_or_io)
         parser.document.model

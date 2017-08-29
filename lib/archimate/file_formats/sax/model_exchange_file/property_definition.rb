@@ -2,6 +2,7 @@
 
 module Archimate
   module FileFormats
+    module Sax
     module ModelExchangeFile
       class PropertyDefinition < FileFormats::Sax::Handler
         include Sax::CaptureDocumentation
@@ -31,4 +32,5 @@ module Archimate
       end
     end
   end
+end
 end

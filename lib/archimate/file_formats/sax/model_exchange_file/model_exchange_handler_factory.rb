@@ -2,6 +2,7 @@
 
 module Archimate
   module FileFormats
+    module Sax
     module ModelExchangeFile
       class ModelExchangeHandlerFactory
         def handler_for(name, attrs)
@@ -60,4 +61,5 @@ module Archimate
       end
     end
   end
+end
 end

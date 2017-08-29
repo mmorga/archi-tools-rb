@@ -2,6 +2,7 @@
 
 module Archimate
   module FileFormats
+    module Sax
     module ModelExchangeFile
       class Property < FileFormats::Sax::Handler
         def initialize(name, attrs, parent_handler)
@@ -24,4 +25,5 @@ module Archimate
       end
     end
   end
+end
 end
