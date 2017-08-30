@@ -69,6 +69,7 @@ module Archimate
           end
 
           def on_referenceable(referenceable, _source)
+            return unless referenceable.id
             @index[referenceable.id] = referenceable
           end
 
@@ -85,12 +86,16 @@ module Archimate
 
           def process_futures
             @futures.each do |future|
+              next unless future.id
               future.obj.send(
                 "#{future.attr}=".to_sym,
                 if future.id.is_a?(Array)
-                  future.id.map { |id| @index[id] }
+                  future.id.map do |id|
+                    raise "Error processing futures for array. id was nil" unless id
+                    @index[id]
+                  end
                 else
-                  @index[future.id]
+                  future.id ? @index[future.id] : nil
                 end
               )
             end

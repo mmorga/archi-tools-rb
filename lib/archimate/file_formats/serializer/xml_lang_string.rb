@@ -2,7 +2,7 @@
 
 module Archimate
   module FileFormats
-    module ModelExchangeFile
+    module Serializer
       class XmlLangString
         def initialize(lang_str, tag_name)
           @tag_name = tag_name

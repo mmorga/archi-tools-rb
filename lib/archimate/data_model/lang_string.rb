@@ -9,8 +9,8 @@ module Archimate
       include Comparison
       extend Forwardable
 
-      def_delegators :@default_text, :strip, :tr, :+, :gsub, :sub, :downcase, :empty?, :split
-      def_delegators :@lang_hash, :size
+      def_delegators :@default_text, :strip, :tr, :+, :gsub, :sub, :downcase, :empty?, :split, :size, :include?
+      # def_delegators :@lang_hash, :size
 
       model_attr :lang_hash # Strict::Hash
       model_attr :default_lang # Strict::String.optional.default(nil)

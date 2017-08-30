@@ -2,7 +2,7 @@
 
 module Archimate
   module FileFormats
-    module ModelExchangeFile
+    module Serializer
       # Property Definitions as defined in ArchiMate 2.1 Model Exchange XSDs
       class XmlPropertyDefs
         def initialize(property_defs)

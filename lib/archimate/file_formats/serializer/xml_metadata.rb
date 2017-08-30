@@ -2,7 +2,7 @@
 
 module Archimate
   module FileFormats
-    module ModelExchangeFile
+    module Serializer
       class XmlMetadata
         def initialize(metadata)
           @metadata = metadata
