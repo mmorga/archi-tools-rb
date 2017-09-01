@@ -23,19 +23,19 @@ module Archimate
 
       def test_layer
         el = build_element(id: "abc123", type: "BusinessRole", name: "Thing")
-        assert_equal "Business", el.layer
+        assert_equal Layers::Business, el.layer
         el = Element.new(el.to_h.merge(type: "DataObject"))
-        assert_equal "Application", el.layer
+        assert_equal Layers::Application, el.layer
         el = Element.new(el.to_h.merge(type: "Device"))
-        assert_equal "Technology", el.layer
+        assert_equal Layers::Technology, el.layer
         el = Element.new(el.to_h.merge(type: "Goal"))
-        assert_equal "Motivation", el.layer
+        assert_equal Layers::Motivation, el.layer
         el = Element.new(el.to_h.merge(type: "Gap"))
-        assert_equal "Implementation and Migration", el.layer
+        assert_equal Layers::Implementation_and_migration, el.layer
         el = Element.new(el.to_h.merge(type: "Junction"))
-        assert_equal "Connectors", el.layer
+        assert_equal Layers::Connectors, el.layer
         el = Element.new(el.to_h.merge(type: "Bogus"))
-        assert_equal "None", el.layer
+        assert_equal Layers::None, el.layer
       end
 
       def test_composed_by

@@ -38,12 +38,10 @@ module Archimate
   end
 
   module FileFormats
-    autoload :ArchimateV2, 'archimate/file_formats/archimate_v2'
     autoload :ArchiFileFormat, 'archimate/file_formats/archi_file_format'
     autoload :ArchiFileReader, 'archimate/file_formats/archi_file_reader'
     autoload :ArchiSaxDocument, 'archimate/file_formats/archi_sax_document'
     autoload :ArchiFileWriter, 'archimate/file_formats/archi_file_writer'
-    autoload :ModelExchangeFileFormat, 'archimate/file_formats/model_exchange_file_format'
     autoload :ModelExchangeFileReader, 'archimate/file_formats/model_exchange_file_reader'
     autoload :ModelExchangeFileWriter21, 'archimate/file_formats/model_exchange_file_writer_21'
     autoload :ModelExchangeFileWriter30, 'archimate/file_formats/model_exchange_file_writer_30'

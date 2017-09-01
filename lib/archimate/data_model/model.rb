@@ -155,24 +155,24 @@ module Archimate
         case item
         when Element
           case item.layer
-          when "Strategy"
+          when Layers::Strategy
             find_default_organization("strategy", "Strategy")
-          when "Business"
+          when Layers::Business
             find_default_organization("business", "Business")
-          when "Application"
+          when Layers::Application
             find_default_organization("application", "Application")
-          when "Technology"
+          when Layers::Technology
             find_default_organization("technology", "Technology")
-          when "Physical"
+          when Layers::Physical
             find_default_organization("physical", "Physical")
-          when "Motivation"
+          when Layers::Motivation
             find_default_organization("motivation", "Motivation")
-          when "Implementation and Migration"
+          when Layers::Implementation_and_migration
             find_default_organization("implementation_migration", "Implementation & Migration")
-          when "Connectors"
+          when Layers::Connectors
             find_default_organization("connectors", "Connectors")
           else
-            raise StandardError, "Unexpected Element Layer: #{item.layer.inspect} for item type #{item.type.inspect}"
+            raise StandardError, "Unexpected Element Layer: #{item.layer} for item type #{item.type}"
           end
         when Relationship
           find_default_organization("relations", "Relations")

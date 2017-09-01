@@ -12,7 +12,7 @@ module Archimate
                 "id" => diagram.id,
                 "name" => diagram.name,
                 "connectionRouterType" => diagram.connection_router_type,
-                "viewpoint" => ArchiFileFormat::VIEWPOINTS.index(diagram.viewpoint_type)&.to_s,
+                "viewpoint" => ViewpointType.values.index(diagram.viewpoint_type)&.to_s,
                 "background" => diagram.background
               )
             ) do

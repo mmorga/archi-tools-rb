@@ -2,29 +2,6 @@
 
 module Archimate
   module DataModel
-    ElementTypeEnum = %w[BusinessActor BusinessRole BusinessCollaboration BusinessInterface
-                         BusinessProcess BusinessFunction BusinessInteraction BusinessEvent BusinessService
-                         BusinessObject Contract Representation Product
-                         ApplicationComponent ApplicationCollaboration ApplicationInterface ApplicationFunction
-                         ApplicationInteraction ApplicationProcess ApplicationEvent ApplicationService DataObject
-                         Node Device SystemSoftware TechnologyCollaboration TechnologyInterface Path
-                         CommunicationNetwork TechnologyFunction TechnologyProcess TechnologyInteraction
-                         TechnologyEvent TechnologyService Artifact Equipment Facility DistributionNetwork Material
-                         Stakeholder Driver Assessment Goal Outcome
-                         Principle Requirement Constraint Meaning Value
-                         Resource Capability CourseOfAction
-                         WorkPackage Deliverable ImplementationEvent Plateau Gap
-                         Grouping Location
-                         AndJunction OrJunction].freeze
-
-    CompositeTypeEnum = %w[Grouping Location].freeze
-
-    RelationshipConnectorEnum = %w[AndJunction OrJunction].freeze
-
-    ElementEnumType = [].concat([ElementTypeEnum, CompositeTypeEnum, RelationshipConnectorEnum]).freeze
-
-    ElementType = String # Strict::String.enum(*ElementEnumType)
-
     # A base element type that can be extended by concrete ArchiMate types.
     #
     # Note that ElementType is abstract, so one must have derived types of this type. this is indicated in xml
@@ -56,7 +33,7 @@ module Archimate
       end
 
       def layer
-        Constants::ELEMENT_LAYER.fetch(type, "None")
+        Layers.for_element(type)
       end
 
       # Diagrams that this element is referenced in.

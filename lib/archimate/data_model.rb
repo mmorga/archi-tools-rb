@@ -5,8 +5,14 @@ module Archimate
     # Enumeration of Influence Strength types. These are suggestions.
     # InfluenceStrengthEnum = String # Strict::String.enum(%w[+ ++ - -- 0 1 2 3 4 5 6 7 8 9 10])
 
+    require 'archimate/data_model/connector_type'
+    require 'archimate/data_model/diagram_type'
+    require 'archimate/data_model/element_type'
+    require 'archimate/data_model/relationship_type'
     require 'archimate/data_model/comparison'
-    require 'archimate/data_model/constants'
+    require 'archimate/data_model/layer'
+    require 'archimate/data_model/layers'
+    require 'archimate/data_model/viewpoint_type'
     require 'archimate/data_model/any_attribute'
     require 'archimate/data_model/any_element'
     require 'archimate/data_model/lang_string'

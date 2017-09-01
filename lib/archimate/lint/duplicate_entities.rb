@@ -86,8 +86,8 @@ module Archimate
       end
 
       def entity_hash_name(entity)
-        layer = DataModel::Constants::ELEMENT_LAYER.fetch(entity.type, nil)
-        layer_sort_order = layer ? DataModel::Constants::LAYER_ELEMENTS.keys.index(layer) : 9
+        layer = DataModel::Layers.for_element(entity.type)
+        layer_sort_order = layer ? DataModel::Layers.find_index(layer) : 9
         [
           entity.class.name, # Taking advantage of Element being before Relationship
           layer_sort_order.to_s,

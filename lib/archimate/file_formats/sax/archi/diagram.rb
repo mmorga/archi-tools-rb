@@ -54,7 +54,7 @@ module Archimate
             when String
               idx = viewpoint_idx.scanf("%d").first
               return nil unless idx
-              ArchimateV2::VIEWPOINTS[idx]
+              Serializer::Archi::ViewpointType.values[idx]
             else
               nil
             end

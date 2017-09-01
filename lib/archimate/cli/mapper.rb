@@ -28,7 +28,7 @@ module Archimate
                    when "archimate:SketchModel"
                      "Sketch"
                    when "archimate:ArchimateDiagramModel"
-                     DataModel::Constants::VIEWPOINTS[(row[2] || 0).to_i]
+                     DataModel::ViewpointType.values[(row[2] || 0).to_i].to_s
                    else
                      row[3]
                    end

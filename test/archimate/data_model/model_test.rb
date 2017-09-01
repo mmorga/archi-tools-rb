@@ -244,15 +244,13 @@ module Archimate
       end
 
       def test_organize
-        # skip("Until I either re-implement or remove the organize method")
         model = build_model
         assert_empty model.organizations
 
-        layer_els = Archimate::DataModel::Constants::LAYER_ELEMENTS
-        (1..layer_els.size).each do |i|
+        Layers.values.each_with_index do |layer, i|
           model = build_model(
-            elements: (0..(i - 1)).map do |idx|
-              build_element(type: layer_els[layer_els.keys[idx]][0])
+            elements: (0..i - 1).map do |idx|
+              build_element(type: Layers.values[idx].elements.first)
             end
           )
           assert_equal i, model.organizations.size

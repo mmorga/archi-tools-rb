@@ -12,7 +12,7 @@ module Archimate
       # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
       model_attr :type # Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
       model_attr :properties, writable: true # Strict::Array.member(Property).default([])
-      model_attr :viewpoint_type # Strict::String.optional.default(nil) # TODO: ViewpointType.optional is better, but is ArchiMate version dependent. Need to figure that out
+      model_attr :viewpoint_type # TODO: make this a ViewpointType, Strict::String.optional.default(nil) # TODO: ViewpointType.optional is better, but is ArchiMate version dependent. Need to figure that out
       model_attr :viewpoint # Viewpoint.optional.default(nil)
       model_attr :nodes, writable: true # Strict::Array.member(ViewNode).default([])
       model_attr :connection_router_type # Coercible::Int.optional.default(nil) # TODO: Archi formats only fill this in, should be an enum

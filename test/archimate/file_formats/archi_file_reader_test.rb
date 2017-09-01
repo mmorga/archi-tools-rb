@@ -64,10 +64,10 @@ module Archimate
       end
 
       def test_relationships
-        assert_equal 178, model.relationships.size
         model.relationships.each do |el|
           assert_kind_of DataModel::Relationship, el
         end
+        assert_equal 178, model.relationships.size
       end
 
       def test_read_diagrams

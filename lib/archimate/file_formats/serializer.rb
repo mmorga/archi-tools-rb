@@ -20,6 +20,7 @@ module Archimate
         autoload :Property, 'archimate/file_formats/serializer/archi/property'
         autoload :Relationship, 'archimate/file_formats/serializer/archi/relationship'
         autoload :ViewNode, 'archimate/file_formats/serializer/archi/view_node'
+        autoload :ViewpointType, 'archimate/file_formats/serializer/archi/viewpoint_type'
       end
       module ModelExchangeFile
         autoload :Element, 'archimate/file_formats/serializer/model_exchange_file/element'

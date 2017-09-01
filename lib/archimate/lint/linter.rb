@@ -13,8 +13,6 @@ module Archimate
     # [x] warn about names with (copy)
     # [x] blank element names
     class Linter
-      # include FileFormats::ArchimateV2
-
       attr_reader :model
 
       def initialize(model)
@@ -91,8 +89,8 @@ module Archimate
       def invalid_for_viewpoint
         model.diagrams.each_with_object([]) do |diagram, errors|
           next if diagram.total_viewpoint?
-          valid_entity_types = FileFormats::ArchimateV2::VIEWPOINTS[diagram.viewpoint_type][:entities]
-          valid_relation_types = FileFormats::ArchimateV2::VIEWPOINTS[diagram.viewpoint_type][:relations]
+          valid_entity_types = DataModel::ViewpointType::VIEWPOINTS[diagram.viewpoint_type][:entities]
+          valid_relation_types = DataModel::ViewpointType::VIEWPOINTS[diagram.viewpoint_type][:relations]
           invalid_elements = diagram.all_nodes.reject do |child|
             child.element&.type.nil? || valid_entity_types.include?(child.element&.type)
           end

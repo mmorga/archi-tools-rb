@@ -2,22 +2,6 @@
 
 module Archimate
   module DataModel
-    RELATIONSHIP_TYPE_ENUM = %w[
-      Composition
-      Aggregation
-      Assignment
-      Realization
-      Serving
-      Access
-      Influence
-      Triggering
-      Flow
-      Specialization
-      Association
-    ].freeze
-
-    RelationshipType = String # Strict::String.enum(*RELATIONSHIP_TYPE_ENUM)
-
     ACCESS_TYPE = %w[Access Read Write ReadWrite].freeze
     AccessTypeEnum = String # Strict::String.enum(*ACCESS_TYPE)
 
@@ -67,7 +51,7 @@ module Archimate
       def description
         [
           name.nil? ? nil : "#{name}:",
-          FileFormats::ArchimateV2::RELATION_VERBS.fetch(type, nil)
+          RELATION_VERBS.fetch(type, nil)
         ].compact.join(" ")
       end
 

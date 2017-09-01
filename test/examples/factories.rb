@@ -325,12 +325,12 @@ module Archimate
 
       def random_element_type
         @random ||= Random.new(Random.new_seed)
-        DataModel::Constants::ELEMENTS[@random.rand(DataModel::Constants::ELEMENTS.size)]
+        DataModel::ElementType.values[@random.rand(DataModel::ElementType.values.size)]
       end
 
       def random_relationship_type
         @random ||= Random.new(Random.new_seed)
-        DataModel::Constants::RELATIONSHIPS[@random.rand(DataModel::Constants::RELATIONSHIPS.size)]
+        DataModel::RelationshipType.values[@random.rand(DataModel::RelationshipType.values.size)]
       end
     end
   end

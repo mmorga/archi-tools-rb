@@ -14,12 +14,12 @@ module Archimate
             when "element"
               element_type = Hash[attrs]["xsi:type"].sub(/archimate:/, '')
               case element_type
-              when ArchimateV2::Entity, ArchimateV2::Junction
+              when DataModel::ElementType, DataModel::ConnectorType
                 Element
-              when ArchimateV2::Relationship
-                Relationship
-              when ArchimateV2::Diagram
+              when DataModel::DiagramType
                 Diagram
+              when DataModel::RelationshipType
+                Relationship
               else
                 raise "Unexpected element_type #{element_type}"
               end
