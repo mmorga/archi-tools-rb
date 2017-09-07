@@ -5,19 +5,36 @@ module Archimate
     class Diagram
       include Comparison
 
-      model_attr :id # Identifier
-      model_attr :name # LangString
-      model_attr :documentation, writable: true # PreservedLangString.optional.default(nil)
-      # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
-      # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
-      model_attr :type # Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
-      model_attr :properties, writable: true # Strict::Array.member(Property).default([])
-      model_attr :viewpoint_type # TODO: make this a ViewpointType, Strict::String.optional.default(nil) # TODO: ViewpointType.optional is better, but is ArchiMate version dependent. Need to figure that out
-      model_attr :viewpoint # Viewpoint.optional.default(nil)
-      model_attr :nodes, writable: true # Strict::Array.member(ViewNode).default([])
-      model_attr :connection_router_type # Coercible::Int.optional.default(nil) # TODO: Archi formats only fill this in, should be an enum
-      model_attr :background # Coercible::Int.optional.default(nil) # value of 0 on Archi Sketch Model
-      model_attr :connections, writable: true # Strict::Array.member(Connection).default([])
+      # @return [String]
+      model_attr :id
+      # @return [LangString]
+      model_attr :name, writable: true
+      # @return [PreservedLangString, NilClass]
+      model_attr :documentation, writable: true
+      # # @return [Array<AnyElement>]
+      # model_attr :other_elements
+      # # @return [Array<AnyAttribute>]
+      # model_attr :other_attributes
+      # @note type here was used for the Element/Relationship/Diagram type
+      # @return [String, NilClass]
+      model_attr :type
+      # @return [Array<Property>]
+      model_attr :properties, writable: true
+      # @todo make this a ViewpointType is better but is Archimate specification version dependent
+      # @return [String, NilClass]
+      model_attr :viewpoint_type
+      # @return [Viewpoint, NilClass]
+      model_attr :viewpoint
+      # @return [Array<ViewNode>]
+      model_attr :nodes, writable: true
+      # @todo Archi formats only fill this in, should be an enum
+      # @return [Int, NilClass]
+      model_attr :connection_router_type
+      # value of 0 on Archi Sketch Model
+      # @return [Int, NilClass]
+      model_attr :background
+      # @return [Array<Connection>]
+      model_attr :connections, writable: true
 
       def initialize(id:, name:, documentation: nil, type: nil, properties: [],
                      viewpoint_type: nil, viewpoint: nil, nodes: [],

@@ -19,20 +19,35 @@ module Archimate
     class Connection
       include Comparison
 
-      model_attr :id # Identifier
-      model_attr :name # LangString.optional
-      model_attr :documentation # PreservedLangString.optional.default(nil)
-      # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
-      # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
-      model_attr :type # Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
-      model_attr :source_attachment # Location.optional.default(nil)
-      model_attr :bendpoints # Strict::Array.member(Location).default([])
-      model_attr :target_attachment # Location.optional.default(nil)
-      model_attr :source, comparison_attr: :id, writable: true # Dry::Struct.optional.default(nil) # ViewNode
-      model_attr :target, comparison_attr: :id, writable: true # Dry::Struct.optional.default(nil) # ViewNode
-      model_attr :relationship, comparison_attr: :id, writable: true # Relationship.optional.default(nil)
-      model_attr :style # Style.optional.default(nil)
-      model_attr :properties # Strict::Array.member(Property).default([])
+      # @return [String]
+      model_attr :id
+      # @return [LangString, NilClass]
+      model_attr :name
+      # @return [PreservedLangString, NilClass]
+      model_attr :documentation
+      # # @return [Array<AnyElement>]
+      model_attr :other_elements
+      # # @return [Array<AnyAttribute>]
+      model_attr :other_attributes
+      # @note type here was used for the Element/Relationship/Diagram type
+      # @return [String, NilClass]
+      model_attr :type
+      # @return [Location, NilClass]
+      model_attr :source_attachment
+      # @return [Array<Location>]
+      model_attr :bendpoints
+      # @return [Location, NilClass]
+      model_attr :target_attachment
+      # @return [ViewNode, NilClass]
+      model_attr :source, comparison_attr: :id, writable: true
+      # @return [ViewNode, NilClass]
+      model_attr :target, comparison_attr: :id, writable: true
+      # @return [Relationship, NilClass]
+      model_attr :relationship, comparison_attr: :id, writable: true
+      # @return [Style, NilClass]
+      model_attr :style
+      # @return [Array<Property>]
+      model_attr :properties
 
       def initialize(id:, name: nil, documentation: nil, type: nil,
                      source_attachment: nil, bendpoints: [], target_attachment: nil,

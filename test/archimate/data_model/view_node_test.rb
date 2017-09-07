@@ -57,9 +57,9 @@ module Archimate
       end
 
       def test_connections
-        connections = @model.find_by_class(Connection)
+        connections = @model.send(:find_by_class, Connection)
         assert connections.size.positive?
-        nodes = @model.find_by_class(ViewNode)
+        nodes = @model.send(:find_by_class, ViewNode)
         assert nodes.size.positive?
 
         nodes.each do |view_node|

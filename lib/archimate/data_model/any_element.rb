@@ -6,11 +6,16 @@ module Archimate
     class AnyElement
       include Comparison
 
-      model_attr :element # Strict::String
-      model_attr :prefix # Strict::String.optional.default("")
-      model_attr :attributes # Strict::Array.member(AnyAttribute).default([])
-      model_attr :content # Strict::String.optional.default(nil)
-      model_attr :children # Strict::Array.member(AnyElement).default([])
+      # @return [String]
+      model_attr :element
+      # @return [String, NilClass]
+      model_attr :prefix
+      # @return [Array<AnyAttribute>]
+      model_attr :attributes
+      # @return [String, NilClass]
+      model_attr :content
+      # @return [Array<AnyElement>]
+      model_attr :children
 
       def initialize(element:, prefix: "", attributes: [], content: nil, children: [])
         @element = element

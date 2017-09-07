@@ -19,10 +19,10 @@ module Archimate
             "wb",
             force_quotes: true
           ) do |csv|
-            headers = elements.first.struct_instance_variables
+            headers = elements.first.class.attr_names
             csv << headers.map(&:to_s)
             elements.each do |element|
-              csv << headers.map { |attr| element[attr] }
+              csv << headers.map { |attr| element.send(attr) }
             end
           end
         end

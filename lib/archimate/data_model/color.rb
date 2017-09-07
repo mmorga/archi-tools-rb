@@ -9,10 +9,14 @@ module Archimate
     class Color
       include Comparison
 
-      model_attr :r # Coercible::Int.constrained(lt: 256, gt: -1)
-      model_attr :g # Coercible::Int.constrained(lt: 256, gt: -1)
-      model_attr :b # Coercible::Int.constrained(lt: 256, gt: -1)
-      model_attr :a # Coercible::Int.constrained(lt: 101, gt: -1).optional.default(nil)
+      # @return [Int.constrained(lt: 256, gt: -1)]
+      model_attr :r
+      # @return [Int.constrained(lt: 256, gt: -1)]
+      model_attr :g
+      # @return [Int.constrained(lt: 256, gt: -1)]
+      model_attr :b
+      # @return [Int.constrained(lt: 101, gt: -1), NilClass]
+      model_attr :a
 
       def self.rgba(str)
         return nil if str.nil?

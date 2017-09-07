@@ -3,7 +3,7 @@
 module Archimate
   module DataModel
     ACCESS_TYPE = %w[Access Read Write ReadWrite].freeze
-    AccessTypeEnum = String # Strict::String.enum(*ACCESS_TYPE)
+    AccessTypeEnum = String #String.enum(*ACCESS_TYPE)
 
     # A base relationship type that can be extended by concrete ArchiMate types.
     #
@@ -13,16 +13,29 @@ module Archimate
     class Relationship
       include Comparison
 
-      model_attr :id # Identifier
-      model_attr :name # LangString.optional.default(nil)
-      model_attr :documentation # PreservedLangString.optional.default(nil)
-      # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
-      # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
-      model_attr :type # Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
-      model_attr :properties # Strict::Array.member(Property).default([])
-      model_attr :source, comparison_attr: :id, writable: true # Element # TODO: This could be an Element or Relationship, is this optional?
-      model_attr :target, comparison_attr: :id, writable: true # Element # TODO: This could be an Element or Relationship, is this optional?
-      model_attr :access_type # AccessTypeEnum.optional.default(nil)
+      # @return [String]
+      model_attr :id
+      # @return [LangString, NilClass]
+      model_attr :name
+      # @return [PreservedLangString, NilClass]
+      model_attr :documentation
+      # # @return [Array<AnyElement>]
+      # model_attr :other_elements
+      # # @return [Array<AnyAttribute>]
+      # model_attr :other_attributes
+      # @note type here was used for the Element/Relationship/Diagram type
+      # @return [String, NilClass]
+      model_attr :type
+      # @return [Array<Property>]
+      model_attr :properties
+      # @todo is this optional?
+      # @return [Element, Relationship]
+      model_attr :source, comparison_attr: :id, writable: true
+      # @todo is this optional?
+      # @return [Element, Relationship]
+      model_attr :target, comparison_attr: :id, writable: true
+      # @return [AccessTypeEnum, NilClass]
+      model_attr :access_type
 
       def initialize(id:, name: nil, documentation: nil, type: nil,
                      properties: [], source:, target:, access_type: nil)
@@ -55,7 +68,7 @@ module Archimate
         ].compact.join(" ")
       end
 
-      # TODO: remove when it doesn't break diff merge conflicts
+      # @todo remove when it doesn't break diff merge conflicts
       # @deprecated
       def referenced_identified_nodes
         [@source, @target].compact

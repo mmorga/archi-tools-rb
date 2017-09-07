@@ -12,9 +12,12 @@ module Archimate
       def_delegators :@default_text, :strip, :tr, :+, :gsub, :sub, :downcase, :empty?, :split, :size, :include?
       # def_delegators :@lang_hash, :size
 
-      model_attr :lang_hash # Strict::Hash
-      model_attr :default_lang # Strict::String.optional.default(nil)
-      model_attr :default_text # Strict::String
+      # @return [Hash]
+      model_attr :lang_hash
+      # @return [String, NilClass]
+      model_attr :default_lang
+      # @return [String]
+      model_attr :default_text
 
       # def self.default_lang
       #   Archimate::Config.instance.default_lang

@@ -9,7 +9,8 @@ module Archimate
     class Metadata
       include Comparison
 
-      model_attr :schema_infos # Strict::Array.member(SchemaInfo).default([])
+      # @return [Array<SchemaInfo>]
+      model_attr :schema_infos
 
       def initialize(schema_infos: [])
         @schema_infos = schema_infos

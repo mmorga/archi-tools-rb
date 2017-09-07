@@ -5,18 +5,31 @@ module Archimate
     class Viewpoint
       include Comparison
 
-      model_attr :id # Identifier
-      model_attr :name # LangString
-      model_attr :documentation # PreservedLangString
-      # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
-      # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
-      model_attr :type # Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
-      model_attr :concerns # Strict::Array.member(Concern).default([])
-      model_attr :viewpoint_purposes # Strict::Array.member(ViewpointPurposeEnum).default([])
-      model_attr :viewpoint_contents # Strict::Array.member(ViewpointContentEnum).default([])
-      model_attr :allowed_element_types # Strict::Array.member(ElementType).default([])
-      model_attr :allowed_relationship_types # Strict::Array.member(RelationshipType).default([])
-      model_attr :modeling_notes # Strict::Array.member(ModelingNote).default([])
+      # @return [String]
+      model_attr :id
+      # @return [LangString]
+      model_attr :name
+      # @return [PreservedLangString]
+      model_attr :documentation
+      # # @return [Array<AnyElement>]
+      model_attr :other_elements
+      # # @return [Array<AnyAttribute>]
+      model_attr :other_attributes
+      # type here was used for the Element/Relationship/Diagram type
+      # @return [String, NilClass]
+      model_attr :type
+      # @return [Array<Concern>]
+      model_attr :concerns
+      # @return [Array<ViewpointPurposeEnum>]
+      model_attr :viewpoint_purposes
+      # @return [Array<ViewpointContentEnum>]
+      model_attr :viewpoint_contents
+      # @return [Array<ElementType>]
+      model_attr :allowed_element_types
+      # @return [Array<RelationshipType>]
+      model_attr :allowed_relationship_types
+      # @return [Array<ModelingNote>]
+      model_attr :modeling_notes
 
       def initialize(id:, name:, documentation: nil, type: nil,
                      concerns: [], viewpoint_purposes: [],

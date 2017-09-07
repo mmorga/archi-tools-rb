@@ -3,6 +3,8 @@ require "ruby-enum"
 
 module Archimate
   module DataModel
+    # Enumeration class that defines the strings used for all Archimate element
+    # types.
     class ElementType
       include Ruby::Enum
 
@@ -73,9 +75,12 @@ module Archimate
       define :Material, "Material"
       define :Outcome, "Outcome"
       define :ImplementationEvent, "ImplementationEvent"
-      # TODO: Is grouping a valid element type?
+      # @todo Is grouping a valid element type?
       # define :Grouping, "Grouping"
 
+      # Case equality operator. Used to determine if a value is a member of this enum
+      #
+      # @param other [String] string to test for enum membership.
       def self.===(other)
         values.include?(other)
       end

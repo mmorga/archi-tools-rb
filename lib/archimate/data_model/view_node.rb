@@ -2,7 +2,7 @@
 
 module Archimate
   module DataModel
-    # PositiveInteger = Strict::Int.constrained(gt: 0)
+    # PositiveInteger =Int.constrained(gt: 0)
 
     # Graphical node type. It can contain child node types.
     # This can be specialized as Label and Container
@@ -29,52 +29,73 @@ module Archimate
       include Comparison
 
       # ViewConceptType
-      model_attr :id # Identifier
-      model_attr :name # LangString.optional.default(nil)
-      model_attr :documentation # PreservedLangString.optional.default(nil)
-      # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
-      # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
-      model_attr :type # Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
-      model_attr :style # Style.optional.default(nil)
+      # @return [String]
+      model_attr :id
+      # @return [LangString, NilClass]
+      model_attr :name
+      # @return [PreservedLangString, NilClass]
+      model_attr :documentation
+      # # @return [Array<AnyElement>]
+      model_attr :other_elements
+      # # @return [Array<AnyAttribute>]
+      model_attr :other_attributes
+      # @note type here was used for the Element/Relationship/Diagram type
+      # @return [String, NilClass]
+      model_attr :type
+      # @return [Style, NilClass]
+      model_attr :style
 
-      # TODO: viewRefs are pointers to 0-* Diagrams for diagram drill in defined in abstract View Concept
-      model_attr :view_refs, comparison_attr: :id, writable: true # Dry::Struct.optional.default(nil)  # viewRef in XSD for a nested View Concept(s) TODO: Make this an array
+      # @note viewRefs are pointers to 0-* Diagrams for diagram drill in defined in abstract View Concept
+      # @todo Make this an array
+      # @return [Diagram]
+      model_attr :view_refs, comparison_attr: :id, writable: true
 
-      # TODO: document where this comes from
-      model_attr :content # Strict::String.optional.default(nil)
+      # @todo document where this comes from
+      # @return [String, NilClass]
+      model_attr :content
 
       # This is needed for various calculations
-      model_attr :parent, comparison_attr: :no_compare # ViewNode
+      # @return [ViewNode]
+      model_attr :parent, comparison_attr: :no_compare
 
       # ViewNodeType
-      model_attr :bounds # Bounds.optional.default(nil)
+      # @return [Bounds, NilClass]
+      model_attr :bounds
 
       # Container - container doesn't distinguish between nodes and connections
-      model_attr :nodes, writable: true # Strict::Array.member(ViewNode).default([])
-      model_attr :connections, writable: true # Strict::Array.member(Connection).default([])
+      # @return [Array<ViewNode>]
+      model_attr :nodes
+      # @return [Array<Connection>]
+      model_attr :connections
 
-      # Note: properties is not in the model under element
-      # it's added under Real Element
-      # TODO: Delete this - I think it's not used
-      model_attr :properties # Strict::Array.member(Property).default([])
+      # @note properties is not in the model under element, it's added under Real Element
+      # @todo Delete this - I think it's not used
+      # @return [Array<Property>]
+      model_attr :properties
 
       # Element
-      model_attr :element, writable: true, comparison_attr: :id # Element.optional.default(nil)
-      model_attr :child_type # Coercible::Int.optional.default(nil) # Archi format, selects the shape of element (for elements that can have two or more shapes)
+      # @return [Element, NilClass]
+      model_attr :element, writable: true, comparison_attr: :id
+      # Archi format, selects the shape of element (for elements that can have two or more shapes)
+      # @return [Int, NilClass]
+      model_attr :child_type
 
-      model_attr :diagram, comparison_attr: :no_compare # Diagram
+      # @return [Diagram, NilClass]
+      model_attr :diagram, comparison_attr: :no_compare
 
-      # Node type to allow a Label in a Artifact. the "label" element holds the info for the Note.
+      # Node type to allow a Label in a Artifact. the "label" element holds the info for the @note.
       # Label View Nodes have the following attributes
 
       # conceptRef is a reference to an concept for this particular label, along with the attributeRef
       # which references the particular concept's part which this label represents.
-      model_attr :concept_ref # Identifier
+      # @return [String]
+      model_attr :concept_ref
       # conceptRef is a reference to an concept for this particular label, along with the partRef
       # which references the particular concept's part which this label represents. If this attribute
       # is set, then there is no need to add a label tag in the Label parent (since it is contained in the model).
       # the XPATH statement is meant to be interpreted in the context of what the conceptRef points to.
-      model_attr :xpath_path # Strict::String.optional
+      # @return [String, NilClass]
+      model_attr :xpath_path
 
       def initialize(id:, name: nil, documentation: nil, type: nil, parent: nil,
                      style: nil, view_refs: [], content: nil, bounds: nil,
@@ -137,7 +158,7 @@ module Archimate
         diagram # ||= ->(node) { node = node.parent until node.nil? || node.is_a?(Diagram) }.call(self)
       end
 
-      # TODO: Is this true for all or only Archi models?
+      # @todo Is this true for all or only Archi models?
       def absolute_position
         offset = bounds || Bounds.zero
         el = parent

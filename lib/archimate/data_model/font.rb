@@ -5,17 +5,22 @@ module Archimate
     class Font
       include Comparison
 
-      model_attr :name # Strict::String.optional
-      model_attr :size # Coercible::Float.constrained(gt: 0.0).optional
-      model_attr :style # Coercible::Int.optional # TODO: make this an enum
-      model_attr :font_data # Strict::String.optional
+      # @return [String, NilClass]
+      model_attr :name
+      # @return [Float, NilClass]
+      model_attr :size
+      # @todo make this an enum
+      # @return [Int, NilClass]
+      model_attr :style
+      # @return [String, NilClass]
+      model_attr :font_data
 
       # Archi font strings look like this:
       #  "1|Arial            |14.0|0|WINDOWS|1|0  |0|0|0|0  |0 |0|0|1|0|0|0|0 |Arial"
       #  "1|Arial            |8.0 |0|WINDOWS|1|0  |0|0|0|0  |0 |0|0|1|0|0|0|0 |Arial"
       #  "1|Segoe UI Semibold|12.0|2|WINDOWS|1|-16|0|0|0|600|-1|0|0|0|3|2|1|34|Segoe UI Semibold"
       #  "1|Times New Roman  |12.0|3|WINDOWS|1|-16|0|0|0|700|-1|0|0|0|3|2|1|18|Times New Roman"
-      # TODO: move this to the archi file reader
+      # @todo move this to the archi file reader
       def self.archi_font_string(str)
         return nil if str.nil?
         font_parts = str.split("|")
@@ -46,7 +51,7 @@ module Archimate
           ].map(&:to_s).join("|")
       end
 
-      # TODO: this isn't standard
+      # @todo this isn't standard
       # Move to file format
       def style_string
         case style

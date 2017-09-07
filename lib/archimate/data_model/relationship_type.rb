@@ -30,7 +30,7 @@ module Archimate
       define :RealisationRelationship, "RealisationRelationship"
       define :SpecialisationRelationship, "SpecialisationRelationship"
       define :TriggeringRelationship, "TriggeringRelationship"
-      define :UsedByRelationship, "UsedByRelationship" # TODO: Support: Serving
+      define :UsedByRelationship, "UsedByRelationship" # @todo Support: Serving
       define :GroupingRelationship, "GroupingRelationship"
 
       def self.===(other)

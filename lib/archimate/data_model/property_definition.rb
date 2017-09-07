@@ -3,18 +3,24 @@
 module Archimate
   module DataModel
     # An enumeration of data types.
-    DataType = String # Strict::String.default("string").enum("string", "boolean", "currency", "date", "time", "number")
+    DataType = String #String.default("string").enum("string", "boolean", "currency", "date", "time", "number")
 
     # A Property definition type containing its unique identifier, name, and data type.
     class PropertyDefinition
       include Comparison
 
-      model_attr :id # Identifier
-      model_attr :name # LangString
-      model_attr :documentation # PreservedLangString.optional.default(nil)
-      # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
-      # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
-      model_attr :type # DataType.optional.default(nil)
+      # @return [String]
+      model_attr :id
+      # @return [LangString]
+      model_attr :name
+      # @return [PreservedLangString, NilClass]
+      model_attr :documentation
+      # # @return [Array<AnyElement>]
+      model_attr :other_elements
+      # # @return [Array<AnyAttribute>]
+      model_attr :other_attributes
+      # @return [DataType, NilClass]
+      model_attr :type
 
       def self.identifier_for_key(key)
         (self.class.hash ^ key.hash).to_s(16)

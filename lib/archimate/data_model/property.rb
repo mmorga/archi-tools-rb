@@ -2,12 +2,15 @@
 
 module Archimate
   module DataModel
-    # A Property instance type declaring the reference to a Property definition and containing the Property value.
+    # A Property instance type declaring the reference to a [PropertyDefinition]
+    # and containing the property value.
     class Property
       include Comparison
 
-      model_attr :value # LangString.optional.default(nil)
-      model_attr :property_definition # PropertyDefinition
+      # @return [LangString, NilClass] value of the property, default +nil+
+      model_attr :value
+      # @return [PropertyDefinition] property definition of the property
+      model_attr :property_definition, writable: true
 
       def initialize(property_definition:, value: nil)
         @property_definition = property_definition

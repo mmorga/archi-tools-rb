@@ -5,10 +5,14 @@ module Archimate
     class Bounds
       include Comparison
 
-      model_attr :x # Coercible::Float.optional
-      model_attr :y # Coercible::Float.optional
-      model_attr :width # Coercible::Float
-      model_attr :height # Coercible::Float
+      # @return [Float, NilClass]
+      model_attr :x
+      # @return [Float, NilClass]
+      model_attr :y
+      # @return [Float]
+      model_attr :width
+      # @return [Float]
+      model_attr :height
 
       def self.zero
         Archimate::DataModel::Bounds.new(x: 0, y: 0, width: 0, height: 0)

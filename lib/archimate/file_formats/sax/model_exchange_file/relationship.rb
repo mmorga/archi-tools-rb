@@ -18,8 +18,8 @@ module Archimate
             [
               event(:on_relationship, relationship),
               event(:on_referenceable, relationship),
-              event(:on_future, Sax::FutureReference.new(relationship, :source, @attrs["source"])),
-              event(:on_future, Sax::FutureReference.new(relationship, :target, @attrs["target"]))
+              event(:on_future, Sax::FutureReference.new(relationship, :source, attrs["source"])),
+              event(:on_future, Sax::FutureReference.new(relationship, :target, attrs["target"]))
             ]
           end
 

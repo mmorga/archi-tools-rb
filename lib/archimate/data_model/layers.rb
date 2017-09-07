@@ -40,7 +40,7 @@ module Archimate
       define :Implementation_and_migration, Layer.new("Implementation and Migration", %w[Deliverable Gap Plateau
              WorkPackage ImplementationEvent])
 
-      # TODO: Is Connectors used? Should this be none?
+      # @todo Is Connectors used? Should this be none?
       define :Connectors, Layer.new("Connectors", %w[AndJunction Junction OrJunction])
 
       define :None, Layer.new("None")

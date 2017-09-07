@@ -6,9 +6,12 @@ module Archimate
     class AnyAttribute
       include Comparison
 
-      model_attr :attribute # Strict::String
-      model_attr :prefix # Strict::String
-      model_attr :value # Strict::String
+      # @return [String]
+      model_attr :attribute
+      # @return [String]
+      model_attr :prefix
+      # @return [String]
+      model_attr :value
 
       def initialize(attribute, value, prefix: "")
         @attribute = attribute

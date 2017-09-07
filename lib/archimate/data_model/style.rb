@@ -5,13 +5,23 @@ module Archimate
     class Style
       include Comparison
 
-      model_attr :text_alignment # Coercible::Int.optional # TODO: make this an enum
-      model_attr :fill_color # Color.optional
-      model_attr :line_color # Color.optional
-      model_attr :font_color # Color.optional # TODO: move this to font
-      model_attr :line_width # Coercible::Int.optional
-      model_attr :font # Font.optional
-      model_attr :text_position # Coercible::Int.optional # TODO: make this an enum
+      # @todo make this an enum
+      # @return [Int, NilClass]
+      model_attr :text_alignment
+      # @return [Color, NilClass]
+      model_attr :fill_color
+      # @return [Color, NilClass]
+      model_attr :line_color
+      # @todo move this to font
+      # @return [Color, NilClass]
+      model_attr :font_color
+      # @return [Int, NilClass]
+      model_attr :line_width
+      # @return [Font, NilClass]
+      model_attr :font
+      # @todo make this an enum
+      # @return [Int, NilClass]
+      model_attr :text_position
 
       def initialize(text_alignment: nil, fill_color: nil, line_color: nil,
                      font_color: nil, line_width: nil, font: nil, text_position: nil)

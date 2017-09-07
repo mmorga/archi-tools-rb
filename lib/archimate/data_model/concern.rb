@@ -8,9 +8,12 @@ module Archimate
     class Concern
       include Comparison
 
-      model_attr :label # LangString - one label is required
-      model_attr :documentation # PreservedLangString
-      model_attr :stakeholders # Strict::Array.member(LangString)
+      # @return [LangString] one label is required
+      model_attr :label
+      # @return [PreservedLangString]
+      model_attr :documentation
+      # @return [Array<LangString>]
+      model_attr :stakeholders
 
       def initialize(label:, documentation: nil, stakeholders: [])
         raise "label is required" unless label

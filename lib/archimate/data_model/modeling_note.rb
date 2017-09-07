@@ -7,9 +7,11 @@ module Archimate
     class ModelingNote
       include Comparison
 
-      model_attr :documentation # PreservedLangString # .constrained(min_size: 1)
+      # @return [PreservedLangString]
+      model_attr :documentation
       # `type` attribute expresses a type for the notes, e.g. OCL for OCL rules.
-      model_attr :type # Strict::String.optional
+      # @return [String, NilClass]
+      model_attr :type
 
       def initialize(documentation:, type: nil)
         @documentation = documentation

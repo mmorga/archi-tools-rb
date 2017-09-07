@@ -2,9 +2,9 @@
 
 module Archimate
   module DataModel
-    # TODO: x & y Defined like this in the XSD
-    # NonNegativeInteger = Coercible::Int.constrained(gteq: 0)
-    # NonNegativeFloat = Coercible::Float # .constrained(gteq: 0)
+    # @todo x & y Defined like this in the XSD
+    # NonNegativeInteger = Int.constrained(gteq: 0)
+    # NonNegativeFloat = Float # .constrained(gteq: 0)
 
     # Graphical node type. It can contain child node types.
     # This is LocationType/LocationGroup in the XSD.
@@ -13,14 +13,20 @@ module Archimate
 
       # The x (towards the right, associated with width) attribute from the Top,Left (i.e. 0,0)
       # corner of the diagram to the Top, Left corner of the bounding box of the concept.
-      model_attr :x # NonNegativeFloat # Note the XSD has this as an Int, NonNegativeInteger
+      # @note the XSD has this as a NonNegativeInteger
+      # @return [Float]
+      model_attr :x
       # The y (towards the bottom, associated with height) attribute from the Top,Left (i.e. 0,0)
       # corner of the diagram to the Top, Left corner of the bounding box of the concept.
-      model_attr :y # NonNegativeFloat # Note the XSD has this as an Int, NonNegativeInteger
+      # @note the XSD has this as a NonNegativeInteger
+      # @return [Float]
+      model_attr :y
 
       # These are holdovers from the archi file format and are only maintained for compatability
-      model_attr :end_x # Coercible::Int.optional.default(nil)
-      model_attr :end_y # Coercible::Int.optional.default(nil)
+      # @return [Int, NilClass]
+      model_attr :end_x
+      # @return [Int, NilClass]
+      model_attr :end_y
 
       def initialize(x:, y:, end_x: nil, end_y: nil)
         @x = x.to_i

@@ -11,18 +11,31 @@ module Archimate
     #
     # An organization has no meaning unless it has at least child organization element.
     #
-    # Note that Organization must fit into a tree structure (so strictly nested).
+    # @note that Organization must fit into a tree structure (so strictly nested).
     class Organization
       include Comparison
 
-      model_attr :id # Identifier.optional # .constrained(format: /[[[:alpha:]]_][w-.]*/)
-      model_attr :name # LangString.optional.default(nil) # LabelGroup in the XSD
-      model_attr :type # Strict::String.optional.default(nil) # I believe this is used only for Archi formats
-      model_attr :documentation # PreservedLangString.optional.default(nil)
-      model_attr :items, writable: true # Strict::Array.member(Dry::Struct).default([])
-      model_attr :organizations # Strict::Array.member(Organization).default([]) # item in the XSD
-      # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
-      # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
+      # Format should match +/[[[:alpha:]]_][w-.]*/+ to be valid for Archimate
+      # Model exchange format
+      # @return [Identifier, NilClass]
+      model_attr :id
+      # LabelGroup in the XSD
+      # @return [LangString, NilClass]
+      model_attr :name
+      # I believe this is used only for Archi formats
+      # @return [String, NilClass]
+      model_attr :type
+      # @return [PreservedLangString, NilClass]
+      model_attr :documentation
+      # @return [Array<Object>]
+      model_attr :items, writable: true
+      # item in the XSD
+      # @return [Array<Organization>]
+      model_attr :organizations, writable: true
+      # # @return [Array<AnyElement>]
+      # model_attr :other_elements
+      # # @return [Array<AnyAttribute>]
+      # model_attr :other_attributes
 
       def initialize(id: nil, name: nil, type: nil, documentation: nil,
                      items: [], organizations: [])

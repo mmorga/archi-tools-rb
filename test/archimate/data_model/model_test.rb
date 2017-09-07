@@ -48,14 +48,15 @@ module Archimate
       end
 
       def test_application_components
+        skip "until this is added as a DSL feature"
         @subject.elements << build_element(type: "ApplicationComponent")
         expected = @subject.elements.select { |e| e.type == "ApplicationComponent" }
         assert_equal expected, @subject.application_components
       end
 
       def test_find_by_class
-        assert_equal [@subject], @subject.find_by_class(Model)
-        assert_equal @subject.elements, @subject.find_by_class(Element)
+        assert_equal [@subject], @subject.send(:find_by_class, Model)
+        assert_equal @subject.elements, @subject.send(:find_by_class, Element)
       end
 
       def test_referenced_identified_nodes
@@ -121,45 +122,45 @@ module Archimate
         subject = Model.new(@subject.to_h.merge(organizations: []))
         index_hash = subject.instance_variable_get(:@index_hash)
         index_hash.values.each do |item|
-          refute subject.find_in_organizations(item)
+          refute subject.send(:find_in_organizations, item)
         end
       end
 
       def test_find_in_organizations
         @subject.elements.each do |el|
-          assert_kind_of DataModel::Organization, @subject.find_in_organizations(el)
+          assert_kind_of DataModel::Organization, @subject.send(:find_in_organizations, el)
         end
         @subject.relationships.each do |el|
-          assert_equal "Relations", @subject.find_in_organizations(el).name.to_s
+          assert_equal "Relations", @subject.send(:find_in_organizations, el).name.to_s
         end
         @subject.diagrams.each do |el|
-          assert_equal "Views", @subject.find_in_organizations(el).name.to_s
+          assert_equal "Views", @subject.send(:find_in_organizations, el).name.to_s
         end
       end
 
       def test_default_organization_for_with_no_initial_organizations
-        organization = @subject.default_organization_for(build_element(type: "BusinessActor"))
+        organization = @subject.send(:default_organization_for, build_element(type: "BusinessActor"))
         assert_equal "Business", organization.name.to_s
 
-        organization = @subject.default_organization_for(build_element(type: "ApplicationComponent"))
+        organization = @subject.send(:default_organization_for, build_element(type: "ApplicationComponent"))
         assert_equal "Application", organization.name.to_s
 
-        organization = @subject.default_organization_for(build_element(type: "Node"))
+        organization = @subject.send(:default_organization_for, build_element(type: "Node"))
         assert_equal "Technology", organization.name.to_s
 
-        organization = @subject.default_organization_for(build_element(type: "Goal"))
+        organization = @subject.send(:default_organization_for, build_element(type: "Goal"))
         assert_equal "Motivation", organization.name.to_s
 
-        organization = @subject.default_organization_for(build_element(type: "Gap"))
+        organization = @subject.send(:default_organization_for, build_element(type: "Gap"))
         assert_equal "Implementation & Migration", organization.name.to_s
 
-        organization = @subject.default_organization_for(build_element(type: "Junction"))
+        organization = @subject.send(:default_organization_for, build_element(type: "Junction"))
         assert_equal "Connectors", organization.name.to_s
 
-        organization = @subject.default_organization_for(build_relationship)
+        organization = @subject.send(:default_organization_for, build_relationship)
         assert_equal "Relations", organization.name.to_s
 
-        organization = @subject.default_organization_for(build_diagram)
+        organization = @subject.send(:default_organization_for, build_diagram)
         assert_equal "Views", organization.name.to_s
       end
 
@@ -176,28 +177,28 @@ module Archimate
             build_organization(type: "diagrams")
           ]
         )
-        organization = subject.default_organization_for(build_element(type: "BusinessActor"))
+        organization = subject.send(:default_organization_for, build_element(type: "BusinessActor"))
         assert_equal "business", organization.type
 
-        organization = subject.default_organization_for(build_element(type: "ApplicationComponent"))
+        organization = subject.send(:default_organization_for, build_element(type: "ApplicationComponent"))
         assert_equal "application", organization.type
 
-        organization = subject.default_organization_for(build_element(type: "Node"))
+        organization = subject.send(:default_organization_for, build_element(type: "Node"))
         assert_equal "technology", organization.type
 
-        organization = subject.default_organization_for(build_element(type: "Goal"))
+        organization = subject.send(:default_organization_for, build_element(type: "Goal"))
         assert_equal "motivation", organization.type
 
-        organization = subject.default_organization_for(build_element(type: "Gap"))
+        organization = subject.send(:default_organization_for, build_element(type: "Gap"))
         assert_equal "implementation_migration", organization.type
 
-        organization = subject.default_organization_for(build_element(type: "Junction"))
+        organization = subject.send(:default_organization_for, build_element(type: "Junction"))
         assert_equal "connectors", organization.type
 
-        organization = subject.default_organization_for(build_relationship)
+        organization = subject.send(:default_organization_for, build_relationship)
         assert_equal "relations", organization.type
 
-        organization = subject.default_organization_for(build_diagram)
+        organization = subject.send(:default_organization_for, build_diagram)
         assert_equal "diagrams", organization.type
       end
 
@@ -214,33 +215,33 @@ module Archimate
             build_organization(name: LangString.string("Diagrams"))
           ]
         )
-        organization = subject.default_organization_for(build_element(type: "BusinessActor"))
+        organization = subject.send(:default_organization_for, build_element(type: "BusinessActor"))
         assert_equal "Business", organization.name.to_s
 
-        organization = subject.default_organization_for(build_element(type: "ApplicationComponent"))
+        organization = subject.send(:default_organization_for, build_element(type: "ApplicationComponent"))
         assert_equal "Application", organization.name.to_s
 
-        organization = subject.default_organization_for(build_element(type: "Node"))
+        organization = subject.send(:default_organization_for, build_element(type: "Node"))
         assert_equal "Technology", organization.name.to_s
 
-        organization = subject.default_organization_for(build_element(type: "Goal"))
+        organization = subject.send(:default_organization_for, build_element(type: "Goal"))
         assert_equal "Motivation", organization.name.to_s
 
-        organization = subject.default_organization_for(build_element(type: "Gap"))
+        organization = subject.send(:default_organization_for, build_element(type: "Gap"))
         assert_equal "Implementation & Migration", organization.name.to_s
 
-        organization = subject.default_organization_for(build_element(type: "Junction"))
+        organization = subject.send(:default_organization_for, build_element(type: "Junction"))
         assert_equal "Connectors", organization.name.to_s
 
-        organization = subject.default_organization_for(build_relationship)
+        organization = subject.send(:default_organization_for, build_relationship)
         assert_equal "Relations", organization.name.to_s
 
-        organization = subject.default_organization_for(build_diagram)
+        organization = subject.send(:default_organization_for, build_diagram)
         assert_equal "Views", organization.name.to_s
       end
 
       def test_make_unique_id
-        assert_match(/^[a-f0-9]{8}$/, @subject.make_unique_id)
+        assert_match(/^[a-f0-9]{8}$/, @subject.send(:make_unique_id))
       end
 
       def test_organize

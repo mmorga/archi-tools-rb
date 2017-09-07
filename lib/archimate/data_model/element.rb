@@ -4,21 +4,31 @@ module Archimate
   module DataModel
     # A base element type that can be extended by concrete ArchiMate types.
     #
-    # Note that ElementType is abstract, so one must have derived types of this type. this is indicated in xml
-    # by having a tag name of "element" and an attribute of xsi:type="BusinessRole" where BusinessRole is
-    # a derived type from ElementType.
+    # Note that ElementType is abstract, so one must have derived types of this
+    # type. This is indicated in xml by having a tag name of +element+ and an
+    # attribute of +xsi:type="BusinessRole"+ where +BusinessRole+ is a derived
+    # type from [ElementType].
     #
-    # TODO: Possible Make this abstract with concrete implementations for all valid element types
+    # @todo Possible Make this abstract with concrete implementations for all
+    #       valid element types
     class Element
       include Comparison
 
-      model_attr :id # Identifier
-      model_attr :name # LangString.optional.default(nil)
-      model_attr :documentation, writable: true # PreservedLangString.optional.default(nil)
-      # model_attr :other_elements # Strict::Array.member(AnyElement).default([])
-      # model_attr :other_attributes # Strict::Array.member(AnyAttribute).default([])
-      model_attr :type # Strict::String.optional # Note: type here was used for the Element/Relationship/Diagram type
-      model_attr :properties # Strict::Array.member(Property).default([])
+      # @return [String]
+      model_attr :id
+      # @return [LangString, NilClass]
+      model_attr :name
+      # @return [PreservedLangString, NilClass]
+      model_attr :documentation, writable: true
+      # # @return [Array<AnyElement>]
+      # model_attr :other_elements
+      # # @return [Array<AnyAttribute>]
+      # model_attr :other_attributes
+      # @note type here was used for the Element/Relationship/Diagram type
+      # @return [String, NilClass]
+      model_attr :type
+      # @return [Array<Property>]
+      model_attr :properties
 
       def initialize(id:, name:, documentation: nil, type: nil, properties: [])
         @id = id
