@@ -6,11 +6,14 @@ module Archimate
     class AnyAttribute
       include Comparison
 
-      # @return [String]
+      # @!attribute [r] attribute
+      #   @return [String]
       model_attr :attribute
-      # @return [String]
+      # @!attribute [r] prefix
+      #   @return [String]
       model_attr :prefix
-      # @return [String]
+      # @!attribute [r] value
+      #   @return [String]
       model_attr :value
 
       def initialize(attribute, value, prefix: "")

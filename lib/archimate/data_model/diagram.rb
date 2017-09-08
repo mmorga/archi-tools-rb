@@ -5,35 +5,46 @@ module Archimate
     class Diagram
       include Comparison
 
-      # @return [String]
+      # @!attribute [r] id
+      #   @return [String]
       model_attr :id
-      # @return [LangString]
+      # @!attribute [rw] name
+      #   @return [LangString]
       model_attr :name, writable: true
-      # @return [PreservedLangString, NilClass]
+      # @!attribute [rw] documentation
+      #   @return [PreservedLangString, NilClass]
       model_attr :documentation, writable: true
       # # @return [Array<AnyElement>]
       # model_attr :other_elements
       # # @return [Array<AnyAttribute>]
       # model_attr :other_attributes
       # @note type here was used for the Element/Relationship/Diagram type
-      # @return [String, NilClass]
+      # @!attribute [r] type
+      #   @return [String, NilClass]
       model_attr :type
-      # @return [Array<Property>]
+      # @!attribute [rw] properties
+      #   @return [Array<Property>]
       model_attr :properties, writable: true
       # @todo make this a ViewpointType is better but is Archimate specification version dependent
-      # @return [String, NilClass]
+      # @!attribute [r] viewpoint_type
+      #   @return [String, NilClass]
       model_attr :viewpoint_type
-      # @return [Viewpoint, NilClass]
+      # @!attribute [r] viewpoint
+      #   @return [Viewpoint, NilClass]
       model_attr :viewpoint
-      # @return [Array<ViewNode>]
+      # @!attribute [rw] nodes
+      #   @return [Array<ViewNode>]
       model_attr :nodes, writable: true
       # @todo Archi formats only fill this in, should be an enum
-      # @return [Int, NilClass]
+      # @!attribute [r] connection_router_type
+      #   @return [Int, NilClass]
       model_attr :connection_router_type
       # value of 0 on Archi Sketch Model
-      # @return [Int, NilClass]
+      # @!attribute [r] background
+      #   @return [Int, NilClass]
       model_attr :background
-      # @return [Array<Connection>]
+      # @!attribute [rw] connections
+      #   @return [Array<Connection>]
       model_attr :connections, writable: true
 
       def initialize(id:, name:, documentation: nil, type: nil, properties: [],

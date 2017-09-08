@@ -29,58 +29,75 @@ module Archimate
       include Comparison
 
       # ViewConceptType
-      # @return [String]
+      # @!attribute [r] id
+      #   @return [String]
       model_attr :id
-      # @return [LangString, NilClass]
+      # @!attribute [r] name
+      #   @return [LangString, NilClass]
       model_attr :name
-      # @return [PreservedLangString, NilClass]
+      # @!attribute [r] documentation
+      #   @return [PreservedLangString, NilClass]
       model_attr :documentation
-      # # @return [Array<AnyElement>]
+      # # @!attribute [r] other_elements
+      #   @return [Array<AnyElement>]
       model_attr :other_elements
-      # # @return [Array<AnyAttribute>]
+      # # @!attribute [r] other_attributes
+      #   @return [Array<AnyAttribute>]
       model_attr :other_attributes
       # @note type here was used for the Element/Relationship/Diagram type
-      # @return [String, NilClass]
+      # @!attribute [r] type
+      #   @return [String, NilClass]
       model_attr :type
-      # @return [Style, NilClass]
+      # @!attribute [r] style
+      #   @return [Style, NilClass]
       model_attr :style
 
       # @note viewRefs are pointers to 0-* Diagrams for diagram drill in defined in abstract View Concept
       # @todo Make this an array
-      # @return [Diagram]
+      # @!attribute [rw] view_refs
+      #   @return [Diagram]
       model_attr :view_refs, comparison_attr: :id, writable: true
 
       # @todo document where this comes from
-      # @return [String, NilClass]
+      # @!attribute [r] content
+      #   @return [String, NilClass]
       model_attr :content
 
       # This is needed for various calculations
-      # @return [ViewNode]
+      # @!attribute [r] parent
+      #   @return [ViewNode]
       model_attr :parent, comparison_attr: :no_compare
 
       # ViewNodeType
-      # @return [Bounds, NilClass]
+      # @!attribute [r] bounds
+      #   @return [Bounds, NilClass]
       model_attr :bounds
 
       # Container - container doesn't distinguish between nodes and connections
-      # @return [Array<ViewNode>]
+      # @!attribute [r] nodes
+      #   @return [Array<ViewNode>]
       model_attr :nodes
-      # @return [Array<Connection>]
+      # @!attribute [r] connections
+      #   @return [Array<Connection>]
       model_attr :connections
 
       # @note properties is not in the model under element, it's added under Real Element
       # @todo Delete this - I think it's not used
-      # @return [Array<Property>]
+      # @!attribute [r] properties
+      #   @return [Array<Property>]
       model_attr :properties
 
       # Element
-      # @return [Element, NilClass]
+      # @!attribute [rw] element
+      #   @return [Element, NilClass]
       model_attr :element, writable: true, comparison_attr: :id
       # Archi format, selects the shape of element (for elements that can have two or more shapes)
-      # @return [Int, NilClass]
+      # @!attribute [r] child_type
+      #   @return [Int, NilClass]
       model_attr :child_type
 
-      # @return [Diagram, NilClass]
+      # @!attribute [r] diagram
+      #   @return [Diagram, NilClass]
       model_attr :diagram, comparison_attr: :no_compare
 
       # Node type to allow a Label in a Artifact. the "label" element holds the info for the @note.
@@ -88,13 +105,15 @@ module Archimate
 
       # conceptRef is a reference to an concept for this particular label, along with the attributeRef
       # which references the particular concept's part which this label represents.
-      # @return [String]
+      # @!attribute [r] concept_ref
+      #   @return [String]
       model_attr :concept_ref
       # conceptRef is a reference to an concept for this particular label, along with the partRef
       # which references the particular concept's part which this label represents. If this attribute
       # is set, then there is no need to add a label tag in the Label parent (since it is contained in the model).
       # the XPATH statement is meant to be interpreted in the context of what the conceptRef points to.
-      # @return [String, NilClass]
+      # @!attribute [r] xpath_path
+      #   @return [String, NilClass]
       model_attr :xpath_path
 
       def initialize(id:, name: nil, documentation: nil, type: nil, parent: nil,

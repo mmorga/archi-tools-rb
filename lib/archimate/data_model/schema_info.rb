@@ -5,11 +5,14 @@ module Archimate
     class SchemaInfo
       include Comparison
 
-      # @return [String, NilClass]
+      # @!attribute [r] schema
+      #   @return [String, NilClass]
       model_attr :schema
-      # @return [String, NilClass]
+      # @!attribute [r] schemaversion
+      #   @return [String, NilClass]
       model_attr :schemaversion
-      # @return [Array<AnyElement>]
+      # @!attribute [r] elements
+      #   @return [Array<AnyElement>]
       model_attr :elements
 
       def initialize(schema: nil, schemaversion: nil, elements: [])

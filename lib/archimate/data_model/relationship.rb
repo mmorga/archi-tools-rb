@@ -13,28 +13,36 @@ module Archimate
     class Relationship
       include Comparison
 
-      # @return [String]
+      # @!attribute [r] id
+      #   @return [String]
       model_attr :id
-      # @return [LangString, NilClass]
+      # @!attribute [r] name
+      #   @return [LangString, NilClass]
       model_attr :name
-      # @return [PreservedLangString, NilClass]
+      # @!attribute [r] documentation
+      #   @return [PreservedLangString, NilClass]
       model_attr :documentation
       # # @return [Array<AnyElement>]
       # model_attr :other_elements
       # # @return [Array<AnyAttribute>]
       # model_attr :other_attributes
       # @note type here was used for the Element/Relationship/Diagram type
-      # @return [String, NilClass]
+      # @!attribute [r] type
+      #   @return [String, NilClass]
       model_attr :type
-      # @return [Array<Property>]
+      # @!attribute [r] properties
+      #   @return [Array<Property>]
       model_attr :properties
       # @todo is this optional?
-      # @return [Element, Relationship]
+      # @!attribute [rw] source
+      #   @return [Element, Relationship]
       model_attr :source, comparison_attr: :id, writable: true
       # @todo is this optional?
-      # @return [Element, Relationship]
+      # @!attribute [rw] target
+      #   @return [Element, Relationship]
       model_attr :target, comparison_attr: :id, writable: true
-      # @return [AccessTypeEnum, NilClass]
+      # @!attribute [r] access_type
+      #   @return [AccessTypeEnum, NilClass]
       model_attr :access_type
 
       def initialize(id:, name: nil, documentation: nil, type: nil,

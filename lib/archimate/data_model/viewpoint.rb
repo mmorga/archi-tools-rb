@@ -5,30 +5,42 @@ module Archimate
     class Viewpoint
       include Comparison
 
-      # @return [String]
+      # @!attribute [r] id
+      #   @return [String]
       model_attr :id
-      # @return [LangString]
+      # @!attribute [r] name
+      #   @return [LangString]
       model_attr :name
-      # @return [PreservedLangString]
+      # @!attribute [r] documentation
+      #   @return [PreservedLangString]
       model_attr :documentation
-      # # @return [Array<AnyElement>]
+      # # @!attribute [r] other_elements
+      #   @return [Array<AnyElement>]
       model_attr :other_elements
-      # # @return [Array<AnyAttribute>]
+      # # @!attribute [r] other_attributes
+      #   @return [Array<AnyAttribute>]
       model_attr :other_attributes
       # type here was used for the Element/Relationship/Diagram type
-      # @return [String, NilClass]
+      # @!attribute [r] type
+      #   @return [String, NilClass]
       model_attr :type
-      # @return [Array<Concern>]
+      # @!attribute [r] concerns
+      #   @return [Array<Concern>]
       model_attr :concerns
-      # @return [Array<ViewpointPurposeEnum>]
+      # @!attribute [r] viewpoint_purposes
+      #   @return [Array<ViewpointPurposeEnum>]
       model_attr :viewpoint_purposes
-      # @return [Array<ViewpointContentEnum>]
+      # @!attribute [r] viewpoint_contents
+      #   @return [Array<ViewpointContentEnum>]
       model_attr :viewpoint_contents
-      # @return [Array<ElementType>]
+      # @!attribute [r] allowed_element_types
+      #   @return [Array<ElementType>]
       model_attr :allowed_element_types
-      # @return [Array<RelationshipType>]
+      # @!attribute [r] allowed_relationship_types
+      #   @return [Array<RelationshipType>]
       model_attr :allowed_relationship_types
-      # @return [Array<ModelingNote>]
+      # @!attribute [r] modeling_notes
+      #   @return [Array<ModelingNote>]
       model_attr :modeling_notes
 
       def initialize(id:, name:, documentation: nil, type: nil,

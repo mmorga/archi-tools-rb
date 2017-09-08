@@ -6,21 +6,28 @@ module Archimate
       include Comparison
 
       # @todo make this an enum
-      # @return [Int, NilClass]
+      # @!attribute [r] text_alignment
+      #   @return [Int, NilClass]
       model_attr :text_alignment
-      # @return [Color, NilClass]
+      # @!attribute [r] fill_color
+      #   @return [Color, NilClass]
       model_attr :fill_color
-      # @return [Color, NilClass]
+      # @!attribute [r] line_color
+      #   @return [Color, NilClass]
       model_attr :line_color
       # @todo move this to font
-      # @return [Color, NilClass]
+      # @!attribute [r] font_color
+      #   @return [Color, NilClass]
       model_attr :font_color
-      # @return [Int, NilClass]
+      # @!attribute [r] line_width
+      #   @return [Int, NilClass]
       model_attr :line_width
-      # @return [Font, NilClass]
+      # @!attribute [r] font
+      #   @return [Font, NilClass]
       model_attr :font
       # @todo make this an enum
-      # @return [Int, NilClass]
+      # @!attribute [r] text_position
+      #   @return [Int, NilClass]
       model_attr :text_position
 
       def initialize(text_alignment: nil, fill_color: nil, line_color: nil,

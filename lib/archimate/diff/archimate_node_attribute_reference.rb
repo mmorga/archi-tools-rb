@@ -6,7 +6,7 @@ module Archimate
       attr_reader :attribute
 
       def initialize(archimate_node, attribute)
-        unless archimate_node.is_a?(DataModel::ArchimateNode)
+        unless archimate_node.is_a?(DataModel::Differentiable)
           raise(
             TypeError,
             "archimate_node must be an ArchimateNode, was #{archimate_node.class}"
@@ -18,7 +18,7 @@ module Archimate
             "Node #{archimate_node.class} attribute must be a sym, was a #{attribute.class} value #{attribute.inspect}"
           )
         end
-        unless archimate_node.class.schema.keys.include?(attribute)
+        unless archimate_node.class.attr_names.include?(attribute)
           raise(
             ArgumentError,
             "Attribute #{attribute} invalid for class #{archimate_node.class}"

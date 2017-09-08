@@ -14,18 +14,22 @@ module Archimate
       # The x (towards the right, associated with width) attribute from the Top,Left (i.e. 0,0)
       # corner of the diagram to the Top, Left corner of the bounding box of the concept.
       # @note the XSD has this as a NonNegativeInteger
-      # @return [Float]
+      # @!attribute [r] x
+      #   @return [Float]
       model_attr :x
       # The y (towards the bottom, associated with height) attribute from the Top,Left (i.e. 0,0)
       # corner of the diagram to the Top, Left corner of the bounding box of the concept.
       # @note the XSD has this as a NonNegativeInteger
-      # @return [Float]
+      # @!attribute [r] y
+      #   @return [Float]
       model_attr :y
 
       # These are holdovers from the archi file format and are only maintained for compatability
-      # @return [Int, NilClass]
+      # @!attribute [r] end_x
+      #   @return [Int, NilClass]
       model_attr :end_x
-      # @return [Int, NilClass]
+      # @!attribute [r] end_y
+      #   @return [Int, NilClass]
       model_attr :end_y
 
       def initialize(x:, y:, end_x: nil, end_y: nil)

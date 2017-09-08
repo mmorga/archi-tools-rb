@@ -346,21 +346,21 @@ module Archimate
                                                       DEFAULT_RELATIONS - %w[AccessRelationship RealisationRelationship])
 
       define :Business_process, ViewpointTypeVal.new("Business Process",
-                                                      DataModel::ConnectorType.values + %w[
-                                                        ApplicationService
-                                                        BusinessActor
-                                                        BusinessCollaboration
-                                                        BusinessEvent
-                                                        BusinessFunction
-                                                        BusinessInteraction
-                                                        BusinessObject
-                                                        BusinessProcess
-                                                        BusinessRole
-                                                        BusinessService
-                                                        Location
-                                                        Representation
-                                                      ],
-                                                      DEFAULT_RELATIONS)
+                                                     DataModel::ConnectorType.values + %w[
+                                                       ApplicationService
+                                                       BusinessActor
+                                                       BusinessCollaboration
+                                                       BusinessEvent
+                                                       BusinessFunction
+                                                       BusinessInteraction
+                                                       BusinessObject
+                                                       BusinessProcess
+                                                       BusinessRole
+                                                       BusinessService
+                                                       Location
+                                                       Representation
+                                                     ],
+                                                     DEFAULT_RELATIONS)
 
       define :Application_behavior, ViewpointTypeVal.new("Application Behavior",
                                                          DataModel::ConnectorType.values + %w[

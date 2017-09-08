@@ -14,20 +14,25 @@ module Archimate
     class Element
       include Comparison
 
-      # @return [String]
+      # @!attribute [r] id
+      #   @return [String]
       model_attr :id
-      # @return [LangString, NilClass]
+      # @!attribute [r] name
+      #   @return [LangString, NilClass]
       model_attr :name
-      # @return [PreservedLangString, NilClass]
+      # @!attribute [rw] documentation
+      #   @return [PreservedLangString, NilClass]
       model_attr :documentation, writable: true
       # # @return [Array<AnyElement>]
       # model_attr :other_elements
       # # @return [Array<AnyAttribute>]
       # model_attr :other_attributes
       # @note type here was used for the Element/Relationship/Diagram type
-      # @return [String, NilClass]
+      # @!attribute [r] type
+      #   @return [String, NilClass]
       model_attr :type
-      # @return [Array<Property>]
+      # @!attribute [r] properties
+      #   @return [Array<Property>]
       model_attr :properties
 
       def initialize(id:, name:, documentation: nil, type: nil, properties: [])

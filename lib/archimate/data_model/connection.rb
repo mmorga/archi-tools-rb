@@ -9,44 +9,51 @@ module Archimate
     # If the connection is an ArchiMate relationship type, the connection's label, documentation and properties may be determined
     # (i.e inherited) from those in the referenced ArchiMate relationship. Otherwise the connection's label, documentation and properties
     # can be provided and will be additional to (or over-ride) those contained in the referenced ArchiMate relationship.
-    # ViewConceptType
-    # - ConnectionType(
-    #     sourceAttachment
-    #     bendpoint
-    #     targetAttachment
-    #     source
-    #     target)
     class Connection
       include Comparison
 
-      # @return [String]
+      # @!attribute [r] id
+      #   @return [String]
       model_attr :id
-      # @return [LangString, NilClass]
+      # @!attribute [r] name
+      #   @return [LangString, NilClass]
       model_attr :name
-      # @return [PreservedLangString, NilClass]
+      # @!attribute [r] documentation
+      #   @return [PreservedLangString, NilClass]
       model_attr :documentation
-      # # @return [Array<AnyElement>]
+      # # @!attribute [r] other_elements
+      #   @return [Array<AnyElement>]
       model_attr :other_elements
-      # # @return [Array<AnyAttribute>]
+      # # @!attribute [r] other_attributes
+      #   @return [Array<AnyAttribute>]
       model_attr :other_attributes
       # @note type here was used for the Element/Relationship/Diagram type
-      # @return [String, NilClass]
+      # @!attribute [r] type
+      #   @return [String, NilClass]
       model_attr :type
-      # @return [Location, NilClass]
+      # @!attribute [r] source_attachment
+      #   @return [Location, NilClass]
       model_attr :source_attachment
-      # @return [Array<Location>]
+      # @!attribute [r] bendpoints
+      #   @return [Array<Location>]
       model_attr :bendpoints
-      # @return [Location, NilClass]
+      # @!attribute [r] target_attachment
+      #   @return [Location, NilClass]
       model_attr :target_attachment
-      # @return [ViewNode, NilClass]
+      # @!attribute [rw] source
+      #   @return [ViewNode, NilClass]
       model_attr :source, comparison_attr: :id, writable: true
-      # @return [ViewNode, NilClass]
+      # @!attribute [rw] target
+      #   @return [ViewNode, NilClass]
       model_attr :target, comparison_attr: :id, writable: true
-      # @return [Relationship, NilClass]
+      # @!attribute [rw] relationship
+      #   @return [Relationship, NilClass]
       model_attr :relationship, comparison_attr: :id, writable: true
-      # @return [Style, NilClass]
+      # @!attribute [r] style
+      #   @return [Style, NilClass]
       model_attr :style
-      # @return [Array<Property>]
+      # @!attribute [r] properties
+      #   @return [Array<Property>]
       model_attr :properties
 
       def initialize(id:, name: nil, documentation: nil, type: nil,

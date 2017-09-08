@@ -78,7 +78,7 @@ module Archimate
   require "archimate/logging"
   require "archimate/color"
   require 'archimate/data_model'
-  # require 'archimate/diff'
+  require 'archimate/diff'
 
   # Computes the set of differences between base and remote models
   def self.diff(base, remote)

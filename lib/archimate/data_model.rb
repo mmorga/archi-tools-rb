@@ -10,6 +10,7 @@ module Archimate
     require 'archimate/data_model/element_type'
     require 'archimate/data_model/relationship_type'
     require 'archimate/data_model/comparison'
+    require 'archimate/data_model/differentiable'
     require 'archimate/data_model/layer'
     require 'archimate/data_model/layers'
     require 'archimate/data_model/viewpoint_type'

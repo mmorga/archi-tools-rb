@@ -8,11 +8,14 @@ module Archimate
     class Concern
       include Comparison
 
-      # @return [LangString] one label is required
+      # @!attribute [r] label
+      #   @return [LangString] one label is required
       model_attr :label
-      # @return [PreservedLangString]
+      # @!attribute [r] documentation
+      #   @return [PreservedLangString]
       model_attr :documentation
-      # @return [Array<LangString>]
+      # @!attribute [r] stakeholders
+      #   @return [Array<LangString>]
       model_attr :stakeholders
 
       def initialize(label:, documentation: nil, stakeholders: [])

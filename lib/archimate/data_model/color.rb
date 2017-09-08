@@ -9,15 +9,22 @@ module Archimate
     class Color
       include Comparison
 
-      # @return [Int.constrained(lt: 256, gt: -1)]
+      # @!attribute [r] r
+      #   @return [Int] red component, value 0-255
       model_attr :r
-      # @return [Int.constrained(lt: 256, gt: -1)]
+      # @!attribute [r] g
+      #   @return [Int] green component, value 0-255
       model_attr :g
-      # @return [Int.constrained(lt: 256, gt: -1)]
+      # @!attribute [r] b
+      #   @return [Int] blue component, value 0-255
       model_attr :b
-      # @return [Int.constrained(lt: 101, gt: -1), NilClass]
+      # @!attribute [r] a
+      #   @return [Int, NilClass] optional alpha component, value 0-100
       model_attr :a
 
+      # Parses a CSS style color string into a color object
+      # @param str [String] CSS color string
+      # @return [Color]
       def self.rgba(str)
         return nil if str.nil?
         md = str.match(/#([\da-f]{2})([\da-f]{2})([\da-f]{2})([\da-f]{2})?/)
@@ -30,6 +37,8 @@ module Archimate
         )
       end
 
+      # Results in a Color instance for the color black
+      # @return [Color]
       def self.black
         new(r: 0, g: 0, b: 0, a: 100)
       end

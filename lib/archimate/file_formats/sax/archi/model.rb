@@ -81,6 +81,12 @@ module Archimate
             end
           end
 
+          # def process_futures_using_fibers
+          #   @futures.each do |future|
+          #     future.resume(@index)
+          #   end
+          # end
+
           def model
             @model ||= DataModel::Model.new(id: @attrs["id"],
                                             name: DataModel::LangString.string(process_text(@attrs["name"])),

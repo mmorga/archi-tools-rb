@@ -9,44 +9,61 @@ module Archimate
     class Model
       include Comparison
 
-      # @return [String] unique identifier of this model
+      # @!attribute [r] id
+      #   @return [String] unique identifier of this model
       model_attr :id
-      # @return [LangString] name of the model
+      # @!attribute [r] name
+      #   @return [LangString] name of the model
       model_attr :name
 
-      # @return [PreservedLangString, NilClass] model documentation
+      # @!attribute [r] documentation
+      #   @return [PreservedLangString, NilClass] model documentation
       model_attr :documentation
-      # @return [Array<Property>] model properties
+      # @!attribute [r] properties
+      #   @return [Array<Property>] model properties
       model_attr :properties
-      # @return [Metadata, NilClass] model metadata
+      # @!attribute [r] metadata
+      #   @return [Metadata, NilClass] model metadata
       model_attr :metadata
-      # @return [Array<Element>]
+      # @!attribute [r] elements
+      #   @return [Array<Element>]
       model_attr :elements
-      # @return [Array<Relationship>]
+      # @!attribute [r] relationships
+      #   @return [Array<Relationship>]
       model_attr :relationships
-      # @return [Array<Organization>]
+      # @!attribute [r] organizations
+      #   @return [Array<Organization>]
       model_attr :organizations
-      # @return [Array<PropertyDefinition>]
+      # @!attribute [r] property_definitions
+      #   @return [Array<PropertyDefinition>]
       model_attr :property_definitions
-      # @return [String, NilClass]
+      # @!attribute [r] version
+      #   @return [String, NilClass]
       model_attr :version
-      # @return [Array<Diagram>]
+      # @!attribute [r] diagrams
+      #   @return [Array<Diagram>]
       model_attr :diagrams
-      # @return [Array<Viewpoint>]
+      # @!attribute [r] viewpoints
+      #   @return [Array<Viewpoint>]
       model_attr :viewpoints
 
       # Following attributes are to hold info on where the model came from
-      # @return [String]
+      # @!attribute [r] filename
+      #   @return [String]
       model_attr :filename
       # @see Archimate::SUPPORTED_FORMATS
-      # @return [Symbol, NilClass] supported Archimate format [Archimate::SUPPORTED_FORMATS] or +nil+
+      # @!attribute [r] file_format
+      #   @return [Symbol, NilClass] supported Archimate format [Archimate::SUPPORTED_FORMATS] or +nil+
       model_attr :file_format
-      # @return [Symbol] one of [Archimate::ARCHIMATE_VERSIONS], default +:archimate_3_0+
+      # @!attribute [r] archimate_version
+      #   @return [Symbol] one of [Archimate::ARCHIMATE_VERSIONS], default +:archimate_3_0+
       model_attr :archimate_version
 
-      # @return [Hash]
+      # @!attribute [r] namespaces
+      #   @return [Hash]
       model_attr :namespaces
-      # @return [Array<String>]
+      # @!attribute [r] schema_locations
+      #   @return [Array<String>]
       model_attr :schema_locations
 
       # # @return [Array<AnyElement>]

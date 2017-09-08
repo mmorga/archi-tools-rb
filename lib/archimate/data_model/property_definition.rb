@@ -3,23 +3,32 @@
 module Archimate
   module DataModel
     # An enumeration of data types.
-    DataType = String #String.default("string").enum("string", "boolean", "currency", "date", "time", "number")
+    # @todo consider making this an enumeration
+    PROPERTY_DEFINITION_TYPES = %w[string boolean currency date time number].freeze
 
     # A Property definition type containing its unique identifier, name, and data type.
     class PropertyDefinition
       include Comparison
 
-      # @return [String]
+      # @!attribute [r] id
+      #   @return [String]
       model_attr :id
-      # @return [LangString]
+      # @!attribute [r] name
+      #   @return [LangString]
       model_attr :name
-      # @return [PreservedLangString, NilClass]
+      # @!attribute [r] documentation
+      #   @return [PreservedLangString, NilClass]
       model_attr :documentation
-      # # @return [Array<AnyElement>]
+      # # @!attribute [r] other_elements
+      #   @return [Array<AnyElement>]
       model_attr :other_elements
-      # # @return [Array<AnyAttribute>]
+      # # @!attribute [r] other_attributes
+      #   @return [Array<AnyAttribute>]
       model_attr :other_attributes
-      # @return [DataType, NilClass]
+      # @!attribute [r] type
+      #   @note if +type+ is nil, then type "string" is assumed
+      #   @see Archimate::DataModel::PROPERTY_DEFINITION_TYPES
+      #   @return [String, NilClass]
       model_attr :type
 
       def self.identifier_for_key(key)

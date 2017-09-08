@@ -5,14 +5,18 @@ module Archimate
     class Font
       include Comparison
 
-      # @return [String, NilClass]
+      # @!attribute [r] name
+      #   @return [String, NilClass]
       model_attr :name
-      # @return [Float, NilClass]
+      # @!attribute [r] size
+      #   @return [Float, NilClass]
       model_attr :size
       # @todo make this an enum
-      # @return [Int, NilClass]
+      # @!attribute [r] style
+      #   @return [Int, NilClass]
       model_attr :style
-      # @return [String, NilClass]
+      # @!attribute [r] font_data
+      #   @return [String, NilClass]
       model_attr :font_data
 
       # Archi font strings look like this:

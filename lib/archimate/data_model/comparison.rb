@@ -16,6 +16,10 @@ module Archimate
           end
       end
 
+      def [](sym)
+        send(sym)
+      end
+
       def dig(*args)
         return self if args.empty?
         val = send(args.shift)

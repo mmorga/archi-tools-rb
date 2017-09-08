@@ -17,20 +17,26 @@ module Archimate
 
       # Format should match +/[[[:alpha:]]_][w-.]*/+ to be valid for Archimate
       # Model exchange format
-      # @return [Identifier, NilClass]
+      # @!attribute [r] id
+      #   @return [String, NilClass]
       model_attr :id
       # LabelGroup in the XSD
-      # @return [LangString, NilClass]
+      # @!attribute [r] name
+      #   @return [LangString, NilClass]
       model_attr :name
       # I believe this is used only for Archi formats
-      # @return [String, NilClass]
+      # @!attribute [r] type
+      #   @return [String, NilClass]
       model_attr :type
-      # @return [PreservedLangString, NilClass]
+      # @!attribute [r] documentation
+      #   @return [PreservedLangString, NilClass]
       model_attr :documentation
-      # @return [Array<Object>]
+      # @!attribute [rw] items
+      #   @return [Array<Object>]
       model_attr :items, writable: true
       # item in the XSD
-      # @return [Array<Organization>]
+      # @!attribute [rw] organizations
+      #   @return [Array<Organization>]
       model_attr :organizations, writable: true
       # # @return [Array<AnyElement>]
       # model_attr :other_elements

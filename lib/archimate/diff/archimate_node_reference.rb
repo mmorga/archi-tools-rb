@@ -11,23 +11,22 @@ module Archimate
       # Produces a NodeReference instance for the given parameters
       def self.for_node(node, child_node)
         case node
-        when DataModel::ArchimateNode
+        when DataModel::Differentiable
           ArchimateNodeAttributeReference.new(node, child_node)
         when Array
           ArchimateArrayReference.new(node, child_node)
         else
-          raise TypeError, "Node references need to be either an ArchimateNode or an Array"
+          raise TypeError, "Node references need to be either an Differentiable or an Array"
         end
       end
 
       def initialize(archimate_node)
-        unless archimate_node.is_a?(DataModel::ArchimateNode) || archimate_node.is_a?(Array)
+        unless archimate_node.is_a?(DataModel::Differentiable) || archimate_node.is_a?(Array)
           raise(
             TypeError,
-            "archimate_node must be an ArchimateNode or Array, was #{archimate_node.class}"
+            "archimate_node must be an Differentiable or Array, was #{archimate_node.class}"
           )
         end
-        raise "new WTF? parent at path #{archimate_node.path} is a #{archimate_node.class} but isn't assigned a model" if archimate_node.in_model.nil? && !archimate_node.is_a?(DataModel::Model)
         @archimate_node = archimate_node
       end
 

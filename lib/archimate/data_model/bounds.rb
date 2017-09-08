@@ -5,13 +5,17 @@ module Archimate
     class Bounds
       include Comparison
 
-      # @return [Float, NilClass]
+      # @!attribute [r] x
+      #   @return [Float, NilClass]
       model_attr :x
-      # @return [Float, NilClass]
+      # @!attribute [r] y
+      #   @return [Float, NilClass]
       model_attr :y
-      # @return [Float]
+      # @!attribute [r] width
+      #   @return [Float]
       model_attr :width
-      # @return [Float]
+      # @!attribute [r] height
+      #   @return [Float]
       model_attr :height
 
       def self.zero
