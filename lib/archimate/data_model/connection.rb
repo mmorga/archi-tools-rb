@@ -80,6 +80,11 @@ module Archimate
       def referenced_identified_nodes
         [@source, @target, @relationship].compact
       end
+
+      # This is used when rendering a connection to connection relationship.
+      def nodes
+        []
+      end
     end
     Dry::Types.register_class(Connection)
     ConnectionList = Strict::Array.member("archimate.data_model.connection").default([])
