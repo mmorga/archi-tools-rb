@@ -193,6 +193,10 @@ table.properties>caption {
     marker-end: url(#archimate-used-by-arrow);
 }
 
+.archimate-serving-relationship {
+    marker-end: url(#archimate-used-by-arrow);
+}
+
 .archimate-aggregation-relationship {
     marker-start: url(#archimate-hollow-diamond);
 }

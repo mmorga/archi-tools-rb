@@ -17,6 +17,8 @@ module Archimate
     #                                  Label
     #                                  Container > Element
     class Connection < Referenceable # ViewConcept
+      using DiffableArray
+
       attribute :source_attachment, Location.optional
       attribute :bendpoints, LocationList
       attribute :target_attachment, Location.optional
@@ -84,6 +86,19 @@ module Archimate
       # This is used when rendering a connection to connection relationship.
       def nodes
         []
+      end
+
+      # TODO: Is this true for all or only Archi models?
+      def absolute_position
+        # offset = bounds || Archimate::DataModel::Bounds.zero
+        offset = Archimate::DataModel::Bounds.zero
+        el = parent.parent
+        while el.respond_to?(:bounds) && el.bounds
+          bounds = el.bounds
+          offset = offset.with(x: (offset.x || 0) + (bounds.x || 0), y: (offset.y || 0) + (bounds.y || 0))
+          el = el.parent.parent
+        end
+        offset
       end
     end
     Dry::Types.register_class(Connection)

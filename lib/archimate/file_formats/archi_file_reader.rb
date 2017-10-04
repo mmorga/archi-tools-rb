@@ -221,7 +221,7 @@ module Archimate
           type: i.attr("xsi:type"),
           source: i["source"],
           target: i["target"],
-          relationship: i["relationship"],
+          relationship: i["relationship"] || i["archimateRelationship"],
           name: i["name"],
           style: parse_style(i),
           bendpoints: parse_bendpoints(i),
