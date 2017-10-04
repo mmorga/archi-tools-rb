@@ -92,6 +92,16 @@ module Archimate
         "#{type_name} #{source.nil? ? 'nothing' : source} -> #{target.nil? ? 'nothing' : target}"
       end
 
+      # @note this is a hack for connections that are the source or target of another connection
+      def nodes
+        []
+      end
+
+      # @note this was added inthe same round as the above addition #nodes
+      def absolute_position
+        source.absolute_position
+      end
+
       def description
         [
           name.nil? ? nil : "#{name}: ",

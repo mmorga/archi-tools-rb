@@ -75,6 +75,7 @@ module Archimate
 
       # Look at the type (if any of the path and set the class appropriately)
       def path_class
+        puts connection&.relationship&.type.inspect
         [
           "archimate",
           css_classify(connection&.relationship&.type || "default")

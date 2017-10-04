@@ -25,16 +25,13 @@ module Archimate
       end
 
       def remove_unreferenced_nodes
-        model.unreferenced_nodes.each do |id|
-          ns = model.lookup(id)
-          puts "Found duplicate ids: #{ns}" if ns.size > 1
-          unreferenced_node = ns[0]
+        model.unreferenced_nodes.each do |unreferenced_node|
+          raise "This functionality is not implemeted yet"
+
+          # TODO: this needs to be the XML serialization of the node
           trash.root.add_child unreferenced_node.dup
-          prev_sib = unreferenced_node.previous_sibling
-          if prev_sib.instance_of?(Nokogiri::XML::Text) && prev_sib.content.strip.empty?
-            ns << prev_sib
-          end
-          ns.remove
+          # TODO: implement this
+          # model.delete(unreferenced_node)
           @progressbar.increment
         end
       end

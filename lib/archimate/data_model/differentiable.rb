@@ -66,7 +66,17 @@ module Archimate
     #    example: When diffing a model, the diff should include the order
     #    of elements referenced in the +elements+ attribute, but shouldn't
     #    continue with the diff of each element itself.
-
+    #
+    # = Complications
+    #
+    # == Object references
+    #
+    # Since a patch operation produces an new replacement object, object
+    # references need to be handled. For example, given an +Element+ with +id=3+
+    # if a patch changes this +Element+'s name, then the +Element+ in
+    # the model under +Model#elements+ is replaced with a different instance,
+    # but a +Relationship+ that references the +Element+ is still pointing at
+    # a different instance and needs to be updated.
     Insert = Struct.new(:path, :value)
     Delete = Struct.new(:path)
     Change = Struct.new(:path, :from, :to)
@@ -81,15 +91,21 @@ module Archimate
         return [] if other.nil?
         raise TypeError, "Expected other <#{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
 
-        self.class.attr_names.each_with_object([]) do |k, a|
-          val = send(k)
+        self.class.comparison_attr_paths.each_with_object([]) do |k, a|
+          val = dig(*k)
+          other_val = other.dig(*k)
           case val
           when NilClass
-            a << Insert.new(k, other[k]) unless other[k].nil?
+            a << Insert.new(k, other_val) unless other_val.nil?
           when Integer, Float, Hash, String, Symbol
-            a.concat(Differentiable.diff_primitive(val, other[k], self, other, k))
+            a.concat(Differentiable.diff_primitive(val, other_val, self, other, k))
           when Differentiable
-            a.concat(val.diff(other[k]))
+            a.concat(
+              val.diff(other_val).map do |diff|
+                diff.path = [k].concat(Array(diff.path))
+                diff
+              end
+            )
           else
             raise "Unexpected Type for Diff don't know how to diff a #{val.class}"
           end
@@ -100,15 +116,23 @@ module Archimate
         ary = diffs.is_a?(Array) ? diffs : [diffs]
         self.class.new(
           ary.each_with_object(to_h) do |diff, args|
-            case diff
-            when Delete
-              args[diff.path] = nil
-            when Insert
-              args[diff.path] = diff.value
-            when Change
-              args[diff.path] = diff.to
+            diff_path = Array(diff.path)
+            attr = diff_path.first
+            if diff_path.size > 1
+              child_diff = diff.dup
+              child_diff.path = diff.path[1..-1]
+              args[attr] = self[attr].patch(child_diff)
             else
-              raise "Unexpected diff type #{diff.class} #{diff.inspect}"
+              case diff
+              when Delete
+                args[attr] = nil
+              when Insert
+                args[attr] = diff.value
+              when Change
+                args[attr] = diff.to
+              else
+                raise "Unexpected diff type #{diff.class} #{diff.inspect}"
+              end
             end
           end
         )

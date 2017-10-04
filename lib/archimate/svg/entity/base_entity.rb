@@ -24,20 +24,22 @@ module Archimate
 
         def layer_background_class
           case child.element&.layer
-          when "Strategy"
+          when "Strategy", DataModel::Layers::Strategy
             "archimate-strategy-background"
-          when "Business"
+          when "Business", DataModel::Layers::Business
             "archimate-business-background"
-          when "Application"
+          when "Application", DataModel::Layers::Application
             "archimate-application-background"
-          when "Technology"
+          when "Technology", DataModel::Layers::Technology
             "archimate-infrastructure-background"
-          when "Physical"
+          when "Physical", DataModel::Layers::Physical
             "archimate-physical-background"
-          when "Motivation"
+          when "Motivation", DataModel::Layers::Motivation
             "archimate-motivation-background"
-          when "Implementation and Migration"
+          when "Implementation and Migration", DataModel::Layers::Implementation_and_migration
             "archimate-implementation-background"
+          else
+            puts "Unexpected layer #{child.element&.layer.inspect}"
           end
         end
 
