@@ -19,6 +19,7 @@ HighLine.color_scheme = HighLine::ColorScheme.new do |cs|
   cs[:Technology]                     = %i[black on_light_green]
   cs[:Motivation]                     = %i[black on_light_magenta]
   cs[:"Implementation and Migration"] = %i[black on_light_red]
+  cs[:Physical]                       = %i[black on_light_green]
   cs[:Connectors]                     = %i[black on_light_gray]
   cs[:unknown_layer]                  = %i[black on_gray]
   cs[:Model]                          = [:cyan]

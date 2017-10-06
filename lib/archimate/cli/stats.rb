@@ -3,6 +3,9 @@
 module Archimate
   module Cli
     class Stats
+      attr_reader :output_io
+      attr_reader :model
+
       def initialize(model, output_io)
         @model = model
         @output_io = output_io
