@@ -266,7 +266,7 @@ module Archimate
           name: options[:name],
           nodes: options.fetch(:nodes) { with_nodes },
           element: options.fetch(:element) { node_element },
-          bounds: build_bounds,
+          bounds: options.fetch(:bounds) { build_bounds },
           connections: connections,
           style: build_style,
           child_type: options.fetch(:child_type, nil),

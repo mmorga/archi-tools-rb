@@ -59,6 +59,15 @@ module Archimate
         x || 0
       end
 
+      def center
+        DataModel::Bounds.new(
+          x: left + width / 2.0,
+          y: top + height / 2.0,
+          width: 0,
+          height: 0
+        )
+      end
+
       def is_above?(other)
         bottom < other.top
       end
