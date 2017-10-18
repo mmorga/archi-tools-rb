@@ -42,13 +42,11 @@ module Archimate
   module FileFormats
     autoload :ArchiFileFormat, 'archimate/file_formats/archi_file_format'
     autoload :ArchiFileReader, 'archimate/file_formats/archi_file_reader'
-    autoload :ArchiSaxDocument, 'archimate/file_formats/archi_sax_document'
     autoload :ArchiFileWriter, 'archimate/file_formats/archi_file_writer'
     autoload :ModelExchangeFileReader, 'archimate/file_formats/model_exchange_file_reader'
     autoload :ModelExchangeFileWriter21, 'archimate/file_formats/model_exchange_file_writer_21'
     autoload :ModelExchangeFileWriter30, 'archimate/file_formats/model_exchange_file_writer_30'
-    autoload :Reader, 'archimate/file_formats/reader'
-    autoload :SaxHandler, 'archimate/file_formats/sax_handler'
+    autoload :Sax, 'archimate/file_formats/sax'
     autoload :Serializer, 'archimate/file_formats/serializer'
   end
 
@@ -78,7 +76,7 @@ module Archimate
   require "archimate/logging"
   require "archimate/color"
   require 'archimate/data_model'
-  # require 'archimate/diff'
+  require 'archimate/diff'
 
   # Computes the set of differences between base and remote models
   def self.diff(base, remote)

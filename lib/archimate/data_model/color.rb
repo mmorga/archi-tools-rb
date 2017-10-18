@@ -64,6 +64,7 @@ module Archimate
       private
 
       def scaled_alpha(max = 255)
+        return max unless a
         (max * (a / 100.0)).round
       end
     end

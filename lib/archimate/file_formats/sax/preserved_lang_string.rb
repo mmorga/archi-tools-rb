@@ -3,14 +3,11 @@
 module Archimate
   module FileFormats
     module Sax
-      class PreservedLangString < FileFormats::SaxHandler
-        def initialize(attrs, parent_handler)
-          super
-          @characters_stack = []
-        end
+      class PreservedLangString < FileFormats::Sax::Handler
+        include Sax::CaptureContent
 
-        def characters(string)
-          @characters_stack.push(string)
+        def initialize(name, attrs, parent_handler)
+          super
         end
 
         def complete

@@ -38,8 +38,10 @@ module Archimate
             "archimate-motivation-background"
           when "Implementation and Migration", DataModel::Layers::Implementation_and_migration
             "archimate-implementation-background"
+          when "Connectors", DataModel::Layers::Connectors
+            "archimate-connectors-background"
           else
-            puts "Unexpected layer #{child.element&.layer.inspect}"
+            puts "Unexpected layer #{child.element&.layer.inspect}" if child.element&.layer
           end
         end
 

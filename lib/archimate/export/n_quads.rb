@@ -121,6 +121,7 @@ module Archimate
         "TriggeringRelationship" => %w(triggers triggered_by),
         "GroupingRelationship" => %w(groups grouped_by),
         "SpecialisationRelationship" => %w(specializes specialized_by),
+        "SpecializationRelationship" => %w(specializes specialized_by),
         "InfluenceRelationship" => %w(influences influenced)
       }.freeze
 

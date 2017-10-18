@@ -91,21 +91,15 @@ module Archimate
         return [] if other.nil?
         raise TypeError, "Expected other <#{other.class} to be of type #{self.class}" unless other.is_a?(self.class)
 
-        self.class.comparison_attr_paths.each_with_object([]) do |k, a|
-          val = dig(*k)
-          other_val = other.dig(*k)
+        self.class.attr_names.each_with_object([]) do |k, a|
+          val = send(k)
           case val
           when NilClass
-            a << Insert.new(k, other_val) unless other_val.nil?
+            a << Insert.new(k, other[k]) unless other[k].nil?
           when Integer, Float, Hash, String, Symbol
-            a.concat(Differentiable.diff_primitive(val, other_val, self, other, k))
+            a.concat(Differentiable.diff_primitive(val, other[k], self, other, k))
           when Differentiable
-            a.concat(
-              val.diff(other_val).map do |diff|
-                diff.path = [k].concat(Array(diff.path))
-                diff
-              end
-            )
+            a.concat(val.diff(other[k]))
           else
             raise "Unexpected Type for Diff don't know how to diff a #{val.class}"
           end
@@ -116,23 +110,15 @@ module Archimate
         ary = diffs.is_a?(Array) ? diffs : [diffs]
         self.class.new(
           ary.each_with_object(to_h) do |diff, args|
-            diff_path = Array(diff.path)
-            attr = diff_path.first
-            if diff_path.size > 1
-              child_diff = diff.dup
-              child_diff.path = diff.path[1..-1]
-              args[attr] = self[attr].patch(child_diff)
+            case diff
+            when Delete
+              args[diff.path] = nil
+            when Insert
+              args[diff.path] = diff.value
+            when Change
+              args[diff.path] = diff.to
             else
-              case diff
-              when Delete
-                args[attr] = nil
-              when Insert
-                args[attr] = diff.value
-              when Change
-                args[attr] = diff.to
-              else
-                raise "Unexpected diff type #{diff.class} #{diff.inspect}"
-              end
+              raise "Unexpected diff type #{diff.class} #{diff.inspect}"
             end
           end
         )

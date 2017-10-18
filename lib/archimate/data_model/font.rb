@@ -50,8 +50,8 @@ module Archimate
       def to_archi_font
         font_data ||
           [
-            1, font.name, font.size, font.style, "WINDOWS", 1, 0, 0, 0, 0, 0, 0,
-            0, 0, 1, 0, 0, 0, 0, font.name
+            1, name, size, style, "WINDOWS", 1, 0, 0, 0, 0, 0, 0,
+            0, 0, 1, 0, 0, 0, 0, name
           ].map(&:to_s).join("|")
       end
 

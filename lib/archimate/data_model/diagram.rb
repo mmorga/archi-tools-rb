@@ -47,7 +47,7 @@ module Archimate
       #   @return [Array<Connection>]
       model_attr :connections, writable: true
 
-      def initialize(id:, name:, documentation: nil, type: nil, properties: [],
+      def initialize(id:, name: nil, documentation: nil, type: nil, properties: [],
                      viewpoint_type: nil, viewpoint: nil, nodes: [],
                      connection_router_type: nil, background: nil, connections: [])
         @id = id
