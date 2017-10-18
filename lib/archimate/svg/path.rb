@@ -11,7 +11,7 @@ module Archimate
 
       # @return Float length of this path
       def length
-        segment_lengths.sum
+        segment_lengths.reduce(0) { |total, length| total + length }
       end
 
       # @return Point mid-point on Path
