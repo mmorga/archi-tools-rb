@@ -113,6 +113,7 @@ module Archimate
         "AssociationRelationship" => %w(associated_with associated_with),
         "AccessRelationship" => %w(accesses accessed_by),
         "UsedByRelationship" => %w(used_by uses),
+        "ServingRelationship" => %w(serving served_by),
         "RealisationRelationship" => %w(realizes realized_by),
         "AssignmentRelationship" => %w(assigned_to assigned_from),
         "AggregationRelationship" => %w(aggregates aggregated_by),

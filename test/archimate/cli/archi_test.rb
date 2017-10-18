@@ -29,19 +29,6 @@ module Archimate
       end
 
       # TODO: make this actually test something
-      def test_merge
-        Archi.start(
-          [
-            "merge",
-            File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'),
-            File.join(TEST_EXAMPLES_FOLDER, 'merger_1_1.archimate'),
-            "-o",
-            @test_file
-          ]
-        )
-      end
-
-      # TODO: make this actually test something
       def test_svg
         Dir.mktmpdir do |dir|
           Archi.start(["svg", "-o", dir, File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'), "-n"])
