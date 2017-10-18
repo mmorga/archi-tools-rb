@@ -66,7 +66,7 @@ module Archimate
       # This is needed for various calculations
       # @!attribute [r] parent
       #   @return [ViewNode]
-      model_attr :parent, comparison_attr: :no_compare
+      model_attr :parent, writable: true, comparison_attr: :no_compare
 
       # ViewNodeType
       # @!attribute [r] bounds

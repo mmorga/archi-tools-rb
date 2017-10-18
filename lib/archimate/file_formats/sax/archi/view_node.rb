@@ -39,6 +39,7 @@ module Archimate
 
           def on_content(string, _source)
             @content = string
+            false
           end
 
           def on_bounds(bounds, _source)
@@ -65,6 +66,8 @@ module Archimate
               child_type: attrs["type"],
               diagram: diagram
             )
+            @view_nodes.each { |node| node.parent = @view_node }
+            @view_node
           end
         end
       end

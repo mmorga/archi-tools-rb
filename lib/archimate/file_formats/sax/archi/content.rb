@@ -10,6 +10,10 @@ module Archimate
             @characters = []
           end
 
+          def characters(string)
+            @characters << string
+          end
+
           def complete
             content = @characters.join("").strip
             return [] if content.empty?
