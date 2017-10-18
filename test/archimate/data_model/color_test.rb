@@ -16,6 +16,14 @@ module Archimate
         assert_equal 100, @c1.a
       end
 
+      def test_factory
+        subject = build_color
+        assert subject.r >= 0
+        assert subject.g >= 0
+        assert subject.b >= 0
+        assert subject.a >= 0
+      end
+
       def test_hash
         assert_equal @c1.hash, Color.new(@c1.to_h).hash
       end

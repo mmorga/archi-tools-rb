@@ -18,12 +18,11 @@ module Archimate
     def self.parse(str)
       doc = Nokogiri::XML(str)
       case doc.namespaces["xmlns"]
-      when "http://www.opengroup.org/xsd/archimate/3.0/"
-        FileFormats::ModelExchangeFileReader30.new.parse(doc)
-      when "http://www.opengroup.org/xsd/archimate"
-        FileFormats::ModelExchangeFileReader21.new.parse(doc)
+      when "http://www.opengroup.org/xsd/archimate/3.0/",
+           "http://www.opengroup.org/xsd/archimate"
+        FileFormats::ModelExchangeFileReader.new(str).parse
       else
-        FileFormats::ArchiFileReader.new.parse(doc)
+        FileFormats::ArchiFileReader.new(str).parse
       end
     end
   end

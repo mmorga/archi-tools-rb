@@ -3,13 +3,36 @@
 module Archimate
   module DataModel
     # An instance of any XML element for arbitrary content like metadata
-    class AnyElement < ArchimateNode
-      attribute :element, Strict::String
-      attribute :prefix, Strict::String.optional
-      attribute :attributes, Strict::Array.member(AnyAttribute).default([])
-      attribute :content, Strict::String.optional
-      attribute :children, Strict::Array.member(AnyElement).default([])
+    class AnyElement
+      include Comparison
+
+      # @!attribute [r] element
+      #   @return [String]
+      model_attr :element
+      # @!attribute [r] prefix
+      #   @return [String, NilClass]
+      model_attr :prefix
+      # @!attribute [r] attributes
+      #   @return [Array<AnyAttribute>]
+      model_attr :attributes
+      # @!attribute [r] content
+      #   @return [String, NilClass]
+      model_attr :content
+      # @!attribute [r] children
+      #   @return [Array<AnyElement>]
+      model_attr :children
+
+      def initialize(element:, prefix: "", attributes: [], content: nil, children: [])
+        @element = element
+        @prefix = prefix
+        @attributes = attributes
+        @content = content
+        @children = children
+      end
+
+      def to_sym
+        element&.to_sym
+      end
     end
-    Dry::Types.register_class(AnyElement)
   end
 end

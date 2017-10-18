@@ -8,7 +8,7 @@ module Archimate
 
         def initialize(child, bounds_offset)
           super
-          @badge_bounds = child.bounds.with(
+          @badge_bounds = DataModel::Bounds.new(
             x: child.bounds.right - 25,
             y: child.bounds.top + 5,
             width: 20,

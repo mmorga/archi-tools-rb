@@ -8,7 +8,7 @@ module Archimate
     class ConvertTest < Minitest::Test
       def setup
         @output_io = StringIO.new
-        @subject = Convert.new(ARCHISURANCE_MODEL)
+        @subject = Convert.new(archisurance_model)
       end
 
       def test_with_graphml

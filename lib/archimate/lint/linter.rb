@@ -13,8 +13,6 @@ module Archimate
     # [x] warn about names with (copy)
     # [x] blank element names
     class Linter
-      include FileFormats::ArchimateV2
-
       attr_reader :model
 
       def initialize(model)
@@ -50,18 +48,18 @@ module Archimate
       def report_subsection(issues, output_io)
         issues.each do |sub_issues|
           output_io.puts(sub_issues)
-          output_io.puts("Sub Total: #{sub_issues.size}")
+          output_io.puts("Sub Total: #{sub_issues.size}") unless sub_issues.empty?
         end
       end
 
       def unused_elements
-        referenced_elements = diagram_referenced_ids
-        model.elements.reject { |el| referenced_elements.include?(el.id) }
+        referenced_elements = model.diagrams.inject([]) { |memo, dia| memo.concat(dia.elements) }.uniq
+        model.elements.reject { |el| referenced_elements.include?(el) }
       end
 
       def unused_relationships
-        referenced_ids = diagram_referenced_ids
-        model.relationships.reject { |el| referenced_ids.include?(el.id) }
+        referenced_relationships = model.diagrams.inject([]) { |memo, dia| memo.concat(dia.relationships) }.uniq
+        model.relationships.reject { |el| referenced_relationships.include?(el) }
       end
 
       def empty_views
@@ -88,15 +86,11 @@ module Archimate
           end
       end
 
-      def diagram_referenced_ids
-        @ref_ids ||= model.diagrams.inject([]) { |memo, dia| memo.concat(dia.referenced_identified_nodes) }.uniq
-      end
-
       def invalid_for_viewpoint
         model.diagrams.each_with_object([]) do |diagram, errors|
           next if diagram.total_viewpoint?
-          valid_entity_types = VIEWPOINTS[diagram.viewpoint][:entities]
-          valid_relation_types = VIEWPOINTS[diagram.viewpoint][:relations]
+          valid_entity_types = DataModel::ViewpointType::VIEWPOINTS[diagram.viewpoint_type][:entities]
+          valid_relation_types = DataModel::ViewpointType::VIEWPOINTS[diagram.viewpoint_type][:relations]
           invalid_elements = diagram.all_nodes.reject do |child|
             child.element&.type.nil? || valid_entity_types.include?(child.element&.type)
           end
@@ -113,21 +107,22 @@ module Archimate
         end
       end
 
-      # Nesting is valid for relations:
-      # * CompositionRelationship
-      # * AggregationRelationship
-      # * AssignmentRelationship
       def nesting_without_relation
-        model.find_by_class(DataModel::ViewNode).each_with_object([]) do |parent, errors|
-          missing_relations = parent.nodes.reject do |child|
-            model.relationships.any? do |rel|
-              parent.archimate_element.nil? ||
-                child.archimate_element.nil? ||
-                (rel.source == parent.archimate_element && rel.target == child.archimate_element)
-            end
-          end
-          errors.concat(missing_relations.map { |child| "#{child.element} should not nest in #{parent.element} without valid relationship" })
-        end
+        model
+          .diagrams
+          .flat_map(&:all_nodes) # These are top level view nodes
+          .reject { |view_node| !view_node.element || view_node.nodes.empty? } # reject the ones with no child view nodes
+          .flat_map { |parent|
+            parent
+              .nodes
+              .select(&:element)
+              .map { |child| [parent, child] } } # map into parent-child pairs for children that are elements
+          .select { |pair|
+            model.relationships.none? { |rel|
+              (rel.source.equal?(pair[0]) && rel.target.equal?(pair[1]))
+            }
+          }
+          .map { |pair| "#{pair[1].element} should not nest in #{pair[0].element} without valid relationship"}
       end
 
       def entity_naming_rules
@@ -135,9 +130,9 @@ module Archimate
           if entity.name.nil? || entity.name.empty?
             errors << "#{entity} name is empty"
           elsif entity.name.size < 2
-            errors << "#{entity} name #{entity.name.inspect} is too short"
+            errors << "#{entity} name #{entity.name} is too short"
           elsif entity.name.include?("(copy)")
-            errors << "#{entity} name #{entity.name.inspect} contains '(copy)'"
+            errors << "#{entity} name #{entity.name} contains '(copy)'"
           end
         end
       end

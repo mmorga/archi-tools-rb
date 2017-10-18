@@ -1,17 +1,49 @@
 # frozen_string_literal: true
+
 module Archimate
   module DataModel
-    class Style < ArchimateNode
-      attribute :text_alignment, Coercible::Int.optional # TODO: make this an enum
-      attribute :fill_color, Color.optional
-      attribute :line_color, Color.optional
-      attribute :font_color, Color.optional # TODO: move this to font
-      attribute :line_width, Coercible::Int.optional
-      attribute :font, Font.optional
-      attribute :text_position, Coercible::Int.optional # TODO: make this an enum
+    class Style
+      include Comparison
+
+      # @todo make this an enum
+      # @!attribute [r] text_alignment
+      #   @return [Int, NilClass]
+      model_attr :text_alignment
+      # @!attribute [r] fill_color
+      #   @return [Color, NilClass]
+      model_attr :fill_color
+      # @!attribute [r] line_color
+      #   @return [Color, NilClass]
+      model_attr :line_color
+      # @todo move this to font
+      # @!attribute [r] font_color
+      #   @return [Color, NilClass]
+      model_attr :font_color
+      # @!attribute [r] line_width
+      #   @return [Int, NilClass]
+      model_attr :line_width
+      # @!attribute [r] font
+      #   @return [Font, NilClass]
+      model_attr :font
+      # @todo make this an enum
+      # @!attribute [r] text_position
+      #   @return [Int, NilClass]
+      model_attr :text_position
+
+      def initialize(text_alignment: nil, fill_color: nil, line_color: nil,
+                     font_color: nil, line_width: nil, font: nil, text_position: nil)
+        @text_alignment = text_alignment
+        @fill_color = fill_color
+        @line_color = line_color
+        @font_color = font_color
+        @line_width = line_width
+        @font = font
+        @text_position = text_position
+      end
 
       def to_s
-        attr_name_vals = struct_instance_variables.map { |k| "#{k}: #{self[k]}" }.join(", ")
+        attr_name_vals = %i[text_alignment fill_color line_color font_color line_width
+                            font text_position].map { |k| "#{k}: #{send(k)}" }.join(", ")
         "Style(#{attr_name_vals})"
       end
 
@@ -26,7 +58,5 @@ module Archimate
         end
       end
     end
-
-    Dry::Types.register_class(Style)
   end
 end

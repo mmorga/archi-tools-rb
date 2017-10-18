@@ -48,14 +48,6 @@ module Archimate
         ).map
       end
 
-      desc "merge ARCHIFILE1 ARCHIFILE2", "EXPERIMENTAL: Merge two archimate files"
-      option :output,
-             aliases: :o,
-             desc: "Write output to FILE instead of stdout."
-      def merge(archifile1, archifile2)
-        Archimate::Cli::Merger.new.merge_files(archifile1, archifile2)
-      end
-
       desc "svg -o OUTPUTDIR ARCHIFILE", "IN DEVELOPMENT: Produce semantically meaningful SVG files from an Archi file"
       option :output,
              aliases: :o,

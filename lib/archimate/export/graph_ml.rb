@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 # This module takes an ArchiMate model and builds GraphML representation of it.
 require "set"
+require "nokogiri"
 
 module Archimate
   module Export
@@ -81,14 +82,15 @@ module Archimate
       end
 
       def docs(xml, docs)
-        docs.each do |doc|
-          data(xml, "documentation", doc)
+        return unless docs
+        docs.langs.each do |lang|
+          data(xml, "documentation", docs.by_lang(lang))
         end
       end
 
       def nodes(xml, elements)
         elements.each do |element|
-          node(xml, element.id, element.name, element.type, element.documentation, element.properties)
+          node(xml, element.id, element.name, element.type, docs: element.documentation, properties: element.properties)
 
           @layers[element.layer] << element.id
         end
@@ -106,7 +108,7 @@ module Archimate
         end
       end
 
-      def node(xml, id, name, type, docs = [], properties = [], other_data = {})
+      def node(xml, id, name, type, other_data = {}, docs: nil, properties: [])
         xml.node(id: id, label: name, labels: "#{type}:#{name}") do
           data_type(xml, "element-type", type)
           name(xml, name)
@@ -118,7 +120,7 @@ module Archimate
         properties(xml, id, properties)
       end
 
-      def edge(xml, id, source, target, type, name = nil, docs = [], properties = [])
+      def edge(xml, id, source, target, type, name = nil, docs = nil, properties = [])
         xml.edge(id: id, source: source, target: target, label: type) do
           data_type(xml, "relationship-type", type)
           name(xml, name)

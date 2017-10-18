@@ -1,10 +1,23 @@
 # frozen_string_literal: true
+
 module Archimate
   module DataModel
-    # A Property instance type declaring the reference to a Property definition and containing the Property value.
-    class Property < ArchimateNode
-      attribute :values, Strict::Array.member(LangString).default([]) # .constrained(min_size: 1)
-      attribute :property_definition, PropertyDefinition
+    # A Property instance type declaring the reference to a [PropertyDefinition]
+    # and containing the property value.
+    class Property
+      include Comparison
+
+      # @!attribute [r] value
+      #   @return [LangString, NilClass] value of the property, default +nil+
+      model_attr :value
+      # @!attribute [rw] property_definition
+      #   @return [PropertyDefinition] property definition of the property
+      model_attr :property_definition, writable: true
+
+      def initialize(property_definition:, value: nil)
+        @property_definition = property_definition
+        @value = value
+      end
 
       def to_s
         "Property(key: #{property_definition.name}, value: #{value || 'no value'})"
@@ -13,13 +26,6 @@ module Archimate
       def key
         property_definition.name
       end
-
-      def value
-        values.first
-      end
     end
-
-    Dry::Types.register_class(Property)
-    PropertiesList = Strict::Array.member(Property).default([])
   end
 end

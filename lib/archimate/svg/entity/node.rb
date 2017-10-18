@@ -15,7 +15,7 @@ module Archimate
         def entity_shape(xml, bounds)
           case child.child_type
           when 1
-            @badge_bounds = bounds.with(
+            @badge_bounds = DataModel::Bounds.new(
               x: bounds.right - 25,
               y: bounds.top + 5,
               width: 20,

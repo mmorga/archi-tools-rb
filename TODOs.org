@@ -284,3 +284,222 @@ effective_entity : (child -> element_name_type)
 get effective entity
 
 that's used to match the rest:
+
+Intermittent Failure with test --seed 11297
+
+---
+
+Remove Id references in preference to object references
+
+Done:
+
+Property (PropertyDefinitionId)
+
+TODO:
+
+Relationship (Source & Target)
+View (Viewpoint)
+
+Connection (For Source & Targets)
+Label (Not Currently Used)
+ViewConcept (View {Concept} list)
+ViewNode (model, targetConnections, archimateNode)
+
+---
+
+Part of Better Diff/Merge redux
+
+What about the path? Need a way to describe diffs & conflicts back to meaningful user world terms. (not id oriented)
+
+Eliminate the use of DiffableArray by making a class for collections
+Eliminate the use of Diffable Primitive with a smarter context diff
+
+Referenceable Object Instance Classes
+
+Archimate::DataModel::Model < Archimate::DataModel::NamedReferenceable
+Archimate::DataModel::PropertyDefinition < Archimate::DataModel::NamedReferenceable,
+Archimate::DataModel::Element < Archimate::DataModel::Concept,
+Archimate::DataModel::Relationship < Archimate::DataModel::Concept,
+Archimate::DataModel::Diagram < Archimate::DataModel::View,
+  Archimate::DataModel::ViewNode < Archimate::DataModel::Referenceable,
+  Archimate::DataModel::Connection < Archimate::DataModel::Referenceable,
+
+What are the non-referenceable things that might be included by a less automated diff?
+
+Model
+  (from Referenceable)
+  id
+  name
+  documentation: Array of LangString - really should be a LangString type (I believe)
+  type: String - TODO: need to handle US/UK spelling differences and naming differences between Archi/ArchiMate2.1/ArchiMate3
+  properties
+  metadata
+  elements
+  relationships
+  organizations
+  property_definitions
+  version
+  diagrams
+  viewpoints
+  filename
+  file_format
+  archimate_version
+  namespaces
+  schema_locations
+
+PropertyDefinition
+  (from Referenceable)
+  id
+  name
+  documentation: Array of LangString - really should be a LangString type (I believe)
+  type: String
+  (from PropertyDefinition)
+  value_type (DataType)
+
+Element
+  (from Referenceable)
+  id
+  name
+  documentation: Array of LangString - really should be a LangString type (I believe)
+  type: String
+  properties (from Concept)
+
+Relationship
+  (from Referenceable)
+  id
+  name
+  documentation: Array of LangString - really should be a LangString type (I believe)
+  type: String
+  source
+  target
+  access_type
+
+Diagram
+  (from Referenceable)
+  id
+  name
+  documentation: Array of LangString - really should be a LangString type (I believe)
+  type: String
+  (from View)
+  properties
+  viewpoint_type
+  viewpoint
+  (from Diagram)
+  nodes (ViewNode collection)
+  connection_router_type (int - enum, Archi only)
+  background (int Archi only)
+  connections (Connection Collection)
+
+ViewNode
+  (from Referenceable)
+  id
+  name
+  documentation: Array of LangString - really should be a LangString type (I believe)
+  type: String
+  model: (identifier - what is this? Archi Only)
+  content: string
+  target_connections: (Archi only, identifiers, collection of ids of targets, TODO, probably not needed)
+  archimate_element (Element)
+  bounds
+  nodes: (ViewNode collection)
+  connections (Connection collection)
+  style
+  type
+  child_type: (TODO: int this selects the shape of the object)
+  properties
+
+There are some sub-classes here that might be valuable to implement?
+Connection
+  (from Referenceable)
+  id
+  name
+  documentation: Array of LangString - really should be a LangString type (I believe)
+  type: String
+  source_attachment (Location)
+  bendpoints
+  target_attachment (Location)
+  source
+  target
+  relationship
+  style
+  properties
+
+What about Organizations - they are horrifically defined in ArchiMate 3. Need an internal model that isn't so insane and is diffable/mergable.
+
+---
+
+Diff implementation
+
+The refinements implementation is hokey. A lot of code and makes thing fragile.
+
+Diff calculation
+
+In most collections (except ones under diagram), the order of items doesn't matter - except it helps make textual diffs of models smaller.
+
+insert and delete are probably only useful for collections
+
+change is typical
+
+how would move be implemented (i.e. move between collections)
+What's the best data structure for collections to make diffs and merges easier? Diff lcs?
+
+validation on demand rather than at creation of data model in absence of dry-struct? Switchable by global setting?
+
+How would we add archimate modules (new concept)? privacy? Timeline? Transitional architectures?
+
+---
+
+Diff
+
+- [ ] User friendly text description
+- [ ] User friendly description includes location information in the model (I.e diagram it's located in, elements describing relationship, and so on)
+- [ ] Diffs can be compared to see if they are in conflict
+- [ ] Diff can be applied to a model to patch model
+
+* TODO Eliminate Documentation class - it's a LangString
+* TODO Make LangString be like a Hash with lang as key and string as value
+* TODO Make LangString use a default lang (stored in Archimate module)
+
+---
+
+Strict::Array.member(AnyAttribute).default([])
+Strict::Array.member(AnyElement).default([])
+Strict::Array.member(Concern).default([])
+Strict::Array.member(Connection).default([])
+Strict::Array.member(Diagram).default([])
+Strict::Array.member(Element).default([])
+Strict::Array.member(ElementType).default([])
+Strict::Array.member(LangString)
+Strict::Array.member(Location).default([])
+Strict::Array.member(ModelingNote).default([])
+Strict::Array.member(Organization).default([])
+Strict::Array.member(Property).default([])
+Strict::Array.member(PropertyDefinition).default([])
+Strict::Array.member(Referenceable).default([])
+Strict::Array.member(Relationship).default([])
+Strict::Array.member(RelationshipType).default([])
+Strict::Array.member(SchemaInfo).default([])
+Strict::Array.member(Strict::String).default([])
+Strict::Array.member(ViewNode).default([])
+Strict::Array.member(Viewpoint).default([])
+Strict::Array.member(ViewpointContentEnum).default([])
+Strict::Array.member(ViewpointPurposeEnum).default([])
+
+---
+
+Use locale for LangString
+IRB::Locale.new.lang
+
+---
+
+referenced_identified_nodes
+Model->
+
+Diagram
+  ViewNode
+    Container
+  Connection
+Element (Property->PropertyDefinition)
+Organization
+Relationship
+

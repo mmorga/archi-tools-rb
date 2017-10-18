@@ -2,86 +2,62 @@
 
 module Archimate
   module DataModel
-    # Basic Viewpoints
-    # Category:Composition Viewpoints that defines internal compositions and aggregations of elements.
-    COMPOSITION_VIEWPOINTS = [
-      "Organization",
-      "Application Platform",
-      "Information Structure",
-      "Technology",
-      "Layered",
-      "Physical"
-    ].freeze
+    class Viewpoint
+      include Comparison
 
-    # Category:Support Viewpoints where you are looking at elements that are supported by other elements. Typically from one layer and upwards to an above layer.
-    SUPPORT_VIEWPOINTS = [
-      "Product",
-      "Application Usage",
-      "Technology Usage"
-    ].freeze
+      # @!attribute [r] id
+      #   @return [String]
+      model_attr :id
+      # @!attribute [r] name
+      #   @return [LangString]
+      model_attr :name
+      # @!attribute [r] documentation
+      #   @return [PreservedLangString]
+      model_attr :documentation
+      # # @!attribute [r] other_elements
+      #   @return [Array<AnyElement>]
+      model_attr :other_elements
+      # # @!attribute [r] other_attributes
+      #   @return [Array<AnyAttribute>]
+      model_attr :other_attributes
+      # type here was used for the Element/Relationship/Diagram type
+      # @!attribute [r] type
+      #   @return [String, NilClass]
+      model_attr :type
+      # @!attribute [r] concerns
+      #   @return [Array<Concern>]
+      model_attr :concerns
+      # @!attribute [r] viewpoint_purposes
+      #   @return [Array<ViewpointPurposeEnum>]
+      model_attr :viewpoint_purposes
+      # @!attribute [r] viewpoint_contents
+      #   @return [Array<ViewpointContentEnum>]
+      model_attr :viewpoint_contents
+      # @!attribute [r] allowed_element_types
+      #   @return [Array<ElementType>]
+      model_attr :allowed_element_types
+      # @!attribute [r] allowed_relationship_types
+      #   @return [Array<RelationshipType>]
+      model_attr :allowed_relationship_types
+      # @!attribute [r] modeling_notes
+      #   @return [Array<ModelingNote>]
+      model_attr :modeling_notes
 
-    # Category:Cooperation Towards peer elements which cooperate with each other. Typically across aspects.
-    COOPERATION_VIEWPOINTS = [
-      "Business Process Cooperation",
-      "Application Cooperation"
-    ].freeze
-
-    # Category:Realization Viewpoints where you are looking at elements that realize other elements. Typically from one layer and downwards to a below layer.
-    REALIZATION_VIEWPOINTS = [
-      "Service Realization",
-      "Implementation and Deployment",
-      "Goal Realization",
-      "Goal Contribution",
-      "Principles",
-      "Requirements Realization",
-      "Motivation"
-    ].freeze
-
-    # Strategy Viewpoints
-    STRATEGY_VIEWPOINTS = [
-      "Strategy",
-      "Capability Map",
-      "Outcome Realization",
-      "Resource Map"
-    ].freeze
-
-    # Implementation and Migration Viewpoints
-    IMPLEMENTATION_AND_MIGRATION_VIEWPOINTS = [
-      "Project",
-      "Migration",
-      "Implementation and Migration"
-    ].freeze
-
-    # Other Viewpoints
-    Other_Viewpoints = %w[Stakeholder].freeze
-
-    VIEWPOINTS_ENUM = [].concat(
-                        [COMPOSITION_VIEWPOINTS, SUPPORT_VIEWPOINTS, COOPERATION_VIEWPOINTS,
-                         REALIZATION_VIEWPOINTS, STRATEGY_VIEWPOINTS,
-                         IMPLEMENTATION_AND_MIGRATION_VIEWPOINTS].flatten
-                      )
-
-    ViewpointType = Strict::String.enum(*VIEWPOINTS_ENUM).optional
-
-    ViewpointContentEnum = Strict::String.enum(%w[Details Coherence Overview])
-    ViewpointContent = Strict::Array.member(ViewpointContentEnum).default([])
-
-    ViewpointPurposeEnum = Strict::String.enum(%w[Designing Deciding Informing])
-    ViewpointPurpose = Strict::Array.member(ViewpointPurposeEnum).default([])
-
-    class Viewpoint < NamedReferenceable
-      using DataModel::DiffableArray
-      using DataModel::DiffablePrimitive
-
-      attribute :concern, ConcernList
-      attribute :viewpointPurpose, ViewpointPurpose.optional
-      attribute :viewpointContent, ViewpointContent.optional
-      attribute :allowedElementTypes, AllowedElementTypes
-      attribute :allowedRelationshipTypes, AllowedRelationshipTypes
-      attribute :modelingNotes, Strict::Array.member(ModelingNote).default([])
+      def initialize(id:, name:, documentation: nil, type: nil,
+                     concerns: [], viewpoint_purposes: [],
+                     viewpoint_contents: [], allowed_element_types: [],
+                     allowed_relationship_types: [], modeling_notes: [])
+        @id = id
+        @name = name
+        @documentation = documentation
+        @type = type
+        @concerns = concerns
+        @viewpoint_purposes = viewpoint_purposes
+        @viewpoint_contents = viewpoint_contents
+        @allowed_element_types = allowed_element_types
+        @allowed_relationship_types = allowed_relationship_types
+        @modeling_notes = modeling_notes
+      end
     end
-
-    Dry::Types.register_class(Viewpoint)
-    ViewpointList = Strict::Array.member(Viewpoint).default([])
   end
 end

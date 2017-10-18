@@ -28,7 +28,7 @@ module Archimate
       end
 
       def title_width
-        @title_width ||= (elements_by_layer.keys + ["Total Elements"]).map(&:size).max
+        @title_width ||= (elements_by_layer.keys + ["Total Elements"]).map(&:to_s).map(&:size).max
       end
 
       def row(title, size, color)

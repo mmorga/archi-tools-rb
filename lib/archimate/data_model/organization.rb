@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Archimate
   module DataModel
     # An organization element represents a structural node in a particular organization of the model concepts.
@@ -10,19 +11,50 @@ module Archimate
     #
     # An organization has no meaning unless it has at least child organization element.
     #
-    # Note that Organization must fit into a tree structure (so strictly nested).
-    class Organization < ArchimateNode # was Referenceable
-      attribute :id, Identifier.optional # .constrained(format: /[[[:alpha:]]_][w-.]*/)
-      attribute :name, LangString.optional # LabelGroup in the XSD, TODO: this is a LangString collection
-      attribute :type, Strict::String.optional # I believe this is used only for Archi formats
-      attribute :documentation, DocumentationGroup
-      attribute :items, Strict::Array.member(Identifier).default([]) # TODO: Convert this to referenceable
-      attribute :organizations, Strict::Array.member(Organization).default([]) # item in the XSD
-      # attribute :other_elements, Strict::Array.member(AnyElement).default([])
-      # attribute :other_attributes, Strict::Array.member(AnyAttribute).default([])
+    # @note that Organization must fit into a tree structure (so strictly nested).
+    class Organization
+      include Comparison
+
+      # Format should match +/[[[:alpha:]]_][w-.]*/+ to be valid for Archimate
+      # Model exchange format
+      # @!attribute [r] id
+      #   @return [String, NilClass]
+      model_attr :id
+      # LabelGroup in the XSD
+      # @!attribute [r] name
+      #   @return [LangString, NilClass]
+      model_attr :name
+      # I believe this is used only for Archi formats
+      # @!attribute [r] type
+      #   @return [String, NilClass]
+      model_attr :type
+      # @!attribute [r] documentation
+      #   @return [PreservedLangString, NilClass]
+      model_attr :documentation
+      # @!attribute [rw] items
+      #   @return [Array<Object>]
+      model_attr :items, writable: true
+      # item in the XSD
+      # @!attribute [rw] organizations
+      #   @return [Array<Organization>]
+      model_attr :organizations, writable: true
+      # # @return [Array<AnyElement>]
+      # model_attr :other_elements
+      # # @return [Array<AnyAttribute>]
+      # model_attr :other_attributes
+
+      def initialize(id: nil, name: nil, type: nil, documentation: nil,
+                     items: [], organizations: [])
+        @id = id
+        @name = name
+        @type = type
+        @documentation = documentation
+        @items = items
+        @organizations = organizations
+      end
 
       def to_s
-        "#{Archimate::Color.data_model('Organization')}<#{id}>[#{Archimate::Color.color(name, [:white, :underline])}]"
+        "#{Archimate::Color.data_model('Organization')}<#{id}>[#{Archimate::Color.color(name, %i[white underline])}]"
       end
 
       def referenced_identified_nodes
@@ -32,9 +64,8 @@ module Archimate
       end
 
       def remove(id)
-        items.delete(id)
+        items.delete_if { |item| item.id == id }
       end
     end
-    Dry::Types.register_class(Organization)
   end
 end

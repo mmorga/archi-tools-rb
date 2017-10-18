@@ -3,11 +3,24 @@
 module Archimate
   module DataModel
     # An instance of any XML attribute for arbitrary content like metadata
-    class AnyAttribute < ArchimateNode
-      attribute :attribute, Strict::String
-      attribute :prefix, Strict::String
-      attribute :value, Strict::String
+    class AnyAttribute
+      include Comparison
+
+      # @!attribute [r] attribute
+      #   @return [String]
+      model_attr :attribute
+      # @!attribute [r] prefix
+      #   @return [String]
+      model_attr :prefix
+      # @!attribute [r] value
+      #   @return [String]
+      model_attr :value
+
+      def initialize(attribute, value, prefix: "")
+        @attribute = attribute
+        @prefix = prefix
+        @value = value
+      end
     end
-    Dry::Types.register_class(AnyAttribute)
   end
 end

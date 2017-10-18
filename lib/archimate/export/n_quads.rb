@@ -94,17 +94,18 @@ module Archimate
 
       def documentation(el)
         docs = []
-        el.documentation.each do |doc|
-          docs << make_quad(el.id, "documentation", doc.text)
+        return docs unless el.documentation && !el.documentation.empty?
+        el.documentation.langs.each do |lang|
+          docs << make_quad(el.id, "documentation", el.documentation.by_lang(lang))
         end
         docs
       end
 
       def relationships(el)
         [
-          make_quad(el.source, predicate(el.type), el.target),
-          make_quad(el.id, "sources", el.source),
-          make_quad(el.id, "target", el.target)
+          make_quad(el.source.id, predicate(el.type), el.target.id),
+          make_quad(el.id, "sources", el.source.id),
+          make_quad(el.id, "target", el.target.id)
         ]
       end
 
@@ -112,6 +113,7 @@ module Archimate
         "AssociationRelationship" => %w(associated_with associated_with),
         "AccessRelationship" => %w(accesses accessed_by),
         "UsedByRelationship" => %w(used_by uses),
+        "ServingRelationship" => %w(serving served_by),
         "RealisationRelationship" => %w(realizes realized_by),
         "AssignmentRelationship" => %w(assigned_to assigned_from),
         "AggregationRelationship" => %w(aggregates aggregated_by),
@@ -120,6 +122,7 @@ module Archimate
         "TriggeringRelationship" => %w(triggers triggered_by),
         "GroupingRelationship" => %w(groups grouped_by),
         "SpecialisationRelationship" => %w(specializes specialized_by),
+        "SpecializationRelationship" => %w(specializes specialized_by),
         "InfluenceRelationship" => %w(influences influenced)
       }.freeze
 

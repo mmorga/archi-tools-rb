@@ -15,7 +15,7 @@ module Archimate
           xml.rect(x: bounds.left, y: bounds.top + group_header_height, width: bounds.width, height: bounds.height - group_header_height, class: background_class, style: shape_style)
           xml.rect(x: bounds.left, y: bounds.top, width: bounds.width / 2.0, height: group_header_height, class: background_class, style: shape_style)
           xml.rect(x: bounds.left, y: bounds.top, width: bounds.width / 2.0, height: group_header_height, class: "archimate-decoration")
-          @text_bounds = bounds.with(height: group_header_height)
+          @text_bounds = DataModel::Bounds.new(bounds.to_h.merge(height: group_header_height))
           @text_align = "left"
         end
       end

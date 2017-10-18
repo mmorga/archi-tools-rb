@@ -86,8 +86,8 @@ module Archimate
       end
 
       def entity_hash_name(entity)
-        layer = DataModel::Constants::ELEMENT_LAYER.fetch(entity.type, nil)
-        layer_sort_order = layer ? DataModel::Constants::LAYER_ELEMENTS.keys.index(layer) : 9
+        layer = DataModel::Layers.for_element(entity.type)
+        layer_sort_order = layer ? DataModel::Layers.find_index(layer) : 9
         [
           entity.class.name, # Taking advantage of Element being before Relationship
           layer_sort_order.to_s,
@@ -104,7 +104,7 @@ module Archimate
       # 4. names differ only in punctuation
       # 5. names differ only by stop-words (list of words such as "the", "api", etc.)
       def simplify(entity)
-        name = entity.name&.dup || ""
+        name = entity.name&.dup.to_s || ""
         name.sub!("(copy)", "") # (copy) is a special case inserted by the Archi tool
         name.downcase!
         name.gsub!(/[[:punct:]]/, "") unless entity.is_a?(DataModel::Relationship)

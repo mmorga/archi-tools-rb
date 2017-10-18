@@ -10,10 +10,10 @@ module Archimate
         end
 
         def calc_text_bounds(_bounds)
-          @text_bounds = @text_bounds.with(
+          @text_bounds = DataModel::Bounds.new(@text_bounds.to_h.merge(
             y: @text_bounds.top + @margin,
             height: @text_bounds.height - @margin
-          )
+          ))
         end
 
         def entity_shape(xml, bounds)

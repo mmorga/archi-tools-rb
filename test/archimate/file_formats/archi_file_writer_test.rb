@@ -8,16 +8,18 @@ module Archimate
       attr_accessor :model
 
       def setup
-        @model_source = ARCHISURANCE_SOURCE
-        @model = ARCHISURANCE_MODEL
+        @model_source = archisurance_source
+        @model = archisurance_model
       end
 
       def test_write
         result_io = StringIO.new
 
         ArchiFileWriter.write(@model, result_io)
-
-        assert_equal @model_source, result_io.string
+        # doc = Nokogiri::XML.parse(result_io.string)
+        # written_model = ArchiFileReader.new(doc).parse
+        written_model = ArchiFileReader.new(result_io.string).parse
+        assert_equal @model, written_model
       end
 
       def test_remove_nil_values

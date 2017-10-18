@@ -1,55 +1,151 @@
 # frozen_string_literal: true
+
 module Archimate
   module DataModel
-    PositiveInteger = Strict::Int.constrained(gt: 0)
+    # PositiveInteger =Int.constrained(gt: 0)
 
     # Graphical node type. It can contain child node types.
-    # TODO: This is ViewNodeType in the v3 XSD
-    class ViewNode < Referenceable #  < ViewConcept
-      using DiffableArray
+    # This can be specialized as Label and Container
+    # In the ArchiMate v3 Schema, the tree of these nodes is:
+    # ViewConceptType(
+    #     LabelGroup (name LangString)
+    #     PreservedLangString
+    #     style (optional)
+    #     viewRefs
+    #     id)
+    # - ViewNodeType(
+    #       LocationGroup (x, y)
+    #       SizeGroup (width, height))
+    #   - Label(
+    #         conceptRef
+    #         attributeRef
+    #         xpathPart (optional)
+    #     )
+    #   - Container(
+    #         nodes (ViewNodeType)
+    #     - Element(
+    #           elementRef)
+    class ViewNode
+      include Comparison
 
-      # LocationGroup: TODO: Consider making this a mixin or extract object
-      # The x (towards the right, associated with width) attribute from the Top,Left (i.e. 0,0)
-      # corner of the diagram to the Top, Left corner of the bounding box of the concept.
-      # attribute :x, NonNegativeInteger
-      # The y (towards the bottom, associated with height) attribute from the Top,Left (i.e. 0,0)
-      # corner of the diagram to the Top, Left corner of the bounding box of the concept.
-      # attribute :y, NonNegativeInteger
+      # ViewConceptType
+      # @!attribute [r] id
+      #   @return [String]
+      model_attr :id
+      # @!attribute [r] name
+      #   @return [LangString, NilClass]
+      model_attr :name
+      # @!attribute [r] documentation
+      #   @return [PreservedLangString, NilClass]
+      model_attr :documentation
+      # # @!attribute [r] other_elements
+      #   @return [Array<AnyElement>]
+      model_attr :other_elements
+      # # @!attribute [r] other_attributes
+      #   @return [Array<AnyAttribute>]
+      model_attr :other_attributes
+      # @note type here was used for the Element/Relationship/Diagram type
+      # @!attribute [r] type
+      #   @return [String, NilClass]
+      model_attr :type
+      # @!attribute [r] style
+      #   @return [Style, NilClass]
+      model_attr :style
 
-      # SizeGroup:
-      # The width (associated with x) attribute from the Left side to the right side of the
-      # bounding box of a concept.
-      # attribute :w, PositiveInteger
-      # The height (associated with y) attribute from the top side to the bottom side of the
-      # bounding box of a concept.
-      # attribute :h, PositiveInteger
+      # @note viewRefs are pointers to 0-* Diagrams for diagram drill in defined in abstract View Concept
+      # @todo Make this an array
+      # @!attribute [rw] view_refs
+      #   @return [Diagram]
+      model_attr :view_refs, comparison_attr: :id, writable: true
 
-      attribute :model, Identifier.optional
-      attribute :content, Strict::String.optional
-      attribute :target_connections, Strict::Array.member(Identifier).default([])
-      attribute :archimate_element, Identifier.optional
-      attribute :bounds, Bounds.optional
-      attribute :nodes, Strict::Array.member(ViewNode).default([])
-      attribute :connections, ConnectionList
-      attribute :style, Style.optional
-      attribute :type, Strict::String.optional
-      attribute :child_type, Coercible::Int.optional
-      attribute :properties, PropertiesList # Note: this is not in the model under element
-      # it's added under Real Element
+      # @todo document where this comes from
+      # @!attribute [r] content
+      #   @return [String, NilClass]
+      model_attr :content
+
+      # This is needed for various calculations
+      # @!attribute [r] parent
+      #   @return [ViewNode]
+      model_attr :parent, writable: true, comparison_attr: :no_compare
+
+      # ViewNodeType
+      # @!attribute [r] bounds
+      #   @return [Bounds, NilClass]
+      model_attr :bounds
+
+      # Container - container doesn't distinguish between nodes and connections
+      # @!attribute [r] nodes
+      #   @return [Array<ViewNode>]
+      model_attr :nodes
+      # @!attribute [r] connections
+      #   @return [Array<Connection>]
+      model_attr :connections
+
+      # @note properties is not in the model under element, it's added under Real Element
+      # @todo Delete this - I think it's not used
+      # @!attribute [r] properties
+      #   @return [Array<Property>]
+      model_attr :properties
+
+      # Element
+      # @!attribute [rw] element
+      #   @return [Element, NilClass]
+      model_attr :element, writable: true, comparison_attr: :id
+      # Archi format, selects the shape of element (for elements that can have two or more shapes)
+      # @!attribute [r] child_type
+      #   @return [Int, NilClass]
+      model_attr :child_type
+
+      # @!attribute [r] diagram
+      #   @return [Diagram, NilClass]
+      model_attr :diagram, comparison_attr: :no_compare
+
+      # Node type to allow a Label in a Artifact. the "label" element holds the info for the @note.
+      # Label View Nodes have the following attributes
+
+      # conceptRef is a reference to an concept for this particular label, along with the attributeRef
+      # which references the particular concept's part which this label represents.
+      # @!attribute [r] concept_ref
+      #   @return [String]
+      model_attr :concept_ref
+      # conceptRef is a reference to an concept for this particular label, along with the partRef
+      # which references the particular concept's part which this label represents. If this attribute
+      # is set, then there is no need to add a label tag in the Label parent (since it is contained in the model).
+      # the XPATH statement is meant to be interpreted in the context of what the conceptRef points to.
+      # @!attribute [r] xpath_path
+      #   @return [String, NilClass]
+      model_attr :xpath_path
+
+      def initialize(id:, name: nil, documentation: nil, type: nil, parent: nil,
+                     style: nil, view_refs: [], content: nil, bounds: nil,
+                     nodes: [], connections: [], properties: [], element: nil,
+                     child_type: nil, diagram:, concept_ref: nil, xpath_path: nil)
+        @id = id
+        @name = name
+        @documentation = documentation
+        @type = type
+        @parent = parent
+        @style = style
+        @view_refs = view_refs
+        @content = content
+        @bounds = bounds
+        @nodes = nodes
+        @connections = connections
+        @properties = properties
+        @element = element
+        @child_type = child_type
+        @diagram = diagram
+        @concept_ref = concept_ref
+        @xpath_path = xpath_path
+      end
 
       def replace(entity, with_entity)
-        if (archimate_element == entity.id)
-          @archimate_element = with_entity.id
-          @element = with_entity
-        end
-        if (model == entity.id)
-          @model = with_entity.id
-          @model_element = with_entity
-        end
+        @element = with_entity if element.id == entity.id
+        @view_refs = with_entity if view_refs == entity
       end
 
       def to_s
-        "ViewNode[#{name || ''}](#{in_model.lookup(archimate_element) if archimate_element && in_model})"
+        "ViewNode[#{name || ''}](#{element if element})"
       end
 
       def description
@@ -58,14 +154,6 @@ module Archimate
           element.nil? ? nil : element.name,
           element&.type.nil? ? nil : "(#{element.type})"
         ].compact.join(" ")
-      end
-
-      def element
-        @element ||= in_model.lookup(archimate_element)
-      end
-
-      def model_element
-        @model_element ||= in_model.lookup(model)
       end
 
       def all_nodes
@@ -78,30 +166,36 @@ module Archimate
 
       def referenced_identified_nodes
         (nodes + connections).reduce(
-          (target_connections + [archimate_element]).compact
+          [element]
+        .compact
         ) do |a, e|
           a.concat(e.referenced_identified_nodes)
         end
       end
 
       def in_diagram
-        @diagram ||= ->(node) { node = node.parent until node.nil? || node.is_a?(Diagram) }.call(self)
+        diagram # ||= ->(node) { node = node.parent until node.nil? || node.is_a?(Diagram) }.call(self)
       end
 
-      # TODO: Is this true for all or only Archi models?
+      # @todo Is this true for all or only Archi models?
       def absolute_position
-        offset = bounds || Archimate::DataModel::Bounds.zero
-        el = parent.parent
+        offset = bounds || Bounds.zero
+        el = parent
         while el.respond_to?(:bounds) && el.bounds
           bounds = el.bounds
-          offset = offset.with(x: (offset.x || 0) + (bounds.x || 0), y: (offset.y || 0) + (bounds.y || 0))
-          el = el.parent.parent
+          offset = Bounds.new(offset.to_h.merge(x: (offset.x || 0) + (bounds.x || 0), y: (offset.y || 0) + (bounds.y || 0)))
+          el = el.parent
         end
         offset
       end
-    end
 
-    Dry::Types.register_class(ViewNode)
+      def target_connections
+        diagram
+          .connections
+          .select { |conn| conn.target&.id == id }
+          .map(&:id)
+      end
+    end
   end
 end
 

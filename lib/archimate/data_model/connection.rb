@@ -9,73 +9,95 @@ module Archimate
     # If the connection is an ArchiMate relationship type, the connection's label, documentation and properties may be determined
     # (i.e inherited) from those in the referenced ArchiMate relationship. Otherwise the connection's label, documentation and properties
     # can be provided and will be additional to (or over-ride) those contained in the referenced ArchiMate relationship.
-    #
-    # This is ConnectionType in the XSD
-    # ViewConceptType > ConnectionType > SourcedConnectionType > Relationship > NestingRelationship
-    #                                  > Line
-    #                 > ViewNodeType >
-    #                                  Label
-    #                                  Container > Element
-    class Connection < Referenceable # ViewConcept
-      using DiffableArray
+    class Connection
+      include Comparison
 
-      attribute :source_attachment, Location.optional
-      attribute :bendpoints, LocationList
-      attribute :target_attachment, Location.optional
-      attribute :source, Identifier.optional
-      attribute :target, Identifier.optional
-      attribute :type, Strict::String.optional
+      # @!attribute [r] id
+      #   @return [String]
+      model_attr :id
+      # @!attribute [r] name
+      #   @return [LangString, NilClass]
+      model_attr :name
+      # @!attribute [r] documentation
+      #   @return [PreservedLangString, NilClass]
+      model_attr :documentation
+      # # @!attribute [r] other_elements
+      #   @return [Array<AnyElement>]
+      model_attr :other_elements
+      # # @!attribute [r] other_attributes
+      #   @return [Array<AnyAttribute>]
+      model_attr :other_attributes
+      # @note type here was used for the Element/Relationship/Diagram type
+      # @!attribute [r] type
+      #   @return [String, NilClass]
+      model_attr :type
+      # @!attribute [r] source_attachment
+      #   @return [Location, NilClass]
+      model_attr :source_attachment
+      # @!attribute [r] bendpoints
+      #   @return [Array<Location>]
+      model_attr :bendpoints
+      # @!attribute [r] target_attachment
+      #   @return [Location, NilClass]
+      model_attr :target_attachment
+      # @!attribute [rw] source
+      #   @return [ViewNode, NilClass]
+      model_attr :source, comparison_attr: :id, writable: true
+      # @!attribute [rw] target
+      #   @return [ViewNode, NilClass]
+      model_attr :target, comparison_attr: :id, writable: true
+      # @!attribute [rw] relationship
+      #   @return [Relationship, NilClass]
+      model_attr :relationship, comparison_attr: :id, writable: true
+      # @!attribute [r] style
+      #   @return [Style, NilClass]
+      model_attr :style
+      # @!attribute [r] properties
+      #   @return [Array<Property>]
+      model_attr :properties
 
-      # This is under Relationship
-      attribute :relationship, Strict::String.optional
-
-      # Note: this is added under ViewConcept
-      attribute :style, Style.optional
-      attribute :properties, PropertiesList
+      def initialize(id:, name: nil, documentation: nil, type: nil,
+                     source_attachment: nil, bendpoints: [], target_attachment: nil,
+                     source: nil, target: nil, relationship: nil, style: nil,
+                     properties: nil)
+        @id = id
+        @name = name
+        @documentation = documentation
+        @type = type
+        @source_attachment = source_attachment
+        @bendpoints = bendpoints
+        @target_attachment = target_attachment
+        @source = source
+        @target = target
+        @relationship = relationship
+        @style = style
+        @properties = properties
+      end
 
       def replace(entity, with_entity)
-        @relationship = with_entity.id if (relationship == entity.id)
-        @source = with_entity.id if (source == entity.id)
-        @target = with_entity.id if (target == entity.id)
+        @relationship = with_entity.id if relationship == entity.id
+        @source = with_entity.id if source == entity.id
+        @target = with_entity.id if target == entity.id
       end
 
       def type_name
-        Archimate::Color.color("#{Archimate::Color.data_model('Connection')}[#{Archimate::Color.color(@name || '', [:white, :underline])}]", :on_light_magenta)
-      end
-
-      def relationship_element
-        in_model.lookup(relationship)
+        Archimate::Color.color("#{Archimate::Color.data_model('Connection')}[#{Archimate::Color.color(@name || '', %i[white underline])}]", :on_light_magenta)
       end
 
       def element
-        relationship_element
-      end
-
-      def source_element
-        in_model.lookup(source)
-      end
-
-      def target_element
-        in_model.lookup(target)
+        relationship
       end
 
       def to_s
-        if in_model
-          s = in_model.lookup(source) unless source.nil?
-          t = in_model.lookup(target) unless target.nil?
-        else
-          s = source
-          t = target
-        end
-        "#{type_name} #{s.nil? ? 'nothing' : s} -> #{t.nil? ? 'nothing' : t}"
+        "#{type_name} #{source.nil? ? 'nothing' : source} -> #{target.nil? ? 'nothing' : target}"
       end
 
       def description
         [
           name.nil? ? nil : "#{name}: ",
-          source_element&.description,
-          relationship_element&.description,
-          target_element&.description
+          source&.description,
+          relationship&.description,
+          target&.description
         ].compact.join(" ")
       end
 
@@ -101,7 +123,5 @@ module Archimate
         offset
       end
     end
-    Dry::Types.register_class(Connection)
-    ConnectionList = Strict::Array.member("archimate.data_model.connection").default([])
   end
 end

@@ -11,6 +11,7 @@ if ENV['TEST_ENV'] != 'guard'
       SimpleCov::Formatter::JSONFormatter
     ])
   SimpleCov.start do
+    track_files "*.rb"
     add_filter "/test/"
   end
   puts "required simplecov"
@@ -22,6 +23,7 @@ require 'minitest/color'
 require 'minitest/profile'
 require 'faker'
 require 'pp'
+require 'awesome_print'
 require 'archimate'
 require_relative 'examples/factories'
 
@@ -35,7 +37,9 @@ Minitest::Test.make_my_diffs_pretty!
 module Minitest
   class Test
     include Archimate::Examples::Factories
-    include Archimate::DataModel::DiffableArray
-    include Archimate::DataModel::DiffablePrimitive
+
+    def clone_with(entity, attrs={})
+      entity.class.new(entity.to_hash.merge(attrs).transform_values(&:dup))
+    end
   end
 end

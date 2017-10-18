@@ -9,7 +9,7 @@ module Archimate
         def initialize(child, bounds_offset)
           super
           bounds = child.bounds
-          @text_bounds = bounds.with(
+          @text_bounds = DataModel::Bounds.new(
             x: bounds.left + 7,
             y: bounds.top + 5,
             width: bounds.width - 14,
@@ -20,7 +20,7 @@ module Archimate
         def entity_shape(xml, bounds)
           case child.child_type
           when 1
-            @badge_bounds = bounds.with(
+            @badge_bounds = DataModel::Bounds.new(
               x: bounds.right - 25,
               y: bounds.top + 5,
               width: 20,
