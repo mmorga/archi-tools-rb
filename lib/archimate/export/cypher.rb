@@ -84,7 +84,7 @@ module Archimate
           props = add_docs(
             {
               layer: element.layer.delete(" "),
-              name: element.name,
+              name: element.name.to_s,
               nodeId: element.id
             }.merge(
               element.properties.each_with_object({}) do |prop, memo|
@@ -150,7 +150,7 @@ module Archimate
       def relationship_def(rel)
         h = add_docs(
           {
-            name: rel.name,
+            name: rel.name.to_s,
             relationshipId: rel.id,
             accessType: rel.access_type,
             weight: weight(rel.type)

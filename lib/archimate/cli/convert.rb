@@ -5,7 +5,7 @@ module Archimate
     class Convert
       include Archimate::Logging
 
-      SUPPORTED_FORMATS = %w[meff2.1 meff3.0 archi nquads graphml csv cypher].freeze
+      SUPPORTED_FORMATS = %w[meff2.1 meff3.0 archi nquads graphml csv cypher jsonl].freeze
 
       attr_reader :model
 
@@ -30,6 +30,8 @@ module Archimate
           Archimate::Export::CSVExport.new(model).to_csv(output_dir: output_dir)
         when "cypher"
           Archimate::Export::Cypher.new(output_io).to_cypher(model)
+        when "jsonl"
+          Archimate::Export::Jsonl.new(output_io).to_jsonl(model)
         else
           error { "Export to '#{export_format}' is not supported yet." }
         end

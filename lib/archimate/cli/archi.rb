@@ -8,7 +8,8 @@ module Archimate
       if output_io.is_a?(String)
         if !force && File.exist?(output_io)
           # TODO: This needs to be handled with more grace
-          return nil unless @hl.agree("File #{output_io} exists. Overwrite?")
+          cli = HighLine.new
+          return nil unless cli.agree("File #{output_io} exists. Overwrite?")
         end
         output_io = File.open(output_io, "w")
       end
