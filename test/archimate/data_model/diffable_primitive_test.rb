@@ -37,10 +37,12 @@ module Archimate
       end
 
       def test_diff_no_changes
+        skip("move to archimate-diff test")
         assert_empty @subject.diff("sample", @model, @model, "name")
       end
 
       def test_diff_delete
+        skip("move to archimate-diff test")
         assert_equal(
           [Diff::Delete.new(Diff::ArchimateNodeAttributeReference.new(@model, :name))],
           @subject.diff(nil, @model, @model, :name)
@@ -48,6 +50,7 @@ module Archimate
       end
 
       def test_diff_change
+        skip("move to archimate-diff test")
         assert_equal(
           [Diff::Change.new(Diff::ArchimateNodeAttributeReference.new(@model, :name), Diff::ArchimateNodeAttributeReference.new(@model, :name))],
           @subject.diff("primal", @model, @model, :name)

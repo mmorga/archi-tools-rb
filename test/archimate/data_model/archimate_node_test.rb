@@ -19,7 +19,9 @@ module Archimate
         @remote_diagram = @remote.diagrams.find { |d| d.id == @diagram.id }
       end
 
+      # TODO: move to archimate-diff test
       def test_diff_on_primitive_attribute
+        skip("move to archimate-diff test")
         assert_equal(
           [Diff::Change.new(
             Diff::ArchimateNodeAttributeReference.new(@remote_diagram.name, :text),
@@ -101,7 +103,9 @@ module Archimate
         validate_in_model(@base)
       end
 
+      # TODO: Move to archimate-diff gem
       def test_diff_with_changed_name
+        skip("move to archimate-diff test")
         m1 = build_model(with_relationships: 2, with_diagrams: 2, with_elements: 4, with_organizations: 4)
         m2 = m1.with(name: "#{m1.name}-changed")
 
@@ -122,7 +126,9 @@ module Archimate
         end
       end
 
+      # TODO: move to archimate-diff test
       def test_insert_diff_on_documentation
+        skip("move to archimate-diff test")
         base = build_model(with_relationships: 2, with_diagrams: 1)
         base_el1 = base.elements.first
         doc1 = build_documentation_list

@@ -19,15 +19,10 @@ module Archimate
   module Cli
     autoload :Archi, 'archimate/cli/archi'
     autoload :Cleanup, 'archimate/cli/cleanup'
-    autoload :ConflictResolver, 'archimate/cli/conflict_resolver'
     autoload :Convert, 'archimate/cli/convert'
-    autoload :Diff, 'archimate/cli/diff'
-    autoload :DiffSummary, 'archimate/cli/diff_summary'
     autoload :Duper, 'archimate/cli/duper'
     autoload :Lint, 'archimate/cli/lint'
     autoload :Mapper, 'archimate/cli/mapper'
-    autoload :Merge, 'archimate/cli/merge'
-    autoload :Merger, 'archimate/cli/merger'
     autoload :Stats, 'archimate/cli/stats'
     autoload :Svger, 'archimate/cli/svger'
   end
@@ -86,12 +81,6 @@ module Archimate
   require "archimate/logging"
   require "archimate/color"
   require 'archimate/data_model'
-  require 'archimate/diff'
-
-  # Computes the set of differences between base and remote models
-  def self.diff(base, remote)
-    base.diff(remote)
-  end
 
   # Reads the given file and returns the Archimate model
   #

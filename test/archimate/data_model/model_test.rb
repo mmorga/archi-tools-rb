@@ -251,7 +251,9 @@ module Archimate
         assert_match(/^[a-f0-9]{8}$/, @subject.make_unique_id)
       end
 
+      # TODO: move to archimate-diff gem
       def test_element_move_organizations
+        skip("move to archimate-diff test")
         base = build_model(
           elements: [
             build_element(id: "1234abcd", type: "BusinessActor")

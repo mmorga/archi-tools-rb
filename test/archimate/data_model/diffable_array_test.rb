@@ -19,11 +19,15 @@ module Archimate
         end
       end
 
+      # TODO: move to archimate-diff test
       def test_diff_on_non_array_error_state
+        skip("move to archimate-diff test")
         assert_raises(TypeError) { @subject.diff(42) }
       end
 
+      # TODO: move to archimate-diff test
       def test_diff_with_delete_and_apply
+        skip("move to archimate-diff test")
         base = build_model(with_elements: 3)
         merged = base.clone
         deleted_element = base.elements[1]
@@ -38,7 +42,9 @@ module Archimate
         assert_equal local.to_h, merged.to_h
       end
 
+      # TODO: move to archimate-diff test
       def test_diff_with_insert_and_apply
+        skip("move to archimate-diff test")
         base = build_model(with_elements: 3)
         inserted_element = build_element
         local = base.with(elements: base.elements + [inserted_element])
@@ -63,7 +69,9 @@ module Archimate
         assert_equal local.to_h, merged.to_h
       end
 
+      # TODO: move to archimate-diff test
       def test_diff_with_delete_of_diagram
+        skip("move to archimate-diff test")
         base = build_model(with_diagrams: 1)
         local = base.with(diagrams: [])
 
@@ -73,7 +81,9 @@ module Archimate
         assert_equal [Diff::Delete.new(Diff::ArchimateArrayReference.new(base.diagrams, 0))], diffs
       end
 
+      # TODO: move to archimate-diff test
       def test_diff_change_of_non_identified_node
+        skip("move to archimate-diff test")
         base, local = build_model_with_bendpoints_diffs
 
         diffs = base.diff(local)
@@ -147,7 +157,9 @@ module Archimate
         assert_equal 1, subject.elements.index(changed_element)
       end
 
+      # TODO: move to archimate-diff test
       def test_independent_changes_element
+        skip("move to archimate-diff test")
         base = build_model(with_relationships: 2, with_diagrams: 1)
         base_el1 = base.elements.first
         base_el2 = base.elements.last
@@ -229,11 +241,15 @@ module Archimate
         [base, local]
       end
 
+      # TODO: move to archimate-diff test
       def test_empty_array_diff
+        skip("move to archimate-diff test")
         array_diff_merge_test_case([], [], -> (base, local) { [] })
       end
 
+      # TODO: move to archimate-diff test
       def test_same_array_diff
+        skip("move to archimate-diff test")
         array_diff_merge_test_case(
           %w(a b c),
           %w(a b c),
@@ -242,7 +258,9 @@ module Archimate
       end
 
       # a, b, c -> z, a, b, c
+      # TODO: move to archimate-diff test
       def test_initial_insert_diff
+        skip("move to archimate-diff test")
         array_diff_merge_test_case(
           %w(a b c),
           %w(z a b c),
@@ -255,7 +273,9 @@ module Archimate
       end
 
       # a, b, c -> b, c
+      # TODO: move to archimate-diff test
       def test_initial_delete_diff
+        skip("move to archimate-diff test")
         array_diff_merge_test_case(
           %w(a b c),
           %w(b c),
@@ -268,7 +288,9 @@ module Archimate
       end
 
       # a, b, c -> a, c
+      # TODO: move to archimate-diff test
       def test_diff_with_internal_delete
+        skip("move to archimate-diff test")
         array_diff_merge_test_case(
           %w(a b c),
           %w(a c),
@@ -281,7 +303,9 @@ module Archimate
       end
 
       # a, b, c -> a, c, b
+      # TODO: move to archimate-diff test
       def test_reorder_diff
+        skip("move to archimate-diff test")
         array_diff_merge_test_case(
           %w(a b c),
           %w(a c b),
@@ -293,7 +317,9 @@ module Archimate
         )
       end
 
+      # TODO: move to archimate-diff test
       def test_order_change_false_deletion_case
+        skip("move to archimate-diff test")
         array_diff_merge_test_case(
           %w(a b c),
           %w(a c b d),
@@ -306,7 +332,9 @@ module Archimate
         )
       end
 
+      # TODO: move to archimate-diff test
       def test_order_change_false_deletion_case_with_elements
+        skip("move to archimate-diff test")
         added_element = build_element
         local = @model.with(
           elements: [
@@ -335,7 +363,9 @@ module Archimate
       end
 
       # a, b, c -> a, b', c
+      # TODO: move to archimate-diff test
       def test_changed_value
+        skip("move to archimate-diff test")
         array_diff_merge_test_case(
           %w(a b c),
           %w(a bp c),
@@ -348,7 +378,9 @@ module Archimate
       end
 
       # a, b, c -> z, c, b'
+      # TODO: move to archimate-diff test
       def test_changed_value_and_move_with_change
+        skip("move to archimate-diff test")
         array_diff_merge_test_case(
           %w(a b c),
           %w(z c bp),
@@ -363,7 +395,9 @@ module Archimate
       end
 
       # a, b, c -> a, b, c, d
+      # TODO: move to archimate-diff test
       def test_insert_at_end_diff
+        skip("move to archimate-diff test")
         array_diff_merge_test_case(
           %w(a b c),
           %w(a b c d),
@@ -376,7 +410,9 @@ module Archimate
       end
 
       # a, b, c -> a, b
+      # TODO: move to archimate-diff test
       def test_delete_at_end_diff
+        skip("move to archimate-diff test")
         array_diff_merge_test_case(
           %w(a b c),
           %w(a b),
@@ -389,7 +425,9 @@ module Archimate
       end
 
       # a, b, c -> a, z, c
+      # TODO: move to archimate-diff test
       def test_changed_value_duplicate_case
+        skip("move to archimate-diff test")
         array_diff_merge_test_case(
           %w(a b c),
           %w(a z c),
@@ -402,7 +440,9 @@ module Archimate
       end
 
       # a, b, c -> a, z, b, c
+      # TODO: move to archimate-diff test
       def test_insert_in_middle_diff
+        skip("move to archimate-diff test")
         array_diff_merge_test_case(
           %w(a b c),
           %w(a z b c),
@@ -415,7 +455,9 @@ module Archimate
       end
 
       # a, b, c -> a, z, b', c
+      # TODO: move to archimate-diff test
       def test_insert_with_change_in_middle_diff
+        skip("move to archimate-diff test")
         array_diff_merge_test_case(
           %w(a b c),
           %w(a z bp c),
@@ -428,7 +470,9 @@ module Archimate
         )
       end
 
+      # TODO: move to archimate-diff test
       def test_diff_with_delete_and_ending_insert
+        skip("move to archimate-diff test")
         array_diff_merge_test_case(
           %w(a b c),
           %w(a c d),
@@ -442,7 +486,9 @@ module Archimate
       end
 
       # a, b, c -> c, x, b, y, z, a
+      # TODO: move to archimate-diff test
       def test_reverse_order_with_inserts_diff
+        skip("move to archimate-diff test")
         array_diff_merge_test_case(
           %w(a b c),
           %w(c x b y z a),
