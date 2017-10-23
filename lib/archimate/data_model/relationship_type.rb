@@ -12,6 +12,7 @@ module Archimate
       "FlowRelationship" => "flows to",
       "InfluenceRelationship" => "influenecs",
       "RealisationRelationship" => "realizes",
+      "RealizationRelationship" => "realizes",
       "SpecialisationRelationship" => "specializes",
       "TriggeringRelationship" => "triggers",
       "UsedByRelationship" => "is used by"
@@ -28,6 +29,7 @@ module Archimate
       define :FlowRelationship, "FlowRelationship"
       define :InfluenceRelationship, "InfluenceRelationship"
       define :RealisationRelationship, "RealisationRelationship"
+      define :RealizationRelationship, "RealizationRelationship"
       define :SpecialisationRelationship, "SpecialisationRelationship"
       define :SpecializationRelationship, "SpecializationRelationship"
       define :TriggeringRelationship, "TriggeringRelationship"

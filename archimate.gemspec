@@ -27,7 +27,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "ruby-progressbar", "~>1.8.1"
   spec.add_runtime_dependency "parallel", "~> 1.11"
   spec.add_runtime_dependency "ruby-enum", "~> 0.7.1"
-  # spec.add_runtime_dependency "diff-lcs", "~> 1.3"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"

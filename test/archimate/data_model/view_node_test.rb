@@ -19,11 +19,6 @@ module Archimate
             )
           ]
         )
-        # assert_equal @element.instance_variable_get(:@in_model), @model
-        # assert @model.instance_variable_get(:@index_hash).include?(@element.id)
-        # assert_equal @element, @model.elements[0]
-        # assert_equal @element, @subject.element
-        # assert_equal @model.diagrams[0].nodes[0], @subject
       end
 
       def test_factory

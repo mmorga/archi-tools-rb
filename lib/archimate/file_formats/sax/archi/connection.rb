@@ -32,7 +32,7 @@ module Archimate
               event(:on_referenceable, connection),
               event(:on_future, Sax::FutureReference.new(connection, :source, @attrs["source"])),
               event(:on_future, Sax::FutureReference.new(connection, :target, @attrs["target"])),
-              event(:on_future, Sax::FutureReference.new(connection, :relationship, @attrs["relationship"]))
+              event(:on_future, Sax::FutureReference.new(connection, :relationship, @attrs["relationship"] || @attrs["archimateRelationship"]))
             ]
           end
 

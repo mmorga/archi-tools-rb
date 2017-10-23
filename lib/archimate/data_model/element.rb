@@ -52,6 +52,7 @@ module Archimate
       end
 
       # Diagrams that this element is referenced in.
+      # @todo this implementation is broken - in_model no longer exists
       def diagrams
         @diagrams ||= in_model.diagrams.select do |diagram|
           diagram.element_ids.include?(id)
@@ -59,6 +60,7 @@ module Archimate
       end
 
       # Relationships that this element is referenced in.
+      # @todo this implementation is broken - in_model no longer exists
       def relationships
         @relationships ||= in_model.relationships.select do |relationship|
           relationship.source == id || relationship.target == id
@@ -70,6 +72,7 @@ module Archimate
       #     2. Child `documentation` (and different `xml:lang` attribute values)
       #     3. Child `properties`
       #     4. Any other elements
+      # @todo this implementation is broken - in_model no longer exists
       def merge(element)
         super
         element.diagrams.each { |diagram| diagram.replace(element, self) }
