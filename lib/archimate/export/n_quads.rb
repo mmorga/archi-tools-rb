@@ -115,6 +115,7 @@ module Archimate
         "UsedByRelationship" => %w(used_by uses),
         "ServingRelationship" => %w(serving served_by),
         "RealisationRelationship" => %w(realizes realized_by),
+        "RealizationRelationship" => %w(realizes realized_by),
         "AssignmentRelationship" => %w(assigned_to assigned_from),
         "AggregationRelationship" => %w(aggregates aggregated_by),
         "CompositionRelationship" => %w(composes composed_by),

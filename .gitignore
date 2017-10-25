@@ -12,6 +12,7 @@
 /tmp/
 /vendor/
 .DS_Store
+*.bak
 *.tags
 tags
 .srclib-cache/

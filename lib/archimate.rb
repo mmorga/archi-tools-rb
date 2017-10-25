@@ -66,12 +66,13 @@ module Archimate
   autoload :FileFormat, 'archimate/file_format'
   autoload :MaybeIO, 'archimate/maybe_io'
   autoload :ProgressIndicator, 'archimate/progress_indicator'
+  autoload :DerivedRelations, 'archimate/derived_relations'
 
   require "archimate/version"
   require "archimate/config"
   require "archimate/logging"
   require "archimate/color"
-  require 'archimate/data_model'
+  require "archimate/data_model"
 
   # Reads the given file and returns the Archimate model
   #

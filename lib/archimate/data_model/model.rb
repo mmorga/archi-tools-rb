@@ -170,6 +170,12 @@ module Archimate
       #   end
       # end
 
+      def make_unique_id
+        unique_id = random_id
+        unique_id = random_id while @index_hash.key?(unique_id)
+        unique_id
+      end
+
       private
 
       # Only used by [#find_default_organization]
@@ -259,12 +265,6 @@ module Archimate
         end
         ref.connections.each { |con| @index_hash[con.id] = con }
         ref
-      end
-
-      def make_unique_id
-        unique_id = random_id
-        unique_id = random_id while @index_hash.key?(unique_id)
-        unique_id
       end
 
       def random_id

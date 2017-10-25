@@ -46,22 +46,6 @@ module Archimate
     class Cypher
       attr_reader :output_io
 
-      WEIGHTS = {
-        'GroupingRelationship' => 0,
-        'JunctionRelationship' => 0,
-        'AssociationRelationship' => 0,
-        'SpecialisationRelationship' => 1,
-        'FlowRelationship' => 2,
-        'TriggeringRelationship' => 3,
-        'InfluenceRelationship' => 4,
-        'AccessRelationship' => 5,
-        'UsedByRelationship' => 6,
-        'RealisationRelationship' => 7,
-        'AssignmentRelationship' => 8,
-        'AggregationRelationship' => 9,
-        'CompositionRelationship' => 10
-      }
-
       def initialize(output_io)
         @output_io = output_io
       end
@@ -136,11 +120,6 @@ module Archimate
         "(s #{props(nodeId: rel.source)})"
       end
 
-      def weight(t)
-        return 0 unless WEIGHTS.include?(t)
-        WEIGHTS[t]
-      end
-
       def add_docs(h, l)
         t = l.map(&:text).join("\n").strip
         return h if t.empty?
@@ -153,7 +132,7 @@ module Archimate
             name: rel.name.to_s,
             relationshipId: rel.id,
             accessType: rel.access_type,
-            weight: weight(rel.type)
+            weight: rel.weight
           }, rel.documentation
         )
         "[r:#{rel.type} #{props(h)}]"
