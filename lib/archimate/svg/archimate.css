@@ -69,6 +69,11 @@ table.properties>caption {
     stroke: #999;
 }
 
+.archimate-location-background {
+    fill: #f9b77a;
+    stroke: #ae8055;
+}
+
 .archimate-strategy-background {
     fill: #eddfac;
     stroke: #44423b;
@@ -181,7 +186,7 @@ table.properties>caption {
 }
 
 .archimate-assignment-relationship {
-    marker-end: url(#archimate-dot-marker);
+    marker-end: url(#archimate-filled-arrow);
     marker-start: url(#archimate-dot-marker);
 }
 
@@ -215,7 +220,12 @@ table.properties>caption {
     marker-end: url(#archimate-hollow-arrow);
 }
 
-/*.archimate-influence-relationship, .archimate-association-relationship {
+.archimate-influence-relationship {
+    marker-end: url(#archimate-open-arrow);
+    stroke-dasharray: 5, 3;
+}
+
+/*, .archimate-association-relationship {
 }
 */
 .archimate-triggering-relationship {

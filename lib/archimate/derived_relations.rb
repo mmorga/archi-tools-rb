@@ -1,7 +1,60 @@
+# frozen_string_literal: true
+
 module Archimate
+  # 5.6.1 Derivation Rule for Structural and Dependency Relationships
+  #
+  # The structural and dependency relationships can be ordered by 'strength'.
+  # Structural relationships are 'stronger' than dependency relationships, and
+  # the relationships within these categories can also be ordered by strength:
+  #
+  # *  Influence (weakest)
+  # *  Access
+  # *  Serving
+  # *  Realization
+  # *  Assignment
+  # *  Aggregation
+  # *  Composition (strongest)
+  #
+  # Part of the language definition is an abstraction rule that states that two
+  # relationships that join at an intermediate element can be combined and
+  # replaced by the weaker of the two.
+  #
+  #   5.6.2 Derivation Rules for Dynamic Relationships
+  #
+  # For the two dynamic relationships, the following rules apply:
+  #
+  # *  If there is a flow relationship r from element a to element b, and a
+  #    structural relationship from element c to element a, a flow relationship
+  #    r can be derived from element c to element b.
+  # *  If there is a flow relationship r from element a to element b, and a
+  #    structural relationship from element d to element b, a flow relationship
+  #    r can be derived from element a to element d.
+  #
+  # These rules can be applied repeatedly. Informally, this means that the
+  # begin and/or endpoint of a flow relationship can be transferred 'backward'
+  # in a chain of elements connected by structural relationships. Example 16
+  # shows two of the possible flow relationships that can be derived with these
+  # rules, given a flow relationship between the two services.
+  #
+  # This rule also applies for a triggering relationship, but only in
+  # combination with an assignment relationship (not with other structural
+  # relationships):
+  #
+  # *  If there is a triggering relationship r from element a to element b, and
+  #    an assignment relationship from element c to element a, a triggering
+  #    relationship r can be derived from element c to element b.
+  # *  If there is a triggering relationship r from element a to element b, and
+  #    an assignment relationship from element d to element b, a triggering
+  #    relationship r can be derived from element a to element d.
+  #
+  # Moreover, triggering relationships are transitive:
+  #
+  # *  If there is a triggering relationship from element a to element b, and a
+  #    triggering relationship from element b to element c, a triggering
+  #    relationship can be derived from element a to element c.
   class DerivedRelations
-    PASS_ALL = lambda { |_item| true }
-    FAIL_ALL = lambda { |_item| false }
+    PASS_ALL = ->(_item) { true }
+    FAIL_ALL = ->(_item) { false }
 
     def initialize(model)
       @model = model
@@ -30,17 +83,9 @@ module Archimate
     #        below this element are not followed
     def derived_relations(start_elements, relationship_filter, target_filter, stop_filter = FAIL_ALL)
       traverse(start_elements, relationship_filter, stop_filter)
-        .reject { |path| Array(path).size <= 1 } # See #2 above
-        .select { |path| target_filter.call(path.last.target) }
-        .map { |path|
-          DataModel::Relationship.new(
-            id: @model.make_unique_id,
-            type: derived_relationship_type(path),
-            source: path.first.source,
-            target: path.last.target,
-            derived: true
-          )
-        }
+        .reject(&single_relation_paths) # See #2 above
+        .select(&target_relations(target_filter))
+        .map(&create_relationship_for_path)
         .uniq { |rel| [rel.type, rel.source, rel.target] }
     end
 
@@ -65,19 +110,11 @@ module Archimate
     #        returns true for.
     def traverse(start_elements, relation_filter, stop_filter, from_path = [])
       return [] if from_path.size > 100
-      start_elements.each_with_object([]) do |el, result|
-        immediate_rels = element_relationships(el)
-          .select(&relation_filter)
-          .reject { |rel| from_path.include?(rel) }
-
-        result.concat(immediate_rels)
-        result.concat(
-          *immediate_rels
-            .reject { |rel| rel.target.nil? || (stop_filter && stop_filter.call(rel)) }
-            .map { |rel|
-              traverse([rel.target], relation_filter, stop_filter, from_path + [rel])
-                .map { |path| Array(path).unshift(rel) }
-            }
+      start_elements.each_with_object([]) do |el, relations|
+        concrete_rels = concrete_relationships(el, relation_filter, from_path)
+        relations.concat(
+          concrete_rels,
+          *derived_relationship_paths(concrete_rels, relation_filter, stop_filter, from_path)
         )
       end
     end
@@ -90,6 +127,47 @@ module Archimate
       @model
         .relationships
         .select { |rel| rel.source.id == el.id }
+    end
+
+    private
+
+    def concrete_relationships(el, relation_filter, from_path)
+      element_relationships(el)
+        .select(&relation_filter)
+        .reject { |rel| from_path.include?(rel) }
+    end
+
+    def derived_relationship_paths(concrete_rels, relation_filter, stop_filter, from_path)
+      concrete_rels
+        .reject { |rel| rel.target.nil? || (stop_filter&.call(rel)) }
+        .map do |rel|
+          traverse([rel.target], relation_filter, stop_filter, from_path + [rel])
+            .map { |path| Array(path).unshift(rel) }
+        end
+    end
+
+    def single_relation_paths
+      ->(path) { Array(path).size <= 1 }
+    end
+
+    def target_relations(target_filter)
+      ->(path) { target_filter.call(path.last.target) }
+    end
+
+    def create_relationship_for_path
+      lambda do |path|
+        DataModel::Relationship.new(
+          id: @model.make_unique_id,
+          type: derived_relationship_type(path),
+          source: path.first.source,
+          target: path.last.target,
+          derived: true
+        )
+      end
+    end
+
+    def by_relation_uniq_attributes
+      ->(rel) { [rel.type, rel.source, rel.target] }
     end
   end
 end

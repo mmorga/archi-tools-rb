@@ -3,10 +3,10 @@
 module Archimate
   module Svg
     Point = Struct.new(:x, :y) do
-      def -(pt)
+      def -(other)
         Math.sqrt(
-          ((pt.x - x) ** 2) +
-          ((pt.y - y) ** 2)
+          ((other.x - x)**2) +
+          ((other.y - y)**2)
         )
       end
     end

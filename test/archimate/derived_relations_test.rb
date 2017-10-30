@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'test_helper'
 require 'test_examples'
 require "awesome_print"
@@ -12,7 +13,8 @@ module Archimate
         File.join(
           TEST_EXAMPLES_FOLDER,
           "derived-relations-cases.archimate"
-        ))
+        )
+      )
       @subject = DerivedRelations.new(@model)
       @a = @subject.element_by_name("A")
       @b = @subject.element_by_name("B")
@@ -50,8 +52,8 @@ module Archimate
 
       actual = @subject.traverse(
         [app_comp_a],
-        lambda { |rel| true },
-        lambda { |el| true }
+        ->(_rel) { true },
+        ->(_el) { true }
       )
 
       assert_equal to_id_array(expected), to_id_array(actual)
@@ -67,7 +69,7 @@ module Archimate
         [@d_to_d_api, @d_api_to_a, @a_to_b],
         [@d_to_d_api, @d_api_to_a, @a_to_app_func],
         [@d_to_d_func, @d_func_to_d_svc],
-        [@d_to_d_func, @d_func_to_d_svc, @d_svc_to_app_func],
+        [@d_to_d_func, @d_func_to_d_svc, @d_svc_to_app_func]
       ]
 
       actual = @subject.traverse(
@@ -87,7 +89,7 @@ module Archimate
         DerivedRelationCase.new('ServingRelationship', @d.id, @app_func.id),
         DerivedRelationCase.new('RealizationRelationship', @d.id, @d_svc.id),
         DerivedRelationCase.new('ServingRelationship', @d.id, @a.id),
-        DerivedRelationCase.new('ServingRelationship', @d.id, @b.id),
+        DerivedRelationCase.new('ServingRelationship', @d.id, @b.id)
       ]
 
       actual = @subject.derived_relations(
@@ -108,13 +110,13 @@ module Archimate
     def test_has_derived_serving_relationships_to_app_components
       expected = [
         DerivedRelationCase.new('ServingRelationship', @d.id, @a.id),
-        DerivedRelationCase.new('ServingRelationship', @d.id, @b.id),
+        DerivedRelationCase.new('ServingRelationship', @d.id, @b.id)
       ]
 
       actual = @subject.derived_relations(
         [@d],
-        lambda { |rel| rel.weight >= DataModel::Serving::WEIGHT },
-        lambda { |el| el.type == "ApplicationComponent" }
+        ->(rel) { rel.weight >= DataModel::Serving::WEIGHT },
+        ->(el) { el.type == "ApplicationComponent" }
       )
 
       assert_equal 2, actual.size
@@ -129,7 +131,7 @@ module Archimate
 
     def to_id_array(items)
       items
-        .map { |item| Array(item).map{ |rel| "#{rel.source.name}->#{rel.target.name}" }.join(", ") }
+        .map { |item| Array(item).map { |rel| "#{rel.source.name}->#{rel.target.name}" }.join(", ") }
     end
 
     def short_rel_desc(rel)
@@ -140,10 +142,10 @@ module Archimate
       items
         .map do |item|
           rels = Array(item)
-          <<~END
-          Derived Relation #{rels.first.source.type}: #{rels.first.source.name} -> #{rels.last.target.type}: #{rels.last.target.name}
-              #{rels.map {|rel| short_rel_desc(rel) }.join("\n    ")}
-          END
+          <<~MESSAGE
+            Derived Relation #{rels.first.source.type}: #{rels.first.source.name} -> #{rels.last.target.type}: #{rels.last.target.name}
+                #{rels.map { |rel| short_rel_desc(rel) }.join("\n    ")}
+          MESSAGE
         end
     end
   end
