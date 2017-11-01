@@ -23,7 +23,7 @@ HighLine.color_scheme = HighLine::ColorScheme.new do |cs|
   cs[:Connectors]                     = %i[black on_light_gray]
   cs[:unknown_layer]                  = %i[black on_gray]
   cs[:Model]                          = [:cyan]
-  cs[:Connection]               = [:blue]
+  cs[:Connection]                     = [:blue]
   cs[:Organization]                   = [:cyan]
   cs[:Relationship]                   = %i[black on_light_gray]
   cs[:Diagram]                        = %i[black on_cyan]
@@ -33,7 +33,7 @@ end
 module Archimate
   class Color
     def self.layer_color(layer, str)
-      layer_sym = layer.to_sym
+      layer_sym = layer&.to_sym
       sym = HighLine.color_scheme.include?(layer_sym) ? layer_sym : :unknown_layer
       color(str, sym)
     end

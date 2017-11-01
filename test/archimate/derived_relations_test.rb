@@ -85,11 +85,11 @@ module Archimate
 
     def test_has_derived_relationships
       expected = [
-        DerivedRelationCase.new('AssignmentRelationship', @d.id, @d_svc.id),
-        DerivedRelationCase.new('ServingRelationship', @d.id, @app_func.id),
-        DerivedRelationCase.new('RealizationRelationship', @d.id, @d_svc.id),
-        DerivedRelationCase.new('ServingRelationship', @d.id, @a.id),
-        DerivedRelationCase.new('ServingRelationship', @d.id, @b.id)
+        DerivedRelationCase.new('Assignment', @d.id, @d_svc.id),
+        DerivedRelationCase.new('Serving', @d.id, @app_func.id),
+        DerivedRelationCase.new('Realization', @d.id, @d_svc.id),
+        DerivedRelationCase.new('Serving', @d.id, @a.id),
+        DerivedRelationCase.new('Serving', @d.id, @b.id)
       ]
 
       actual = @subject.derived_relations(
@@ -109,13 +109,13 @@ module Archimate
 
     def test_has_derived_serving_relationships_to_app_components
       expected = [
-        DerivedRelationCase.new('ServingRelationship', @d.id, @a.id),
-        DerivedRelationCase.new('ServingRelationship', @d.id, @b.id)
+        DerivedRelationCase.new('Serving', @d.id, @a.id),
+        DerivedRelationCase.new('Serving', @d.id, @b.id)
       ]
 
       actual = @subject.derived_relations(
         [@d],
-        ->(rel) { rel.weight >= DataModel::Serving::WEIGHT },
+        ->(rel) { rel.weight >= DataModel::Relationships::Serving::WEIGHT },
         ->(el) { el.type == "ApplicationComponent" }
       )
 

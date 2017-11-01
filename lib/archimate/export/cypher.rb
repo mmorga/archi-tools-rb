@@ -22,24 +22,6 @@
 #     accessType: Relationship.access_type
 #   Labels:
 #     Relationship.type
-#
-# | Weight | Name           |
-# |--------+----------------|
-# |      1 | Association    |
-# |      2 | Access         |
-# |      3 | Used by        |
-# |      4 | Realization    |
-# |      5 | Assignment     |
-# |      6 | Aggregation    |
-# |      7 | Composition    |
-# |      8 | Flow           |
-# |      9 | Triggering     |
-# |     10 | Grouping       |
-# |     11 | Junction       |
-# |     12 | Specialization |
-# Structural stronger than Dependency Relationships
-# ServingRelationship == UsedByRelationship
-
 
 module Archimate
   module Export

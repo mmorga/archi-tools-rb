@@ -1,8 +1,15 @@
 # frozen_string_literal: true
+
 require "nokogiri"
 
 module Archimate
   module FileFormats
+    REL_NAME_MAPPING = {
+      DataModel::Relationships::Realization => "Realisation",
+      DataModel::Relationships::Serving => "UsedBy",
+      DataModel::Relationships::Specialization => "Specialisation"
+    }.freeze
+
     # Archimate version 2.1 Model Exchange Format Writer
     class ModelExchangeFileWriter21 < Serializer::ModelExchangeFile::ModelExchangeFileWriter
       include Serializer::ModelExchangeFile::V21::Connection
@@ -25,11 +32,12 @@ module Archimate
       end
 
       def relationship_attributes(relationship)
+        rel_name = REL_NAME_MAPPING.fetch(relationship.class, relationship.type)
         {
           identifier: identifier(relationship.id),
           source: identifier(relationship.source.id),
           target: identifier(relationship.target.id),
-          "xsi:type" => meff_type(relationship.type)
+          "xsi:type" => "#{rel_name}Relationship"
         }
       end
 

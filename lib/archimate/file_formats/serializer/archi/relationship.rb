@@ -8,7 +8,7 @@ module Archimate
           def serialize_relationship(xml, rel)
             xml.element(
               remove_nil_values(
-                "xsi:type" => "archimate:#{rel.type}",
+                "xsi:type" => "archimate:#{rel.type}Relationship",
                 "id" => rel.id,
                 "name" => rel.name,
                 "source" => rel.source.id,

@@ -213,9 +213,15 @@ module Archimate
       end
 
       def build_relationship(options = {})
-        DataModel::Relationship.new(
+        cls_name = options.delete(:type)
+        if cls_name
+          cls_name = cls_name.sub(/Relationship$/, "")
+          cls = DataModel::Relationships.const_get(cls_name)
+        else
+          cls = random_relationship_type
+        end
+        cls.new(
           id: fetch_or_fake_id(options),
-          type: options.fetch(:type) { random_relationship_type },
           source: options.fetch(:source) { build_element },
           target: options.fetch(:target) { build_element },
           name: fetch_or_fake_name(options),
@@ -330,7 +336,8 @@ module Archimate
 
       def random_relationship_type
         @random ||= Random.new(Random.new_seed)
-        DataModel::RelationshipType.values[@random.rand(DataModel::RelationshipType.values.size)]
+        @rel_types ||= Archimate::DataModel::Relationships.constants
+        DataModel::Relationships.const_get(@rel_types[@random.rand(@rel_types.size)])
       end
     end
   end

@@ -18,7 +18,7 @@ module Archimate
                 Element
               when DataModel::DiagramType
                 Diagram
-              when DataModel::RelationshipType
+              when DataModel::Relationships
                 Relationship
               else
                 raise "Unexpected element_type #{element_type}"

@@ -25,7 +25,7 @@ module Archimate
           private
 
           def relationship
-            @relationship ||= DataModel::Relationship.new(
+            @relationship ||= DataModel::Relationships.create(
               id: @attrs["id"],
               type: element_type,
               source: nil,

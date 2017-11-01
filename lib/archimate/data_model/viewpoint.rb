@@ -37,7 +37,7 @@ module Archimate
       #   @return [Array<ElementType>]
       model_attr :allowed_element_types
       # @!attribute [r] allowed_relationship_types
-      #   @return [Array<RelationshipType>]
+      #   @return [Array<Relationships::*>]
       model_attr :allowed_relationship_types
       # @!attribute [r] modeling_notes
       #   @return [Array<ModelingNote>]

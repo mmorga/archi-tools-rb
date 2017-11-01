@@ -12,17 +12,17 @@ module Archimate
       CORE_ELEMENTS = [DataModel::Layers::Business, DataModel::Layers::Application, DataModel::Layers::Technology]
                       .flat_map(&:elements)
 
-      DEFAULT_RELATIONS = %w[
-        AccessRelationship
-        AggregationRelationship
-        AssignmentRelationship
-        AssociationRelationship
-        CompositionRelationship
-        FlowRelationship
-        RealisationRelationship
-        SpecialisationRelationship
-        TriggeringRelationship
-        UsedByRelationship
+      DEFAULT_RELATIONS = [
+        Relationships::Access,
+        Relationships::Aggregation,
+        Relationships::Assignment,
+        Relationships::Association,
+        Relationships::Composition,
+        Relationships::Flow,
+        Relationships::Realization,
+        Relationships::Specialization,
+        Relationships::Triggering,
+        Relationships::Serving
       ].freeze
 
       ViewpointTypeVal = Struct.new(:name, :entities, :relations) do
@@ -34,7 +34,7 @@ module Archimate
       # Basic Viewpoints
       define :Introductory, ViewpointTypeVal.new("Introductory",
                                                  CORE_ELEMENTS,
-                                                 DataModel::RelationshipType.values)
+                                                 DataModel::Relationships.classes)
 
       # Category:Composition Viewpoints that defines internal compositions and aggregations of elements.
       define :Organization, ViewpointTypeVal.new("Organization",
@@ -45,11 +45,11 @@ module Archimate
                                                    BusinessRole
                                                    Location
                                                  ],
-                                                 DEFAULT_RELATIONS - %w[AccessRelationship RealisationRelationship])
+                                                 DEFAULT_RELATIONS - [Relationships::Access, Relationships::Realization])
 
       define :Application_platform, ViewpointTypeVal.new("Application Platform",
                                                          CORE_ELEMENTS,
-                                                         DataModel::RelationshipType.values)
+                                                         DataModel::Relationships.classes)
 
       define :Information_structure, ViewpointTypeVal.new("Information Structure",
                                                           DataModel::ConnectorType.values + %w[
@@ -59,19 +59,19 @@ module Archimate
                                                             Meaning
                                                             Representation
                                                           ],
-                                                          DEFAULT_RELATIONS - %w[AssignmentRelationship UsedByRelationship])
+                                                          DEFAULT_RELATIONS - [Relationships::Assignment, Relationships::Serving])
 
       define :Technology, ViewpointTypeVal.new("Technology",
                                                CORE_ELEMENTS,
-                                               DataModel::RelationshipType.values)
+                                               DataModel::Relationships.classes)
 
       define :Layered, ViewpointTypeVal.new("Layered",
                                             ENTITIES + DataModel::ConnectorType.values,
-                                            DataModel::RelationshipType.values)
+                                            DataModel::Relationships.classes)
 
       define :Physical, ViewpointTypeVal.new("Physical",
                                              CORE_ELEMENTS,
-                                             DataModel::RelationshipType.values)
+                                             DataModel::Relationships.classes)
 
       # Category:Support Viewpoints where you are looking at elements that are supported by other elements. Typically from one layer and upwards to an above layer.
       define :Product, ViewpointTypeVal.new("Product",
@@ -111,7 +111,7 @@ module Archimate
 
       define :Technology_usage, ViewpointTypeVal.new("Technology Usage",
                                                      CORE_ELEMENTS,
-                                                     DataModel::RelationshipType.values)
+                                                     DataModel::Relationships.classes)
 
       # Category:Cooperation Towards peer elements which cooperate with each other. Typically across aspects.
       define :Business_process_cooperation, ViewpointTypeVal.new("Business Process Cooperation",
@@ -185,13 +185,13 @@ module Archimate
                                                        Principle
                                                        Requirement
                                                      ],
-                                                     %w[
-                                                       AggregationRelationship
-                                                       AssociationRelationship
-                                                       CompositionRelationship
-                                                       InfluenceRelationship
-                                                       RealisationRelationship
-                                                       SpecialisationRelationship
+                                                     [
+                                                       Relationships::Aggregation,
+                                                       Relationships::Association,
+                                                       Relationships::Composition,
+                                                       Relationships::Influence,
+                                                       Relationships::Realization,
+                                                       Relationships::Specialization
                                                      ])
 
       define :Goal_contribution, ViewpointTypeVal.new("Goal Contribution",
@@ -201,13 +201,13 @@ module Archimate
                                                         Principle
                                                         Requirement
                                                       ],
-                                                      %w[
-                                                        AggregationRelationship
-                                                        AssociationRelationship
-                                                        CompositionRelationship
-                                                        InfluenceRelationship
-                                                        RealisationRelationship
-                                                        SpecialisationRelationship
+                                                      [
+                                                        Relationships::Aggregation,
+                                                        Relationships::Association,
+                                                        Relationships::Composition,
+                                                        Relationships::Influence,
+                                                        Relationships::Realization,
+                                                        Relationships::Specialization
                                                       ])
 
       define :Principles, ViewpointTypeVal.new("Principles",
@@ -215,13 +215,13 @@ module Archimate
                                                  Goal
                                                  Principle
                                                ],
-                                               %w[
-                                                 AggregationRelationship
-                                                 AssociationRelationship
-                                                 CompositionRelationship
-                                                 InfluenceRelationship
-                                                 RealisationRelationship
-                                                 SpecialisationRelationship
+                                               [
+                                                 Relationships::Aggregation,
+                                                 Relationships::Association,
+                                                 Relationships::Composition,
+                                                 Relationships::Influence,
+                                                 Relationships::Realization,
+                                                 Relationships::Specialization
                                                ])
 
       define :Requirements_realization, ViewpointTypeVal.new("Requirements Realization",
@@ -242,32 +242,32 @@ module Archimate
                                                  Requirement
                                                  Stakeholder
                                                ],
-                                               %w[
-                                                 AggregationRelationship
-                                                 AssociationRelationship
-                                                 CompositionRelationship
-                                                 FlowRelationship
-                                                 InfluenceRelationship
-                                                 RealisationRelationship
-                                                 SpecialisationRelationship
+                                               [
+                                                 Relationships::Aggregation,
+                                                 Relationships::Association,
+                                                 Relationships::Composition,
+                                                 Relationships::Flow,
+                                                 Relationships::Influence,
+                                                 Relationships::Realization,
+                                                 Relationships::Specialization
                                                ])
 
       # Strategy Viewpoints
       define :Strategy, ViewpointTypeVal.new("Strategy",
                                              CORE_ELEMENTS,
-                                             DataModel::RelationshipType.values)
+                                             DataModel::Relationships.classes)
 
       define :Capability_map, ViewpointTypeVal.new("Capability Map",
                                                    CORE_ELEMENTS,
-                                                   DataModel::RelationshipType.values)
+                                                   DataModel::Relationships.classes)
 
       define :Outcome_realization, ViewpointTypeVal.new("Outcome Realization",
                                                         CORE_ELEMENTS,
-                                                        DataModel::RelationshipType.values)
+                                                        DataModel::Relationships.classes)
 
       define :Resource_map, ViewpointTypeVal.new("Resource Map",
                                                  CORE_ELEMENTS,
-                                                 DataModel::RelationshipType.values)
+                                                 DataModel::Relationships.classes)
 
       # Implementation and Migration Viewpoints
       define :Project, ViewpointTypeVal.new("Project",
@@ -278,18 +278,18 @@ module Archimate
                                               Goal
                                               WorkPackage
                                             ],
-                                            DEFAULT_RELATIONS - %w[AccessRelationship])
+                                            DEFAULT_RELATIONS - [Relationships::Access])
 
       define :Migration, ViewpointTypeVal.new("Migration",
                                               DataModel::ConnectorType.values + %w[Gap Plateau],
-                                              %w[
-                                                AndJunction
-                                                AssociationRelationship
-                                                CompositionRelationship
-                                                FlowRelationship
-                                                Junction
-                                                OrJunction
-                                                TriggeringRelationship
+                                              [
+                                                Relationships::AndJunction,
+                                                Relationships::Association,
+                                                Relationships::Composition,
+                                                Relationships::Flow,
+                                                Relationships::Junction,
+                                                Relationships::OrJunction,
+                                                Relationships::Triggering
                                               ])
 
       define :Implementation_and_migration, ViewpointTypeVal.new("Implementation and Migration",
@@ -315,12 +315,12 @@ module Archimate
                                                   Goal
                                                   Stakeholder
                                                 ],
-                                                %w[
-                                                  AggregationRelationship
-                                                  AssociationRelationship
-                                                  CompositionRelationship
-                                                  InfluenceRelationship
-                                                  SpecialisationRelationship
+                                                [
+                                                  Relationships::Aggregation,
+                                                  Relationships::Association,
+                                                  Relationships::Composition,
+                                                  Relationships::Influence,
+                                                  Relationships::Specialization
                                                 ])
 
       # Other older viewpoints
@@ -335,7 +335,7 @@ module Archimate
                                                         BusinessRole
                                                         BusinessService
                                                       ],
-                                                      DEFAULT_RELATIONS - %w[AccessRelationship])
+                                                      DEFAULT_RELATIONS - [Relationships::Access])
 
       define :Business_function, ViewpointTypeVal.new("Business Function",
                                                       DataModel::ConnectorType.values + %w[
@@ -343,7 +343,10 @@ module Archimate
                                                         BusinessFunction
                                                         BusinessRole
                                                       ],
-                                                      DEFAULT_RELATIONS - %w[AccessRelationship RealisationRelationship])
+                                                      DEFAULT_RELATIONS - [
+                                                        Relationships::Access,
+                                                        Relationships::Realization
+                                                      ])
 
       define :Business_process, ViewpointTypeVal.new("Business Process",
                                                      DataModel::ConnectorType.values + %w[
@@ -381,7 +384,7 @@ module Archimate
                                                             ApplicationInterface
                                                             DataObject
                                                           ],
-                                                          DEFAULT_RELATIONS - %w[RealisationRelationship])
+                                                          DEFAULT_RELATIONS - [Relationships::Realization])
 
       define :Infrastructure, ViewpointTypeVal.new("Infrastructure",
                                                    DataModel::ConnectorType.values + %w[
@@ -415,7 +418,7 @@ module Archimate
 
       define :Landscape_map, ViewpointTypeVal.new("Landscape Map",
                                                   ENTITIES + DataModel::ConnectorType.values,
-                                                  DataModel::RelationshipType.values)
+                                                  DataModel::Relationships.classes)
 
       def self.[](idx)
         values[idx]
