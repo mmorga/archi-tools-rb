@@ -17,49 +17,26 @@ module Archimate
           @text_bounds = child.bounds.reduced_by(2)
           @bounds_offset = bounds_offset
           @entity = @child.element || @child
-          @background_class = layer_background_class
+          @background_class = @child&.element&.layer&.background_class
           @text_align = nil
           @badge = nil
         end
 
-        def layer_background_class
-          case child.element&.layer
-          when "Strategy", DataModel::Layers::Strategy
-            "archimate-strategy-background"
-          when "Business", DataModel::Layers::Business
-            "archimate-business-background"
-          when "Application", DataModel::Layers::Application
-            "archimate-application-background"
-          when "Technology", DataModel::Layers::Technology
-            "archimate-infrastructure-background"
-          when "Physical", DataModel::Layers::Physical
-            "archimate-physical-background"
-          when "Motivation", DataModel::Layers::Motivation
-            "archimate-motivation-background"
-          when "Implementation and Migration", DataModel::Layers::Implementation_and_migration
-            "archimate-implementation-background"
-          when "Connectors", DataModel::Layers::Connectors
-            "archimate-connectors-background"
-          else
-            puts "Unexpected layer #{child.element&.layer.inspect}" if child.element&.layer
-          end
-        end
-
         def to_svg(xml)
-          optional_link(xml) {
+          optional_link(xml) do
             xml.g(group_attrs) do
               xml.title { xml.text @entity.name } unless @entity.name.nil? || @entity.name.empty?
-              xml.desc { xml.text(@entity.documentation.to_s) } if @entity.documentation && !@entity.documentation.empty?
+              xml.desc { xml.text(@entity.documentation.to_s) } unless @entity.documentation&.empty?
               entity_shape(xml, child.bounds)
               entity_badge(xml)
               entity_label(xml)
               child.nodes.each { |c| Svg::EntityFactory.make_entity(c, child.bounds).to_svg(xml) }
             end
-          }
+          end
         end
 
-        def optional_link(xml, &block)
-          block.call
+        def optional_link(_xml)
+          yield
         end
 
         def entity_label(xml)

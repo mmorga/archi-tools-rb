@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'test_helper'
 
 module Archimate
@@ -8,11 +9,11 @@ module Archimate
         cases = %w[one apple frank]
         hashes = cases.map { |key| PropertyDefinition.identifier_for_key(key) }
         assert_equal hashes.size, hashes.uniq.size
-        assert hashes.all? { |hash| hash.instance_of?(String) }
+        assert(hashes.all? { |hash| hash.instance_of?(String) })
       end
 
       def test_constructor
-        name = LangString.create("owner")
+        name = LangString.new("owner")
         subject = DataModel::PropertyDefinition.new(
           id: "id-123",
           name: name,

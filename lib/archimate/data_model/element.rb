@@ -8,9 +8,6 @@ module Archimate
     # type. This is indicated in xml by having a tag name of +element+ and an
     # attribute of +xsi:type="BusinessRole"+ where +BusinessRole+ is a derived
     # type from [ElementType].
-    #
-    # @todo Possible Make this abstract with concrete implementations for all
-    #       valid element types
     class Element
       include Comparison
 
@@ -27,10 +24,6 @@ module Archimate
       # model_attr :other_elements
       # # @return [Array<AnyAttribute>]
       # model_attr :other_attributes
-      # @note type here was used for the Element/Relationship/Diagram type
-      # @!attribute [r] type
-      #   @return [String, NilClass]
-      model_attr :type
       # @!attribute [r] properties
       #   @return [Array<Property>]
       model_attr :properties
@@ -47,8 +40,16 @@ module Archimate
         Archimate::Color.layer_color(layer, "#{type}<#{id}>[#{name}]")
       end
 
+      def type
+        self.class.name.split("::").last
+      end
+
+      def classification
+        self.class::CLASSIFICATION
+      end
+
       def layer
-        Layers.for_element(type)
+        self.class::LAYER
       end
 
       # Diagrams that this element is referenced in.

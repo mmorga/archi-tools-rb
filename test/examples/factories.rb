@@ -39,7 +39,7 @@ module Archimate
 
       def build_concern(label: nil, documentation: nil, stakeholders: nil)
         DataModel::Concern.new(
-          label: label || DataModel::LangString.create(Faker::Company.buzzword),
+          label: label || DataModel::LangString.new(Faker::Company.buzzword),
           documentation: documentation,
           stakeholders: stakeholders || []
         )
@@ -47,12 +47,12 @@ module Archimate
 
       def build_connection(options = {})
         diagram = options.fetch(:diagram) { build_diagram }
-        relationship = options.fetch(:relationship) {
+        relationship = options.fetch(:relationship) do
           build_relationship(
             source: build_element,
             target: build_element
           )
-        }
+        end
         source = options.fetch(:source) { build_view_node(element: relationship&.source, diagram: diagram) }
         target = options.fetch(:target) { build_view_node(element: relationship&.target, diagram: diagram) }
 
@@ -108,10 +108,19 @@ module Archimate
       end
 
       def build_element(options = {})
-        DataModel::Element.new(
+        cls_name = options.delete(:type)
+        if cls_name
+          if cls_name.is_a?(Class)
+            cls = cls_name
+          else
+            cls = DataModel::Elements.const_get(cls_name)
+          end
+        else
+          cls = random_element_type
+        end
+        cls.new(
           id: fetch_or_fake_id(options),
           name: fetch_or_fake_name(options),
-          type: options.fetch(:type) { random_element_type },
           documentation: optional_documentation(options),
           properties: options.fetch(:properties, [])
         )
@@ -190,14 +199,16 @@ module Archimate
 
       def build_preserved_lang_string(options = {})
         DataModel::PreservedLangString.new(
-          lang_hash: options.fetch(:lang_hash) { { nil => "##{random(1, 1_000_000)} #{Faker::ChuckNorris.fact}"} },
+          lang_hash: options.fetch(:lang_hash) { { nil => "##{random(1, 1_000_000)} #{Faker::ChuckNorris.fact}" } },
           default_lang: options.fetch(:default_lang, nil)
         )
       end
 
       def build_property(options = {})
+        value = options.fetch(:value) { Faker::Company.buzzword }
+        value = DataModel::LangString.new(value) if value
         DataModel::Property.new(
-          value: DataModel::LangString.create(options.fetch(:value) { Faker::Company.buzzword }),
+          value: value,
           property_definition:
             options.fetch(:property_definition) { build_property_definition(name: options.fetch(:key, nil)) }
         )
@@ -311,7 +322,7 @@ module Archimate
       end
 
       def fetch_or_fake_name(options)
-        DataModel::LangString.create(options.fetch(:name) { Faker::Company.buzzword })
+        DataModel::LangString.new(options.fetch(:name) { Faker::Company.buzzword })
       end
 
       def fetch_or_fake_positive_number(options, key)
@@ -321,7 +332,7 @@ module Archimate
       def optional_documentation(options)
         attrs = options[:documentation]
         return nil unless attrs
-        DataModel::PreservedLangString.create(attrs)
+        DataModel::PreservedLangString.new(attrs)
       end
 
       def random(min, max)
@@ -331,13 +342,14 @@ module Archimate
 
       def random_element_type
         @random ||= Random.new(Random.new_seed)
-        DataModel::ElementType.values[@random.rand(DataModel::ElementType.values.size)]
+        @el_types ||= Archimate::DataModel::Elements.classes
+        @el_types[@random.rand(@el_types.size)]
       end
 
       def random_relationship_type
         @random ||= Random.new(Random.new_seed)
-        @rel_types ||= Archimate::DataModel::Relationships.constants
-        DataModel::Relationships.const_get(@rel_types[@random.rand(@rel_types.size)])
+        @rel_types ||= Archimate::DataModel::Relationships.classes
+        @rel_types[@random.rand(@rel_types.size)]
       end
     end
   end

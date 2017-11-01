@@ -7,7 +7,6 @@ module Archimate
 
     require 'archimate/data_model/connector_type'
     require 'archimate/data_model/diagram_type'
-    require 'archimate/data_model/element_type'
     require 'archimate/data_model/comparison'
     require 'archimate/data_model/differentiable'
     require 'archimate/data_model/layer'
@@ -27,7 +26,9 @@ module Archimate
     require 'archimate/data_model/property'
     require 'archimate/data_model/organization'
     require 'archimate/data_model/element'
+    require 'archimate/data_model/elements'
     require 'archimate/data_model/relationship'
+    require 'archimate/data_model/relationships'
     require 'archimate/data_model/viewpoint_type'
     require 'archimate/data_model/concern'
     require 'archimate/data_model/viewpoint'

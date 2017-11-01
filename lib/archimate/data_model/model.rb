@@ -181,7 +181,14 @@ module Archimate
       # Only used by [#find_default_organization]
       def add_organization(type, name)
         raise "Program Error: #{organizations.inspect}" unless organizations.none? { |f| f.type == type || f.name == name }
-        organization = Organization.new(id: make_unique_id, name: LangString.create(name), type: type, items: [], organizations: [], documentation: nil)
+        organization = Organization.new(
+          id: make_unique_id,
+          name: LangString.new(name),
+          type: type,
+          items: [],
+          organizations: [],
+          documentation: nil
+        )
         register(organization, organizations)
         organizations.push(organization)
         organization
@@ -217,6 +224,8 @@ module Archimate
             find_default_organization("implementation_migration", "Implementation & Migration")
           when Layers::Connectors
             find_default_organization("connectors", "Connectors")
+          when Layers::Other
+            find_default_organization("other", "Other")
           else
             raise StandardError, "Unexpected Element Layer: #{item.layer} for item type #{item.type}"
           end

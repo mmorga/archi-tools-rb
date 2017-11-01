@@ -1,17 +1,18 @@
 # frozen_string_literal: true
+
 require "ruby-enum"
 
 module Archimate
   module DataModel
     class Layer
-      attr_reader :elements
       attr_reader :name
+      attr_reader :background_class
 
       # No user serviceable parts here. don't use me.
-      def initialize(layer = "None", element_names = [])
+      def initialize(layer = "None", background_class = "")
         @symbol = Layer.symbolize(layer)
         @name = layer
-        @elements = element_names
+        @background_class = background_class
       end
 
       def hash
@@ -43,8 +44,6 @@ module Archimate
       def to_s
         @name
       end
-
-      private
 
       def self.symbolize(str)
         return str if str.is_a?(Symbol)

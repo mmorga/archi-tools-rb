@@ -10,7 +10,6 @@ module Archimate
       extend Forwardable
 
       def_delegators :@default_text, :strip, :tr, :+, :gsub, :sub, :downcase, :empty?, :split, :size, :include?
-      # def_delegators :@lang_hash, :size
 
       # @!attribute [r] lang_hash
       #   @return [Hash]
@@ -22,46 +21,17 @@ module Archimate
       #   @return [String]
       model_attr :default_text
 
-      # def self.default_lang
-      #   Archimate::Config.instance.default_lang
-      # end
-
       def self.string(str, lang = nil)
         return nil if !str || str.strip.empty?
-        str = str.strip
-        lang = nil if !lang || lang.empty?
-        new(
-          lang_hash: { lang => str },
-          default_lang: lang,
-          default_text: str
-        )
-      end
-
-      def self.create(copy)
-        case copy
-        when String
-          string(copy)
-        when LangString
-          copy
-        when Hash
-          lang_hash = copy.fetch(:lang_hash, {})
-          default_lang = copy.fetch(:default_lang, "")
-          default_text = copy.fetch(:default_text, "")
-          return nil if [lang_hash, default_lang, default_text].any? { |i| i && i.empty? }
-          new(
-            lang_hash: lang_hash,
-            default_lang: default_lang,
-            default_text: default_text
-          )
-        end
+        new(str, lang)
       end
 
       # @param [Hash{Symbol => Object},LangString, String] attributes
       # @raise [Struct::Error] if the given attributes don't conform {#schema}
       #   with given {# # constructor_type}
-      def initialize(str = nil, lang_hash: {}, default_lang: nil, default_text: nil)
+      def initialize(str = nil, lang = nil, lang_hash: {}, default_lang: nil, default_text: nil)
         @lang_hash = lang_hash
-        @default_lang = default_lang
+        @default_lang = default_lang || lang
         @default_text = default_text
         case str
         when String

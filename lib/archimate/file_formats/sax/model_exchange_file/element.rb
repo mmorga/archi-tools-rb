@@ -28,7 +28,7 @@ module Archimate
           private
 
           def element
-            @element ||= DataModel::Element.new(
+            @element ||= DataModel::Elements.create(
               id: attrs["identifier"],
               name: name,
               type: element_type,

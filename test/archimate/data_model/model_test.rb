@@ -248,10 +248,10 @@ module Archimate
         model = build_model
         assert_empty model.organizations
 
-        Layers.values.each_with_index do |layer, i|
+        Layers.values.each_with_index do |_layer, i|
           model = build_model(
             elements: (0..i - 1).map do |idx|
-              build_element(type: Layers.values[idx].elements.first)
+              build_element(type: Elements.classes.find { |cls| cls::LAYER == Layers.values[idx] })
             end
           )
           assert_equal i, model.organizations.size
