@@ -10,9 +10,9 @@ module Archimate
       def setup
         @concern = build_concern
         @concern2 = Concern.new(
-          label: LangString.string("label"),
-          documentation: PreservedLangString.string("docs"),
-          stakeholders: [LangString.string("stakeholder")]
+          label: LangString.new("label"),
+          documentation: PreservedLangString.new("docs"),
+          stakeholders: [LangString.new("stakeholder")]
         )
       end
 
@@ -46,7 +46,7 @@ module Archimate
 
       def test_constraints
         assert_raises { Concern.new(label: nil, documentation: [], stakeholders: []) }
-        assert_raises { Concern.new(label: LangString.string("concern"), documentation: [], stakeholders: nil) }
+        assert_raises { Concern.new(label: LangString.new("concern"), documentation: [], stakeholders: nil) }
       end
     end
   end

@@ -49,7 +49,7 @@ module Archimate
 
       def test_new_duplicate_with_args
         r1 = build_relationship
-        r2 = r1.class.new(r1.to_h.merge(name: LangString.string("pablo")))
+        r2 = r1.class.new(r1.to_h.merge(name: LangString.new("pablo")))
         refute_equal r1, r2
         assert_equal "pablo", r2.name.to_s
       end
@@ -69,7 +69,7 @@ module Archimate
 
       def test_equality_operator_false
         m1 = build_relationship
-        m2 = m1.class.new(m1.to_h.merge(name: LangString.string("felix")))
+        m2 = m1.class.new(m1.to_h.merge(name: LangString.new("felix")))
         refute_equal m1, m2
       end
 

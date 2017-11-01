@@ -217,7 +217,7 @@ module Archimate
       def build_property_definition(id: nil, name: nil, documentation: nil, type: "string")
         DataModel::PropertyDefinition.new(
           id: id || build_id,
-          name: name || DataModel::LangString.string(Faker::Company.buzzword),
+          name: name || DataModel::LangString.new(Faker::Company.buzzword),
           documentation: documentation,
           type: type
         )

@@ -6,7 +6,7 @@ module Archimate
     class DiagramTest < Minitest::Test
       def test_new
         docs = build_documentation
-        diagram = Diagram.new(id: "123", name: LangString.string("my diagram"), documentation: docs, type: "")
+        diagram = Diagram.new(id: "123", name: LangString.new("my diagram"), documentation: docs, type: "")
         assert_equal "123", diagram.id
         assert_equal "my diagram", diagram.name.to_s
         assert_equal docs, diagram.documentation

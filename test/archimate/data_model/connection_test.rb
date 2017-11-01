@@ -11,7 +11,7 @@ module Archimate
         target_el = build_element
         @subject = build_connection(
           id: "abc123",
-          name: LangString.string("test_name"),
+          name: LangString.new("test_name"),
           type: "three",
           source: nil,
           target: nil,

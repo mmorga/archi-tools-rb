@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'test_helper'
 
 module Archimate
@@ -33,7 +34,7 @@ module Archimate
 
       def test_build_organization
         f = build_organization(type: "testtype")
-        [:id, :type].each do |sym|
+        %i[id type].each do |sym|
           assert_instance_of String, f.send(sym)
           refute_empty f.send(sym)
         end
@@ -59,7 +60,7 @@ module Archimate
       end
 
       def test_operator_eqleql_false
-        refute @f1 == Organization.new(id: "234", name: LangString.string("Sales"), type: "Business")
+        refute @f1 == Organization.new(id: "234", name: LangString.new("Sales"), type: "Business")
       end
 
       def test_to_s
@@ -74,17 +75,17 @@ module Archimate
               organizations: [
                 build_organization(
                   organizations: [],
-                  items: %w(k l m).map{ |id| build_element(id: id) }
+                  items: %w[k l m].map { |id| build_element(id: id) }
                 )
               ],
-              items: %w(a b c).map{ |id| build_element(id: id) }
+              items: %w[a b c].map { |id| build_element(id: id) }
             ),
-            build_organization(organizations: [], items: %w(d e f).map{ |id| build_element(id: id) })
+            build_organization(organizations: [], items: %w[d e f].map { |id| build_element(id: id) })
           ],
-          items: %w(g h i j).map{ |id| build_element(id: id) }
+          items: %w[g h i j].map { |id| build_element(id: id) }
         )
 
-        assert_equal %w(a b c d e f g h i j k l m), subject.referenced_identified_nodes.map(&:id).sort
+        assert_equal %w[a b c d e f g h i j k l m], subject.referenced_identified_nodes.map(&:id).sort
       end
     end
   end

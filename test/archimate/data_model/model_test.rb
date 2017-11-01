@@ -27,7 +27,7 @@ module Archimate
 
       def test_equality_operator_false
         m2 = @subject.clone
-        m2.instance_variable_set(:@name, LangString.string("felix"))
+        m2.instance_variable_set(:@name, LangString.new("felix"))
         refute_equal @subject, m2
       end
 
@@ -205,14 +205,14 @@ module Archimate
       def test_default_organization_for_with_initial_organizations_by_name
         subject = build_model(
           organizations: [
-            build_organization(name: LangString.string("Business")),
-            build_organization(name: LangString.string("Application")),
-            build_organization(name: LangString.string("Technology")),
-            build_organization(name: LangString.string("Motivation")),
-            build_organization(name: LangString.string("Implementation & Migration")),
-            build_organization(name: LangString.string("Connectors")),
-            build_organization(name: LangString.string("Relations")),
-            build_organization(name: LangString.string("Diagrams"))
+            build_organization(name: LangString.new("Business")),
+            build_organization(name: LangString.new("Application")),
+            build_organization(name: LangString.new("Technology")),
+            build_organization(name: LangString.new("Motivation")),
+            build_organization(name: LangString.new("Implementation & Migration")),
+            build_organization(name: LangString.new("Connectors")),
+            build_organization(name: LangString.new("Relations")),
+            build_organization(name: LangString.new("Diagrams"))
           ]
         )
         organization = subject.send(:default_organization_for, build_element(type: "BusinessActor"))
