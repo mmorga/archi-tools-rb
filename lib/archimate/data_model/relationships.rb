@@ -24,6 +24,7 @@ module Archimate
         WEIGHT = 10
         CLASSIFICATION = :structural
         VERB = "composes"
+        OBJECT_VERB = "composed by"
 
         def initialize(args)
           super
@@ -34,6 +35,7 @@ module Archimate
         WEIGHT = 9
         CLASSIFICATION = :structural
         VERB = "aggregates"
+        OBJECT_VERB = "aggregated by"
 
         def initialize(args)
           super
@@ -44,6 +46,7 @@ module Archimate
         WEIGHT = 8
         CLASSIFICATION = :structural
         VERB = "assigned to"
+        OBJECT_VERB = "assigned from"
 
         def initialize(args)
           super
@@ -54,6 +57,7 @@ module Archimate
         WEIGHT = 7
         CLASSIFICATION = :structural
         VERB = "realizes"
+        OBJECT_VERB = "realized by"
 
         def initialize(args)
           super
@@ -64,6 +68,7 @@ module Archimate
         WEIGHT = 6
         CLASSIFICATION = :dependency
         VERB = "serves"
+        OBJECT_VERB = "served by"
 
         def initialize(args)
           super
@@ -74,6 +79,7 @@ module Archimate
         WEIGHT = 5
         CLASSIFICATION = :dependency
         VERB = "accesses"
+        OBJECT_VERB = "accessed by"
 
         def initialize(args)
           super
@@ -84,6 +90,7 @@ module Archimate
         WEIGHT = 4
         CLASSIFICATION = :dependency
         VERB = "influences"
+        OBJECT_VERB = "influenced by"
 
         def initialize(args)
           super
@@ -94,6 +101,7 @@ module Archimate
         WEIGHT = 3
         CLASSIFICATION = :dynamic
         VERB = "triggers"
+        OBJECT_VERB = "triggered by"
 
         def initialize(args)
           super
@@ -104,6 +112,7 @@ module Archimate
         WEIGHT = 2
         CLASSIFICATION = :dynamic
         VERB = "flows to"
+        OBJECT_VERB = "flows from"
 
         def initialize(args)
           super
@@ -114,6 +123,7 @@ module Archimate
         WEIGHT = 1
         CLASSIFICATION = :other
         VERB = "specializes"
+        OBJECT_VERB = "specialized by"
 
         def initialize(args)
           super
@@ -123,7 +133,8 @@ module Archimate
       class Association < Relationship
         WEIGHT = 0
         CLASSIFICATION = :other
-        VERB = "is associated with"
+        VERB = "associated with"
+        OBJECT_VERB = "associated from"
 
         def initialize(args)
           super
@@ -136,6 +147,7 @@ module Archimate
         WEIGHT = 0
         CLASSIFICATION = :other
         VERB = "junction to"
+        OBJECT_VERB = "junction from"
 
         def initialize(args)
           super
@@ -147,7 +159,8 @@ module Archimate
       class AndJunction < Relationship
         WEIGHT = 0
         CLASSIFICATION = :other
-        VERB = "junction to"
+        VERB = "and junction to"
+        OBJECT_VERB = "and junction from"
 
         def initialize(args)
           super
@@ -159,7 +172,8 @@ module Archimate
       class OrJunction < Relationship
         WEIGHT = 0
         CLASSIFICATION = :other
-        VERB = "junction to"
+        VERB = "or junction to"
+        OBJECT_VERB = "or junction from"
 
         def initialize(args)
           super

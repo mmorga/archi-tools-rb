@@ -10,6 +10,8 @@ module Archimate
     # type from [ElementType].
     class Element
       include Comparison
+      include Referenceable
+      include RelationshipReferences
 
       # @!attribute [r] id
       #   @return [String]
@@ -19,22 +21,14 @@ module Archimate
       model_attr :name
       # @!attribute [rw] documentation
       #   @return [PreservedLangString, NilClass]
-      model_attr :documentation, writable: true
+      model_attr :documentation, writable: true, default: nil
       # # @return [Array<AnyElement>]
       # model_attr :other_elements
       # # @return [Array<AnyAttribute>]
       # model_attr :other_attributes
       # @!attribute [r] properties
       #   @return [Array<Property>]
-      model_attr :properties
-
-      def initialize(id:, name:, documentation: nil, type: nil, properties: [])
-        @id = id
-        @name = name
-        @documentation = documentation
-        @type = type
-        @properties = properties
-      end
+      model_attr :properties, default: []
 
       def to_s
         Archimate::Color.layer_color(layer, "#{type}<#{id}>[#{name}]")
@@ -57,14 +51,6 @@ module Archimate
       def diagrams
         @diagrams ||= in_model.diagrams.select do |diagram|
           diagram.element_ids.include?(id)
-        end
-      end
-
-      # Relationships that this element is referenced in.
-      # @todo this implementation is broken - in_model no longer exists
-      def relationships
-        @relationships ||= in_model.relationships.select do |relationship|
-          relationship.source == id || relationship.target == id
         end
       end
 

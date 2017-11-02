@@ -13,23 +13,24 @@ module Archimate
     # is a derived type from RelationshipType.
     class Relationship
       include Comparison
+      include Referenceable
 
       # @!attribute [r] id
       #   @return [String]
       model_attr :id
       # @!attribute [r] name
       #   @return [LangString, NilClass]
-      model_attr :name
+      model_attr :name, default: nil
       # @!attribute [r] documentation
       #   @return [PreservedLangString, NilClass]
-      model_attr :documentation
+      model_attr :documentation, default: nil
       # @return [Array<AnyElement>]
       # model_attr :other_elements
       # @return [Array<AnyAttribute>]
       # model_attr :other_attributes
       # @!attribute [r] properties
       #   @return [Array<Property>]
-      model_attr :properties
+      model_attr :properties, default: []
       # @todo is this optional?
       # @!attribute [rw] source
       #   @return [Element, Relationship]
@@ -40,23 +41,10 @@ module Archimate
       model_attr :target, comparison_attr: :id, writable: true
       # @!attribute [r] access_type
       #   @return [AccessTypeEnum, NilClass]
-      model_attr :access_type
+      model_attr :access_type, default: nil
       # @!attribute [r] derived
       #   @return [Boolean] this is a derived relation if true
-      model_attr :derived
-
-      def initialize(id:, name: nil, documentation: nil,
-                     properties: [], source:, target:, access_type: nil,
-                     derived: false)
-        @id = id
-        @name = name
-        @documentation = documentation
-        @properties = properties
-        @source = source
-        @target = target
-        @access_type = access_type
-        @derived = derived
-      end
+      model_attr :derived, default: false
 
       def replace(entity, with_entity)
         @source = with_entity.id if source == entity.id
