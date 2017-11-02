@@ -3,8 +3,8 @@ module Archimate
     module Factories
       def build_any_attribute(attribute: nil, prefix: "", value: nil)
         DataModel::AnyAttribute.new(
-          attribute || Faker::Company.buzzword.downcase,
-          value || Faker::Company.buzzword,
+          attribute: attribute || Faker::Company.buzzword.downcase,
+          value: value || Faker::Company.buzzword,
           prefix: prefix
         )
       end

@@ -3,7 +3,7 @@
 module Archimate
   module DataModel
     module Comparison
-      def initialize(opts)
+      def initialize(opts = {})
         self.class.attr_info.each do |sym, attr_info|
           raise "#{self.class} required value for #{sym} is missing." unless attr_info.default != :value_required || opts.include?(sym)
           val = opts.fetch(sym, attr_info.default)

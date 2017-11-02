@@ -13,12 +13,7 @@ module Archimate
       # `type` attribute expresses a type for the notes, e.g. OCL for OCL rules.
       # @!attribute [r] type
       #   @return [String, NilClass]
-      model_attr :type
-
-      def initialize(documentation:, type: nil)
-        @documentation = documentation
-        @type = type
-      end
+      model_attr :type, default: nil
     end
   end
 end

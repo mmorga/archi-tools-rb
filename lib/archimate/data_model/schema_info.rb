@@ -7,19 +7,13 @@ module Archimate
 
       # @!attribute [r] schema
       #   @return [String, NilClass]
-      model_attr :schema
+      model_attr :schema, default: nil
       # @!attribute [r] schemaversion
       #   @return [String, NilClass]
-      model_attr :schemaversion
+      model_attr :schemaversion, default: nil
       # @!attribute [r] elements
       #   @return [Array<AnyElement>]
-      model_attr :elements
-
-      def initialize(schema: nil, schemaversion: nil, elements: [])
-        @schema = schema
-        @schemaversion = schemaversion
-        @elements = elements
-      end
+      model_attr :elements, default: []
 
       def to_s
         "#{type.light_black}[#{schema} #{schemaversion}]"

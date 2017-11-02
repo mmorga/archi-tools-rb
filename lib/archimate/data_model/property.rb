@@ -9,15 +9,10 @@ module Archimate
 
       # @!attribute [r] value
       #   @return [LangString, NilClass] value of the property, default +nil+
-      model_attr :value
+      model_attr :value, default: nil
       # @!attribute [rw] property_definition
       #   @return [PropertyDefinition] property definition of the property
       model_attr :property_definition, writable: true
-
-      def initialize(property_definition:, value: nil)
-        @property_definition = property_definition
-        @value = value
-      end
 
       def to_s
         "Property(key: #{property_definition.name}, value: #{value || 'no value'})"

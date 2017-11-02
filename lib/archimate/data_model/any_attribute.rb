@@ -11,16 +11,10 @@ module Archimate
       model_attr :attribute
       # @!attribute [r] prefix
       #   @return [String]
-      model_attr :prefix
+      model_attr :prefix, default: ""
       # @!attribute [r] value
       #   @return [String]
       model_attr :value
-
-      def initialize(attribute, value, prefix: "")
-        @attribute = attribute
-        @prefix = prefix
-        @value = value
-      end
     end
   end
 end

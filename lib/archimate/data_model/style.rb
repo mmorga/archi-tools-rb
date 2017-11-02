@@ -8,38 +8,27 @@ module Archimate
       # @todo make this an enum
       # @!attribute [r] text_alignment
       #   @return [Int, NilClass]
-      model_attr :text_alignment
+      model_attr :text_alignment, default: nil
       # @!attribute [r] fill_color
       #   @return [Color, NilClass]
-      model_attr :fill_color
+      model_attr :fill_color, default: nil
       # @!attribute [r] line_color
       #   @return [Color, NilClass]
-      model_attr :line_color
+      model_attr :line_color, default: nil
       # @todo move this to font
       # @!attribute [r] font_color
       #   @return [Color, NilClass]
-      model_attr :font_color
+      model_attr :font_color, default: nil
       # @!attribute [r] line_width
       #   @return [Int, NilClass]
-      model_attr :line_width
+      model_attr :line_width, default: nil
       # @!attribute [r] font
       #   @return [Font, NilClass]
-      model_attr :font
+      model_attr :font, default: nil
       # @todo make this an enum
       # @!attribute [r] text_position
       #   @return [Int, NilClass]
-      model_attr :text_position
-
-      def initialize(text_alignment: nil, fill_color: nil, line_color: nil,
-                     font_color: nil, line_width: nil, font: nil, text_position: nil)
-        @text_alignment = text_alignment
-        @fill_color = fill_color
-        @line_color = line_color
-        @font_color = font_color
-        @line_width = line_width
-        @font = font
-        @text_position = text_position
-      end
+      model_attr :text_position, default: nil
 
       def to_s
         attr_name_vals = %i[text_alignment fill_color line_color font_color line_width

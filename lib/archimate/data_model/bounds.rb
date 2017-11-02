@@ -7,10 +7,10 @@ module Archimate
 
       # @!attribute [r] x
       #   @return [Float, NilClass]
-      model_attr :x
+      model_attr :x, default: nil
       # @!attribute [r] y
       #   @return [Float, NilClass]
-      model_attr :y
+      model_attr :y, default: nil
       # @!attribute [r] width
       #   @return [Float]
       model_attr :width

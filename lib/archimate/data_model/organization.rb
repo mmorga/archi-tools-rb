@@ -19,39 +19,29 @@ module Archimate
       # Model exchange format
       # @!attribute [r] id
       #   @return [String, NilClass]
-      model_attr :id
+      model_attr :id, default: nil
       # LabelGroup in the XSD
       # @!attribute [r] name
       #   @return [LangString, NilClass]
-      model_attr :name
+      model_attr :name, default: nil
       # I believe this is used only for Archi formats
       # @!attribute [r] type
       #   @return [String, NilClass]
-      model_attr :type
+      model_attr :type, default: nil
       # @!attribute [r] documentation
       #   @return [PreservedLangString, NilClass]
-      model_attr :documentation
+      model_attr :documentation, default: nil
       # @!attribute [rw] items
       #   @return [Array<Object>]
-      model_attr :items, writable: true
+      model_attr :items, writable: true, default: []
       # item in the XSD
       # @!attribute [rw] organizations
       #   @return [Array<Organization>]
-      model_attr :organizations, writable: true
+      model_attr :organizations, writable: true, default: []
       # # @return [Array<AnyElement>]
       # model_attr :other_elements
       # # @return [Array<AnyAttribute>]
       # model_attr :other_attributes
-
-      def initialize(id: nil, name: nil, type: nil, documentation: nil,
-                     items: [], organizations: [])
-        @id = id
-        @name = name
-        @type = type
-        @documentation = documentation
-        @items = items
-        @organizations = organizations
-      end
 
       def to_s
         "#{Archimate::Color.data_model('Organization')}<#{id}>[#{Archimate::Color.color(name, %i[white underline])}]"

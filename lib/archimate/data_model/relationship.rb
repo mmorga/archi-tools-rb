@@ -34,11 +34,11 @@ module Archimate
       # @todo is this optional?
       # @!attribute [rw] source
       #   @return [Element, Relationship]
-      model_attr :source, comparison_attr: :id, writable: true
+      model_attr :source, comparison_attr: :id, writable: true, default: nil
       # @todo is this optional?
       # @!attribute [rw] target
       #   @return [Element, Relationship]
-      model_attr :target, comparison_attr: :id, writable: true
+      model_attr :target, comparison_attr: :id, writable: true, default: nil
       # @!attribute [r] access_type
       #   @return [AccessTypeEnum, NilClass]
       model_attr :access_type, default: nil

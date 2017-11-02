@@ -17,62 +17,44 @@ module Archimate
       model_attr :id
       # @!attribute [r] name
       #   @return [LangString, NilClass]
-      model_attr :name
+      model_attr :name, default: nil
       # @!attribute [r] documentation
       #   @return [PreservedLangString, NilClass]
-      model_attr :documentation
+      model_attr :documentation, default: nil
       # # @!attribute [r] other_elements
       #   @return [Array<AnyElement>]
-      model_attr :other_elements
+      model_attr :other_elements, default: []
       # # @!attribute [r] other_attributes
       #   @return [Array<AnyAttribute>]
-      model_attr :other_attributes
+      model_attr :other_attributes, default: []
       # @note type here was used for the Element/Relationship/Diagram type
       # @!attribute [r] type
       #   @return [String, NilClass]
-      model_attr :type
+      model_attr :type, default: nil
       # @!attribute [r] source_attachment
       #   @return [Location, NilClass]
-      model_attr :source_attachment
+      model_attr :source_attachment, default: nil
       # @!attribute [r] bendpoints
       #   @return [Array<Location>]
-      model_attr :bendpoints
+      model_attr :bendpoints, default: []
       # @!attribute [r] target_attachment
       #   @return [Location, NilClass]
-      model_attr :target_attachment
+      model_attr :target_attachment, default: nil
       # @!attribute [rw] source
       #   @return [ViewNode, NilClass]
-      model_attr :source, comparison_attr: :id, writable: true
+      model_attr :source, comparison_attr: :id, writable: true, default: nil
       # @!attribute [rw] target
       #   @return [ViewNode, NilClass]
-      model_attr :target, comparison_attr: :id, writable: true
+      model_attr :target, comparison_attr: :id, writable: true, default: nil
       # @!attribute [rw] relationship
       #   @return [Relationship, NilClass]
-      model_attr :relationship, comparison_attr: :id, writable: true
+      model_attr :relationship, comparison_attr: :id, writable: true, default: nil
       # @!attribute [r] style
       #   @return [Style, NilClass]
-      model_attr :style
+      model_attr :style, default: nil
       # @!attribute [r] properties
       #   @return [Array<Property>]
-      model_attr :properties
-
-      def initialize(id:, name: nil, documentation: nil, type: nil,
-                     source_attachment: nil, bendpoints: [], target_attachment: nil,
-                     source: nil, target: nil, relationship: nil, style: nil,
-                     properties: nil)
-        @id = id
-        @name = name
-        @documentation = documentation
-        @type = type
-        @source_attachment = source_attachment
-        @bendpoints = bendpoints
-        @target_attachment = target_attachment
-        @source = source
-        @target = target
-        @relationship = relationship
-        @style = style
-        @properties = properties
-      end
+      model_attr :properties, default: []
 
       def replace(entity, with_entity)
         @relationship = with_entity.id if relationship == entity.id

@@ -18,28 +18,21 @@ module Archimate
       model_attr :name
       # @!attribute [r] documentation
       #   @return [PreservedLangString, NilClass]
-      model_attr :documentation
+      model_attr :documentation, default: nil
       # # @!attribute [r] other_elements
       #   @return [Array<AnyElement>]
-      model_attr :other_elements
+      model_attr :other_elements, default: []
       # # @!attribute [r] other_attributes
       #   @return [Array<AnyAttribute>]
-      model_attr :other_attributes
+      model_attr :other_attributes, default: []
       # @!attribute [r] type
       #   @note if +type+ is nil, then type "string" is assumed
       #   @see Archimate::DataModel::PROPERTY_DEFINITION_TYPES
       #   @return [String, NilClass]
-      model_attr :type
+      model_attr :type, default: nil
 
       def self.identifier_for_key(key)
         (self.class.hash ^ key.hash).to_s(16)
-      end
-
-      def initialize(id:, name:, documentation: nil, type: nil)
-        @id = id
-        @name = name
-        @documentation = documentation
-        @type = type
       end
     end
   end

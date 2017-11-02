@@ -11,24 +11,16 @@ module Archimate
       model_attr :element
       # @!attribute [r] prefix
       #   @return [String, NilClass]
-      model_attr :prefix
+      model_attr :prefix, default: ""
       # @!attribute [r] attributes
       #   @return [Array<AnyAttribute>]
-      model_attr :attributes
+      model_attr :attributes, default: []
       # @!attribute [r] content
       #   @return [String, NilClass]
-      model_attr :content
+      model_attr :content, default: nil
       # @!attribute [r] children
       #   @return [Array<AnyElement>]
-      model_attr :children
-
-      def initialize(element:, prefix: "", attributes: [], content: nil, children: [])
-        @element = element
-        @prefix = prefix
-        @attributes = attributes
-        @content = content
-        @children = children
-      end
+      model_attr :children, default: []
 
       def to_sym
         element&.to_sym

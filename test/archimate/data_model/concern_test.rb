@@ -45,8 +45,7 @@ module Archimate
       end
 
       def test_constraints
-        assert_raises { Concern.new(label: nil, documentation: [], stakeholders: []) }
-        assert_raises { Concern.new(label: LangString.new("concern"), documentation: [], stakeholders: nil) }
+        assert_raises { Concern.new(documentation: [], stakeholders: []) }
       end
     end
   end

@@ -45,11 +45,11 @@ module Archimate
       end
 
       def test_width_required
-        assert_raises { build_bounds(x: 0, y: 10, width: nil, height: 700) }
+        assert_raises { Bounds.new(x: 0, y: 10, height: 700) }
       end
 
       def test_height_required
-        assert_raises { build_bounds(x: 0, y: 10, width: 500, height: nil) }
+        assert_raises { Bounds.new(x: 0, y: 10, width: 500) }
       end
 
       def test_to_s

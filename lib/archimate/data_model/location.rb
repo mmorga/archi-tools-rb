@@ -27,10 +27,10 @@ module Archimate
       # These are holdovers from the archi file format and are only maintained for compatability
       # @!attribute [r] end_x
       #   @return [Int, NilClass]
-      model_attr :end_x
+      model_attr :end_x, default: nil
       # @!attribute [r] end_y
       #   @return [Int, NilClass]
-      model_attr :end_y
+      model_attr :end_y, default: nil
 
       def initialize(x:, y:, end_x: nil, end_y: nil)
         @x = x.to_i

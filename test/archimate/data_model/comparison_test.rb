@@ -56,7 +56,6 @@ module Archimate
       end
 
       def test_referenceable_integration
-        assert_equal 2, @ref_thing1.references.size
         assert_includes @ref_thing1.references, @subject1
         assert_includes @ref_thing1.references, @subject2
       end
