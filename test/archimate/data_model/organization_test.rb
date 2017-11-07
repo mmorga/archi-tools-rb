@@ -41,9 +41,7 @@ module Archimate
         assert_instance_of LangString, f.name
         refute_empty f.name
         assert_nil f.documentation
-        assert_instance_of Array, f.items
         assert_empty f.items
-        assert_instance_of Array, f.organizations
         assert_empty f.organizations
       end
 

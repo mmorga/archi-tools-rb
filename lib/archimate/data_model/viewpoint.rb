@@ -4,60 +4,45 @@ module Archimate
   module DataModel
     class Viewpoint
       include Comparison
+      include Referenceable
 
       # @!attribute [r] id
-      #   @return [String]
+      # @return [String]
       model_attr :id
       # @!attribute [r] name
-      #   @return [LangString]
+      # @return [LangString]
       model_attr :name
       # @!attribute [r] documentation
-      #   @return [PreservedLangString]
-      model_attr :documentation
+      # @return [PreservedLangString]
+      model_attr :documentation, default: nil
       # # @!attribute [r] other_elements
-      #   @return [Array<AnyElement>]
-      model_attr :other_elements
+      # @return [Array<AnyElement>]
+      model_attr :other_elements, default: []
       # # @!attribute [r] other_attributes
-      #   @return [Array<AnyAttribute>]
-      model_attr :other_attributes
+      # @return [Array<AnyAttribute>]
+      model_attr :other_attributes, default: []
       # type here was used for the Element/Relationship/Diagram type
       # @!attribute [r] type
-      #   @return [String, NilClass]
-      model_attr :type
+      # @return [String, NilClass]
+      model_attr :type, default: nil
       # @!attribute [r] concerns
-      #   @return [Array<Concern>]
-      model_attr :concerns
+      # @return [Array<Concern>]
+      model_attr :concerns, default: []
       # @!attribute [r] viewpoint_purposes
-      #   @return [Array<ViewpointPurposeEnum>]
-      model_attr :viewpoint_purposes
+      # @return [Array<ViewpointPurposeEnum>]
+      model_attr :viewpoint_purposes, default: []
       # @!attribute [r] viewpoint_contents
-      #   @return [Array<ViewpointContentEnum>]
-      model_attr :viewpoint_contents
+      # @return [Array<ViewpointContentEnum>]
+      model_attr :viewpoint_contents, default: []
       # @!attribute [r] allowed_element_types
-      #   @return [Array<ElementType>]
-      model_attr :allowed_element_types
+      # @return [Array<ElementType>]
+      model_attr :allowed_element_types, default: []
       # @!attribute [r] allowed_relationship_types
-      #   @return [Array<Relationships::*>]
-      model_attr :allowed_relationship_types
+      # @return [Array<Relationships::*>]
+      model_attr :allowed_relationship_types, default: []
       # @!attribute [r] modeling_notes
-      #   @return [Array<ModelingNote>]
-      model_attr :modeling_notes
-
-      def initialize(id:, name:, documentation: nil, type: nil,
-                     concerns: [], viewpoint_purposes: [],
-                     viewpoint_contents: [], allowed_element_types: [],
-                     allowed_relationship_types: [], modeling_notes: [])
-        @id = id
-        @name = name
-        @documentation = documentation
-        @type = type
-        @concerns = concerns
-        @viewpoint_purposes = viewpoint_purposes
-        @viewpoint_contents = viewpoint_contents
-        @allowed_element_types = allowed_element_types
-        @allowed_relationship_types = allowed_relationship_types
-        @modeling_notes = modeling_notes
-      end
+      # @return [Array<ModelingNote>]
+      model_attr :modeling_notes, default: []
     end
   end
 end

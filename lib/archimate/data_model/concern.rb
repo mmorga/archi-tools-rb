@@ -9,13 +9,13 @@ module Archimate
       include Comparison
 
       # @!attribute [r] label
-      #   @return [LangString] one label is required
+      # @return [LangString] one label is required
       model_attr :label
       # @!attribute [r] documentation
-      #   @return [PreservedLangString]
+      # @return [PreservedLangString]
       model_attr :documentation, default: nil
       # @!attribute [r] stakeholders
-      #   @return [Array<LangString>]
+      # @return [Array<LangString>]
       model_attr :stakeholders, default: []
     end
   end

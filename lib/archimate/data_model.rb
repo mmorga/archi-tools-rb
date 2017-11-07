@@ -5,6 +5,7 @@ module Archimate
     # Enumeration of Influence Strength types. These are suggestions.
     # InfluenceStrengthEnum = String # Strict::String.enum(%w[+ ++ - -- 0 1 2 3 4 5 6 7 8 9 10])
     require 'archimate/data_model/referenceable'
+    require 'archimate/data_model/referenceable_list'
     require 'archimate/data_model/connector_type'
     require 'archimate/data_model/diagram_type'
     require 'archimate/data_model/comparison'

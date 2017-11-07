@@ -14,20 +14,20 @@ module Archimate
       include RelationshipReferences
 
       # @!attribute [r] id
-      #   @return [String]
+      # @return [String]
       model_attr :id
       # @!attribute [r] name
-      #   @return [LangString, NilClass]
+      # @return [LangString, NilClass]
       model_attr :name
       # @!attribute [rw] documentation
-      #   @return [PreservedLangString, NilClass]
+      # @return [PreservedLangString, NilClass]
       model_attr :documentation, writable: true, default: nil
       # # @return [Array<AnyElement>]
       # model_attr :other_elements
       # # @return [Array<AnyAttribute>]
       # model_attr :other_attributes
       # @!attribute [r] properties
-      #   @return [Array<Property>]
+      # @return [Array<Property>]
       model_attr :properties, default: []
 
       def to_s

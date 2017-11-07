@@ -34,6 +34,11 @@ module Archimate
         assert_match subject.key, result
         assert_match subject.value, result
       end
+
+      def test_referenceable_property_definition
+        prop = build_property
+        assert_includes prop.property_definition.references, prop
+      end
     end
   end
 end

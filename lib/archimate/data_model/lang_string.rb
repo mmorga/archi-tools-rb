@@ -12,13 +12,13 @@ module Archimate
       def_delegators :@default_text, :strip, :tr, :+, :gsub, :sub, :downcase, :empty?, :split, :size, :include?
 
       # @!attribute [r] lang_hash
-      #   @return [Hash]
+      # @return [Hash]
       model_attr :lang_hash
       # @!attribute [r] default_lang
-      #   @return [String, NilClass]
+      # @return [String, NilClass]
       model_attr :default_lang
       # @!attribute [r] default_text
-      #   @return [String]
+      # @return [String]
       model_attr :default_text
 
       def self.string(str, lang = nil)

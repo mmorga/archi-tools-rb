@@ -7,19 +7,19 @@ module Archimate
       include Comparison
 
       # @!attribute [r] element
-      #   @return [String]
+      # @return [String]
       model_attr :element
       # @!attribute [r] prefix
-      #   @return [String, NilClass]
+      # @return [String, NilClass]
       model_attr :prefix, default: ""
       # @!attribute [r] attributes
-      #   @return [Array<AnyAttribute>]
+      # @return [Array<AnyAttribute>]
       model_attr :attributes, default: []
       # @!attribute [r] content
-      #   @return [String, NilClass]
+      # @return [String, NilClass]
       model_attr :content, default: nil
       # @!attribute [r] children
-      #   @return [Array<AnyElement>]
+      # @return [Array<AnyElement>]
       model_attr :children, default: []
 
       def to_sym

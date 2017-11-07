@@ -8,11 +8,11 @@ module Archimate
       include Comparison
 
       # @!attribute [r] documentation
-      #   @return [PreservedLangString]
+      # @return [PreservedLangString]
       model_attr :documentation
       # `type` attribute expresses a type for the notes, e.g. OCL for OCL rules.
       # @!attribute [r] type
-      #   @return [String, NilClass]
+      # @return [String, NilClass]
       model_attr :type, default: nil
     end
   end

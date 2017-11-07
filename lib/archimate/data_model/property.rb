@@ -8,10 +8,10 @@ module Archimate
       include Comparison
 
       # @!attribute [r] value
-      #   @return [LangString, NilClass] value of the property, default +nil+
+      # @return [LangString, NilClass] value of the property, default +nil+
       model_attr :value, default: nil
       # @!attribute [rw] property_definition
-      #   @return [PropertyDefinition] property definition of the property
+      # @return [PropertyDefinition] property definition of the property
       model_attr :property_definition, writable: true
 
       def to_s

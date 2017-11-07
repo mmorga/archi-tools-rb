@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'test_helper'
 
 module Archimate
@@ -21,7 +22,7 @@ module Archimate
       def test_factory_list
         diagrams = build_diagram_list(with_diagrams: 2)
         assert_kind_of Array, diagrams
-        diagrams.each {|d| assert_kind_of Diagram, d }
+        diagrams.each { |d| assert_kind_of Diagram, d }
       end
     end
   end

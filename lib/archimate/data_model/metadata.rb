@@ -10,7 +10,7 @@ module Archimate
       include Comparison
 
       # @!attribute [r] schema_infos
-      #   @return [Array<SchemaInfo>]
+      # @return [Array<SchemaInfo>]
       model_attr :schema_infos, default: []
     end
   end

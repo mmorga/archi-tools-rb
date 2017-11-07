@@ -7,13 +7,13 @@ module Archimate
       include Comparison
 
       # @!attribute [r] attribute
-      #   @return [String]
+      # @return [String]
       model_attr :attribute
       # @!attribute [r] prefix
-      #   @return [String]
+      # @return [String]
       model_attr :prefix, default: ""
       # @!attribute [r] value
-      #   @return [String]
+      # @return [String]
       model_attr :value
     end
   end

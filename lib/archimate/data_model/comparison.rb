@@ -7,6 +7,7 @@ module Archimate
         self.class.attr_info.each do |sym, attr_info|
           raise "#{self.class} required value for #{sym} is missing." unless attr_info.default != :value_required || opts.include?(sym)
           val = opts.fetch(sym, attr_info.default)
+          val = ReferenceableList.new(self, val) if attr_info.referenceable_list
           instance_variable_set("@#{sym}".to_sym, val)
           val.add_reference(self) if val.is_a?(Referenceable)
         end
@@ -72,7 +73,7 @@ module Archimate
       end
 
       module ClassMethods
-        AttributeInfo = Struct.new(:comparison_attr, :writable, :default) do
+        AttributeInfo = Struct.new(:comparison_attr, :writable, :default, :referenceable_list) do
           def attr_inspect(obj, sym)
             case comparison_attr
             when :no_compare
@@ -87,13 +88,14 @@ module Archimate
 
         # Define the reader method (or call model_attr)
         # Append the attr_sym to the @@attrs for the class
-        def model_attr(attr_sym, comparison_attr: nil, writable: false, default: :value_required)
+        def model_attr(attr_sym, comparison_attr: nil, writable: false,
+                       default: :value_required, referenceable_list: false)
           send(:attr_reader, attr_sym)
           attrs = attr_names << attr_sym
           class_variable_set(:@@attr_names, attrs.uniq)
           class_variable_set(
             :@@attr_info,
-            attr_info.merge(attr_sym => AttributeInfo.new(comparison_attr, writable, default))
+            attr_info.merge(attr_sym => AttributeInfo.new(comparison_attr, writable, default, referenceable_list))
           )
           if comparison_attr != :no_compare
             attrs = comparison_attr_paths << (comparison_attr ? [attr_sym, comparison_attr] : attr_sym)
@@ -103,9 +105,13 @@ module Archimate
           define_method("#{attr_sym}=".to_sym) do |val|
             instance_variable_set(:@hash_key, nil)
             old_val = instance_variable_get("@#{attr_sym}")
-            old_val.remove_reference(self) if old_val.is_a?(Referenceable)
-            instance_variable_set("@#{attr_sym}".to_sym, val)
-            val.add_reference(self) if val.is_a?(Referenceable)
+            if old_val.is_a?(ReferenceableList)
+              old_val.replace_with(val)
+            else
+              old_val.remove_reference(self) if old_val.is_a?(Referenceable)
+              instance_variable_set("@#{attr_sym}".to_sym, val)
+              val.add_reference(self) if val.is_a?(Referenceable)
+            end
           end
         end
 

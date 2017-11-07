@@ -11,49 +11,50 @@ module Archimate
     # can be provided and will be additional to (or over-ride) those contained in the referenced ArchiMate relationship.
     class Connection
       include Comparison
+      include Referenceable
 
       # @!attribute [r] id
-      #   @return [String]
+      # @return [String]
       model_attr :id
       # @!attribute [r] name
-      #   @return [LangString, NilClass]
+      # @return [LangString, NilClass]
       model_attr :name, default: nil
       # @!attribute [r] documentation
-      #   @return [PreservedLangString, NilClass]
+      # @return [PreservedLangString, NilClass]
       model_attr :documentation, default: nil
       # # @!attribute [r] other_elements
-      #   @return [Array<AnyElement>]
+      # @return [Array<AnyElement>]
       model_attr :other_elements, default: []
       # # @!attribute [r] other_attributes
-      #   @return [Array<AnyAttribute>]
+      # @return [Array<AnyAttribute>]
       model_attr :other_attributes, default: []
       # @note type here was used for the Element/Relationship/Diagram type
       # @!attribute [r] type
-      #   @return [String, NilClass]
+      # @return [String, NilClass]
       model_attr :type, default: nil
       # @!attribute [r] source_attachment
-      #   @return [Location, NilClass]
+      # @return [Location, NilClass]
       model_attr :source_attachment, default: nil
       # @!attribute [r] bendpoints
-      #   @return [Array<Location>]
+      # @return [Array<Location>]
       model_attr :bendpoints, default: []
       # @!attribute [r] target_attachment
-      #   @return [Location, NilClass]
+      # @return [Location, NilClass]
       model_attr :target_attachment, default: nil
       # @!attribute [rw] source
-      #   @return [ViewNode, NilClass]
+      # @return [ViewNode, NilClass]
       model_attr :source, comparison_attr: :id, writable: true, default: nil
       # @!attribute [rw] target
-      #   @return [ViewNode, NilClass]
+      # @return [ViewNode, NilClass]
       model_attr :target, comparison_attr: :id, writable: true, default: nil
       # @!attribute [rw] relationship
-      #   @return [Relationship, NilClass]
+      # @return [Relationship, NilClass]
       model_attr :relationship, comparison_attr: :id, writable: true, default: nil
       # @!attribute [r] style
-      #   @return [Style, NilClass]
+      # @return [Style, NilClass]
       model_attr :style, default: nil
       # @!attribute [r] properties
-      #   @return [Array<Property>]
+      # @return [Array<Property>]
       model_attr :properties, default: []
 
       def replace(entity, with_entity)

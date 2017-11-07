@@ -2,6 +2,12 @@
 
 module Archimate
   module DataModel
+    # RelationshipReferences provides a means to allow a class that is referenced
+    # by Relationship objects to get the set of:
+    # * All relationships
+    # * All relationships by:
+    #   - a particular type
+    #   - if this object is the source of target of the relationship
     module RelationshipReferences
       def relationships
         references.select { |ref| ref.is_a?(DataModel.Relationship) }

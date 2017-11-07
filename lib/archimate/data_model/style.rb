@@ -7,27 +7,27 @@ module Archimate
 
       # @todo make this an enum
       # @!attribute [r] text_alignment
-      #   @return [Int, NilClass]
+      # @return [Int, NilClass]
       model_attr :text_alignment, default: nil
       # @!attribute [r] fill_color
-      #   @return [Color, NilClass]
+      # @return [Color, NilClass]
       model_attr :fill_color, default: nil
       # @!attribute [r] line_color
-      #   @return [Color, NilClass]
+      # @return [Color, NilClass]
       model_attr :line_color, default: nil
       # @todo move this to font
       # @!attribute [r] font_color
-      #   @return [Color, NilClass]
+      # @return [Color, NilClass]
       model_attr :font_color, default: nil
       # @!attribute [r] line_width
-      #   @return [Int, NilClass]
+      # @return [Int, NilClass]
       model_attr :line_width, default: nil
       # @!attribute [r] font
-      #   @return [Font, NilClass]
+      # @return [Font, NilClass]
       model_attr :font, default: nil
       # @todo make this an enum
       # @!attribute [r] text_position
-      #   @return [Int, NilClass]
+      # @return [Int, NilClass]
       model_attr :text_position, default: nil
 
       def to_s

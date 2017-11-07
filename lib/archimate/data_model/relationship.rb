@@ -16,34 +16,34 @@ module Archimate
       include Referenceable
 
       # @!attribute [r] id
-      #   @return [String]
+      # @return [String]
       model_attr :id
       # @!attribute [r] name
-      #   @return [LangString, NilClass]
+      # @return [LangString, NilClass]
       model_attr :name, default: nil
       # @!attribute [r] documentation
-      #   @return [PreservedLangString, NilClass]
+      # @return [PreservedLangString, NilClass]
       model_attr :documentation, default: nil
       # @return [Array<AnyElement>]
       # model_attr :other_elements
       # @return [Array<AnyAttribute>]
       # model_attr :other_attributes
       # @!attribute [r] properties
-      #   @return [Array<Property>]
+      # @return [Array<Property>]
       model_attr :properties, default: []
       # @todo is this optional?
       # @!attribute [rw] source
-      #   @return [Element, Relationship]
+      # @return [Element, Relationship]
       model_attr :source, comparison_attr: :id, writable: true, default: nil
       # @todo is this optional?
       # @!attribute [rw] target
-      #   @return [Element, Relationship]
+      # @return [Element, Relationship]
       model_attr :target, comparison_attr: :id, writable: true, default: nil
       # @!attribute [r] access_type
-      #   @return [AccessTypeEnum, NilClass]
+      # @return [AccessTypeEnum, NilClass]
       model_attr :access_type, default: nil
       # @!attribute [r] derived
-      #   @return [Boolean] this is a derived relation if true
+      # @return [Boolean] this is a derived relation if true
       model_attr :derived, default: false
 
       def replace(entity, with_entity)

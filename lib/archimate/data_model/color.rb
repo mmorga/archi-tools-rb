@@ -10,16 +10,16 @@ module Archimate
       include Comparison
 
       # @!attribute [r] r
-      #   @return [Int] red component, value 0-255
+      # @return [Int] red component, value 0-255
       model_attr :r
       # @!attribute [r] g
-      #   @return [Int] green component, value 0-255
+      # @return [Int] green component, value 0-255
       model_attr :g
       # @!attribute [r] b
-      #   @return [Int] blue component, value 0-255
+      # @return [Int] blue component, value 0-255
       model_attr :b
       # @!attribute [r] a
-      #   @return [Int, NilClass] optional alpha component, value 0-100
+      # @return [Int, NilClass] optional alpha component, value 0-100
       model_attr :a
 
       # Parses a CSS style color string into a color object
