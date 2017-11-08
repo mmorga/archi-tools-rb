@@ -28,16 +28,17 @@ module Archimate
 
       attr_reader :parent
 
-      def initialize(parent, contents = [])
+      def initialize(parent, contents = [], parent_attr_references = [])
         @parent = parent
+        @parent_attr_references = parent_attr_references
         @list = contents || []
-        @list.each { |item| item.add_reference(parent) }
+        add_references
       end
 
       def replace_with(contents)
-        @list.each { |item| item.remove_reference(parent) }
+        remove_references
         @list = contents
-        @list.each { |item| item.add_reference(parent) }
+        add_references
       end
 
       def to_ary
@@ -46,8 +47,35 @@ module Archimate
 
       def push(item)
         return if @list.include?(item)
-        item.add_reference(parent)
+        add_item_references(item)
         @list << item
+      end
+
+      def inspect
+        vals = @list.first(3).map(&:brief_inspect)
+        "[#{vals.join(', ')}#{"...#{@list.size}" if @list.size > 3}]"
+      end
+
+      private
+
+      def add_references
+        @list.each { |item| add_item_references(item) }
+      end
+
+      def add_item_references(item)
+        item.add_reference(parent)
+        @parent_attr_references.each do |attr|
+          item.add_reference(parent.send(attr)) if parent.send(attr)
+        end
+      end
+
+      def remove_references
+        @list.each do |item|
+          item.remove_reference(parent)
+          @parent_attr_references.each do |attr|
+            item.remove_reference(parent.send(attr)) if parent.send(attr)
+          end
+        end
       end
     end
   end

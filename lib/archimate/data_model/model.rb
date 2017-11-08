@@ -74,29 +74,6 @@ module Archimate
       # Constructor
       def initialize(opts = {})
         super
-      # def initialize(id:, name:, documentation: nil, properties: [],
-      #                metadata: nil, elements: [], relationships: [],
-      #                organizations: [], property_definitions: [],
-      #                version: nil, diagrams: [], viewpoints: [],
-      #                filename: nil, file_format: nil, archimate_version: :archimate_3_0,
-      #                namespaces: {}, schema_locations: [])
-      #   @id = id
-      #   @name = name
-      #   @documentation = documentation
-      #   @properties = properties
-      #   @metadata = metadata
-      #   @elements = elements
-      #   @relationships = relationships
-      #   @organizations = organizations
-      #   @property_definitions = property_definitions
-      #   @version = version
-      #   @diagrams = diagrams
-      #   @viewpoints = viewpoints
-      #   @filename = filename
-      #   @file_format = file_format
-      #   @archimate_version = archimate_version
-      #   @namespaces = namespaces
-      #   @schema_locations = schema_locations
         rebuild_index
       end
 

@@ -46,14 +46,6 @@ module Archimate
         self.class::LAYER
       end
 
-      # Diagrams that this element is referenced in.
-      # @todo this implementation is broken - in_model no longer exists
-      def diagrams
-        @diagrams ||= in_model.diagrams.select do |diagram|
-          diagram.element_ids.include?(id)
-        end
-      end
-
       # Copy any attributes/docs, etc. from each of the others into the original.
       #     1. Child `label`s with different `xml:lang` attribute values
       #     2. Child `documentation` (and different `xml:lang` attribute values)

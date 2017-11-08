@@ -4,11 +4,15 @@ module Archimate
   module DataModel
     # Graphical connection type.
     #
-    # If the 'relationshipRef' attribute is present, the connection should reference an existing ArchiMate relationship.
+    # If the 'relationshipRef' attribute is present, the connection should
+    # reference an existing ArchiMate relationship.
     #
-    # If the connection is an ArchiMate relationship type, the connection's label, documentation and properties may be determined
-    # (i.e inherited) from those in the referenced ArchiMate relationship. Otherwise the connection's label, documentation and properties
-    # can be provided and will be additional to (or over-ride) those contained in the referenced ArchiMate relationship.
+    # If the connection is an ArchiMate relationship type, the connection's
+    # label, documentation and properties may be determined (i.e inherited)
+    # from those in the referenced ArchiMate relationship. Otherwise the
+    # connection's label, documentation and properties can be provided and will
+    # be additional to (or over-ride) those contained in the referenced
+    # ArchiMate relationship.
     class Connection
       include Comparison
       include Referenceable
@@ -49,13 +53,17 @@ module Archimate
       model_attr :target, comparison_attr: :id, writable: true, default: nil
       # @!attribute [rw] relationship
       # @return [Relationship, NilClass]
-      model_attr :relationship, comparison_attr: :id, writable: true, default: nil
+      model_attr :relationship, comparison_attr: :id, writable: true, default: nil, also_reference: [:diagram]
       # @!attribute [r] style
       # @return [Style, NilClass]
       model_attr :style, default: nil
       # @!attribute [r] properties
       # @return [Array<Property>]
       model_attr :properties, default: []
+
+      # @!attribute [r] diagram
+      # @return [Diagram, NilClass]
+      model_attr :diagram, comparison_attr: :no_compare
 
       def replace(entity, with_entity)
         @relationship = with_entity.id if relationship == entity.id

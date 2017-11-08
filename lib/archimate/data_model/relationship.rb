@@ -87,13 +87,6 @@ module Archimate
         [@source, @target].compact
       end
 
-      # Diagrams that this element is referenced in.
-      def diagrams
-        @diagrams ||= in_model.diagrams.select do |diagram|
-          diagram.relationship_ids.include?(id)
-        end
-      end
-
       # Copy any attributes/docs, etc. from each of the others into the original.
       #     1. Child `label`s with different `xml:lang` attribute values
       #     2. Child `documentation` (and different `xml:lang` attribute values)

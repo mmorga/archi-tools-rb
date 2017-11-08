@@ -76,7 +76,7 @@ module Archimate
       # Container - container doesn't distinguish between nodes and connections
       # @!attribute [r] nodes
       # @return [Array<ViewNode>]
-      model_attr :nodes, default: [], referenceable_list: true
+      model_attr :nodes, default: [], referenceable_list: true, also_reference: [:diagram]
       # @!attribute [r] connections
       # @return [Array<Connection>]
       model_attr :connections, default: [], referenceable_list: true
@@ -90,7 +90,7 @@ module Archimate
       # Element
       # @!attribute [rw] element
       # @return [Element, NilClass]
-      model_attr :element, writable: true, comparison_attr: :id, default: nil
+      model_attr :element, writable: true, comparison_attr: :id, default: nil, also_reference: [:diagram]
       # Archi format, selects the shape of element (for elements that can have two or more shapes)
       # @!attribute [r] child_type
       # @return [Int, NilClass]

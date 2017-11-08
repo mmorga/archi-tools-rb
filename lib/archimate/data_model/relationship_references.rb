@@ -10,7 +10,7 @@ module Archimate
     #   - if this object is the source of target of the relationship
     module RelationshipReferences
       def relationships
-        references.select { |ref| ref.is_a?(DataModel.Relationship) }
+        references.select { |ref| ref.is_a?(DataModel::Relationship) }
       end
 
       def self.included(_base)

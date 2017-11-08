@@ -5,11 +5,27 @@ module Archimate
     module Comparison
       def initialize(opts = {})
         self.class.attr_info.each do |sym, attr_info|
-          raise "#{self.class} required value for #{sym} is missing." unless attr_info.default != :value_required || opts.include?(sym)
+          if attr_info.default == :value_required && !opts.include?(sym)
+            raise "#{self.class} required value for #{sym} is missing."
+          end
           val = opts.fetch(sym, attr_info.default)
-          val = ReferenceableList.new(self, val) if attr_info.referenceable_list
           instance_variable_set("@#{sym}".to_sym, val)
           val.add_reference(self) if val.is_a?(Referenceable)
+        end
+
+        self.class.attr_info.each do |sym, attr_info|
+          if attr_info.referenceable_list
+            instance_variable_set(
+              "@#{sym}".to_sym,
+              ReferenceableList.new(self, opts.fetch(sym, attr_info.default), attr_info.also_reference)
+            )
+          elsif attr_info.also_reference.size.positive?
+            val = instance_variable_get("@#{sym}".to_sym)
+            attr_info.also_reference.each do |ref_sym|
+              ref = send(ref_sym)
+              val.add_reference(ref) if ref && val
+            end
+          end
         end
       end
 
@@ -45,6 +61,8 @@ module Archimate
         self.class.comparison_attr_paths.each(&blk)
       end
 
+      # @todo implement pretty_print as a more normal pretty_print with correct
+      #       handling for attr_info values for comparison_attr
       def pretty_print(pp)
         pp.object_address_group(self) do
           pp.seplist(self.class.comparison_attr_paths, proc { pp.text ',' }) do |attr|
@@ -60,12 +78,18 @@ module Archimate
         end
       end
 
+      # @todo implement inspect as a more normal inspect with correct handling for
+      #       attr_info values for comparison_attr
       def inspect
-        "#<#{self.class}:#{respond_to?(:id) ? id : object_id}\n    " +
+        "#<#{self.class.to_s.split('::').last}\n    " +
           self.class.attr_info
               .map { |sym, info| info.attr_inspect(self, sym) }
-              .compact
-              .join("\n    ")
+          .compact
+              .join("\n    ") + "\n    >"
+      end
+
+      def brief_inspect
+        "#<#{self.class.to_s.split('::').last}#{" id=#{id}" if respond_to?(:id)}#{" #{name.brief_inspect}" if respond_to?(:name) && name}>"
       end
 
       def self.included(base)
@@ -73,15 +97,35 @@ module Archimate
       end
 
       module ClassMethods
-        AttributeInfo = Struct.new(:comparison_attr, :writable, :default, :referenceable_list) do
+        AttributeInfo = Struct.new(:comparison_attr, :writable, :default, :referenceable_list, :also_reference) do
           def attr_inspect(obj, sym)
             case comparison_attr
             when :no_compare
               nil
             when nil
-              "#{sym}: #{obj.send(sym)&.inspect}"
+              "#{sym}: #{attr_value_inspect(obj.send(sym))}"
             else
-              "#{sym}: #{obj.send(sym)&.send(comparison_attr)&.inspect}"
+              val = obj.send(sym)
+              cval = val&.send(comparison_attr)
+              "#{sym}: #<#{val.class.to_s.split('::').last} #{comparison_attr}=#{attr_value_inspect(cval)}>"
+            end
+          end
+
+          def attr_value_inspect(val)
+            case val
+            when Comparison
+              val.brief_inspect
+            when Array
+              vals = val.first(3).map do |v|
+                if v.is_a?(Comparison)
+                  v.brief_inspect
+                else
+                  v.inspect
+                end
+              end
+              "[#{vals.join(', ')}#{"...#{val.size}" if val.size > 3}]"
+            else
+              val.inspect
             end
           end
         end
@@ -89,13 +133,16 @@ module Archimate
         # Define the reader method (or call model_attr)
         # Append the attr_sym to the @@attrs for the class
         def model_attr(attr_sym, comparison_attr: nil, writable: false,
-                       default: :value_required, referenceable_list: false)
+                       default: :value_required, referenceable_list: false,
+                       also_reference: [])
           send(:attr_reader, attr_sym)
           attrs = attr_names << attr_sym
           class_variable_set(:@@attr_names, attrs.uniq)
           class_variable_set(
             :@@attr_info,
-            attr_info.merge(attr_sym => AttributeInfo.new(comparison_attr, writable, default, referenceable_list))
+            attr_info.merge(attr_sym => AttributeInfo.new(
+              comparison_attr, writable, default, referenceable_list, also_reference
+            ))
           )
           if comparison_attr != :no_compare
             attrs = comparison_attr_paths << (comparison_attr ? [attr_sym, comparison_attr] : attr_sym)
@@ -111,6 +158,10 @@ module Archimate
               old_val.remove_reference(self) if old_val.is_a?(Referenceable)
               instance_variable_set("@#{attr_sym}".to_sym, val)
               val.add_reference(self) if val.is_a?(Referenceable)
+              also_reference.each do |ref_sym|
+                ref = send(ref_sym)
+                val.add_reference(ref) if ref && val
+              end
             end
           end
         end

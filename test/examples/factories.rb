@@ -68,7 +68,8 @@ module Archimate
           target: target,
           relationship: relationship,
           style: options.fetch(:style, nil),
-          properties: options.fetch(:properties, [])
+          properties: options.fetch(:properties, []),
+          diagram: diagram
         )
       end
 
