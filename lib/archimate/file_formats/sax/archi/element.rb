@@ -23,11 +23,13 @@ module Archimate
           private
 
           def element
-            @element ||= DataModel::Element.new(id: @attrs["id"],
-                                                name: DataModel::LangString.string(process_text(@attrs["name"])),
-                                                type: element_type,
-                                                documentation: documentation,
-                                                properties: properties)
+            @element ||= DataModel::Elements.create(
+              id: @attrs["id"],
+              name: DataModel::LangString.string(process_text(@attrs["name"])),
+              type: element_type,
+              documentation: documentation,
+              properties: properties
+            )
           end
         end
       end

@@ -90,11 +90,9 @@ module Archimate
     end
 
     def derived_relationship_type(path)
-      DataModel::Relationship::WEIGHTS.rassoc(
-        path
-          .map(&:weight)
-          .min
-      ).first
+      path
+        .min_by(&:weight)
+        .class
     end
 
     # traverse returns an Array of paths (Array<Relationship>)
@@ -156,9 +154,8 @@ module Archimate
 
     def create_relationship_for_path
       lambda do |path|
-        DataModel::Relationship.new(
+        derived_relationship_type(path).new(
           id: @model.make_unique_id,
-          type: derived_relationship_type(path),
           source: path.first.source,
           target: path.last.target,
           derived: true

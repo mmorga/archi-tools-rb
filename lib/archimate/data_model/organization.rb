@@ -14,44 +14,35 @@ module Archimate
     # @note that Organization must fit into a tree structure (so strictly nested).
     class Organization
       include Comparison
+      include Referenceable
 
       # Format should match +/[[[:alpha:]]_][w-.]*/+ to be valid for Archimate
       # Model exchange format
       # @!attribute [r] id
-      #   @return [String, NilClass]
-      model_attr :id
+      # @return [String, NilClass]
+      model_attr :id, default: nil
       # LabelGroup in the XSD
       # @!attribute [r] name
-      #   @return [LangString, NilClass]
-      model_attr :name
+      # @return [LangString, NilClass]
+      model_attr :name, default: nil
       # I believe this is used only for Archi formats
       # @!attribute [r] type
-      #   @return [String, NilClass]
-      model_attr :type
+      # @return [String, NilClass]
+      model_attr :type, default: nil
       # @!attribute [r] documentation
-      #   @return [PreservedLangString, NilClass]
-      model_attr :documentation
+      # @return [PreservedLangString, NilClass]
+      model_attr :documentation, default: nil
       # @!attribute [rw] items
-      #   @return [Array<Object>]
-      model_attr :items, writable: true
+      # @return [Array<Object>]
+      model_attr :items, writable: true, default: [], referenceable_list: true
       # item in the XSD
       # @!attribute [rw] organizations
-      #   @return [Array<Organization>]
-      model_attr :organizations, writable: true
-      # # @return [Array<AnyElement>]
-      # model_attr :other_elements
-      # # @return [Array<AnyAttribute>]
-      # model_attr :other_attributes
-
-      def initialize(id: nil, name: nil, type: nil, documentation: nil,
-                     items: [], organizations: [])
-        @id = id
-        @name = name
-        @type = type
-        @documentation = documentation
-        @items = items
-        @organizations = organizations
-      end
+      # @return [Array<Organization>]
+      model_attr :organizations, writable: true, default: [], referenceable_list: true
+      # @return [Array<AnyElement>]
+      model_attr :other_elements, default: []
+      # @return [Array<AnyAttribute>]
+      model_attr :other_attributes, default: []
 
       def to_s
         "#{Archimate::Color.data_model('Organization')}<#{id}>[#{Archimate::Color.color(name, %i[white underline])}]"
@@ -59,7 +50,7 @@ module Archimate
 
       def referenced_identified_nodes
         organizations.reduce(items) do |a, e|
-          a.concat(e.referenced_identified_nodes)
+          a.to_ary + e.referenced_identified_nodes
         end
       end
 

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "nokogiri"
 
 module Archimate
@@ -8,7 +9,7 @@ module Archimate
         @string_or_io = doc
       end
 
-      def parse()
+      def parse
         handler_factory = Sax::Archi::ArchiHandlerFactory.new
         parser = Nokogiri::XML::SAX::Parser.new(Sax::Document.new(handler_factory))
         parser.parse(@string_or_io)

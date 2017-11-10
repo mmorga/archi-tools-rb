@@ -103,33 +103,10 @@ module Archimate
 
       def relationships(el)
         [
-          make_quad(el.source.id, predicate(el.type), el.target.id),
+          make_quad(el.source.id, el.class::VERB, el.target.id),
           make_quad(el.id, "sources", el.source.id),
           make_quad(el.id, "target", el.target.id)
         ]
-      end
-
-      PREDICATES = {
-        "AssociationRelationship" => %w(associated_with associated_with),
-        "AccessRelationship" => %w(accesses accessed_by),
-        "UsedByRelationship" => %w(used_by uses),
-        "ServingRelationship" => %w(serving served_by),
-        "RealisationRelationship" => %w(realizes realized_by),
-        "RealizationRelationship" => %w(realizes realized_by),
-        "AssignmentRelationship" => %w(assigned_to assigned_from),
-        "AggregationRelationship" => %w(aggregates aggregated_by),
-        "CompositionRelationship" => %w(composes composed_by),
-        "FlowRelationship" => %w(flows_to flows_from),
-        "TriggeringRelationship" => %w(triggers triggered_by),
-        "GroupingRelationship" => %w(groups grouped_by),
-        "SpecialisationRelationship" => %w(specializes specialized_by),
-        "SpecializationRelationship" => %w(specializes specialized_by),
-        "InfluenceRelationship" => %w(influences influenced)
-      }.freeze
-
-      def predicate(t)
-        raise "Unexpected relationship name: '#{t}'" unless PREDICATES.include?(t)
-        PREDICATES[t][0]
       end
 
       def make_quad(subject, predicate, object)

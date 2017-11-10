@@ -31,7 +31,7 @@ module Archimate
           private
 
           def relationship
-            @relationship ||= DataModel::Relationship.new(
+            @relationship ||= DataModel::Relationships.create(
               id: attrs["identifier"],
               type: attrs["xsi:type"],
               source: nil,

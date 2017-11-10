@@ -9,15 +9,19 @@ module Archimate
       attr_accessor :subject_lang
 
       def setup
-        @subject = LangString.string("hello")
-        @subject_lang = LangString.new(lang_hash: { "elvish" => "Elrond" }, default_lang: "elvish", default_text: "Elrond")
+        @subject = LangString.new("hello")
+        @subject_lang = LangString.new(
+          lang_hash: { "elvish" => "Elrond" },
+          default_lang: "elvish",
+          default_text: "Elrond"
+        )
       end
 
       def test_constructor
-      	assert_instance_of LangString, subject
-      	assert_equal "hello", subject.text
-      	assert_equal "hello", subject.to_s
-      	assert_nil subject.lang
+        assert_instance_of LangString, subject
+        assert_equal "hello", subject.text
+        assert_equal "hello", subject.to_s
+        assert_nil subject.lang
       end
 
       def test_to_s
@@ -25,7 +29,7 @@ module Archimate
       end
 
       def test_to_hash
-        expected = {lang_hash: {nil => "hello"}, default_lang: nil, default_text: "hello"}
+        expected = { lang_hash: { nil => "hello" }, default_lang: nil, default_text: "hello" }
         assert_equal expected, @subject.to_h
       end
 
@@ -46,7 +50,7 @@ module Archimate
       end
 
       def test_strip
-        assert_equal "blah", LangString.string("   blah   ").strip
+        assert_equal "blah", LangString.new("   blah   ").strip
       end
 
       def test_tr
@@ -58,7 +62,7 @@ module Archimate
       end
 
       def test_gsub
-        assert_equal "heyyo", @subject.gsub("l", "y")
+        assert_equal "heyyo", @subject.tr("l", "y")
       end
 
       def test_sub
@@ -66,11 +70,11 @@ module Archimate
       end
 
       def test_downcase
-        assert_equal "lowcase", LangString.string("LOWCASE").downcase
+        assert_equal "lowcase", LangString.new("LOWCASE").downcase
       end
 
       def test_split
-        assert_equal %w{h e l l o}, @subject.split(//)
+        assert_equal %w[h e l l o], @subject.split(//)
       end
     end
   end

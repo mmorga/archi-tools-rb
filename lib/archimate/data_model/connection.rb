@@ -4,75 +4,66 @@ module Archimate
   module DataModel
     # Graphical connection type.
     #
-    # If the 'relationshipRef' attribute is present, the connection should reference an existing ArchiMate relationship.
+    # If the 'relationshipRef' attribute is present, the connection should
+    # reference an existing ArchiMate relationship.
     #
-    # If the connection is an ArchiMate relationship type, the connection's label, documentation and properties may be determined
-    # (i.e inherited) from those in the referenced ArchiMate relationship. Otherwise the connection's label, documentation and properties
-    # can be provided and will be additional to (or over-ride) those contained in the referenced ArchiMate relationship.
+    # If the connection is an ArchiMate relationship type, the connection's
+    # label, documentation and properties may be determined (i.e inherited)
+    # from those in the referenced ArchiMate relationship. Otherwise the
+    # connection's label, documentation and properties can be provided and will
+    # be additional to (or over-ride) those contained in the referenced
+    # ArchiMate relationship.
     class Connection
       include Comparison
+      include Referenceable
 
       # @!attribute [r] id
-      #   @return [String]
+      # @return [String]
       model_attr :id
       # @!attribute [r] name
-      #   @return [LangString, NilClass]
-      model_attr :name
+      # @return [LangString, NilClass]
+      model_attr :name, default: nil
       # @!attribute [r] documentation
-      #   @return [PreservedLangString, NilClass]
-      model_attr :documentation
+      # @return [PreservedLangString, NilClass]
+      model_attr :documentation, default: nil
       # # @!attribute [r] other_elements
-      #   @return [Array<AnyElement>]
-      model_attr :other_elements
+      # @return [Array<AnyElement>]
+      model_attr :other_elements, default: []
       # # @!attribute [r] other_attributes
-      #   @return [Array<AnyAttribute>]
-      model_attr :other_attributes
+      # @return [Array<AnyAttribute>]
+      model_attr :other_attributes, default: []
       # @note type here was used for the Element/Relationship/Diagram type
       # @!attribute [r] type
-      #   @return [String, NilClass]
-      model_attr :type
+      # @return [String, NilClass]
+      model_attr :type, default: nil
       # @!attribute [r] source_attachment
-      #   @return [Location, NilClass]
-      model_attr :source_attachment
+      # @return [Location, NilClass]
+      model_attr :source_attachment, default: nil
       # @!attribute [r] bendpoints
-      #   @return [Array<Location>]
-      model_attr :bendpoints
+      # @return [Array<Location>]
+      model_attr :bendpoints, default: []
       # @!attribute [r] target_attachment
-      #   @return [Location, NilClass]
-      model_attr :target_attachment
+      # @return [Location, NilClass]
+      model_attr :target_attachment, default: nil
       # @!attribute [rw] source
-      #   @return [ViewNode, NilClass]
-      model_attr :source, comparison_attr: :id, writable: true
+      # @return [ViewNode, NilClass]
+      model_attr :source, comparison_attr: :id, writable: true, default: nil
       # @!attribute [rw] target
-      #   @return [ViewNode, NilClass]
-      model_attr :target, comparison_attr: :id, writable: true
+      # @return [ViewNode, NilClass]
+      model_attr :target, comparison_attr: :id, writable: true, default: nil
       # @!attribute [rw] relationship
-      #   @return [Relationship, NilClass]
-      model_attr :relationship, comparison_attr: :id, writable: true
+      # @return [Relationship, NilClass]
+      model_attr :relationship, comparison_attr: :id, writable: true, default: nil, also_reference: [:diagram]
       # @!attribute [r] style
-      #   @return [Style, NilClass]
-      model_attr :style
+      # @return [Style, NilClass]
+      model_attr :style, default: nil
       # @!attribute [r] properties
-      #   @return [Array<Property>]
-      model_attr :properties
+      # @return [Array<Property>]
+      model_attr :properties, default: []
 
-      def initialize(id:, name: nil, documentation: nil, type: nil,
-                     source_attachment: nil, bendpoints: [], target_attachment: nil,
-                     source: nil, target: nil, relationship: nil, style: nil,
-                     properties: nil)
-        @id = id
-        @name = name
-        @documentation = documentation
-        @type = type
-        @source_attachment = source_attachment
-        @bendpoints = bendpoints
-        @target_attachment = target_attachment
-        @source = source
-        @target = target
-        @relationship = relationship
-        @style = style
-        @properties = properties
-      end
+      # @!attribute [r] diagram
+      # @return [Diagram, NilClass]
+      model_attr :diagram, comparison_attr: :no_compare
 
       def replace(entity, with_entity)
         @relationship = with_entity.id if relationship == entity.id

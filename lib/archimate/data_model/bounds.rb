@@ -6,16 +6,16 @@ module Archimate
       include Comparison
 
       # @!attribute [r] x
-      #   @return [Float, NilClass]
-      model_attr :x
+      # @return [Float, NilClass]
+      model_attr :x, default: nil
       # @!attribute [r] y
-      #   @return [Float, NilClass]
-      model_attr :y
+      # @return [Float, NilClass]
+      model_attr :y, default: nil
       # @!attribute [r] width
-      #   @return [Float]
+      # @return [Float]
       model_attr :width
       # @!attribute [r] height
-      #   @return [Float]
+      # @return [Float]
       model_attr :height
 
       def self.zero

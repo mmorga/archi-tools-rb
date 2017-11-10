@@ -22,7 +22,6 @@ module Archimate
           def complete
             [
               event(:on_future,
-                    # Fiber.new { |index| view_node.view_refs = index[attrs["model"]] },
                     Sax::FutureReference.new(view_node, :view_refs, attrs["model"])),
               event(:on_future,
                     Sax::FutureReference.new(view_node,

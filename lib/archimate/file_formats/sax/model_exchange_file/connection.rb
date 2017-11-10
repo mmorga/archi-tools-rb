@@ -58,7 +58,8 @@ module Archimate
                                                       style: @style,
                                                       bendpoints: @bendpoints,
                                                       documentation: documentation,
-                                                      properties: properties)
+                                                      properties: properties,
+                                                      diagram: diagram)
           end
         end
       end

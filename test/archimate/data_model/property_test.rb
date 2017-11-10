@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'test_helper'
 
 module Archimate
@@ -32,6 +33,11 @@ module Archimate
         assert_match "Property", result
         assert_match subject.key, result
         assert_match subject.value, result
+      end
+
+      def test_referenceable_property_definition
+        prop = build_property
+        assert_includes prop.property_definition.references, prop
       end
     end
   end

@@ -6,18 +6,18 @@ module Archimate
       include Comparison
 
       # @!attribute [r] name
-      #   @return [String, NilClass]
-      model_attr :name
+      # @return [String, NilClass]
+      model_attr :name, default: nil
       # @!attribute [r] size
-      #   @return [Float, NilClass]
-      model_attr :size
+      # @return [Float, NilClass]
+      model_attr :size, default: nil
       # @todo make this an enum
       # @!attribute [r] style
-      #   @return [Int, NilClass]
-      model_attr :style
+      # @return [Int, NilClass]
+      model_attr :style, default: nil
       # @!attribute [r] font_data
-      #   @return [String, NilClass]
-      model_attr :font_data
+      # @return [String, NilClass]
+      model_attr :font_data, default: nil
 
       # Archi font strings look like this:
       #  "1|Arial            |14.0|0|WINDOWS|1|0  |0|0|0|0  |0 |0|0|1|0|0|0|0 |Arial"

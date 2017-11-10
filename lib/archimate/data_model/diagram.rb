@@ -4,64 +4,49 @@ module Archimate
   module DataModel
     class Diagram
       include Comparison
+      include Referenceable
 
       # @!attribute [r] id
-      #   @return [String]
+      # @return [String]
       model_attr :id
       # @!attribute [rw] name
-      #   @return [LangString]
-      model_attr :name, writable: true
+      # @return [LangString]
+      model_attr :name, writable: true, default: nil
       # @!attribute [rw] documentation
-      #   @return [PreservedLangString, NilClass]
-      model_attr :documentation, writable: true
-      # # @return [Array<AnyElement>]
-      # model_attr :other_elements
-      # # @return [Array<AnyAttribute>]
-      # model_attr :other_attributes
+      # @return [PreservedLangString, NilClass]
+      model_attr :documentation, writable: true, default: nil
+      # @return [Array<AnyElement>]
+      model_attr :other_elements, default: []
+      # @return [Array<AnyAttribute>]
+      model_attr :other_attributes, default: []
       # @note type here was used for the Element/Relationship/Diagram type
       # @!attribute [r] type
-      #   @return [String, NilClass]
-      model_attr :type
+      # @return [String, NilClass]
+      model_attr :type, default: nil
       # @!attribute [rw] properties
-      #   @return [Array<Property>]
-      model_attr :properties, writable: true
+      # @return [Array<Property>]
+      model_attr :properties, writable: true, default: []
       # @todo make this a ViewpointType is better but is Archimate specification version dependent
       # @!attribute [r] viewpoint_type
-      #   @return [String, NilClass]
-      model_attr :viewpoint_type
+      # @return [String, NilClass]
+      model_attr :viewpoint_type, default: nil
       # @!attribute [r] viewpoint
-      #   @return [Viewpoint, NilClass]
-      model_attr :viewpoint
+      # @return [Viewpoint, NilClass]
+      model_attr :viewpoint, default: nil
       # @!attribute [rw] nodes
-      #   @return [Array<ViewNode>]
-      model_attr :nodes, writable: true
+      # @return [Array<ViewNode>]
+      model_attr :nodes, writable: true, default: [], referenceable_list: true
       # @todo Archi formats only fill this in, should be an enum
       # @!attribute [r] connection_router_type
-      #   @return [Int, NilClass]
-      model_attr :connection_router_type
+      # @return [Int, NilClass]
+      model_attr :connection_router_type, default: nil
       # value of 0 on Archi Sketch Model
       # @!attribute [r] background
-      #   @return [Int, NilClass]
-      model_attr :background
+      # @return [Int, NilClass]
+      model_attr :background, default: nil
       # @!attribute [rw] connections
-      #   @return [Array<Connection>]
-      model_attr :connections, writable: true
-
-      def initialize(id:, name: nil, documentation: nil, type: nil, properties: [],
-                     viewpoint_type: nil, viewpoint: nil, nodes: [],
-                     connection_router_type: nil, background: nil, connections: [])
-        @id = id
-        @name = name
-        @documentation = documentation
-        @type = type
-        @properties = properties
-        @viewpoint_type = viewpoint_type
-        @viewpoint = viewpoint
-        @nodes = nodes
-        @connection_router_type = connection_router_type
-        @background = background
-        @connections = connections
-      end
+      # @return [Array<Connection>]
+      model_attr :connections, writable: true, default: [], referenceable_list: true
 
       def all_nodes
         nodes.inject(Array.new(nodes)) { |child_ary, child| child_ary.concat(child.all_nodes) }
@@ -92,7 +77,7 @@ module Archimate
       end
 
       def referenced_identified_nodes
-        (nodes + connections)
+        (nodes.to_ary + connections)
           .map(&:referenced_identified_nodes)
           .flatten
           .uniq

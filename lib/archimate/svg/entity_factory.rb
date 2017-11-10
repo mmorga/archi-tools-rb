@@ -5,10 +5,10 @@ module Archimate
     module EntityFactory
       def make_entity(child, bounds_offset)
         entity = child.element || child
-        klass_name = "Archimate::Svg::Entity::#{entity.type.sub('archimate:', '')}"
-        klass = Object.const_get(klass_name)
+        klass_name = entity.type.sub('archimate:', '')
+        klass = Archimate::Svg::Entity.const_get(klass_name)
         klass.new(child, bounds_offset)
-      rescue
+      rescue NameError
         puts "Unsupported entity type #{klass_name}"
       end
       module_function :make_entity

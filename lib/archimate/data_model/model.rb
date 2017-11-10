@@ -10,91 +10,70 @@ module Archimate
       include Comparison
 
       # @!attribute [r] id
-      #   @return [String] unique identifier of this model
+      # @return [String] unique identifier of this model
       model_attr :id
       # @!attribute [r] name
-      #   @return [LangString] name of the model
+      # @return [LangString] name of the model
       model_attr :name
 
       # @!attribute [r] documentation
-      #   @return [PreservedLangString, NilClass] model documentation
-      model_attr :documentation
+      # @return [PreservedLangString, NilClass] model documentation
+      model_attr :documentation, default: nil
       # @!attribute [r] properties
-      #   @return [Array<Property>] model properties
-      model_attr :properties
+      # @return [Array<Property>] model properties
+      model_attr :properties, default: []
       # @!attribute [r] metadata
-      #   @return [Metadata, NilClass] model metadata
-      model_attr :metadata
+      # @return [Metadata, NilClass] model metadata
+      model_attr :metadata, default: nil
       # @!attribute [r] elements
-      #   @return [Array<Element>]
-      model_attr :elements
+      # @return [Array<Element>]
+      model_attr :elements, default: [], referenceable_list: true
       # @!attribute [r] relationships
-      #   @return [Array<Relationship>]
-      model_attr :relationships
+      # @return [Array<Relationship>]
+      model_attr :relationships, default: [], referenceable_list: true
       # @!attribute [r] organizations
-      #   @return [Array<Organization>]
-      model_attr :organizations
+      # @return [Array<Organization>]
+      model_attr :organizations, default: [], referenceable_list: true
       # @!attribute [r] property_definitions
-      #   @return [Array<PropertyDefinition>]
-      model_attr :property_definitions
+      # @return [Array<PropertyDefinition>]
+      model_attr :property_definitions, default: [], referenceable_list: true
       # @!attribute [r] version
-      #   @return [String, NilClass]
-      model_attr :version
+      # @return [String, NilClass]
+      model_attr :version, default: nil
       # @!attribute [r] diagrams
-      #   @return [Array<Diagram>]
-      model_attr :diagrams
+      # @return [Array<Diagram>]
+      model_attr :diagrams, default: [], referenceable_list: true
       # @!attribute [r] viewpoints
-      #   @return [Array<Viewpoint>]
-      model_attr :viewpoints
+      # @return [Array<Viewpoint>]
+      model_attr :viewpoints, default: [], referenceable_list: true
 
       # Following attributes are to hold info on where the model came from
       # @!attribute [r] filename
-      #   @return [String]
-      model_attr :filename
+      # @return [String]
+      model_attr :filename, default: nil
       # @see Archimate::SUPPORTED_FORMATS
       # @!attribute [r] file_format
-      #   @return [Symbol, NilClass] supported Archimate format [Archimate::SUPPORTED_FORMATS] or +nil+
-      model_attr :file_format
+      # @return [Symbol, NilClass] supported Archimate format [Archimate::SUPPORTED_FORMATS] or +nil+
+      model_attr :file_format, default: nil
       # @!attribute [r] archimate_version
-      #   @return [Symbol] one of [Archimate::ARCHIMATE_VERSIONS], default +:archimate_3_0+
-      model_attr :archimate_version
+      # @return [Symbol] one of [Archimate::ARCHIMATE_VERSIONS], default +:archimate_3_0+
+      model_attr :archimate_version, default: :archimate_3_0
 
       # @!attribute [r] namespaces
-      #   @return [Hash]
-      model_attr :namespaces
+      # @return [Hash]
+      model_attr :namespaces, default: {}
       # @!attribute [r] schema_locations
-      #   @return [Array<String>]
-      model_attr :schema_locations
+      # @return [Array<String>]
+      model_attr :schema_locations, default: []
 
-      # # @return [Array<AnyElement>]
-      # model_attr :other_elements
-      # # @return [Array<AnyAttribute>]
-      # model_attr :other_attributes
+      # @return [Array<AnyElement>]
+      model_attr :other_elements, default: []
+      # @return [Array<AnyAttribute>]
+      model_attr :other_attributes, default: []
 
       # Constructor
-      def initialize(id:, name:, documentation: nil, properties: [],
-                     metadata: nil, elements: [], relationships: [],
-                     organizations: [], property_definitions: [],
-                     version: nil, diagrams: [], viewpoints: [],
-                     filename: nil, file_format: nil, archimate_version: :archimate_3_0,
-                     namespaces: {}, schema_locations: [])
-        @id = id
-        @name = name
-        @documentation = documentation
-        @properties = properties
-        @metadata = metadata
-        @elements = elements
-        @relationships = relationships
-        @organizations = organizations
-        @property_definitions = property_definitions
-        @version = version
-        @diagrams = diagrams
-        @viewpoints = viewpoints
-        @filename = filename
-        @file_format = file_format
-        @archimate_version = archimate_version
-        @namespaces = namespaces
-        @schema_locations = schema_locations
+      def initialize(opts = {})
+        super
         rebuild_index
       end
 
@@ -131,7 +110,7 @@ module Archimate
           .concat(diagrams).each do |item|
             if find_in_organizations(item).nil?
               default_organization = default_organization_for(item)
-              default_organization.items.push(item.id) unless default_organization.items.include?(item.id)
+              default_organization.items.push(item) unless default_organization.items.include?(item)
             end
           end
         self
@@ -181,7 +160,14 @@ module Archimate
       # Only used by [#find_default_organization]
       def add_organization(type, name)
         raise "Program Error: #{organizations.inspect}" unless organizations.none? { |f| f.type == type || f.name == name }
-        organization = Organization.new(id: make_unique_id, name: LangString.create(name), type: type, items: [], organizations: [], documentation: nil)
+        organization = Organization.new(
+          id: make_unique_id,
+          name: LangString.new(name),
+          type: type,
+          items: [],
+          organizations: [],
+          documentation: nil
+        )
         register(organization, organizations)
         organizations.push(organization)
         organization
@@ -217,6 +203,8 @@ module Archimate
             find_default_organization("implementation_migration", "Implementation & Migration")
           when Layers::Connectors
             find_default_organization("connectors", "Connectors")
+          when Layers::Other
+            find_default_organization("other", "Other")
           else
             raise StandardError, "Unexpected Element Layer: #{item.layer} for item type #{item.type}"
           end
@@ -242,7 +230,7 @@ module Archimate
       end
 
       def find_in_organizations(item, _fs = nil)
-        find_by_class(DataModel::Organization).select { |f| f.items.include?(item.id) }.first
+        find_by_class(DataModel::Organization).select { |f| f.items.include?(item) }.first
       end
 
       # Only used by [#unreferenced_nodes]

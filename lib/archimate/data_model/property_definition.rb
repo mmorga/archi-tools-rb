@@ -9,37 +9,31 @@ module Archimate
     # A Property definition type containing its unique identifier, name, and data type.
     class PropertyDefinition
       include Comparison
+      include Referenceable
 
       # @!attribute [r] id
-      #   @return [String]
+      # @return [String]
       model_attr :id
       # @!attribute [r] name
-      #   @return [LangString]
+      # @return [LangString]
       model_attr :name
       # @!attribute [r] documentation
-      #   @return [PreservedLangString, NilClass]
-      model_attr :documentation
-      # # @!attribute [r] other_elements
-      #   @return [Array<AnyElement>]
-      model_attr :other_elements
-      # # @!attribute [r] other_attributes
-      #   @return [Array<AnyAttribute>]
-      model_attr :other_attributes
+      # @return [PreservedLangString, NilClass]
+      model_attr :documentation, default: nil
+      # @!attribute [r] other_elements
+      # @return [Array<AnyElement>]
+      model_attr :other_elements, default: []
+      # @!attribute [r] other_attributes
+      # @return [Array<AnyAttribute>]
+      model_attr :other_attributes, default: []
       # @!attribute [r] type
-      #   @note if +type+ is nil, then type "string" is assumed
-      #   @see Archimate::DataModel::PROPERTY_DEFINITION_TYPES
-      #   @return [String, NilClass]
-      model_attr :type
+      # @note if +type+ is nil, then type "string" is assumed
+      # @see Archimate::DataModel::PROPERTY_DEFINITION_TYPES
+      # @return [String, NilClass]
+      model_attr :type, default: nil
 
       def self.identifier_for_key(key)
         (self.class.hash ^ key.hash).to_s(16)
-      end
-
-      def initialize(id:, name:, documentation: nil, type: nil)
-        @id = id
-        @name = name
-        @documentation = documentation
-        @type = type
       end
     end
   end

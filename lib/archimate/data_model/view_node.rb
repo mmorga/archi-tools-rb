@@ -27,77 +27,77 @@ module Archimate
     #           elementRef)
     class ViewNode
       include Comparison
+      include Referenceable
 
       # ViewConceptType
       # @!attribute [r] id
-      #   @return [String]
+      # @return [String]
       model_attr :id
       # @!attribute [r] name
-      #   @return [LangString, NilClass]
-      model_attr :name
+      # @return [LangString, NilClass]
+      model_attr :name, default: nil
       # @!attribute [r] documentation
-      #   @return [PreservedLangString, NilClass]
-      model_attr :documentation
+      # @return [PreservedLangString, NilClass]
+      model_attr :documentation, default: nil
       # # @!attribute [r] other_elements
-      #   @return [Array<AnyElement>]
-      model_attr :other_elements
+      # @return [Array<AnyElement>]
+      model_attr :other_elements, default: []
       # # @!attribute [r] other_attributes
-      #   @return [Array<AnyAttribute>]
-      model_attr :other_attributes
+      # @return [Array<AnyAttribute>]
+      model_attr :other_attributes, default: []
       # @note type here was used for the Element/Relationship/Diagram type
       # @!attribute [r] type
-      #   @return [String, NilClass]
-      model_attr :type
+      # @return [String, NilClass]
+      model_attr :type, default: nil
       # @!attribute [r] style
-      #   @return [Style, NilClass]
-      model_attr :style
+      # @return [Style, NilClass]
+      model_attr :style, default: nil
 
       # @note viewRefs are pointers to 0-* Diagrams for diagram drill in defined in abstract View Concept
-      # @todo Make this an array
       # @!attribute [rw] view_refs
-      #   @return [Diagram]
-      model_attr :view_refs, comparison_attr: :id, writable: true
+      # @return [Diagram]
+      model_attr :view_refs, comparison_attr: :id, writable: true, default: nil
 
       # @todo document where this comes from
       # @!attribute [r] content
-      #   @return [String, NilClass]
-      model_attr :content
+      # @return [String, NilClass]
+      model_attr :content, default: nil
 
       # This is needed for various calculations
       # @!attribute [r] parent
-      #   @return [ViewNode]
-      model_attr :parent, writable: true, comparison_attr: :no_compare
+      # @return [ViewNode]
+      model_attr :parent, writable: true, comparison_attr: :no_compare, default: nil
 
       # ViewNodeType
       # @!attribute [r] bounds
-      #   @return [Bounds, NilClass]
-      model_attr :bounds
+      # @return [Bounds, NilClass]
+      model_attr :bounds, default: nil
 
       # Container - container doesn't distinguish between nodes and connections
       # @!attribute [r] nodes
-      #   @return [Array<ViewNode>]
-      model_attr :nodes
+      # @return [Array<ViewNode>]
+      model_attr :nodes, default: [], referenceable_list: true, also_reference: [:diagram]
       # @!attribute [r] connections
-      #   @return [Array<Connection>]
-      model_attr :connections
+      # @return [Array<Connection>]
+      model_attr :connections, default: [], referenceable_list: true
 
       # @note properties is not in the model under element, it's added under Real Element
       # @todo Delete this - I think it's not used
       # @!attribute [r] properties
-      #   @return [Array<Property>]
-      model_attr :properties
+      # @return [Array<Property>]
+      model_attr :properties, default: []
 
       # Element
       # @!attribute [rw] element
-      #   @return [Element, NilClass]
-      model_attr :element, writable: true, comparison_attr: :id
+      # @return [Element, NilClass]
+      model_attr :element, writable: true, comparison_attr: :id, default: nil, also_reference: [:diagram]
       # Archi format, selects the shape of element (for elements that can have two or more shapes)
       # @!attribute [r] child_type
-      #   @return [Int, NilClass]
-      model_attr :child_type
+      # @return [Int, NilClass]
+      model_attr :child_type, default: nil
 
       # @!attribute [r] diagram
-      #   @return [Diagram, NilClass]
+      # @return [Diagram, NilClass]
       model_attr :diagram, comparison_attr: :no_compare
 
       # Node type to allow a Label in a Artifact. the "label" element holds the info for the @note.
@@ -106,43 +106,15 @@ module Archimate
       # conceptRef is a reference to an concept for this particular label, along with the attributeRef
       # which references the particular concept's part which this label represents.
       # @!attribute [r] concept_ref
-      #   @return [String]
-      model_attr :concept_ref
+      # @return [String]
+      model_attr :concept_ref, default: nil
       # conceptRef is a reference to an concept for this particular label, along with the partRef
       # which references the particular concept's part which this label represents. If this attribute
       # is set, then there is no need to add a label tag in the Label parent (since it is contained in the model).
       # the XPATH statement is meant to be interpreted in the context of what the conceptRef points to.
       # @!attribute [r] xpath_path
-      #   @return [String, NilClass]
-      model_attr :xpath_path
-
-      def initialize(id:, name: nil, documentation: nil, type: nil, parent: nil,
-                     style: nil, view_refs: [], content: nil, bounds: nil,
-                     nodes: [], connections: [], properties: [], element: nil,
-                     child_type: nil, diagram:, concept_ref: nil, xpath_path: nil)
-        @id = id
-        @name = name
-        @documentation = documentation
-        @type = type
-        @parent = parent
-        @style = style
-        @view_refs = view_refs
-        @content = content
-        @bounds = bounds
-        @nodes = nodes
-        @connections = connections
-        @properties = properties
-        @element = element
-        @child_type = child_type
-        @diagram = diagram
-        @concept_ref = concept_ref
-        @xpath_path = xpath_path
-      end
-
-      def replace(entity, with_entity)
-        @element = with_entity if element.id == entity.id
-        @view_refs = with_entity if view_refs == entity
-      end
+      # @return [String, NilClass]
+      model_attr :xpath_path, default: nil
 
       def to_s
         "ViewNode[#{name || ''}](#{element if element})"
@@ -165,7 +137,7 @@ module Archimate
       end
 
       def referenced_identified_nodes
-        (nodes + connections).reduce(
+        (nodes.to_ary + connections).reduce(
           [element]
         .compact
         ) do |a, e|

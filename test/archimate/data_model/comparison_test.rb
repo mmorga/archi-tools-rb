@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'test_helper'
 
 module Archimate
@@ -9,21 +10,18 @@ module Archimate
       model_attr :shape
       model_attr :size, writable: true
       model_attr :ref, comparison_attr: :name
-
-      def initialize(shape, size, ref)
-        @shape = shape
-        @size = size
-        @ref = ref
-      end
     end
 
-    RefThing = Struct.new(:name, :value)
+    RefThing = Struct.new(:name, :value) do
+      include Referenceable
+    end
 
     class ComparisonTest < Minitest::Test
       def setup
-        @subject1 = ComplexComparison.new("circle", 12, RefThing.new(1, "thing"))
-        @subject2 = ComplexComparison.new("circle", 12, RefThing.new(1, "thing"))
-        @subject3 = ComplexComparison.new("circle", 12, RefThing.new(1, "nothing"))
+        @ref_thing1 = RefThing.new(1, "thing")
+        @subject1 = ComplexComparison.new(shape: "circle", size: 12, ref: @ref_thing1)
+        @subject2 = ComplexComparison.new(shape: "circle", size: 12, ref: @ref_thing1)
+        @subject3 = ComplexComparison.new(shape: "circle", size: 12, ref: RefThing.new(1, "nothing"))
       end
 
       def test_eqleql
@@ -44,15 +42,22 @@ module Archimate
       end
 
       def test_to_h
-        assert_equal({
+        assert_equal(
+          {
             shape: "circle",
             size: 12,
             ref: RefThing.new(1, "thing")
-          }, @subject1.to_h)
+          }, @subject1.to_h
+        )
       end
 
       def test_dig
         assert_equal "thing", @subject1.dig(:ref, :value)
+      end
+
+      def test_referenceable_integration
+        assert_includes @ref_thing1.references, @subject1
+        assert_includes @ref_thing1.references, @subject2
       end
     end
   end

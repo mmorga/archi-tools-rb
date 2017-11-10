@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'test_helper'
 
 module Archimate
@@ -13,7 +14,7 @@ module Archimate
         els = build_element_list(elements: given_elements, with_elements: 3, with_relationships: 3)
         assert_equal 6, els.size
         assert given_elements.all? { |el| els.include?(el) }
-        assert els.all? { |el| el.is_a?(Element) }
+        assert(els.all? { |el| el.is_a?(Element) })
       end
 
       def test_to_s
@@ -24,18 +25,16 @@ module Archimate
       def test_layer
         el = build_element(id: "abc123", type: "BusinessRole", name: "Thing")
         assert_equal Layers::Business, el.layer
-        el = Element.new(el.to_h.merge(type: "DataObject"))
+        el = Elements::DataObject.new(el.to_h)
         assert_equal Layers::Application, el.layer
-        el = Element.new(el.to_h.merge(type: "Device"))
+        el = Elements::Device.new(el.to_h)
         assert_equal Layers::Technology, el.layer
-        el = Element.new(el.to_h.merge(type: "Goal"))
+        el = Elements::Goal.new(el.to_h)
         assert_equal Layers::Motivation, el.layer
-        el = Element.new(el.to_h.merge(type: "Gap"))
+        el = Elements::Gap.new(el.to_h)
         assert_equal Layers::Implementation_and_migration, el.layer
-        el = Element.new(el.to_h.merge(type: "Junction"))
+        el = Elements::Junction.new(el.to_h)
         assert_equal Layers::Connectors, el.layer
-        el = Element.new(el.to_h.merge(type: "Bogus"))
-        assert_equal Layers::None, el.layer
       end
 
       def test_composed_by

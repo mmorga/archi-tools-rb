@@ -25,7 +25,8 @@ module Archimate
               style: style,
               bendpoints: @bendpoints,
               documentation: documentation,
-              properties: properties
+              properties: properties,
+              diagram: diagram
             )
             [
               event(:on_connection, connection),

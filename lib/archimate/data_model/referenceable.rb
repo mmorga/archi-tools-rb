@@ -2,18 +2,23 @@
 
 module Archimate
   module DataModel
-    # Something that can be referenced in the model.
-    class Referenceable < ArchimateNode
-      private
-
-      def find_my_index
-        id
+    # Something that can be referenced by another entity.
+    module Referenceable
+      def add_reference(referencer)
+        references << referencer unless references.include?(referencer)
       end
 
-      # name isn't merged
-      def merge(node)
-        documentation.concat(node.documentation)
-        properties.concat(node.properties)
+      def remove_reference(referencer)
+        references.delete(referencer)
+      end
+
+      def references
+        @referenceable_set ||= []
+      end
+
+      # Diagrams that this entity is referenced in.
+      def diagrams
+        references.select { |ref| ref.is_a?(Diagram) }
       end
     end
   end

@@ -45,7 +45,7 @@ require "json"
 module Archimate
   module Export
     def self.clean_json(hash)
-      JSON.generate(hash.delete_if { |_k,v| v.nil? || (v.is_a?(String) && v.empty?) })
+      JSON.generate(hash.delete_if { |_k, v| v.nil? || (v.is_a?(String) && v.empty?) })
     end
 
     class PropertiesHash
@@ -75,35 +75,17 @@ module Archimate
       # `nodeId`: "d8e75068-df75-4c21-a2af-fab5c195687a"
       def to_jsonl
         Export.clean_json(
-          {
-            _key: element.id,
-            name: element.name&.to_s,
-            layer: element.layer&.delete(" "),
-            type: element.type,
-            documentation: element.documentation&.to_s,
-            properties: PropertiesHash.new(element.properties).to_h
-          }
+          _key: element.id,
+          name: element.name&.to_s,
+          layer: element.layer&.name&.to_s&.delete(" "),
+          type: element.type,
+          documentation: element.documentation&.to_s,
+          properties: PropertiesHash.new(element.properties).to_h
         )
       end
     end
 
     class JsonlEdge
-      WEIGHTS = {
-        'GroupingRelationship' => 0,
-        'JunctionRelationship' => 0,
-        'AssociationRelationship' => 0,
-        'SpecialisationRelationship' => 1,
-        'FlowRelationship' => 2,
-        'TriggeringRelationship' => 3,
-        'InfluenceRelationship' => 4,
-        'AccessRelationship' => 5,
-        'UsedByRelationship' => 6,
-        'RealisationRelationship' => 7,
-        'AssignmentRelationship' => 8,
-        'AggregationRelationship' => 9,
-        'CompositionRelationship' => 10
-      }
-
       attr_reader :relationship
 
       def initialize(relationship)
@@ -112,27 +94,16 @@ module Archimate
 
       def to_jsonl
         Export.clean_json(
-          {
-            _key: relationship.id,
-            _from: relationship.source,
-            _to: relationship.target,
-            name: relationship.name&.to_s,
-            type: relationship.type,
-            accessType: relationship.access_type,
-            documentation: relationship.documentation&.to_s,
-            properties: PropertiesHash.new(relationship.properties).to_h,
-            weight: weight
-          }
+          _key: relationship.id,
+          _from: relationship.source,
+          _to: relationship.target,
+          name: relationship.name&.to_s,
+          type: relationship.type,
+          accessType: relationship.access_type,
+          documentation: relationship.documentation&.to_s,
+          properties: PropertiesHash.new(relationship.properties).to_h,
+          weight: relationship.weight
         )
-      end
-
-      private
-      def weight
-        unless WEIGHTS.include?(relationship.type)
-          raise "Relationship type not found: \"#{relationship.type}\""
-          return 0
-        end
-        WEIGHTS[relationship.type]
       end
     end
 
