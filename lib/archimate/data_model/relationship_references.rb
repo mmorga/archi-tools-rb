@@ -15,13 +15,40 @@ module Archimate
 
       def self.included(_base)
         Relationships.classes.each do |rel_cls|
-          define_method(rel_cls::VERB.tr(' ', '_').to_sym) do
+          define_method(RRHelpers.to_method_name(rel_cls::VERB, "relationships")) do
             references.select { |ref| ref.is_a?(rel_cls) && ref.source == self }
           end
 
-          define_method(rel_cls::OBJECT_VERB.tr(' ', '_').to_sym) do
+          define_method(RRHelpers.to_method_name(rel_cls::OBJECT_VERB, "relationships")) do
             references.select { |ref| ref.is_a?(rel_cls) && ref.target == self }
           end
+
+          define_method(RRHelpers.to_method_name(rel_cls::VERB)) do |target = nil, args = {}|
+            args[:target] = target unless args.key?(:target) || !target
+            args[:source] = self
+            args[:id] = model.make_unique_id if !args.key?(:id) && model
+            relationship = rel_cls.new(args)
+            model.relationships << relationship if model
+            relationship
+          end
+
+          define_method(RRHelpers.to_method_name(rel_cls::OBJECT_VERB)) do |source = nil, args = {}|
+            args[:source] = source unless args.key?(:source) || !source
+            args[:target] = self
+            args[:id] = model.make_unique_id if !args.key?(:id) && model
+            relationship = rel_cls.new(args)
+            model.relationships << relationship if model
+            relationship
+          end
+        end
+      end
+
+      module RRHelpers
+        def self.to_method_name(str, suffix = nil)
+          [str.tr(' ', '_'), suffix]
+            .compact
+            .join("_")
+            .to_sym
         end
       end
     end

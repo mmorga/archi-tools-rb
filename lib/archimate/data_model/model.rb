@@ -238,7 +238,7 @@ module Archimate
         @index_hash.values.select { |node| node.respond_to? :id }
       end
 
-      # @todo make this private - maybe move to [Organization]
+      # @todo maybe move to [Organization]
       def index_organizations(ref)
         ref.organizations.each do |org|
           @index_hash[org.id] = index_organizations(org)
@@ -246,7 +246,7 @@ module Archimate
         ref
       end
 
-      # @todo make this private - maybe move to [ViewNode]
+      # @todo maybe move to [ViewNode]
       def index_view_nodes(ref)
         ref.nodes.each do |node|
           @index_hash[node.id] = index_view_nodes(node)

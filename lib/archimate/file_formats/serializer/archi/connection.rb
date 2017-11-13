@@ -16,7 +16,7 @@ module Archimate
                   archi_style_hash(connection.style).merge(
                     "source" => connection.source&.id,
                     "target" => connection.target&.id,
-                    "relationship" => connection.relationship&.id
+                    "archimateRelationship" => connection.relationship&.id
                   )
                 )
               )

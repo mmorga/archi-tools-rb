@@ -16,9 +16,8 @@ module Archimate
         @referenceable_set ||= []
       end
 
-      # Diagrams that this entity is referenced in.
-      def diagrams
-        references.select { |ref| ref.is_a?(Diagram) }
+      def model
+        references.find { |ref| ref.is_a?(Model) }
       end
     end
   end

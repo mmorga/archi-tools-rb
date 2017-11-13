@@ -30,6 +30,14 @@ module Archimate
         def to_s
           name
         end
+
+        def select_elements(from_elements)
+          from_elements.select { |el| entities.include?(el.class) }
+        end
+
+        def select_relationships(from_relationships)
+          from_relationships.select { |rel| relations.include?(rel.class) }
+        end
       end
 
       # Basic Viewpoints

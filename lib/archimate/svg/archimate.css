@@ -185,54 +185,54 @@ table.properties>caption {
     font-size: 9px;
 }
 
-.archimate-assignment-relationship {
+.archimate-assignment {
     marker-end: url(#archimate-filled-arrow);
     marker-start: url(#archimate-dot-marker);
 }
 
-.archimate-composition-relationship {
+.archimate-composition {
     marker-start: url(#archimate-filled-diamond);
 }
 
-.archimate-used-by-relationship {
+.archimate-used-by {
     marker-end: url(#archimate-used-by-arrow);
 }
 
-.archimate-serving-relationship {
+.archimate-serving {
     marker-end: url(#archimate-used-by-arrow);
 }
 
-.archimate-aggregation-relationship {
+.archimate-aggregation {
     marker-start: url(#archimate-hollow-diamond);
 }
 
-.archimate-access-relationship {
+.archimate-access {
     marker-end: url(#archimate-open-arrow);
     stroke-dasharray: 2, 3;
 }
 
-.archimate-realisation-relationship {
+.archimate-realization {
     marker-end: url(#archimate-hollow-arrow);
     stroke-dasharray: 5, 3;
 }
 
-.archimate-specialisation-relationship {
+.archimate-specialization {
     marker-end: url(#archimate-hollow-arrow);
 }
 
-.archimate-influence-relationship {
+.archimate-influence {
     marker-end: url(#archimate-open-arrow);
     stroke-dasharray: 5, 3;
 }
 
-/*, .archimate-association-relationship {
+/*, .archimate-association {
 }
 */
-.archimate-triggering-relationship {
+.archimate-triggering {
     marker-end: url(#archimate-filled-arrow);
 }
 
-.archimate-flow-relationship {
+.archimate-flow {
     marker-end: url(#archimate-filled-arrow);
     stroke-dasharray: 3, 3;
 }
