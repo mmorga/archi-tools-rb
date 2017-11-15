@@ -60,6 +60,7 @@ module Archimate
     autoload :Extents, 'archimate/svg/extents'
     autoload :Path, 'archimate/svg/path'
     autoload :Point, 'archimate/svg/point'
+    autoload :Segment, 'archimate/svg/segment'
     autoload :SvgTemplate, 'archimate/svg/svg_template'
   end
 
