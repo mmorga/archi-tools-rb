@@ -7,24 +7,29 @@ module Archimate
     # A list of things that can be referenced by another entity.
     class ReferenceableList
       extend Forwardable
+      include Referenceable
 
       def_delegators :@list,
+                     :+,
+                     :==,
                      :[],
                      :all?,
                      :dig,
+                     :each,
                      :each_with_object,
+                     :empty?,
                      :find,
+                     :first,
+                     :flat_map,
                      :hash,
                      :include?,
+                     :inspect,
                      :map,
                      :none?,
-                     :select,
-                     :==,
-                     :each,
-                     :empty?,
-                     :first,
                      :reduce,
-                     :size
+                     :select,
+                     :size,
+                     :to_a
 
       attr_reader :parent
 
@@ -48,12 +53,13 @@ module Archimate
       def push(item)
         return if @list.include?(item)
         add_item_references(item)
-        @list << item
+        @list.push(item)
       end
 
-      def inspect
-        vals = @list.first(3).map(&:brief_inspect)
-        "[#{vals.join(', ')}#{"...#{@list.size}" if @list.size > 3}]"
+      def <<(item)
+        return if @list.include?(item)
+        add_item_references(item)
+        @list << item
       end
 
       private

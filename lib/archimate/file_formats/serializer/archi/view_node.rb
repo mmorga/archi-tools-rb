@@ -26,7 +26,7 @@ module Archimate
               )
             ) do
               serialize_bounds(xml, child.bounds)
-              serialize(xml, child.connections)
+              serialize(xml, (child.connections + child.diagram.connections.select { |conn| conn.source.id == child.id }).uniq)
               xml.content { xml.text child.content } if child.content
               serialize(xml, child.nodes)
               serialize_documentation(xml, child.documentation)

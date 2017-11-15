@@ -14,7 +14,6 @@ module Archimate
         autoload :Diagram, 'archimate/file_formats/serializer/archi/diagram'
         autoload :Documentation, 'archimate/file_formats/serializer/archi/documentation'
         autoload :Element, 'archimate/file_formats/serializer/archi/element'
-        autoload :Location, 'archimate/file_formats/serializer/archi/location'
         autoload :Model, 'archimate/file_formats/serializer/archi/model'
         autoload :Organization, 'archimate/file_formats/serializer/archi/organization'
         autoload :Property, 'archimate/file_formats/serializer/archi/property'

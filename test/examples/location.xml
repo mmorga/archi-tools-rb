@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model xmlns="http://www.opengroup.org/xsd/archimate/3.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengroup.org/xsd/archimate/3.0/ http://www.opengroup.org/xsd/archimate/3.0/archimate3_Diagram.xsd" identifier="id-8e6b63b9-20d4-4565-a907-5f9cb5294a59">
+  <name xml:lang="en">location</name>
+  <elements>
+    <element identifier="id-96da25f9-fbb6-47b1-8516-e9c0d0251abf" xsi:type="ApplicationComponent">
+      <name xml:lang="en">A</name>
+    </element>
+    <element identifier="id-a82d4f96-cca2-4d2d-bc02-4007ea3c4323" xsi:type="ApplicationComponent">
+      <name xml:lang="en">B</name>
+    </element>
+    <element identifier="id-4503964b-6a5b-40c8-9f45-38b348fca732" xsi:type="ApplicationComponent">
+      <name xml:lang="en">C</name>
+    </element>
+  </elements>
+  <relationships>
+    <relationship identifier="id-d28343e2-8225-49ac-907b-dc1872d52f55" source="id-a82d4f96-cca2-4d2d-bc02-4007ea3c4323" target="id-96da25f9-fbb6-47b1-8516-e9c0d0251abf" xsi:type="Serving" />
+    <relationship identifier="id-26641fc9-6738-408d-b2ef-768179a0802e" source="id-a82d4f96-cca2-4d2d-bc02-4007ea3c4323" target="id-4503964b-6a5b-40c8-9f45-38b348fca732" xsi:type="Serving" />
+  </relationships>
+  <organizations>
+    <item>
+      <label xml:lang="en">Application</label>
+      <item identifierRef="id-96da25f9-fbb6-47b1-8516-e9c0d0251abf" />
+      <item identifierRef="id-a82d4f96-cca2-4d2d-bc02-4007ea3c4323" />
+      <item identifierRef="id-4503964b-6a5b-40c8-9f45-38b348fca732" />
+    </item>
+    <item>
+      <label xml:lang="en">Relations</label>
+      <item identifierRef="id-d28343e2-8225-49ac-907b-dc1872d52f55" />
+      <item identifierRef="id-26641fc9-6738-408d-b2ef-768179a0802e" />
+    </item>
+    <item>
+      <label xml:lang="en">Views</label>
+      <item identifierRef="id-665850db-1156-4ca2-8c07-583392b14f64" />
+    </item>
+  </organizations>
+  <views>
+    <diagrams>
+      <view identifier="id-665850db-1156-4ca2-8c07-583392b14f64" xsi:type="Diagram">
+        <name xml:lang="en">Default View</name>
+        <node identifier="id-d9560e4e-e314-478b-bbc7-96f48ba27669" elementRef="id-96da25f9-fbb6-47b1-8516-e9c0d0251abf" xsi:type="Element" x="10" y="10" w="120" h="55">
+          <style>
+            <fillColor r="181" g="255" b="255" />
+            <lineColor r="92" g="92" b="92" />
+          </style>
+        </node>
+        <node identifier="id-9423a2a0-4879-4987-a3c7-34f0ea0d78ac" elementRef="id-a82d4f96-cca2-4d2d-bc02-4007ea3c4323" xsi:type="Element" x="210" y="160" w="120" h="55">
+          <style>
+            <fillColor r="181" g="255" b="255" />
+            <lineColor r="92" g="92" b="92" />
+          </style>
+        </node>
+        <node identifier="id-a23a6d7e-3c99-42cb-af07-defc5ca37956" elementRef="id-4503964b-6a5b-40c8-9f45-38b348fca732" xsi:type="Element" x="210" y="10" w="120" h="55">
+          <style>
+            <fillColor r="181" g="255" b="255" />
+            <lineColor r="92" g="92" b="92" />
+          </style>
+        </node>
+        <connection identifier="id-209c68ba-811a-4c5a-bea8-706d781fddf7" relationshipRef="id-d28343e2-8225-49ac-907b-dc1872d52f55" xsi:type="Relationship" source="id-9423a2a0-4879-4987-a3c7-34f0ea0d78ac" target="id-d9560e4e-e314-478b-bbc7-96f48ba27669">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+          </style>
+          <bendpoint x="108" y="180" />
+        </connection>
+        <connection identifier="id-057bd2ac-a19d-4ba5-80cd-1b941fa757f9" relationshipRef="id-26641fc9-6738-408d-b2ef-768179a0802e" xsi:type="Relationship" source="id-9423a2a0-4879-4987-a3c7-34f0ea0d78ac" target="id-a23a6d7e-3c99-42cb-af07-defc5ca37956">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+          </style>
+          <bendpoint x="300" y="108" />
+        </connection>
+      </view>
+    </diagrams>
+  </views>
+</model>

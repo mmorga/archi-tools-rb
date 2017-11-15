@@ -96,6 +96,22 @@ module Archimate
         [@source, @target, @relationship].compact
       end
 
+      def start_location
+        source_attachment || source_bounds.center
+      end
+
+      def end_location
+        target_attachment || target_bounds.center
+      end
+
+      def source_bounds
+        source.absolute_position
+      end
+
+      def target_bounds
+        target.absolute_position
+      end
+
       # This is used when rendering a connection to connection relationship.
       def nodes
         []

@@ -59,10 +59,6 @@ module Archimate
         end
       end
 
-      def brief_inspect
-        "#{to_s.slice(0, 40).inspect}#{'...' if to_s.size > 40}"
-      end
-
       def by_lang(lang)
         lang_hash.fetch(lang, nil)
       end

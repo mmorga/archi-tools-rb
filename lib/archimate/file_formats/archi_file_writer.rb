@@ -9,7 +9,6 @@ module Archimate
       include Serializer::Archi::Diagram
       include Serializer::Archi::Documentation
       include Serializer::Archi::Element
-      include Serializer::Archi::Location
       include Serializer::Archi::Model
       include Serializer::Archi::Organization
       include Serializer::Archi::Property

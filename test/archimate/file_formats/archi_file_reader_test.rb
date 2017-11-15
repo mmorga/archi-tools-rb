@@ -14,11 +14,25 @@ module Archimate
         @model = ArchiFileReader.new(archisurance_source).parse
       end
 
+      def test_bendpoint_conversion
+        @m1 = ArchiFileReader.new(File.read("test/examples/location.archimate")).parse
+        c1 = @m1.lookup("209c68ba-811a-4c5a-bea8-706d781fddf7")
+        assert_equal [DataModel::Location.new(x: 108, y: 180)], c1.bendpoints
+      end
+
       def test_readers
         result_io = StringIO.new
         ArchiFileWriter.write(@model, result_io)
         written_model = ArchiFileReader.new(result_io.string).parse
+        # Archi tends to vary in expected values by 1. This patch to location
+        # makes Locations still equal so long as x & y are up to 1 different than
+        # the compared Location.
+        DataModel::Location.send(:define_method, :==, proc do |other|
+          (x - other.x).abs <= 1 &&
+            (y - other.y).abs <= 1
+        end)
         assert_equal model, written_model
+        DataModel::Location.send(:remove_method, :==)
       end
 
       def test_reader_profile

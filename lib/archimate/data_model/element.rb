@@ -22,10 +22,12 @@ module Archimate
       # @!attribute [rw] documentation
       # @return [PreservedLangString, NilClass]
       model_attr :documentation, writable: true, default: nil
-      # # @return [Array<AnyElement>]
-      # model_attr :other_elements
-      # # @return [Array<AnyAttribute>]
-      # model_attr :other_attributes
+      # @!attribute [r] other_elements
+      # @return [Array<AnyElement>]
+      model_attr :other_elements, default: []
+      # @!attribute [r] other_attributes
+      # @return [Array<AnyAttribute>]
+      model_attr :other_attributes, default: []
       # @!attribute [r] properties
       # @return [Array<Property>]
       model_attr :properties, default: []
@@ -57,6 +59,11 @@ module Archimate
         element.diagrams.each { |diagram| diagram.replace(element, self) }
         element.relationships.each { |relationship| relationship.replace(element, self) }
         element.organization.remove(element.id)
+      end
+
+      # Diagrams that this entity is referenced in.
+      def diagrams
+        references.select { |ref| ref.is_a?(Diagram) }
       end
     end
   end
