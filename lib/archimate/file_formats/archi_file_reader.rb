@@ -13,7 +13,17 @@ module Archimate
         handler_factory = Sax::Archi::ArchiHandlerFactory.new
         parser = Nokogiri::XML::SAX::Parser.new(Sax::Document.new(handler_factory))
         parser.parse(@string_or_io)
-        parser.document.model
+        model = parser.document.model
+        model
+          .diagrams
+          .flat_map(&:connections)
+          .each do |connection|
+            connection.bendpoints.each do |bendpoint|
+              bendpoint.x += connection.start_location.x.to_i
+              bendpoint.y += connection.start_location.y.to_i
+            end
+          end
+        model
       end
     end
   end

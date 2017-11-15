@@ -78,18 +78,12 @@ module Archimate
         end
       end
 
-      # @todo implement inspect as a more normal inspect with correct handling for
-      #       attr_info values for comparison_attr
       def inspect
         "#<#{self.class.to_s.split('::').last}\n    " +
           self.class.attr_info
               .map { |sym, info| info.attr_inspect(self, sym) }
           .compact
-              .join("\n    ") + "\n    >"
-      end
-
-      def brief_inspect
-        "#<#{self.class.to_s.split('::').last}#{" id=#{id}" if respond_to?(:id)}#{" #{name.brief_inspect}" if respond_to?(:name) && name}>"
+              .join(" ") + ">"
       end
 
       def self.included(base)
@@ -103,29 +97,11 @@ module Archimate
             when :no_compare
               nil
             when nil
-              "#{sym}: #{attr_value_inspect(obj.send(sym))}"
+              "#{sym}: #{obj.send(sym).inspect}"
             else
               val = obj.send(sym)
               cval = val&.send(comparison_attr)
-              "#{sym}: #<#{val.class.to_s.split('::').last} #{comparison_attr}=#{attr_value_inspect(cval)}>"
-            end
-          end
-
-          def attr_value_inspect(val)
-            case val
-            when Comparison
-              val.brief_inspect
-            when Array
-              vals = val.first(3).map do |v|
-                if v.is_a?(Comparison)
-                  v.brief_inspect
-                else
-                  v.inspect
-                end
-              end
-              "[#{vals.join(', ')}#{"...#{val.size}" if val.size > 3}]"
-            else
-              val.inspect
+              "#{sym}: #<#{val.class.to_s.split('::').last} #{comparison_attr}=#{cval.inspect}>"
             end
           end
         end

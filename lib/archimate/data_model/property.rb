@@ -21,12 +21,6 @@ module Archimate
       def key
         property_definition.name
       end
-
-      def brief_inspect
-        cls_name = self.class.name.split('::').last
-        val = "#{value.to_s.slice(0, 40).inspect}#{'...' if value.to_s.size > 40}"
-        "#<#{cls_name} #{key} = #{val}>"
-      end
     end
   end
 end

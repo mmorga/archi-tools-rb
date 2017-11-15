@@ -22,6 +22,15 @@ module Archimate
         Archimate::DataModel::Bounds.new(x: 0, y: 0, width: 0, height: 0)
       end
 
+      def self.from_location(location)
+        DataModel::Bounds.new(
+          x: location.x,
+          y: location.y,
+          width: 0,
+          height: 0
+        )
+      end
+
       def initialize(x: nil, y: nil, width:, height:)
         raise "Width expected" unless width
         raise "Height expected" unless height
@@ -68,19 +77,19 @@ module Archimate
         )
       end
 
-      def is_above?(other)
+      def above?(other)
         bottom < other.top
       end
 
-      def is_below?(other)
+      def below?(other)
         top > other.bottom
       end
 
-      def is_right_of?(other)
+      def right_of?(other)
         left > other.right
       end
 
-      def is_left_of?(other)
+      def left_of?(other)
         right < other.left
       end
 
@@ -88,6 +97,7 @@ module Archimate
         Bounds.new(x: left + val, y: top + val, width: width - val * 2, height: height - val * 2)
       end
 
+      # Tests if this bounds is inside the argument Bounds
       def inside?(other)
         left > other.left &&
           right < other.right &&

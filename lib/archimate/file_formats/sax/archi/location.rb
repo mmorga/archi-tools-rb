@@ -9,9 +9,7 @@ module Archimate
             super
             @location = DataModel::Location.new(
               x: @attrs["startX"] || 0,
-              y: @attrs["startY"] || 0,
-              end_x: @attrs["endX"],
-              end_y: @attrs["endY"]
+              y: @attrs["startY"] || 0
             )
           end
 

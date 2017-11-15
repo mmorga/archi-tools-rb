@@ -63,26 +63,18 @@ module Archimate
       private
 
       def source_bounds
-        @source_bounds ||= connection.source&.absolute_position || DataModel::Bounds.zero
+        @source_bounds ||= connection.source_bounds || DataModel::Bounds.zero
       end
 
       def target_bounds
-        @target_bounds ||= connection.target&.absolute_position || DataModel::Bounds.zero
+        @target_bounds ||= connection.target_bounds || DataModel::Bounds.zero
       end
 
       def normalized_bend_points
-        source_bounds_center = source_bounds.center
-        bp_bounds = connection.bendpoints.map do |bp|
-          DataModel::Bounds.new(
-            x: source_bounds_center.x + (bp.x || 0),
-            y: source_bounds_center.y + (bp.y || 0),
-            width: 0,
-            height: 0
-          )
-        end
-        bp_bounds.reject do |bounds|
-          bounds.inside?(source_bounds) || bounds.inside?(target_bounds)
-        end
+        connection
+          .bendpoints
+          .reject { |bendpoint| [source_bounds, target_bounds].any? { |bounds| bendpoint.inside?(bounds) } }
+          .map { |bendpoint| DataModel::Bounds.from_location(bendpoint) }
       end
 
       def calc_points
@@ -98,8 +90,10 @@ module Archimate
         points.uniq
       end
 
-      # a: Bounds
-      # b: Bounds
+      # Takes the bounds of two objects and returns the optimal points
+      # between from the edge of `a` to the edge of `b`
+      # @param a [Bounds]
+      # @param b [Bounds]
       def bounds_to_points(a, b)
         ax_range = a.x_range
         bx_range = b.x_range
@@ -108,7 +102,7 @@ module Archimate
 
         if overlap_x_center
           ax = bx = overlap_x_center
-        elsif b.is_right_of?(a)
+        elsif b.right_of?(a)
           ax = a.right
           bx = b.left
         else
@@ -123,7 +117,7 @@ module Archimate
 
         if overlap_y_center
           ay = by = overlap_y_center
-        elsif b.is_above?(a)
+        elsif b.above?(a)
           ay = a.top
           by = b.bottom
         else
@@ -142,6 +136,9 @@ module Archimate
         "L #{point.x} #{point.y}"
       end
 
+      # Returns the midpoint of the overlap of two ranges or nil if there is no overlap
+      # @param r1 [Range]
+      # @param r2 [Range]
       def ranges_overlap(r1, r2)
         begin_max = [r1, r2].map(&:begin).max
         end_min = [r1, r2].map(&:end).min

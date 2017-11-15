@@ -20,13 +20,16 @@ module Archimate
                      :empty?,
                      :find,
                      :first,
+                     :flat_map,
                      :hash,
                      :include?,
+                     :inspect,
                      :map,
                      :none?,
                      :reduce,
                      :select,
-                     :size
+                     :size,
+                     :to_a
 
       attr_reader :parent
 
@@ -57,11 +60,6 @@ module Archimate
         return if @list.include?(item)
         add_item_references(item)
         @list << item
-      end
-
-      def inspect
-        vals = @list.first(3).map(&:brief_inspect)
-        "[#{vals.join(', ')}#{"...#{@list.size}" if @list.size > 3}]"
       end
 
       private

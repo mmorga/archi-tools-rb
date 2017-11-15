@@ -16,31 +16,28 @@ module Archimate
       # @note the XSD has this as a NonNegativeInteger
       # @!attribute [r] x
       # @return [Float]
-      model_attr :x
+      model_attr :x, writable: true
       # The y (towards the bottom, associated with height) attribute from the Top,Left (i.e. 0,0)
       # corner of the diagram to the Top, Left corner of the bounding box of the concept.
       # @note the XSD has this as a NonNegativeInteger
       # @!attribute [r] y
       # @return [Float]
-      model_attr :y
+      model_attr :y, writable: true
 
-      # These are holdovers from the archi file format and are only maintained for compatability
-      # @!attribute [r] end_x
-      # @return [Int, NilClass]
-      model_attr :end_x, default: nil
-      # @!attribute [r] end_y
-      # @return [Int, NilClass]
-      model_attr :end_y, default: nil
-
-      def initialize(x:, y:, end_x: nil, end_y: nil)
+      def initialize(x:, y:)
         @x = x.to_i
         @y = y.to_i
-        @end_x = end_x.nil? ? nil : end_x.to_i
-        @end_y = end_y.nil? ? nil : end_y.to_i
       end
 
       def to_s
         "Location(x: #{x}, y: #{y})"
+      end
+
+      # Returns true if this location is inside the bounds argument
+      # @param bounds [Bounds]
+      def inside?(bounds)
+        bounds.x_range.cover?(x) &&
+          bounds.y_range.cover?(y)
       end
     end
   end

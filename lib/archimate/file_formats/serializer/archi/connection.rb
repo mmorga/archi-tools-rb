@@ -21,10 +21,25 @@ module Archimate
                 )
               )
             ) do
-              serialize(xml, connection.bendpoints)
+              connection.bendpoints.each do |bendpoint|
+                serialize_bendpoint(xml, bendpoint, connection)
+              end
               serialize_documentation(xml, connection.documentation)
               serialize(xml, connection.properties)
             end
+          end
+
+          # startX = bendpoint.x - start_location.x
+          # startY = bendpoint.y - start_location.y
+          def serialize_bendpoint(xml, bendpoint, connection)
+            xml.bendpoint(
+              {
+                startX: bendpoint.x - connection.start_location.x,
+                startY: bendpoint.y - connection.start_location.y,
+                endX: bendpoint.x - connection.end_location.x,
+                endY: bendpoint.y - connection.end_location.y
+              }.delete_if { |_k, v| v.zero? }
+            )
           end
         end
       end

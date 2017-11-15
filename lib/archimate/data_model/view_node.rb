@@ -167,6 +167,10 @@ module Archimate
           .select { |conn| conn.target&.id == id }
           .map(&:id)
       end
+
+      def center
+        @bounds&.center
+      end
     end
   end
 end
