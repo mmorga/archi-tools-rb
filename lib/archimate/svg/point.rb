@@ -9,6 +9,10 @@ module Archimate
           ((other.y - y)**2)
         )
       end
+
+      def to_s
+        [x, y].map(&:to_s).join(" ")
+      end
     end
   end
 end

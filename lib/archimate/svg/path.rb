@@ -3,6 +3,8 @@
 module Archimate
   module Svg
     class Path
+      LINE_CURVE_RADIUS = 5
+
       attr_reader :connection
 
       def initialize(connection)
@@ -23,28 +25,42 @@ module Archimate
       # @return Point at the given percent along line between start and end
       def point(fraction)
         length_from_start = length * fraction
-        segments.each do |a, b|
-          seg_length = b - a
-          if seg_length >= length_from_start
-            pct = length_from_start / seg_length
-            return Point.new(
-              a.x + ((b.x - a.x) * pct),
-              a.y + ((b.y - a.y) * pct)
-            )
-          else
-            length_from_start -= seg_length
-          end
+        segments.each do |segment|
+          return segment.from_start(length_from_start) if segment.length >= length_from_start
+          length_from_start -= segment.length
         end
         Point.new(0.0, 0.0)
       end
 
-      # builds the line coordinates for the path
-      # rough drawing is the point at center of first element, point of each bendpoint, and center of end element
-      # First naive implementation
-      # if left/right range of both overlap, use centerpoint of overlap range as x val
-      # if top/bottom range of both overlap, use centerpoint of overlap range as y val
+      # New implementation of SVG d method for a set of points
+      # making smooth curves at each bendpoint
+      #
+      # Given three points: a, b, c
+      # The result should be:
+      # (a is already part of the path -> first point is a move_to command)
+      # line_to(segment(a-b) - curve_radius (from end))
+      # q_curve(b, segment(b-c) - curve_radius (from start))
+      #
+      # For cases with more bendpoints (with values d, e, ...)
+      # repeat the above section with c as the new a value (so then [c, d, e], [d, e, f], etc.)
       def d
-        [move_to(points.first)].concat(points[1..-1].map { |pt| line_to(pt) }).join(" ")
+        [move_to(points.first)]
+          .concat(
+            points
+              .each_cons(3)
+              .flat_map { |a, b, c| curve_segment(a, b, c) }
+          )
+          .concat([line_to(points.last)])
+          .join(" ")
+      end
+
+      def curve_segment(a, b, c)
+        pt1 = Segment.new(a, b).from_end(LINE_CURVE_RADIUS)
+        pt2 = Segment.new(b, c).from_start(LINE_CURVE_RADIUS)
+        [
+          line_to(pt1),
+          q_curve(b, pt2)
+        ]
       end
 
       def points
@@ -52,12 +68,12 @@ module Archimate
       end
 
       def segments
-        (0..points.length - 2).map { |i| [points[i], points[i + 1]] }
+        (0..points.length - 2).map { |i| Segment.new(points[i], points[i + 1]) }
       end
 
       # Returns the lengths of each segment of the line
       def segment_lengths
-        segments.map { |a, b| b - a }
+        segments.map(&:length)
       end
 
       private
@@ -92,6 +108,8 @@ module Archimate
 
       # Takes the bounds of two objects and returns the optimal points
       # between from the edge of `a` to the edge of `b`
+      # if left/right range of both overlap, use centerpoint of overlap range as x val
+      # if top/bottom range of both overlap, use centerpoint of overlap range as y val
       # @param a [Bounds]
       # @param b [Bounds]
       def bounds_to_points(a, b)
@@ -129,14 +147,19 @@ module Archimate
       end
 
       def move_to(point)
-        "M #{point.x} #{point.y}"
+        "M #{point}"
       end
 
       def line_to(point)
-        "L #{point.x} #{point.y}"
+        "L #{point}"
+      end
+
+      def q_curve(cp, pt)
+        "Q #{cp} #{pt}"
       end
 
       # Returns the midpoint of the overlap of two ranges or nil if there is no overlap
+      # @todo this should be a feature of Range
       # @param r1 [Range]
       # @param r2 [Range]
       def ranges_overlap(r1, r2)
