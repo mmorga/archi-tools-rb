@@ -35,7 +35,7 @@ module Archimate
       # @return [Array<ViewpointContentEnum>]
       model_attr :viewpoint_contents, default: []
       # @!attribute [r] allowed_element_types
-      # @return [Array<ElementType>]
+      # @return [Array<Elements::*>]
       model_attr :allowed_element_types, default: []
       # @!attribute [r] allowed_relationship_types
       # @return [Array<Relationships::*>]
@@ -43,6 +43,14 @@ module Archimate
       # @!attribute [r] modeling_notes
       # @return [Array<ModelingNote>]
       model_attr :modeling_notes, default: []
+
+      def select_elements(from_elements)
+        from_elements.select { |el| allowed_element_types.include?(el.class) }
+      end
+
+      def select_relationships(from_relationships)
+        from_relationships.select { |rel| allowed_relationship_types.include?(rel.class) }
+      end
     end
   end
 end

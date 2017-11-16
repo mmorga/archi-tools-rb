@@ -676,6 +676,12 @@ module Archimate
       def self.classes
         constants.map { |cls_name| const_get(cls_name) }
       end
+
+      def self.core_elements
+        classes.select do |el|
+          [Layers::Business, Layers::Application, Layers::Technology].include?(el::LAYER)
+        end
+      end
     end
   end
 end

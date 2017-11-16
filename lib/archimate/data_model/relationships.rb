@@ -209,6 +209,21 @@ module Archimate
       def self.classes
         constants.map { |cls_name| const_get(cls_name) }
       end
+
+      def self.default
+        [
+          Relationships::Access,
+          Relationships::Aggregation,
+          Relationships::Assignment,
+          Relationships::Association,
+          Relationships::Composition,
+          Relationships::Flow,
+          Relationships::Realization,
+          Relationships::Specialization,
+          Relationships::Triggering,
+          Relationships::Serving
+        ].freeze
+      end
     end
   end
 end

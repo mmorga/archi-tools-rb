@@ -34,10 +34,10 @@ module Archimate
           def serialize_bendpoint(xml, bendpoint, connection)
             xml.bendpoint(
               {
-                startX: bendpoint.x - connection.start_location.x,
-                startY: bendpoint.y - connection.start_location.y,
-                endX: bendpoint.x - connection.end_location.x,
-                endY: bendpoint.y - connection.end_location.y
+                startX: (bendpoint.x - connection.start_location.x).to_i,
+                startY: (bendpoint.y - connection.start_location.y).to_i,
+                endX: (bendpoint.x - connection.end_location.x).to_i,
+                endY: (bendpoint.y - connection.end_location.y).to_i
               }.delete_if { |_k, v| v.zero? }
             )
           end
