@@ -10,7 +10,7 @@ module Archimate
               xml.view(
                 remove_nil_values(
                   identifier: identifier(diagram.id),
-                  viewpoint: diagram.viewpoint_type,
+                  viewpoint: viewpoint_attribute(diagram.viewpoint),
                   "xsi:type": diagram.type
                 )
               ) do

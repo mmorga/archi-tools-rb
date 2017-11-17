@@ -26,10 +26,6 @@ module Archimate
       # @!attribute [rw] properties
       # @return [Array<Property>]
       model_attr :properties, writable: true, default: []
-      # @todo make this a ViewpointType is better but is Archimate specification version dependent
-      # @!attribute [r] viewpoint_type
-      # @return [String, NilClass]
-      model_attr :viewpoint_type, default: nil
       # @!attribute [r] viewpoint
       # @return [Viewpoint, NilClass]
       model_attr :viewpoint, default: nil
@@ -73,7 +69,7 @@ module Archimate
       end
 
       def total_viewpoint?
-        viewpoint_type.nil? || viewpoint_type.empty?
+        viewpoint.nil?
       end
 
       def referenced_identified_nodes

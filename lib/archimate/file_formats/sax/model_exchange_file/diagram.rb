@@ -31,8 +31,7 @@ module Archimate
           def diagram
             @diagram ||= DataModel::Diagram.new(
               id: @attrs["identifier"],
-              viewpoint_type: @attrs["viewpoint"],
-              viewpoint: DataModel::Viewpoints.with_name(@attrs["viewpoint"]),
+              viewpoint: viewpoint,
               connection_router_type: @attrs["connectionRouterType"],
               type: @attrs["xsi:type"],
               background: @attrs["background"]
@@ -52,6 +51,18 @@ module Archimate
           def on_connection(connection, _source)
             @connections << connection
             false
+          end
+
+          VIEWPOINT_MAP = {
+            "Business Process Co-operation" => DataModel::Viewpoints::Business_process_cooperation,
+            "Application Co-operation" => DataModel::Viewpoints::Application_cooperation
+          }.freeze
+
+          def viewpoint
+            viewpoint_attr = @attrs["viewpoint"]&.strip || ""
+            return nil if viewpoint_attr.empty?
+            return VIEWPOINT_MAP[viewpoint_attr] if VIEWPOINT_MAP.include?(viewpoint_attr)
+            DataModel::Viewpoints.with_name(viewpoint_attr)
           end
         end
       end
