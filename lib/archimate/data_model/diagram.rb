@@ -82,6 +82,24 @@ module Archimate
           .flatten
           .uniq
       end
+
+      def viewpoint_description
+        case viewpoint
+        when Symbol
+          viewpoint.to_s
+        when Viewpoint
+          viewpoint.name.to_s
+        else
+          case type
+          when "canvas:CanvasModel"
+            "Canvas"
+          when "archimate:SketchModel"
+            "Sketch"
+          else
+            "Total"
+          end
+        end
+      end
     end
   end
 end

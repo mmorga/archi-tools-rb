@@ -21,6 +21,7 @@ module Archimate
                      :find,
                      :first,
                      :flat_map,
+                     :group_by,
                      :hash,
                      :include?,
                      :inspect,

@@ -392,6 +392,10 @@ module Archimate
         allowed_element_types: Elements.classes + ConnectorType.values,
         allowed_relationship_types: Relationships.classes
       )
+
+      def self.with_name(name)
+        constants.map { |sym| const_get(sym) }.find { |vp| vp.name == name }
+      end
     end
   end
 end

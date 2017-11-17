@@ -32,7 +32,7 @@ module Archimate
             @diagram ||= DataModel::Diagram.new(
               id: @attrs["identifier"],
               viewpoint_type: @attrs["viewpoint"],
-              viewpoint: nil,
+              viewpoint: DataModel::Viewpoints.with_name(@attrs["viewpoint"]),
               connection_router_type: @attrs["connectionRouterType"],
               type: @attrs["xsi:type"],
               background: @attrs["background"]
