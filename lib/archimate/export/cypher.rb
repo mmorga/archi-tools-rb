@@ -49,7 +49,7 @@ module Archimate
         elements.each do |element|
           props = add_docs(
             {
-              layer: element.layer.delete(" "),
+              layer: element.layer.to_s,
               name: element.name.to_s,
               nodeId: element.id
             }.merge(
@@ -99,11 +99,12 @@ module Archimate
       end
 
       def source(rel)
-        "(s #{props(nodeId: rel.source)})"
+        "(s #{props(nodeId: rel.source.id)})"
       end
 
-      def add_docs(h, l)
-        t = l.map(&:text).join("\n").strip
+      def add_docs(h, documentation)
+        return h unless documentation
+        t = documentation.to_s.strip
         return h if t.empty?
         h.merge(documentation: t)
       end
@@ -121,7 +122,7 @@ module Archimate
       end
 
       def target(rel)
-        "(t #{props(nodeId: rel.target)})"
+        "(t #{props(nodeId: rel.target.id)})"
       end
 
       def write(str)
