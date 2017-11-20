@@ -3,8 +3,8 @@
 require 'test_helper'
 
 module Archimate
-  class DuperTest < Minitest::Test
-    def test_stats_archi_format
+  class DupesTest < Minitest::Test
+    def test_dupes_archi_format
       out, err = capture_io do
         Cli::Archi.start %w[dupes test/examples/archisurance.archimate]
       end
@@ -30,7 +30,7 @@ module Archimate
       assert_equal expected, Color.uncolor(out).gsub(/ +\n/, "\n")
     end
 
-    def test_duper_archimate_exchange_format
+    def test_dupes_archimate_exchange_format
       out, err = capture_io do
         Cli::Archi.start ["dupes", "test/examples/ArchiSurance V3.xml"]
       end
