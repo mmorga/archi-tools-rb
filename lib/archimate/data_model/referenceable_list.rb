@@ -24,10 +24,12 @@ module Archimate
                      :group_by,
                      :hash,
                      :include?,
+                     :inject,
                      :inspect,
                      :map,
                      :none?,
                      :reduce,
+                     :reject,
                      :select,
                      :size,
                      :to_a

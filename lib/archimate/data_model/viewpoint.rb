@@ -44,6 +44,10 @@ module Archimate
       # @return [Array<ModelingNote>]
       model_attr :modeling_notes, default: []
 
+      def to_s
+        name.to_s
+      end
+
       def select_elements(from_elements)
         from_elements.select { |el| allowed_element_types.include?(el.class) }
       end

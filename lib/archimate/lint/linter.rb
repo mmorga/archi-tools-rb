@@ -92,10 +92,10 @@ module Archimate
           valid_entity_types = diagram.viewpoint&.allowed_element_types || DataModel::Elements.classes
           valid_relation_types = diagram.viewpoint&.allowed_relationship_types || DataModel::Relationships.classes
           invalid_elements = diagram.all_nodes.reject do |child|
-            child.element&.type.nil? || valid_entity_types.include?(child.element&.type)
+            child.element.nil? || valid_entity_types.include?(child.element.class)
           end
           invalid_relations = diagram.connections.reject do |sc|
-            sc.element&.type.nil? || valid_relation_types.include?(sc.element&.type)
+            sc.element.nil? || valid_relation_types.include?(sc.element.class)
           end
           next unless !invalid_elements.empty? || !invalid_relations.empty?
           errors << format(

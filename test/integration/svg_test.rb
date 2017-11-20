@@ -8,7 +8,7 @@ module Archimate
     def test_svg_archi_format
       Dir.mktmpdir do |dir|
         _out, _err = capture_io do
-          Cli::Archi.start ["svg", "-o", dir, "test/examples/archisurance.archimate"]
+          Cli::Archi.start ["svg", "-n", "-o", dir, "test/examples/archisurance.archimate"]
         end
         svgs = Dir.glob(File.join(dir, "*.svg"))
         expected_ids = archisurance_model.diagrams.map(&:id).sort
