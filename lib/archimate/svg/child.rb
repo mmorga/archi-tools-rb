@@ -3,12 +3,10 @@
 module Archimate
   module Svg
     class Child
-      attr_reader :todos
       attr_reader :child
 
       def initialize(child)
         @child = child
-        @todos = Hash.new(0)
       end
 
       # The info needed to render is contained in the child with the exception of

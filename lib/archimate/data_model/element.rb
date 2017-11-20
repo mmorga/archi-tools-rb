@@ -53,7 +53,6 @@ module Archimate
       #     2. Child `documentation` (and different `xml:lang` attribute values)
       #     3. Child `properties`
       #     4. Any other elements
-      # @todo this implementation is broken - in_model no longer exists
       def merge(element)
         super
         element.diagrams.each { |diagram| diagram.replace(element, self) }

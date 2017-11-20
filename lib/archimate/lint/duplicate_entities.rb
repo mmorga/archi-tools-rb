@@ -6,7 +6,7 @@ module Archimate
       a able about above according accordingly across actually after afterwards again against all allow allows
       almost alone along already also although always am among amongst amoungst amount an and another any anybody
       anyhow anyone anything anyway anyways anywhere apart appear appreciate appropriate are around as aside ask
-      asking associated at available away awfully back be became because become becomes becoming been before
+      asking associated at available away awfully be became because become becomes becoming been before
       beforehand behind being believe below beside besides best better between beyond bill both bottom brief but
       by call came can can't cannot cant cause causes certain certainly changes clearly co com come comes computer
       con concerning consequently consider considering contain containing contains corresponding could couldn't
@@ -14,7 +14,7 @@ module Archimate
       does doesn't doing don't done down downwards due during each edu eg eight either eleven else elsewhere empty
       enough entirely especially et etc even ever every everybody everyone everything everywhere ex exactly example
       except far few fifteen fifth fify fill find fire first five followed following follows for former formerly
-      forth forty found four from front full further furthermore get gets getting give given gives go goes going
+      forth forty found four from full further furthermore get gets getting give given gives go goes going
       gone got gotten greetings had hadn't happens hardly has hasn't hasnt have haven't having he he's hello help
       hence her here here's hereafter hereby herein hereupon hers herself hi him himself his hither hopefully how
       howbeit however hundred i i'd i'll i'm i've ie if ignored immediate in inasmuch inc indeed indicate indicated
@@ -90,8 +90,9 @@ module Archimate
       end
 
       def entity_hash_name(entity)
-        layer = entity.layer
-        layer_sort_order = layer ? DataModel::Layers.find_index(layer) : 9
+        layer = entity.respond_to?(:layer) ? entity.layer : nil
+        layer ||= DataModel::Layers::None
+        layer_sort_order = DataModel::Layers.find_index(layer) # layer ? DataModel::Layers.find_index(layer) : 9
         [
           entity.class.name, # Taking advantage of Element being before Relationship
           layer_sort_order.to_s,

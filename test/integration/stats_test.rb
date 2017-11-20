@@ -5,7 +5,11 @@ require 'test_helper'
 module Archimate
   class StatsTest < Minitest::Test
     def test_stats_archi_format
-      result = Color.uncolor(`bin/archimate stats test/examples/archisurance.archimate`)
+      out, err = capture_io do
+        Cli::Archi.start %w[stats test/examples/archisurance.archimate]
+      end
+      assert_empty err
+      result = Color.uncolor(out)
       assert_match(/Business *68\b/, result)
       assert_match(/Application *22\b/, result)
       assert_match(/Technology *21\b/, result)
@@ -16,7 +20,11 @@ module Archimate
     end
 
     def test_stats_archimate_model_exchange_format
-      result = Color.uncolor(`bin/archimate stats "test/examples/ArchiSurance V3.xml"`)
+      out, err = capture_io do
+        Cli::Archi.start ["stats", "test/examples/ArchiSurance V3.xml"]
+      end
+      assert_empty err
+      result = Color.uncolor(out)
       assert_match(/Business *67\b/, result)
       assert_match(/Application *25\b/, result)
       assert_match(/Technology *18\b/, result)

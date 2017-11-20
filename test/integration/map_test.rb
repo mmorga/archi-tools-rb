@@ -5,7 +5,9 @@ require 'test_helper'
 module Archimate
   class MapTest < Minitest::Test
     def test_map_archi_format
-      result = Color.uncolor(`bin/archimate map test/examples/archisurance.archimate`).gsub(/ +\n/, "\n")
+      out, err = capture_io do
+        Cli::Archi.start ["map", "test/examples/archisurance.archimate"]
+      end
       expected = <<~EXPECTED
         Id           | Name                                 | Viewpoint
         -------------+--------------------------------------+------------------------------
@@ -30,11 +32,14 @@ module Archimate
 
         17 Diagrams
       EXPECTED
-      assert_equal expected, result
+      assert_empty err
+      assert_equal expected, Color.uncolor(out).gsub(/ +\n/, "\n")
     end
 
     def test_map_archimate_model_exchange_format
-      result = Color.uncolor(`bin/archimate map "test/examples/ArchiSurance V3.xml"`).gsub(/ +\n/, "\n")
+      out, err = capture_io do
+        Cli::Archi.start ["map", "test/examples/ArchiSurance V3.xml"]
+      end
       expected = <<~EXPECTED
         Id          | Name                                 | Viewpoint
         ------------+--------------------------------------+----------
@@ -59,8 +64,8 @@ module Archimate
 
         17 Diagrams
       EXPECTED
-      assert_equal expected, result
-      # puts result
+      assert_empty err
+      assert_equal expected, Color.uncolor(out).gsub(/ +\n/, "\n")
     end
   end
 end
