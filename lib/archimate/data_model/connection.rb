@@ -117,17 +117,9 @@ module Archimate
         []
       end
 
-      # TODO: Is this true for all or only Archi models?
       def absolute_position
-        # offset = bounds || Archimate::DataModel::Bounds.zero
-        offset = Archimate::DataModel::Bounds.zero
-        el = parent.parent
-        while el.respond_to?(:bounds) && el.bounds
-          bounds = el.bounds
-          offset = offset.with(x: (offset.x || 0) + (bounds.x || 0), y: (offset.y || 0) + (bounds.y || 0))
-          el = el.parent.parent
-        end
-        offset
+        pt = Svg::Path.new(self).midpoint
+        Bounds.new(x: pt.x, y: pt.y, width: 0, height: 0)
       end
 
       def replace_item_with(item, replacement)

@@ -3,12 +3,11 @@
 module Archimate
   module Svg
     module Entity
-      class ServiceEntity < BaseEntity
-        include Rect
-
+      class ServiceEntity < RoundedRectEntity
         def initialize(child, bounds_offset)
           super
           bounds = child.bounds
+          @badge = "#archimate-service-badge"
           @text_bounds = DataModel::Bounds.new(
             x: bounds.left + 7,
             y: bounds.top + 5,
@@ -19,17 +18,11 @@ module Archimate
 
         def entity_shape(xml, bounds)
           case child.child_type
-          when 1
-            @badge_bounds = DataModel::Bounds.new(
-              x: bounds.right - 25,
-              y: bounds.top + 5,
-              width: 20,
-              height: 20
-            )
-            @badge = "#archimate-service-badge"
-            rect_path(xml, bounds)
-          else
+          when "1"
             service_path(xml, bounds)
+            @badge = nil
+          else
+            super
           end
         end
 

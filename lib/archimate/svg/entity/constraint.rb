@@ -6,7 +6,6 @@ module Archimate
       class Constraint < MotivationEntity
         def initialize(child, bounds_offset)
           super
-          @background_class = "archimate-motivation2-background"
           @badge = "#archimate-constraint-badge"
         end
       end

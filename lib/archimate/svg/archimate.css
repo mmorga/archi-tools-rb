@@ -56,7 +56,6 @@ table.properties>caption {
     float: right;
     height: 20px;
     width: 20px;
-    /*border: 1px solid red;*/
 }
 
 .archimate-icon {
@@ -115,8 +114,8 @@ table.properties>caption {
 }
 
 .archimate-motivation-background {
-    fill: #fecdfe;
-    stroke: #b18fb1;
+    fill: #cccdfd;
+    stroke: #8e8fb1;
 }
 
 .archimate-motivation2-background {
@@ -147,6 +146,12 @@ table.properties>caption {
 .archimate-group-background {
     fill: #d2d7d7;
     stroke: #939696;
+}
+
+.archimate-grouping-background {
+    fill: #ffffff;
+    stroke: #b2b2b2;
+    stroke-dasharray: 8,4;
 }
 
 .archimate-sticky-background {
@@ -225,9 +230,6 @@ table.properties>caption {
     stroke-dasharray: 5, 3;
 }
 
-/*, .archimate-association {
-}
-*/
 .archimate-triggering {
     marker-end: url(#archimate-filled-arrow);
 }
@@ -236,7 +238,3 @@ table.properties>caption {
     marker-end: url(#archimate-filled-arrow);
     stroke-dasharray: 3, 3;
 }
-
-/*.archimate-default-connection {
-}
-*/

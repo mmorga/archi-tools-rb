@@ -12,7 +12,7 @@ module Archimate
 
         def entity_shape(xml, bounds)
           case child.child_type
-          when 1
+          when "1"
             @badge = "#archimate-device-badge"
             node_path(xml, bounds)
           else

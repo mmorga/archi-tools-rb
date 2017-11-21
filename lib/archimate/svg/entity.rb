@@ -46,6 +46,7 @@ module Archimate
       autoload :Gap, 'archimate/svg/entity/gap'
       autoload :Goal, 'archimate/svg/entity/goal'
       autoload :Group, 'archimate/svg/entity/group'
+      autoload :Grouping, 'archimate/svg/entity/grouping'
       autoload :ImplementationEvent, 'archimate/svg/entity/implementation_event'
       autoload :InfrastructureEvent, 'archimate/svg/entity/infrastructure_event'
       autoload :InfrastructureFunction, 'archimate/svg/entity/infrastructure_function'
