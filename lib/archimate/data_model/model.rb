@@ -127,32 +127,51 @@ module Archimate
           .uniq
       end
 
-      # This is used only by the model [Cli::Cleanup] class.
-      def unreferenced_nodes
-        identified_nodes - referenced_identified_nodes
+      # @todo this should move into either Comparison or a Mergeable class
+      # Steps to merge
+      # merge attributes of each copy into master_entity
+      # update references of each copy to reference master_entity instead (where it makes sense)
+      # remove reference of each copy from its references
+      def merge_entities(master_entity, copies)
+        copies.delete(master_entity)
+        copies.each do |copy|
+          copy.replace_with(master_entity)
+          # if !copy.references.empty?
+          #   puts "#{copy.class} still referenced by #{copy.references.map { |ref| ref.class.name }.join(", ")}"
+          # end
+          deregister(copy)
+        end
       end
 
-      # def merge_entities(master_entity, copies)
-      #   copies.delete(master_entity)
-      #   copies.each do |copy|
-      #     entities.each do |entity|
-      #       case entity
-      #       when entity == master_entity
-      #         master_entity.merge(copy)
-      #       when Organization
-      #         entity.remove(copy.id)
-      #       when ViewNode, Relationship, Connection
-      #         entity.replace(copy, master_entity)
-      #       end
-      #     end
-      #     deregister(copy)
-      #   end
-      # end
+      def replace_item_with(item, replacement)
+        case item
+        when Organization
+          organizations.delete(item)
+          organizations << replacement
+        when Element
+          elements.delete(item)
+          elements << replacement
+        when Relationship
+          relationships.delete(item)
+          relationships << replacement
+        end
+      end
 
       def make_unique_id
         unique_id = random_id
         unique_id = random_id while @index_hash.key?(unique_id)
         unique_id
+      end
+
+      def remove_reference(item)
+        case item
+        when Element
+          elements.delete(item)
+        when Relationship
+          relationships.delete(item)
+        else
+          raise "Unhandled remove reference for type #{item.class}"
+        end
       end
 
       private
@@ -231,11 +250,6 @@ module Archimate
 
       def find_in_organizations(item, _fs = nil)
         find_by_class(DataModel::Organization).select { |f| f.items.include?(item) }.first
-      end
-
-      # Only used by [#unreferenced_nodes]
-      def identified_nodes
-        @index_hash.values.select { |node| node.respond_to? :id }
       end
 
       # @todo maybe move to [Organization]

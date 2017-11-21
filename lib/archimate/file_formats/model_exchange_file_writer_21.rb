@@ -26,6 +26,7 @@ module Archimate
       include Serializer::ModelExchangeFile::Relationship
       include Serializer::ModelExchangeFile::Style
       include Serializer::ModelExchangeFile::V21::ViewNode
+      include Serializer::ModelExchangeFile::V21::Viewpoint
 
       def initialize(model)
         super

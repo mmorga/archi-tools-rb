@@ -69,28 +69,37 @@ module Archimate
       desc "clean ARCHIFILE", "Clean up unreferenced elements and relations"
       option :output,
              aliases: :o,
-             desc: "Write output to FILE instead of replacing ARCHIFILE"
+             desc: "Write output to OUTPUT instead of replacing ARCHIFILE"
       option :saveremoved,
              aliases: :r,
-             desc: "Write removed elements into FILE"
+             desc: "Write removed elements into SAVEREMOVED"
       option :noninteractive,
              aliases: :n,
              type: :boolean,
              default: false,
              desc: "Don't provide interactive feedback"
+      option :force,
+             aliases: :f,
+             type: :boolean,
+             default: false,
+             desc: "Force overwriting of existing output file"
       def clean(archifile)
         Config.instance.interactive = !options.fetch("noninteractive", false)
-        outfile = options.key?(:output) ? options[:output] : archifile
+        output_io = Cli.output_io(
+          options.fetch("output", archifile),
+          options.fetch("force", false)
+        )
         Archimate::MaybeIO.new(options.fetch(:saveremoved, nil)) do |removed_element_io|
-          Archimate::Cli::Cleanup.new(Archimate.read(archifile), outfile, removed_element_io)
+          Archimate::Cli::Cleanup.new(Archimate.read(archifile), output_io, removed_element_io).clean
         end
+        output_io.close
       end
 
       desc "dupes ARCHIFILE", "List (potential) duplicate elements in Archi file"
       def dupes(archifile)
         Archimate::Cli::Duper.new(
-          archimate.read(archifile),
-          STDOUT
+          Archimate.read(archifile),
+          $stdout
         ).list
       end
 

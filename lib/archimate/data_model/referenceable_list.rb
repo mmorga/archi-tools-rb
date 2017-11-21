@@ -14,6 +14,7 @@ module Archimate
                      :==,
                      :[],
                      :all?,
+                     :any?,
                      :dig,
                      :each,
                      :each_with_object,
@@ -21,12 +22,15 @@ module Archimate
                      :find,
                      :first,
                      :flat_map,
+                     :group_by,
                      :hash,
                      :include?,
+                     :inject,
                      :inspect,
                      :map,
                      :none?,
                      :reduce,
+                     :reject,
                      :select,
                      :size,
                      :to_a
@@ -62,6 +66,11 @@ module Archimate
         @list << item
       end
 
+      def delete(item)
+        @list.delete(item)
+        remove_item_references(item)
+      end
+
       private
 
       def add_references
@@ -76,11 +85,13 @@ module Archimate
       end
 
       def remove_references
-        @list.each do |item|
-          item.remove_reference(parent)
-          @parent_attr_references.each do |attr|
-            item.remove_reference(parent.send(attr)) if parent.send(attr)
-          end
+        @list.each { |item| remove_item_references(item) }
+      end
+
+      def remove_item_references(item)
+        item.remove_reference(parent)
+        @parent_attr_references.each do |attr|
+          item.remove_reference(parent.send(attr)) if parent.send(attr)
         end
       end
     end

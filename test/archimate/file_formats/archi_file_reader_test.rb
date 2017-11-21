@@ -50,7 +50,7 @@ module Archimate
           ]
         )
         printer = RubyProf::FlatPrinterWithLineNumbers.new(result)
-        printer.print(STDOUT, min_percent: 1)
+        printer.print($stdout, min_percent: 1)
       end
 
       def test_organizations

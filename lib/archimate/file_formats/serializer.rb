@@ -9,6 +9,9 @@ module Archimate
       autoload :XmlMetadata, 'archimate/file_formats/serializer/xml_metadata'
       autoload :XmlPropertyDefs, 'archimate/file_formats/serializer/xml_property_defs'
       module Archi
+        autoload :ArchiFileWriter, 'archimate/file_formats/serializer/archi/archi_file_writer'
+        autoload :ArchiFileWriter3, 'archimate/file_formats/serializer/archi/archi_file_writer_3'
+        autoload :ArchiFileWriter4, 'archimate/file_formats/serializer/archi/archi_file_writer_4'
         autoload :Bounds, 'archimate/file_formats/serializer/archi/bounds'
         autoload :Connection, 'archimate/file_formats/serializer/archi/connection'
         autoload :Diagram, 'archimate/file_formats/serializer/archi/diagram'
@@ -19,7 +22,8 @@ module Archimate
         autoload :Property, 'archimate/file_formats/serializer/archi/property'
         autoload :Relationship, 'archimate/file_formats/serializer/archi/relationship'
         autoload :ViewNode, 'archimate/file_formats/serializer/archi/view_node'
-        autoload :ViewpointType, 'archimate/file_formats/serializer/archi/viewpoint_type'
+        autoload :Viewpoint3, 'archimate/file_formats/serializer/archi/viewpoint3'
+        autoload :Viewpoint4, 'archimate/file_formats/serializer/archi/viewpoint4'
       end
       module ModelExchangeFile
         autoload :Element, 'archimate/file_formats/serializer/model_exchange_file/element'
@@ -38,6 +42,7 @@ module Archimate
           autoload :OrganizationBody, 'archimate/file_formats/serializer/model_exchange_file/v21/organization_body'
           autoload :Property, 'archimate/file_formats/serializer/model_exchange_file/v21/property'
           autoload :ViewNode, 'archimate/file_formats/serializer/model_exchange_file/v21/view_node'
+          autoload :Viewpoint, 'archimate/file_formats/serializer/model_exchange_file/v21/viewpoint'
         end
         module V30
           autoload :Connection, 'archimate/file_formats/serializer/model_exchange_file/v30/connection'

@@ -35,7 +35,6 @@ module Archimate
   end
 
   module FileFormats
-    autoload :ArchiFileFormat, 'archimate/file_formats/archi_file_format'
     autoload :ArchiFileReader, 'archimate/file_formats/archi_file_reader'
     autoload :ArchiFileWriter, 'archimate/file_formats/archi_file_writer'
     autoload :ModelExchangeFileReader, 'archimate/file_formats/model_exchange_file_reader'

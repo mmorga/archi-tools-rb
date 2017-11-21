@@ -1,10 +1,17 @@
 # frozen_string_literal: true
 
+require "ruby-enum"
+
 module Archimate
   module DataModel
-    module Viewpoints
+    # This module contains an enumeration of built-in ArchiMate viewpoint
+    # types. These viewpoints are a summary of the viewpoint types defined
+    # in ArchiMate versions 2 and 3.
+    class Viewpoints
+      include Ruby::Enum
+
       # Basic Viewpoints
-      INTRODUCTORY = Viewpoint.new(
+      define :Introductory, Viewpoint.new(
         id: "VIEWPOINT-INTRODUCTORY",
         name: "Introductory",
         allowed_element_types: Elements.core_elements,
@@ -12,7 +19,7 @@ module Archimate
       )
 
       # Category:Composition Viewpoints that defines internal compositions and aggregations of elements.
-      ORGANIZATION = Viewpoint.new(
+      define :Organization, Viewpoint.new(
         id: "VIEWPOINT-ORGANIZATION",
         name: "Organization",
         allowed_element_types: ConnectorType.values + [
@@ -23,14 +30,14 @@ module Archimate
         allowed_relationship_types: Relationships.default - [Relationships::Access, Relationships::Realization]
       )
 
-      APPLICATION_PLATFORM = Viewpoint.new(
+      define :Application_platform, Viewpoint.new(
         id: "VIEWPOINT-APPLICATION_PLATFORM",
         name: "Application Platform",
         allowed_element_types: Elements.core_elements,
         allowed_relationship_types: Relationships.classes
       )
 
-      INFORMATION_STRUCTURE = Viewpoint.new(
+      define :Information_structure, Viewpoint.new(
         id: "VIEWPOINT-INFORMATION_STRUCTURE",
         name: "Information Structure",
         allowed_element_types: ConnectorType.values + [
@@ -40,21 +47,21 @@ module Archimate
         allowed_relationship_types: Relationships.default - [Relationships::Assignment, Relationships::Serving]
       )
 
-      TECHNOLOGY = Viewpoint.new(
+      define :Technology, Viewpoint.new(
         id: "VIEWPOINT-TECHNOLOGY",
         name: "Technology",
         allowed_element_types: Elements.core_elements,
         allowed_relationship_types: Relationships.classes
       )
 
-      LAYERED = Viewpoint.new(
+      define :Layered, Viewpoint.new(
         id: "VIEWPOINT-LAYERED",
         name: "Layered",
         allowed_element_types: Elements.classes + ConnectorType.values,
         allowed_relationship_types: Relationships.classes
       )
 
-      PHYSICAL = Viewpoint.new(
+      define :Physical, Viewpoint.new(
         id: "VIEWPOINT-PHYSICAL",
         name: "Physical",
         allowed_element_types: Elements.core_elements,
@@ -64,7 +71,7 @@ module Archimate
       # Category:Support Viewpoints where you are looking at elements that are
       # supported by other elements. Typically from one layer and upwards to an
       # above layer.
-      PRODUCT = Viewpoint.new(
+      define :Product, Viewpoint.new(
         id: "VIEWPOINT-PRODUCT",
         name: "Product",
         allowed_element_types: ConnectorType.values + [
@@ -79,7 +86,7 @@ module Archimate
         allowed_relationship_types: Relationships.default
       )
 
-      APPLICATION_USAGE = Viewpoint.new(
+      define :Application_usage, Viewpoint.new(
         id: "VIEWPOINT-APPLICATION_USAGE",
         name: "Application Usage",
         allowed_element_types: ConnectorType.values + [
@@ -93,7 +100,7 @@ module Archimate
         allowed_relationship_types: Relationships.default
       )
 
-      TECHNOLOGY_USAGE = Viewpoint.new(
+      define :Technology_usage, Viewpoint.new(
         id: "VIEWPOINT-TECHNOLOGY_USAGE",
         name: "Technology Usage",
         allowed_element_types: Elements.core_elements,
@@ -102,7 +109,7 @@ module Archimate
 
       # Category:Cooperation Towards peer elements which cooperate with each
       # other. Typically across aspects.
-      BUSINESS_PROCESS_COOPERATION = Viewpoint.new(
+      define :Business_process_cooperation, Viewpoint.new(
         id: "VIEWPOINT-BUSINESS_PROCESS_COOPERATION",
         name: "Business Process Cooperation",
         allowed_element_types: ConnectorType.values + [
@@ -116,7 +123,7 @@ module Archimate
         allowed_relationship_types: Relationships.default
       )
 
-      APPLICATION_COOPERATION = Viewpoint.new(
+      define :Application_cooperation, Viewpoint.new(
         id: "VIEWPOINT-APPLICATION_COOPERATION",
         name: "Application Cooperation",
         allowed_element_types: ConnectorType.values + [
@@ -131,7 +138,7 @@ module Archimate
       # Category:Realization Viewpoints where you are looking at elements that
       # realize other elements. Typically from one layer and downwards to a
       # below layer.
-      SERVICE_REALIZATION = Viewpoint.new(
+      define :Service_realization, Viewpoint.new(
         id: "VIEWPOINT-SERVICE_REALIZATION",
         name: "Service Realization",
         allowed_element_types: ConnectorType.values + [
@@ -146,7 +153,7 @@ module Archimate
         allowed_relationship_types: Relationships.default
       )
 
-      IMPLEMENTATION_AND_DEPLOYMENT = Viewpoint.new(
+      define :Implementation_and_deployment, Viewpoint.new(
         id: "VIEWPOINT-IMPLEMENTATION_AND_DEPLOYMENT",
         name: "Implementation and Deployment",
         allowed_element_types: ConnectorType.values + [
@@ -159,7 +166,7 @@ module Archimate
         allowed_relationship_types: Relationships.default
       )
 
-      GOAL_REALIZATION = Viewpoint.new(
+      define :Goal_realization, Viewpoint.new(
         id: "VIEWPOINT-GOAL_REALIZATION",
         name: "Goal Realization",
         allowed_element_types: [
@@ -173,7 +180,7 @@ module Archimate
         ]
       )
 
-      GOAL_CONTRIBUTION = Viewpoint.new(
+      define :Goal_contribution, Viewpoint.new(
         id: "VIEWPOINT-GOAL_CONTRIBUTION",
         name: "Goal Contribution",
         allowed_element_types: [
@@ -187,7 +194,7 @@ module Archimate
         ]
       )
 
-      PRINCIPLES = Viewpoint.new(
+      define :Principles, Viewpoint.new(
         id: "VIEWPOINT-PRINCIPLES",
         name: "Principles",
         allowed_element_types: [Elements::Goal, Elements::Principle],
@@ -198,7 +205,7 @@ module Archimate
         ]
       )
 
-      REQUIREMENTS_REALIZATION = Viewpoint.new(
+      define :Requirements_realization, Viewpoint.new(
         id: "VIEWPOINT-REQUIREMENTS_REALIZATION",
         name: "Requirements Realization",
         allowed_element_types: Elements.core_elements + ConnectorType.values + [
@@ -207,7 +214,7 @@ module Archimate
         allowed_relationship_types: Relationships.default
       )
 
-      MOTIVATION = Viewpoint.new(
+      define :Motivation, Viewpoint.new(
         id: "VIEWPOINT-MOTIVATION",
         name: "Motivation",
         allowed_element_types: [
@@ -224,28 +231,28 @@ module Archimate
       )
 
       # Strategy Viewpoints
-      STRATEGY = Viewpoint.new(
+      define :Strategy, Viewpoint.new(
         id: "VIEWPOINT-STRATEGY",
         name: "Strategy",
         allowed_element_types: Elements.core_elements,
         allowed_relationship_types: Relationships.classes
       )
 
-      CAPABILITY_MAP = Viewpoint.new(
+      define :Capability_map, Viewpoint.new(
         id: "VIEWPOINT-CAPABILITY_MAP",
         name: "Capability Map",
         allowed_element_types: Elements.core_elements,
         allowed_relationship_types: Relationships.classes
       )
 
-      OUTCOME_REALIZATION = Viewpoint.new(
+      define :Outcome_realization, Viewpoint.new(
         id: "VIEWPOINT-OUTCOME_REALIZATION",
         name: "Outcome Realization",
         allowed_element_types: Elements.core_elements,
         allowed_relationship_types: Relationships.classes
       )
 
-      RESOURCE_MAP = Viewpoint.new(
+      define :Resource_map, Viewpoint.new(
         id: "VIEWPOINT-RESOURCE_MAP",
         name: "Resource Map",
         allowed_element_types: Elements.core_elements,
@@ -253,7 +260,7 @@ module Archimate
       )
 
       # Implementation and Migration Viewpoints
-      PROJECT = Viewpoint.new(
+      define :Project, Viewpoint.new(
         id: "VIEWPOINT-PROJECT",
         name: "Project",
         allowed_element_types: ConnectorType.values + [
@@ -263,7 +270,7 @@ module Archimate
         allowed_relationship_types: Relationships.default - [Relationships::Access]
       )
 
-      MIGRATION = Viewpoint.new(
+      define :Migration, Viewpoint.new(
         id: "VIEWPOINT-MIGRATION",
         name: "Migration",
         allowed_element_types: ConnectorType.values + [Elements::Gap, Elements::Plateau],
@@ -275,7 +282,7 @@ module Archimate
         ]
       )
 
-      IMPLEMENTATION_AND_MIGRATION = Viewpoint.new(
+      define :Implementation_and_migration, Viewpoint.new(
         id: "VIEWPOINT-IMPLEMENTATION_AND_MIGRATION",
         name: "Implementation and Migration",
         allowed_element_types: Elements.core_elements + ConnectorType.values + [
@@ -288,7 +295,7 @@ module Archimate
       )
 
       # Other Viewpoints
-      STAKEHOLDER = Viewpoint.new(
+      define :Stakeholder, Viewpoint.new(
         id: "VIEWPOINT-STAKEHOLDER",
         name: "Stakeholder",
         allowed_element_types: [
@@ -303,7 +310,7 @@ module Archimate
       )
 
       # Other older viewpoints
-      ACTOR_COOPERATION = Viewpoint.new(
+      define :Actor_cooperation, Viewpoint.new(
         id: "VIEWPOINT-ACTOR_COOPERATION",
         name: "Actor Co-operation",
         allowed_element_types: ConnectorType.values + [
@@ -315,7 +322,7 @@ module Archimate
         allowed_relationship_types: Relationships.default - [Relationships::Access]
       )
 
-      BUSINESS_FUNCTION = Viewpoint.new(
+      define :Business_function, Viewpoint.new(
         id: "VIEWPOINT-BUSINESS_FUNCTION",
         name: "Business Function",
         allowed_element_types: ConnectorType.values + [
@@ -325,7 +332,7 @@ module Archimate
         allowed_relationship_types: Relationships.default - [Relationships::Access, Relationships::Realization]
       )
 
-      BUSINESS_PROCESS = Viewpoint.new(
+      define :Business_process, Viewpoint.new(
         id: "VIEWPOINT-BUSINESS_PROCESS",
         name: "Business Process",
         allowed_element_types: ConnectorType.values + [
@@ -339,7 +346,7 @@ module Archimate
         allowed_relationship_types: Relationships.default
       )
 
-      APPLICATION_BEHAVIOR = Viewpoint.new(
+      define :Application_behavior, Viewpoint.new(
         id: "VIEWPOINT-APPLICATION_BEHAVIOR",
         name: "Application Behavior",
         allowed_element_types: ConnectorType.values + [
@@ -351,7 +358,7 @@ module Archimate
         allowed_relationship_types: Relationships.default
       )
 
-      APPLICATION_STRUCTURE = Viewpoint.new(
+      define :Application_structure, Viewpoint.new(
         id: "VIEWPOINT-APPLICATION_STRUCTURE",
         name: "Application Structure",
         allowed_element_types: ConnectorType.values + [
@@ -361,7 +368,7 @@ module Archimate
         allowed_relationship_types: Relationships.default - [Relationships::Realization]
       )
 
-      INFRASTRUCTURE = Viewpoint.new(
+      define :Infrastructure, Viewpoint.new(
         id: "VIEWPOINT-INFRASTRUCTURE",
         name: "Infrastructure",
         allowed_element_types: ConnectorType.values + [
@@ -373,7 +380,7 @@ module Archimate
         allowed_relationship_types: Relationships.default
       )
 
-      INFRASTRUCTURE_USAGE = Viewpoint.new(
+      define :Infrastructure_usage, Viewpoint.new(
         id: "VIEWPOINT-INFRASTRUCTURE_USAGE",
         name: "Infrastructure Usage",
         allowed_element_types: ConnectorType.values + [
@@ -386,12 +393,24 @@ module Archimate
         allowed_relationship_types: Relationships.default
       )
 
-      LANDSCAPE_MAP = Viewpoint.new(
+      define :Landscape_map, Viewpoint.new(
         id: "VIEWPOINT-LANDSCAPE_MAP",
         name: "Landscape Map",
         allowed_element_types: Elements.classes + ConnectorType.values,
         allowed_relationship_types: Relationships.classes
       )
+
+      def self.[](idx)
+        values[idx]
+      end
+
+      def self.with_name(name)
+        values.find { |vp| vp.name == name }
+      end
+
+      VIEWPOINT_CONTENT_ENUM = %w[Details Coherence Overview].freeze
+
+      VIEWPOINT_PURPOSE_ENUM = %w[Designing Deciding Informing].freeze
     end
   end
 end

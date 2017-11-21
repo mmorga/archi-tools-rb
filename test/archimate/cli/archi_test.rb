@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'test_helper'
 require 'tempfile'
 
@@ -16,45 +17,6 @@ module Archimate
       end
 
       # TODO: make this actually test something
-      def test_map
-        Archi.start(
-          [
-            "map",
-            File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'),
-            "-o",
-            @test_file,
-            "-n"
-          ]
-        )
-      end
-
-      # TODO: make this actually test something
-      def test_svg
-        Dir.mktmpdir do |dir|
-          Archi.start(["svg", "-o", dir, File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'), "-n"])
-        end
-      end
-
-      # TODO: make this actually test something
-      def test_clean
-        removed_items = Tempfile.new("test_clean_removed.xml")
-        Archi.start(
-          [
-            "clean",
-            File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'),
-            "-o",
-            @test_file,
-            "-r",
-            removed_items,
-            "--noninteractive"
-          ]
-        )
-      ensure
-        removed_items.close
-        removed_items.unlink
-      end
-
-      # TODO: make this actually test something
       def test_dedupe
         Archi.start(
           [
@@ -65,38 +27,6 @@ module Archimate
             "-m",
             "-f",
             "-n"
-          ]
-        )
-      end
-
-      # TODO: make this actually test something
-      def test_convert_meff
-        Archi.start(
-          [
-            "convert",
-            "-t",
-            "meff2.1",
-            File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'),
-            "-o",
-            @test_file,
-            "-f",
-            "--noninteractive"
-          ]
-        )
-      end
-
-      # TODO: make this actually test something
-      def test_convert_quads
-        Archi.start(
-          [
-            "convert",
-            "-t",
-            "nquads",
-            File.join(TEST_EXAMPLES_FOLDER, 'base.archimate'),
-            "-o",
-            @test_file,
-            "-f",
-            "--noninteractive"
           ]
         )
       end

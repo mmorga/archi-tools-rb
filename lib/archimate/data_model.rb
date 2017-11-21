@@ -33,7 +33,6 @@ module Archimate
     require 'archimate/data_model/concern'
     require 'archimate/data_model/viewpoint'
     require 'archimate/data_model/viewpoints'
-    require 'archimate/data_model/viewpoint_type'
     require 'archimate/data_model/location'
     require 'archimate/data_model/connection'
     require 'archimate/data_model/view_node'

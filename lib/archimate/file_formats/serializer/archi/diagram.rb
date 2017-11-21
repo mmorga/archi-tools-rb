@@ -12,7 +12,7 @@ module Archimate
                 "id" => diagram.id,
                 "name" => diagram.name,
                 "connectionRouterType" => diagram.connection_router_type,
-                "viewpoint" => ViewpointType.values.index(diagram.viewpoint_type)&.to_s,
+                "viewpoint" => serialize_viewpoint(diagram.viewpoint),
                 "background" => diagram.background
               )
             ) do

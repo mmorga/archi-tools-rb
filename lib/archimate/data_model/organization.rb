@@ -57,6 +57,27 @@ module Archimate
       def remove(id)
         items.delete_if { |item| item.id == id }
       end
+
+      def remove_reference(item)
+        super
+        case item
+        when Organization
+          organizations.delete(item)
+        else
+          items.delete(item)
+        end
+      end
+
+      def replace_item_with(item, replacement)
+        case item
+        when Organization
+          organizations.delete(item)
+          organizations << replacement
+        else
+          items.delete(item)
+          items << replacement
+        end
+      end
     end
   end
 end
