@@ -14,6 +14,7 @@ module Archimate
                      :==,
                      :[],
                      :all?,
+                     :any?,
                      :dig,
                      :each,
                      :each_with_object,

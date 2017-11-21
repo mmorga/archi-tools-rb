@@ -171,6 +171,17 @@ module Archimate
       def center
         @bounds&.center
       end
+
+      def replace_item_with(item, replacement)
+        super
+        item.remove_reference(self)
+        case item
+        when element
+          @element = replacement
+        else
+          raise "Trying to replace #{item} that I don't reference"
+        end
+      end
     end
   end
 end

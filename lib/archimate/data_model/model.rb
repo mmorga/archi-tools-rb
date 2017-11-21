@@ -135,56 +135,27 @@ module Archimate
       def merge_entities(master_entity, copies)
         copies.delete(master_entity)
         copies.each do |copy|
-          # @todo master_entity.merge_attributes(copy)
-          copy.references.each do |ref|
-            case ref
-            when Organization
-              if copy.is_a?(Organization)
-                ref.organizations.delete(copy)
-              else
-                ref.items.delete(copy)
-              end
-            when Relationship
-              if ref.source == copy
-                ref.source = master_entity
-              else
-                ref.target = master_entity
-              end
-              copy.remove_reference(ref)
-            when ViewNode
-              ref.nodes.delete(copy) if copy.is_a?(ViewNode)
-              ref.element = master_entity if copy.is_a?(Element)
-            when Diagram
-              copy.remove_reference(ref)
-            when Model
-              copy.remove_reference(ref)
-            else
-              raise ref.class.to_s
-            end
-          end
-          if !copy.references.empty?
-            puts "#{copy.class} still referenced by #{copy.references.map { |ref| ref.class.name }.join(", ")}"
-          end
+          copy.replace_with(master_entity)
+          # if !copy.references.empty?
+          #   puts "#{copy.class} still referenced by #{copy.references.map { |ref| ref.class.name }.join(", ")}"
+          # end
           deregister(copy)
         end
       end
 
-      # def merge_entities(master_entity, copies)
-      #   copies.delete(master_entity)
-      #   copies.each do |copy|
-      #     entities.each do |entity|
-      #       case entity
-      #       when entity == master_entity
-      #         master_entity.merge(copy)
-      #       when Organization
-      #         entity.remove(copy.id)
-      #       when ViewNode, Relationship, Connection
-      #         entity.replace(copy, master_entity)
-      #       end
-      #     end
-      #     deregister(copy)
-      #   end
-      # end
+      def replace_item_with(item, replacement)
+        case item
+        when Organization
+          organizations.delete(item)
+          organizations << replacement
+        when Element
+          elements.delete(item)
+          elements << replacement
+        when Relationship
+          relationships.delete(item)
+          relationships << replacement
+        end
+      end
 
       def make_unique_id
         unique_id = random_id
@@ -193,7 +164,6 @@ module Archimate
       end
 
       def remove_reference(item)
-        super
         case item
         when Element
           elements.delete(item)

@@ -39,14 +39,6 @@ module Archimate
         EXPECTED
         assert_equal expected, Color.uncolor(output_io.string).gsub(/ +\n/, "\n")
       end
-
-      def test_merge
-        skip("This currently fails")
-        output_io = StringIO.new
-        duper = Duper.new(archisurance_model, output_io, true)
-        duper.merge
-        # flunk(output_io.string)
-      end
     end
   end
 end
