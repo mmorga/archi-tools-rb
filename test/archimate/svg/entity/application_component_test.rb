@@ -17,7 +17,7 @@ module Archimate
         end
 
         def test_badge
-          assert_nil @subject.instance_variable_get(:@badge)
+          assert_equal "#archimate-app-component-badge", @subject.instance_variable_get(:@badge)
         end
       end
     end

@@ -13,11 +13,12 @@ module Archimate
             ]
           )
           @child = @model.diagrams.first.nodes.first
+          @subject = ApplicationService.new(@child, build_bounds)
+
         end
 
         def test_badge
-          subject = ApplicationService.new(@child, build_bounds)
-          assert_nil subject.instance_variable_get(:@badge)
+          assert_equal "#archimate-service-badge", @subject.instance_variable_get(:@badge)
         end
       end
     end

@@ -6,7 +6,6 @@ module Archimate
       class Principle < MotivationEntity
         def initialize(child, bounds_offset)
           super
-          @background_class = "archimate-motivation2-background"
           @badge = "#archimate-principle-badge"
         end
       end

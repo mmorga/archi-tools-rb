@@ -4,13 +4,20 @@ module Archimate
   module Svg
     module Entity
       # TODO: support alternate appearance
-      class ApplicationComponent < BaseEntity
+      class ApplicationComponent < RectEntity
         def initialize(child, bounds_offset)
           super
+          @badge = "#archimate-app-component-badge"
         end
 
         def entity_shape(xml, bounds)
-          component_path(xml, bounds)
+          case child.child_type
+          when "1"
+            super
+          else
+            component_path(xml, bounds)
+            @badge = nil
+          end
         end
 
         def component_path(xml, bounds)

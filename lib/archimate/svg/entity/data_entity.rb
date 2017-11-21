@@ -6,7 +6,7 @@ module Archimate
       class DataEntity < BaseEntity
         def initialize(child, bounds_offset)
           super
-          @margin = 10
+          @margin = 8
         end
 
         def calc_text_bounds(_bounds)

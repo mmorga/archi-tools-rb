@@ -115,15 +115,6 @@ module Archimate
         end
       end
 
-      class Meaning < Element
-        CLASSIFICATION = :passive_structure
-        LAYER = Layers::Business
-
-        def initialize(args)
-          super
-        end
-      end
-
       class Product < Element
         CLASSIFICATION = :passive_structure
         LAYER = Layers::Business
@@ -134,15 +125,6 @@ module Archimate
       end
 
       class Representation < Element
-        CLASSIFICATION = :passive_structure
-        LAYER = Layers::Business
-
-        def initialize(args)
-          super
-        end
-      end
-
-      class Value < Element
         CLASSIFICATION = :passive_structure
         LAYER = Layers::Business
 
@@ -491,6 +473,15 @@ module Archimate
         end
       end
 
+      class Meaning < Element
+        CLASSIFICATION = :passive_structure
+        LAYER = Layers::Motivation
+
+        def initialize(args)
+          super
+        end
+      end
+
       class Outcome < Element
         CLASSIFICATION = :active_structure
         LAYER = Layers::Motivation
@@ -520,6 +511,15 @@ module Archimate
 
       class Stakeholder < Element
         CLASSIFICATION = :active_structure
+        LAYER = Layers::Motivation
+
+        def initialize(args)
+          super
+        end
+      end
+
+      class Value < Element
+        CLASSIFICATION = :passive_structure
         LAYER = Layers::Motivation
 
         def initialize(args)

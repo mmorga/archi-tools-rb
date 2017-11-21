@@ -92,8 +92,9 @@ module Archimate
       # @return [Element, NilClass]
       model_attr :element, writable: true, comparison_attr: :id, default: nil, also_reference: [:diagram]
       # Archi format, selects the shape of element (for elements that can have two or more shapes)
+      # A nil value indicates the standard representation, a value of "1" indicates the alternate
       # @!attribute [r] child_type
-      # @return [Int, NilClass]
+      # @return [String, NilClass]
       model_attr :child_type, default: nil
 
       # @!attribute [r] diagram

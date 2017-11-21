@@ -11,7 +11,7 @@ module Archimate
 
         def entity_shape(xml, bounds)
           case child.child_type
-          when 1
+          when "1"
             @badge = nil
             process_path(xml, bounds)
           else
