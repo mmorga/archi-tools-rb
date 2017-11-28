@@ -323,6 +323,7 @@ module Archimate
       end
 
       def fetch_or_fake_name(options)
+        return nil if options.include?(:name) && options[:name].nil?
         DataModel::LangString.new(options.fetch(:name) { Faker::Company.buzzword })
       end
 

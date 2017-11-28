@@ -3,13 +3,17 @@
 module Archimate
   module Svg
     module EntityFactory
+      # @todo this is wrong because it depends on `type` attribute
       def make_entity(child, bounds_offset)
-        entity = child.element || child
-        klass_name = entity.type.sub('archimate:', '')
-        klass = Archimate::Svg::Entity.const_get(klass_name)
-        klass.new(child, bounds_offset)
+        if child.element
+          klass_name = child.element.class.name.split("::").last
+        else
+          klass_name = child.type.sub('archimate:', '')
+        end
+        Entity.const_get(klass_name).new(child, bounds_offset)
       rescue NameError
-        puts "Unsupported entity type #{klass_name}"
+        Logging.logger.fatal "Unsupported entity type #{klass_name}"
+        raise
       end
       module_function :make_entity
     end

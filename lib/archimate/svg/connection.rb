@@ -51,7 +51,7 @@ module Archimate
       end
 
       def text_position
-        case connection.style
+        case connection.style&.text_position
         when 0
           0.1 # "10%"
         when 1

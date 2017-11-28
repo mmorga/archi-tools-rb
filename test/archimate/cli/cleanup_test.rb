@@ -17,7 +17,6 @@ module Archimate
         assert_kind_of Cleanup, @subject
       end
 
-      # @todo: test something
       def test_clean
         out, err = capture_io do
           @subject.clean

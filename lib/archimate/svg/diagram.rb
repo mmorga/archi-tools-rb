@@ -66,11 +66,6 @@ module Archimate
         )
       end
 
-      def attr_to_i(node, attr)
-        ival = node.attr(attr)
-        ival.to_i unless ival.nil? || ival.strip.empty?
-      end
-
       def render_elements(svg_node)
         diagram
           .nodes

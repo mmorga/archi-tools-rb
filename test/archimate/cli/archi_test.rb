@@ -16,7 +16,6 @@ module Archimate
         @test_file.unlink
       end
 
-      # TODO: make this actually test something
       def test_dedupe
         Archi.start(
           [
