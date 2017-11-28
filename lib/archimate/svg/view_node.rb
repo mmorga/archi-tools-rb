@@ -13,12 +13,7 @@ module Archimate
       # any offset needed. So this will need to be included in the recursive drawing of children
       def render_elements(svg)
         Nokogiri::XML::Builder.with(svg) do |xml|
-          entity = EntityFactory.make_entity(view_node, nil)
-          if entity.nil?
-            puts "Unable to make an SVG Entity for ViewNode:\n#{view_node}"
-          else
-            entity.to_svg(xml)
-          end
+          EntityFactory.make_entity(view_node, nil).to_svg(xml)
         end
         svg
       end
