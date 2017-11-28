@@ -50,16 +50,26 @@ module Archimate
       end
     end
 
-    def test_dedupe_archimate_exchange_format
-      skip("Write me")
-      out, err = capture_io do
-        Cli::Archi.start ["dupes", "test/examples/ArchiSurance V3.xml"]
+    def test_dedupe_archi_format_variations
+      Dir.mktmpdir do |tmpdir|
+        outfile = File.join(tmpdir, "deduped.archimate")
+        out, err = capture_io do
+          Cli::Archi.start ["dedupe", "-m", "-o", outfile, "--force", "test/examples/duplication.archimate"]
+        end
+        assert_empty err
+        assert_empty out
+
+        model = Archimate.read(outfile)
+        assert_equal 1, model.application_components.size
+        assert_equal "Application Component", model.application_components.first.name.to_s
+        assert_equal 1, model.application_interfaces.size
+        assert_equal "Application Interface", model.application_interfaces.first.name.to_s
+        assert_equal 1, model.application_services.size
+        assert_equal "Application Service", model.application_services.first.name.to_s
+        assert_equal 1, model.application_functions.size
+        assert_equal "Application Function", model.application_functions.first.name.to_s
+        assert_equal 1, model.relationships.size
       end
-      expected = <<~EXPECTED
-        Total Possible Duplicates: 0
-      EXPECTED
-      assert_empty err
-      assert_equal expected, Color.uncolor(out).gsub(/ +\n/, "\n")
     end
   end
 end

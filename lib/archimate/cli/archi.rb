@@ -124,14 +124,16 @@ module Archimate
              desc: "Don't provide interactive feedback"
       def dedupe(archifile)
         Config.instance.interactive = !options.fetch("noninteractive", false)
+        output_io = Cli.output_io(
+          options.fetch("output", archifile),
+          options[:force]
+        )
         Archimate::Cli::Duper.new(
           Archimate.read(archifile),
-          Cli.output_io(
-            options.fetch("output", archifile),
-            options[:force]
-          ),
+          output_io,
           options[:mergeall]
         ).merge
+        output_io.close
       end
 
       desc "convert ARCHIFILE", "Convert the incoming file to the desired type"
