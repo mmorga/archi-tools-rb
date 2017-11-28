@@ -54,10 +54,16 @@ module Archimate
       #     3. Child `properties`
       #     4. Any other elements
       def merge(element)
-        super
-        element.diagrams.each { |diagram| diagram.replace(element, self) }
-        element.relationships.each { |relationship| relationship.replace(element, self) }
-        element.organization.remove(element.id)
+        if !documentation
+          self.documentation = element.documentation
+        elsif documentation != element.documentation
+          documentation.merge(element.documentation)
+        end
+        element.properties.each do |property|
+          unless properties.find { |my_prop| my_prop.property_definition.name == property.property_definition.name && my_prop.value == property.value}
+            properties << property
+          end
+        end
       end
 
       # Diagrams that this entity is referenced in.

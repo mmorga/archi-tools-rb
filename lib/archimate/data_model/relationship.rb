@@ -23,7 +23,7 @@ module Archimate
       model_attr :name, default: nil
       # @!attribute [r] documentation
       # @return [PreservedLangString, NilClass]
-      model_attr :documentation, default: nil
+      model_attr :documentation, writable: true, default: nil
       # @return [Array<AnyElement>]
       # model_attr :other_elements
       # @return [Array<AnyAttribute>]
@@ -88,7 +88,16 @@ module Archimate
       #     4. Any other elements
       # source and target don't change on a merge
       def merge(relationship)
-        super
+        if !documentation
+          self.documentation = relationship.documentation
+        elsif documentation != relationship.documentation
+          documentation.merge(relationship.documentation)
+        end
+        relationship.properties.each do |property|
+          unless properties.find { |my_prop| my_prop.property_definition.name == property.property_definition.name && my_prop.value == property.value}
+            properties << property
+          end
+        end
         @access_type ||= relationship.access_type
       end
 

@@ -126,6 +126,7 @@ module Archimate
       def merge_entities(master_entity, copies)
         copies.delete(master_entity)
         copies.each do |copy|
+          master_entity.merge(copy)
           copy.replace_with(master_entity)
           # if !copy.references.empty?
           #   puts "#{copy.class} still referenced by #{copy.references.map { |ref| ref.class.name }.join(", ")}"

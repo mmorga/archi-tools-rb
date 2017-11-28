@@ -79,6 +79,19 @@ module Archimate
           Regexp.new(Regexp.escape(str)) =~ other
         end
       end
+
+      def merge(other)
+        return unless other
+        other.lang_hash.each do |k, v|
+          if @lang_hash.include?(k)
+            @lang_hash[k] = [@lang_hash[k], v].join("\n") if @lang_hash[k] != other.lang_hash[k]
+          else
+            @lang_hash[k] = v
+          end
+        end
+        @default_lang = @default_lang || other.default_lang || @lang_hash.keys.first
+        @default_text = @lang_hash[@default_lang]
+      end
     end
   end
 end

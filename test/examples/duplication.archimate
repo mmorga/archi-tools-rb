@@ -6,12 +6,28 @@
     <element xsi:type="archimate:BusinessActor" name="Business Actor" id="ad87973e-1ccb-4ad6-9028-4b0ac7856e6a"/>
   </folder>
   <folder name="Application" id="2ace1ed3-fe8a-4432-a061-80f12f0a6938" type="application">
-    <element xsi:type="archimate:ApplicationComponent" name="Application Component" id="e8d8be94-c7b0-4992-be0b-12442f59d2b5"/>
+    <element xsi:type="archimate:ApplicationComponent" name="Application Component" id="e8d8be94-c7b0-4992-be0b-12442f59d2b5">
+      <documentation>Existing documentation should still be present</documentation>
+      <property key="prop1" value="prop1val"/>
+      <property key="prop2" value="prop2val"/>
+    </element>
     <element xsi:type="archimate:ApplicationComponent" name="Application Component" id="dc9b7c0f-7091-4616-9c1a-27717258c1f7"/>
     <element xsi:type="archimate:ApplicationInterface" name="Application Interface" id="a121d4d7-7eb5-4242-9631-542b190e3dfb"/>
-    <element xsi:type="archimate:ApplicationInterface" name="application interface" id="b90e0e9b-2a7c-4886-ad49-df0223b048f4"/>
-    <element xsi:type="archimate:ApplicationFunction" name="Application Function" id="49f40210-5394-4388-b9ed-a8b4a7a4a8fc"/>
-    <element xsi:type="archimate:ApplicationFunction" name="Little Application Function" id="3056b4ac-554e-4610-9429-283fcaf2617e"/>
+    <element xsi:type="archimate:ApplicationInterface" name="application interface" id="b90e0e9b-2a7c-4886-ad49-df0223b048f4">
+      <documentation>Merged documentation should still be there</documentation>
+      <property key="prop1" value="prop1val"/>
+      <property key="prop2" value="prop2val"/>
+    </element>
+    <element xsi:type="archimate:ApplicationFunction" name="Application Function" id="49f40210-5394-4388-b9ed-a8b4a7a4a8fc">
+      <documentation>When both have documentation</documentation>
+      <property key="prop1" value="prop1val"/>
+      <property key="prop2" value="prop2val"/>
+    </element>
+    <element xsi:type="archimate:ApplicationFunction" name="Little Application Function" id="3056b4ac-554e-4610-9429-283fcaf2617e">
+      <documentation>The documentation should be merged</documentation>
+      <property key="prop2" value="prop2altval"/>
+      <property key="prop3" value="prop3val"/>
+    </element>
     <element xsi:type="archimate:ApplicationService" name="Application Service" id="26d714ca-0d58-4020-9fd0-aba3d29b10bd"/>
     <element xsi:type="archimate:ApplicationService" name="Application Service" id="0c5dcf3d-0f1c-4aef-aa2c-5d603f18f829"/>
   </folder>
@@ -20,8 +36,12 @@
   <folder name="Implementation &amp; Migration" id="f06663b0-8726-47b7-b8e6-b9afe80d49f6" type="implementation_migration"/>
   <folder name="Other" id="8603706e-fca3-43be-8ac3-fa8b6a413d54" type="other"/>
   <folder name="Relations" id="d2a683bb-fdcc-42b1-8fbb-f1cc80c6b97e" type="relations">
-    <element xsi:type="archimate:AssignmentRelationship" id="8028de4c-3e3c-424c-8f0d-7a9b936faedb" source="ad87973e-1ccb-4ad6-9028-4b0ac7856e6a" target="1ccbd452-ba52-4d6e-a04c-bcafd11ede8e"/>
-    <element xsi:type="archimate:AssignmentRelationship" id="073cca4a-36a3-48fc-a8f2-7daa46b3d80c" source="ad87973e-1ccb-4ad6-9028-4b0ac7856e6a" target="1ccbd452-ba52-4d6e-a04c-bcafd11ede8e"/>
+    <element xsi:type="archimate:AssignmentRelationship" id="8028de4c-3e3c-424c-8f0d-7a9b936faedb" source="ad87973e-1ccb-4ad6-9028-4b0ac7856e6a" target="1ccbd452-ba52-4d6e-a04c-bcafd11ede8e">
+      <property key="prop2" value="prop2val"/>
+    </element>
+    <element xsi:type="archimate:AssignmentRelationship" id="073cca4a-36a3-48fc-a8f2-7daa46b3d80c" source="ad87973e-1ccb-4ad6-9028-4b0ac7856e6a" target="1ccbd452-ba52-4d6e-a04c-bcafd11ede8e">
+      <property key="prop1" value="prop1val"/>
+    </element>
   </folder>
   <folder name="Views" id="adf2e766-2148-4f58-b48a-f2dc97174b35" type="diagrams">
     <element xsi:type="archimate:ArchimateDiagramModel" name="Default View" id="475f8ac4-97d6-4a3c-add5-a76bd865b675">
