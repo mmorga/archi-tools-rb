@@ -22,8 +22,8 @@ module Archimate
                 identifier: identifier(view_node.id),
                 elementRef: nil,
                 "xsi:type" => view_node.type,
-                "x" => view_node.bounds ? (view_node.bounds&.x + x_offset).round : nil,
-                "y" => view_node.bounds ? (view_node.bounds&.y + y_offset).round : nil,
+                "x" => view_node.bounds ? ((view_node.bounds&.x || 0) + x_offset).round : nil,
+                "y" => view_node.bounds ? ((view_node.bounds&.y || 0) + y_offset).round : nil,
                 "w" => view_node.bounds&.width&.round,
                 "h" => view_node.bounds&.height&.round
               }
@@ -35,7 +35,7 @@ module Archimate
                 attrs[:elementRef] = view_node.view_refs
                 attrs[:type] = "model"
               end
-              remove_nil_values(attrs)
+              attrs.compact
             end
           end
         end

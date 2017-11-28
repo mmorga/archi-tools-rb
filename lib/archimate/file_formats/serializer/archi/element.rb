@@ -7,11 +7,11 @@ module Archimate
         module Element
           def serialize_element(xml, element)
             xml.element(
-              remove_nil_values(
+              {
                 "xsi:type" => "archimate:#{element.type}",
                 "id" => element.id,
                 "name" => element.name
-              )
+              }.compact
             ) do
               serialize_documentation(xml, element.documentation)
               serialize(xml, element.properties)

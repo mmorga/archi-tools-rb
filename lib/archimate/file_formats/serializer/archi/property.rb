@@ -6,7 +6,7 @@ module Archimate
       module Archi
         module Property
           def serialize_property(xml, property)
-            xml.property(remove_nil_values(key: property.key, value: property.value))
+            xml.property({ key: property.key, value: property.value }.compact)
           end
         end
       end

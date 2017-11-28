@@ -7,7 +7,7 @@ module Archimate
         module Organization
           def serialize_organization(xml, organization)
             xml.folder(
-              remove_nil_values(name: organization.name, id: organization.id, type: organization.type)
+              { name: organization.name, id: organization.id, type: organization.type }.compact
             ) do
               serialize(xml, organization.organizations)
               serialize_documentation(xml, organization.documentation)

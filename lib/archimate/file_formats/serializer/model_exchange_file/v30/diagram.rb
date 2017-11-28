@@ -8,11 +8,11 @@ module Archimate
           module Diagram
             def serialize_diagram(xml, diagram)
               xml.view(
-                remove_nil_values(
+                {
                   identifier: identifier(diagram.id),
                   "xsi:type": diagram.type,
                   viewpoint: diagram.viewpoint&.name
-                )
+                }.compact
               ) do
                 elementbase(xml, diagram)
                 serialize(xml, diagram.nodes)

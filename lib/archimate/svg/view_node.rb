@@ -2,20 +2,20 @@
 
 module Archimate
   module Svg
-    class Child
-      attr_reader :child
+    class ViewNode
+      attr_reader :view_node
 
-      def initialize(child)
-        @child = child
+      def initialize(view_node)
+        @view_node = view_node
       end
 
-      # The info needed to render is contained in the child with the exception of
+      # The info needed to render is contained in the view node with the exception of
       # any offset needed. So this will need to be included in the recursive drawing of children
       def render_elements(svg)
         Nokogiri::XML::Builder.with(svg) do |xml|
-          entity = EntityFactory.make_entity(child, nil)
+          entity = EntityFactory.make_entity(view_node, nil)
           if entity.nil?
-            puts "Unable to make an SVG Entity for Child:\n#{child}"
+            puts "Unable to make an SVG Entity for ViewNode:\n#{view_node}"
           else
             entity.to_svg(xml)
           end

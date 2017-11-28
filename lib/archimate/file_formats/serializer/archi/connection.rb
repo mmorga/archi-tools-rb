@@ -7,19 +7,17 @@ module Archimate
         module Connection
           def serialize_connection(xml, connection)
             xml.sourceConnection(
-              remove_nil_values(
-                {
-                  "xsi:type" => connection.type,
-                  "id" => connection.id,
-                  "name" => connection.name
-                }.merge(
-                  archi_style_hash(connection.style).merge(
-                    "source" => connection.source&.id,
-                    "target" => connection.target&.id,
-                    "archimateRelationship" => connection.relationship&.id
-                  )
+              {
+                "xsi:type" => connection.type,
+                "id" => connection.id,
+                "name" => connection.name
+              }.merge(
+                archi_style_hash(connection.style).merge(
+                  "source" => connection.source&.id,
+                  "target" => connection.target&.id,
+                  "archimateRelationship" => connection.relationship&.id
                 )
-              )
+              ).compact
             ) do
               connection.bendpoints.each do |bendpoint|
                 serialize_bendpoint(xml, bendpoint, connection)

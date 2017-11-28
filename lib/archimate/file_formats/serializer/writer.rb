@@ -45,11 +45,6 @@ module Archimate
             end
           end
         end
-
-        def remove_nil_values(h)
-          h.delete_if { |_k, v| v.nil? }
-          h
-        end
       end
     end
   end

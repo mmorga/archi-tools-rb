@@ -34,7 +34,7 @@ module Archimate
                 # the elementref for views in views
                 attrs[:elementref] = view_node.view_refs
               end
-              remove_nil_values(attrs)
+              attrs.compact
             end
           end
         end

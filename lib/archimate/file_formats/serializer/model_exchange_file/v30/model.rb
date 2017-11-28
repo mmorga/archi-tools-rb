@@ -25,13 +25,11 @@ module Archimate
             end
 
             def model_attrs(model)
-              remove_nil_values(
-                model.namespaces.merge(
-                  "xsi:schemaLocation" => model.schema_locations.join(" "),
-                  "identifier" => identifier(model.id),
-                  "version" => model.version
-                )
-              )
+              model.namespaces.merge(
+                "xsi:schemaLocation" => model.schema_locations.join(" "),
+                "identifier" => identifier(model.id),
+                "version" => model.version
+              ).compact
             end
           end
         end

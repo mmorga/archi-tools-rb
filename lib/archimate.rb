@@ -50,7 +50,6 @@ module Archimate
   end
 
   module Svg
-    autoload :Child, 'archimate/svg/child'
     autoload :CssStyle, 'archimate/svg/css_style'
     autoload :Connection, 'archimate/svg/connection'
     autoload :Diagram, 'archimate/svg/diagram'
@@ -61,6 +60,7 @@ module Archimate
     autoload :Point, 'archimate/svg/point'
     autoload :Segment, 'archimate/svg/segment'
     autoload :SvgTemplate, 'archimate/svg/svg_template'
+    autoload :ViewNode, 'archimate/svg/view_node'
   end
 
   autoload :FileFormat, 'archimate/file_format'
@@ -69,6 +69,7 @@ module Archimate
   autoload :DerivedRelations, 'archimate/derived_relations'
 
   require "archimate/version"
+  require "archimate/core_refinements"
   require "archimate/config"
   require "archimate/logging"
   require "archimate/color"

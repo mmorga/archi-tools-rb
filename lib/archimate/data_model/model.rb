@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+using Archimate::CoreRefinements
+
 module Archimate
   module DataModel
     # This is the root model type.
@@ -171,6 +173,12 @@ module Archimate
           relationships.delete(item)
         else
           raise "Unhandled remove reference for type #{item.class}"
+        end
+      end
+
+      Elements.classes.each do |el_cls|
+        define_method(el_cls.name.split("::").last.snake_case + "s") do
+          elements.select { |el| el.is_a?(el_cls) }
         end
       end
 

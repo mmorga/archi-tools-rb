@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 TEST_EXAMPLES_FOLDER = File.join(File.dirname(__FILE__), "examples")
@@ -6,10 +7,12 @@ TEST_EXAMPLES_FOLDER = File.join(File.dirname(__FILE__), "examples")
 if ENV['TEST_ENV'] != 'guard'
   require 'simplecov'
   require 'simplecov-json'
-  SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new([
+  SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new(
+    [
       SimpleCov::Formatter::HTMLFormatter,
       SimpleCov::Formatter::JSONFormatter
-    ])
+    ]
+  )
   SimpleCov.start do
     track_files "*.rb"
     add_filter "/test/"
@@ -38,7 +41,7 @@ module Minitest
   class Test
     include Archimate::Examples::Factories
 
-    def clone_with(entity, attrs={})
+    def clone_with(entity, attrs = {})
       entity.class.new(entity.to_hash.merge(attrs).transform_values(&:dup))
     end
   end

@@ -37,8 +37,7 @@ module Archimate
         assert_equal Layers::Connectors, el.layer
       end
 
-      def test_composed_by
-        skip "until composed_by is added"
+      def test_composed_by_relationships
         element = build_element
         composed_by_element = build_element
         composed_by_relationship = build_relationship(
@@ -51,11 +50,11 @@ module Archimate
           relationships: [composed_by_relationship]
         )
 
-        assert_equal [composed_by_element], element.composed_by
+        assert_equal [composed_by_element], element.composed_by_elements
+        assert_equal [composed_by_relationship], element.composed_by_relationships
       end
 
-      def test_composes
-        skip "until composes is added"
+      def test_composes_relationships
         element = build_element
         composed_by_element = build_element
         composed_by_relationship = build_relationship(
@@ -68,7 +67,8 @@ module Archimate
           relationships: [composed_by_relationship]
         )
 
-        assert_equal [element], composed_by_element.composes
+        assert_equal [element], composed_by_element.composes_elements
+        assert_equal [composed_by_relationship], composed_by_element.composes_relationships
       end
     end
   end

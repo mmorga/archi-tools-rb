@@ -48,7 +48,6 @@ module Archimate
       end
 
       def test_application_components
-        skip "until this is added as a DSL feature"
         @subject.elements << build_element(type: "ApplicationComponent")
         expected = @subject.elements.select { |e| e.type == "ApplicationComponent" }
         assert_equal expected, @subject.application_components

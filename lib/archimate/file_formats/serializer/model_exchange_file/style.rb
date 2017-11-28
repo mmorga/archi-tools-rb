@@ -7,11 +7,7 @@ module Archimate
         module Style
           def serialize_style(xml, style)
             return unless style
-            xml.style(
-              remove_nil_values(
-                lineWidth: style.line_width
-              )
-            ) do
+            xml.style({ lineWidth: style.line_width }.compact) do
               serialize_color(xml, style.fill_color, :fillColor)
               serialize_color(xml, style.line_color, :lineColor)
               serialize_font(xml, style)
@@ -22,11 +18,11 @@ module Archimate
           def serialize_font(xml, style)
             return unless style && (style.font || style.font_color)
             xml.font(
-              remove_nil_values(
+              {
                 name: style.font&.name,
                 size: style.font&.size&.round,
                 style: font_style_string(style.font)
-              )
+              }.compact
             ) { serialize_color(xml, style&.font_color, :color) }
           end
 

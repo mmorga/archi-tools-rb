@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+using Archimate::CoreRefinements
+
 module Archimate
   module Svg
     class Path
@@ -116,7 +118,7 @@ module Archimate
         ax_range = a.x_range
         bx_range = b.x_range
 
-        overlap_x_center = ranges_overlap(ax_range, bx_range)
+        overlap_x_center = ax_range.overlap_midpoint(bx_range)
 
         if overlap_x_center
           ax = bx = overlap_x_center
@@ -131,7 +133,7 @@ module Archimate
         ay_range = a.y_range
         by_range = b.y_range
 
-        overlap_y_center = ranges_overlap(ay_range, by_range)
+        overlap_y_center = ay_range.overlap_midpoint(by_range)
 
         if overlap_y_center
           ay = by = overlap_y_center
@@ -156,17 +158,6 @@ module Archimate
 
       def q_curve(cp, pt)
         "Q #{cp} #{pt}"
-      end
-
-      # Returns the midpoint of the overlap of two ranges or nil if there is no overlap
-      # @todo this should be a feature of Range
-      # @param r1 [Range]
-      # @param r2 [Range]
-      def ranges_overlap(r1, r2)
-        begin_max = [r1, r2].map(&:begin).max
-        end_min = [r1, r2].map(&:end).min
-        return nil if begin_max > end_min
-        (begin_max + end_min) / 2.0
       end
     end
   end
