@@ -85,7 +85,6 @@ module Archimate
           hash[tag] = hash.fetch(tag, []) << entity
         end
         @dupes.delete_if { |_tag, entities| entities.size <= 1 }
-        # @word_count.sort_by(&:last).reverse.each { |ak, av| puts "#{ak}: #{av}" }
         @dupes
       end
 

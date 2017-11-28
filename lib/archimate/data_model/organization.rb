@@ -48,12 +48,6 @@ module Archimate
         "#{Archimate::Color.data_model('Organization')}<#{id}>[#{Archimate::Color.color(name, %i[white underline])}]"
       end
 
-      def referenced_identified_nodes
-        organizations.reduce(items) do |a, e|
-          a.to_ary + e.referenced_identified_nodes
-        end
-      end
-
       def remove(id)
         items.delete_if { |item| item.id == id }
       end

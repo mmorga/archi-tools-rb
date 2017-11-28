@@ -65,26 +65,6 @@ module Archimate
         assert_match "Organization", @f1.to_s
         assert_match @f1.name, @f1.to_s
       end
-
-      def test_referenced_identified_nodes
-        subject = build_organization(
-          organizations: [
-            build_organization(
-              organizations: [
-                build_organization(
-                  organizations: [],
-                  items: %w[k l m].map { |id| build_element(id: id) }
-                )
-              ],
-              items: %w[a b c].map { |id| build_element(id: id) }
-            ),
-            build_organization(organizations: [], items: %w[d e f].map { |id| build_element(id: id) })
-          ],
-          items: %w[g h i j].map { |id| build_element(id: id) }
-        )
-
-        assert_equal %w[a b c d e f g h i j k l m], subject.referenced_identified_nodes.map(&:id).sort
-      end
     end
   end
 end

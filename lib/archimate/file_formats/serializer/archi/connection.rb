@@ -27,8 +27,6 @@ module Archimate
             end
           end
 
-          # startX = bendpoint.x - start_location.x
-          # startY = bendpoint.y - start_location.y
           def serialize_bendpoint(xml, bendpoint, connection)
             xml.bendpoint(
               {

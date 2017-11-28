@@ -72,13 +72,6 @@ module Archimate
         viewpoint.nil?
       end
 
-      def referenced_identified_nodes
-        (nodes.to_ary + connections)
-          .map(&:referenced_identified_nodes)
-          .flatten
-          .uniq
-      end
-
       def viewpoint_description
         case viewpoint
         when Symbol

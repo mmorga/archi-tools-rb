@@ -81,12 +81,6 @@ module Archimate
         ].compact.join(" ")
       end
 
-      # @todo remove when it doesn't break diff merge conflicts
-      # @deprecated
-      def referenced_identified_nodes
-        [@source, @target].compact
-      end
-
       # Copy any attributes/docs, etc. from each of the others into the original.
       #     1. Child `label`s with different `xml:lang` attribute values
       #     2. Child `documentation` (and different `xml:lang` attribute values)

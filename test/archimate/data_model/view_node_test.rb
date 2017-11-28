@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'test_helper'
 
 module Archimate
@@ -64,29 +65,6 @@ module Archimate
             assert_kind_of Connection, @model.lookup(connection_id)
           end
         end
-      end
-
-      def test_referenced_identified_nodes
-        source = build_element(id: "g")
-        target = build_element(id: "h")
-        relationship = build_relationship(id: "i")
-        subject = build_view_node(
-          element: build_element(id: "d"),
-          nodes: [
-            build_view_node(
-              element: build_element(id: "f"),
-              connections: [
-                build_connection(
-                  source: source,
-                  target: target,
-                  relationship: relationship
-                )
-              ]
-            )
-          ]
-        )
-
-        assert_equal %w(d f g h i), subject.referenced_identified_nodes.map(&:id).sort
       end
     end
   end

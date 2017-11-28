@@ -92,10 +92,6 @@ module Archimate
         ].compact.join(" ")
       end
 
-      def referenced_identified_nodes
-        [@source, @target, @relationship].compact
-      end
-
       def start_location
         source_attachment || source_bounds.center
       end

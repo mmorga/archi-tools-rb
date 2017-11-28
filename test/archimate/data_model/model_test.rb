@@ -58,66 +58,7 @@ module Archimate
         assert_equal @subject.elements, @subject.send(:find_by_class, Element)
       end
 
-      def test_referenced_identified_nodes
-        skip("Need to fix diagram building in subject")
-        subject = build_model(
-          organizations: [
-            build_organization(
-              organizations: [
-                build_organization(
-                  organizations: [
-                    build_organization(
-                      organizations: [],
-                      items: %w[a b c].map { |id| build_element(id: id) }
-                    )
-                  ],
-                  items: %w[d e f].map { |id| build_element(id: id) }
-                ),
-                build_organization(organizations: [], items: %w[g h i].map { |id| build_element(id: id) })
-              ],
-              items: %w[j k].map { |id| build_element(id: id) }
-            )
-          ],
-          relationships: [
-            build_relationship(
-              source: build_element(id: "l"),
-              target: build_element(id: "m")
-            )
-          ],
-          diagrams: [
-            build_diagram(
-              nodes: [
-                build_view_node(
-                  # target_connections: %w[l m].map { |id| build_connection(id: id) },
-                  element: build_element(id: "n"),
-                  nodes: [
-                    build_view_node(
-                      # target_connections: %w[o p].map { |id| build_connection(id: id) },
-                      element: build_element(id: "q")
-                    )
-                  ],
-                  connections: [
-                    build_connection(
-                      id: "r",
-                      source: build_element(id: "s"),
-                      target: build_element(id: "t"),
-                      relationship: build_relationship(id: "u")
-                    )
-                  ]
-                )
-              ]
-            )
-          ]
-        )
-
-        result = subject.referenced_identified_nodes.map(&:id).sort
-        ('a'..'u').to_a.each do |id|
-          assert_includes result, id
-        end
-      end
-
       def test_find_in_organizations_with_no_organizations
-        skip("Until implement or deprecate find_in_organizations")
         subject = Model.new(@subject.to_h.merge(organizations: []))
         index_hash = subject.instance_variable_get(:@index_hash)
         index_hash.values.each do |item|

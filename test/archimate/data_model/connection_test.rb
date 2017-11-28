@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'test_helper'
 
 module Archimate
@@ -31,24 +32,6 @@ module Archimate
       def test_to_s_with_no_model
         @subject = build_connection
         assert_match("[#{subject.name}]", Archimate::Color.uncolor(subject.to_s))
-      end
-
-      def test_referenced_identified_nodes
-        source = build_view_node(id: "a", element: build_element(id: "d"))
-        target = build_view_node(id: "b", element: build_element(id: "e"))
-        relationship = build_relationship(id: "c", source: source.element, target: target.element)
-        subject = build_connection(
-          source: source,
-          target: target,
-          relationship: relationship
-        )
-
-        rsrc, rtar, rrel = subject.referenced_identified_nodes
-        assert_equal source, rsrc
-        assert_equal target, rtar
-        assert_equal relationship, rrel
-
-        assert_equal %w(a b c), subject.referenced_identified_nodes.map(&:id).sort
       end
     end
   end

@@ -118,17 +118,6 @@ module Archimate
         self
       end
 
-      # Only used by [Diff::DeletedItemsReferencedConflict]
-      def referenced_identified_nodes
-        classes = [Diagram, ViewNode, Connection, Organization, Relationship].freeze
-        @index_hash
-          .values
-          .select { |entity| classes.include?(entity.class) }
-          .map(&:referenced_identified_nodes)
-          .flatten
-          .uniq
-      end
-
       # @todo this should move into either Comparison or a Mergeable class
       # Steps to merge
       # merge attributes of each copy into master_entity

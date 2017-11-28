@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'test_helper'
 require 'test_examples'
 require 'ruby-prof'
@@ -20,28 +21,29 @@ module Archimate
         assert_equal model, written_model
       end
 
-      def test_reader_profile
-        skip("Profile ArchiFileReader")
-        RubyProf.start
-        ArchiFileReader.new(archisurance_source).parse
-        result = RubyProf.stop
-        result.eliminate_methods!(
-          [
-            # /Nokogiri/,
-            # /Array/,
-            # /Hash/
-            # /String/,
-            # /Class/
-          ]
-        )
-        printer = RubyProf::FlatPrinterWithLineNumbers.new(result)
-        printer.print($stdout, min_percent: 1)
+      if ENV["PROFILE"]
+        def test_reader_profile
+          RubyProf.start
+          ArchiFileReader.new(archisurance_source).parse
+          result = RubyProf.stop
+          result.eliminate_methods!(
+            [
+              # /Nokogiri/,
+              # /Array/,
+              # /Hash/
+              # /String/,
+              # /Class/
+            ]
+          )
+          printer = RubyProf::FlatPrinterWithLineNumbers.new(result)
+          printer.print($stdout, min_percent: 1)
+        end
       end
 
       def test_organizations
         organizations = model.organizations
         assert_equal 6, organizations.size
-        assert organizations.all? { |e| e.is_a? DataModel::Organization }
+        assert(organizations.all? { |e| e.is_a? DataModel::Organization })
         assert_equal 5, organizations[0].organizations.size
         assert_equal 30, organizations[0].organizations[0].items.size
         assert_equal "id-1544", organizations[0].organizations[0].items.first.id
@@ -123,7 +125,7 @@ module Archimate
         test_file = File.join(TEST_EXAMPLES_FOLDER, filename)
         source = File.read(test_file)
         model = ModelExchangeFileReader.new(source).parse
-        source = source.gsub(" />", "/>").gsub("\r", "")
+        source = source.gsub(" />", "/>").delete("\r")
         result_io = StringIO.new
         ModelExchangeFileWriter30.write(model, result_io)
         written_output = result_io.string

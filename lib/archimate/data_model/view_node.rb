@@ -137,15 +137,6 @@ module Archimate
         nodes.each_with_object(id => self) { |i, a| a.merge!(i.child_id_hash) }
       end
 
-      def referenced_identified_nodes
-        (nodes.to_ary + connections).reduce(
-          [element]
-        .compact
-        ) do |a, e|
-          a.concat(e.referenced_identified_nodes)
-        end
-      end
-
       def in_diagram
         diagram # ||= ->(node) { node = node.parent until node.nil? || node.is_a?(Diagram) }.call(self)
       end

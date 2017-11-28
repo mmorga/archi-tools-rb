@@ -56,15 +56,6 @@ module Archimate
           end
         end
       end
-
-      # module RRHelpers
-      #   def self.to_method_name(str, suffix = nil)
-      #     [str.tr(' ', '_'), suffix]
-      #       .compact
-      #       .join("_")
-      #       .to_sym
-      #   end
-      # end
     end
   end
 end

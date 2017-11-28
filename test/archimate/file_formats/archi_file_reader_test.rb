@@ -35,22 +35,23 @@ module Archimate
         DataModel::Location.send(:remove_method, :==)
       end
 
-      def test_reader_profile
-        skip("Profile ArchiFileReader")
-        RubyProf.start
-        ArchiFileReader.new(archisurance_source).parse
-        result = RubyProf.stop
-        result.eliminate_methods!(
-          [
-            # /Nokogiri/,
-            # /Array/,
-            # /Hash/
-            # /String/,
-            # /Class/
-          ]
-        )
-        printer = RubyProf::FlatPrinterWithLineNumbers.new(result)
-        printer.print($stdout, min_percent: 1)
+      if ENV["PROFILE"]
+        def test_reader_profile
+          RubyProf.start
+          ArchiFileReader.new(archisurance_source).parse
+          result = RubyProf.stop
+          result.eliminate_methods!(
+            [
+              # /Nokogiri/,
+              # /Array/,
+              # /Hash/
+              # /String/,
+              # /Class/
+            ]
+          )
+          printer = RubyProf::FlatPrinterWithLineNumbers.new(result)
+          printer.print($stdout, min_percent: 1)
+        end
       end
 
       def test_organizations
