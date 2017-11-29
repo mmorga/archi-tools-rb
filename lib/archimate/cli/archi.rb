@@ -48,7 +48,7 @@ module Archimate
         ).map
       end
 
-      desc "svg -o OUTPUTDIR ARCHIFILE", "IN DEVELOPMENT: Produce semantically meaningful SVG files from an Archi file"
+      desc "svg -o OUTPUTDIR ARCHIFILE", "Produce semantically meaningful SVG files from an Archi file"
       option :output,
              aliases: :o,
              required: true,
