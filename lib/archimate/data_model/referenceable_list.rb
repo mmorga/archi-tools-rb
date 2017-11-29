@@ -32,6 +32,7 @@ module Archimate
                      :reduce,
                      :reject,
                      :select,
+                     :sort,
                      :size,
                      :to_a
 
