@@ -5,6 +5,8 @@ require "ruby-enum"
 module Archimate
   module DataModel
     class Layer
+      include Comparable
+
       attr_reader :name
       attr_reader :background_class
 
@@ -35,6 +37,10 @@ module Archimate
 
       def ==(other)
         @symbol == other&.to_sym
+      end
+
+      def <=>(other)
+        Layers.find_index(self) <=> Layers.find_index(other)
       end
 
       def to_sym
