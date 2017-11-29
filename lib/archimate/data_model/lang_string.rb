@@ -23,16 +23,18 @@ module Archimate
 
       def self.string(str, lang = nil)
         return nil if !str || str.strip.empty?
-        new(str, lang)
+        new(str, default_lang: lang)
       end
 
-      # @param [Hash{Symbol => Object},LangString, String] attributes
+      # @param str [String, LangString] optional shortcut to set define this LangString
+      # @param lang_hash [Hash{Symbol => Object}] attributes
+      # @param default_lang [String] optional setting of the default language
       # @raise [Struct::Error] if the given attributes don't conform {#schema}
       #   with given {# # constructor_type}
-      def initialize(str = nil, lang = nil, lang_hash: {}, default_lang: nil, default_text: nil)
+      def initialize(str = nil, lang_hash: {}, default_lang: nil)
         @lang_hash = lang_hash
-        @default_lang = default_lang || lang
-        @default_text = default_text
+        @default_lang = default_lang || lang_hash.keys.first
+        @default_text = str || lang_hash.fetch(@default_lang, nil)
         case str
         when String
           @lang_hash[@default_lang] = @default_text = str.strip
@@ -41,7 +43,7 @@ module Archimate
           @default_lang = str.default_lang
           @default_text = str.default_text
         else
-          @lang_hash[default_lang] = default_text if default_text
+          @lang_hash[default_lang] = @default_text if @default_text
         end
       end
 

@@ -18,7 +18,7 @@ module Archimate
       end
 
       def test_build_test_helper
-        docs = PreservedLangString.new(lang_hash: {"en" => "Something", "es" => "Hola"}, default_lang: "en", default_text: "Something")
+        docs = PreservedLangString.new(lang_hash: {"en" => "Something", "es" => "Hola"}, default_lang: "en")
         rel = build_relationship(id: "123", name: "my rel", documentation: docs)
         assert_equal "123", rel.id
         assert_equal "my rel", rel.name.to_s

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-## This class passes an IO (or a fake IO) to the given block based on passing
-# either a filename to permit ouput into or nil for a fake IO.
+
+# This class passes an IO (or a fake IO) to the given block based on passing
+# either a filename to permit output into or nil for a fake IO.
 #
 module Archimate
   class MaybeIO

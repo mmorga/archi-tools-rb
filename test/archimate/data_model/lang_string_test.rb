@@ -12,8 +12,7 @@ module Archimate
         @subject = LangString.new("hello")
         @subject_lang = LangString.new(
           lang_hash: { "elvish" => "Elrond" },
-          default_lang: "elvish",
-          default_text: "Elrond"
+          default_lang: "elvish"
         )
       end
 

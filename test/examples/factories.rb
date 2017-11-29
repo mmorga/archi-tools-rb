@@ -105,7 +105,7 @@ module Archimate
       end
 
       def build_documentation(options = {})
-        DataModel::PreservedLangString.new(lang_hash: {"en" => "Something", "es" => "Hola"}, default_lang: "en", default_text: "Something")
+        DataModel::PreservedLangString.new(lang_hash: {"en" => "Something", "es" => "Hola"}, default_lang: "en")
       end
 
       def build_element(options = {})
