@@ -1,7 +1,0 @@
-#!/usr/bin/env ruby -w
-# frozen_string_literal: true
-
-require "rubygems"
-require "archimate"
-
-Archimate::Cli::Diff.diff(ARGV[0], ARGV[1], Archimate::AIO.new)
