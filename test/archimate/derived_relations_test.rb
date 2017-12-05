@@ -40,15 +40,9 @@ module Archimate
       end
     end
 
-    def test_element_relationships
-      app_comp_a = @model.elements.find(&DataModel.by_name("A"))
-      expected = @model.relationships.select { |rel| rel.source == app_comp_a }
-      assert_equal expected, @subject.element_relationships(app_comp_a)
-    end
-
     def test_traverse_for_simple_case_a
       app_comp_a = @model.elements.find(&DataModel.by_name("A"))
-      expected = @subject.element_relationships(app_comp_a).map { |rel| [rel] }
+      expected = app_comp_a.source_relationships.map { |rel| [rel] }
 
       actual = @subject.traverse(
         [app_comp_a],

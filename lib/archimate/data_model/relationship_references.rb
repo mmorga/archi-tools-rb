@@ -15,6 +15,16 @@ module Archimate
         references.select { |ref| ref.is_a?(DataModel::Relationship) }
       end
 
+      # List of relationships where this object is the source
+      def source_relationships
+        relationships.select { |rel| rel.source.id == id }
+      end
+
+      # List of relationships where this object is the target
+      def target_relationships
+        relationships.select { |rel| rel.target.id == id }
+      end
+
       # Creates a method on this instance that returns the relationships of the
       # relationship type `rel_cls` where this object is the source.
       #

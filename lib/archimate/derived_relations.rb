@@ -117,17 +117,11 @@ module Archimate
       end
     end
 
-    # @deprecated Move functionality to archimate lib
-    def element_relationships(el)
-      @model
-        .relationships
-        .select { |rel| rel.source.id == el.id }
-    end
-
     private
 
     def concrete_relationships(el, relation_filter, from_path)
-      element_relationships(el)
+      el
+        .source_relationships
         .select(&relation_filter)
         .reject { |rel| from_path.include?(rel) }
     end

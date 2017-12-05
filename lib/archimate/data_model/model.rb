@@ -150,8 +150,10 @@ module Archimate
       end
 
       def make_unique_id
-        unique_id = random_id
-        unique_id = random_id while @index_hash.key?(unique_id)
+        @random ||= Random.new
+        begin
+          unique_id = format("%08x", @random.rand(0xffffffff))
+        end until !@index_hash.key?(unique_id)
         unique_id
       end
 
@@ -265,11 +267,6 @@ module Archimate
         end
         ref.connections.each { |con| @index_hash[con.id] = con }
         ref
-      end
-
-      def random_id
-        @random ||= Random.new
-        format("%08x", @random.rand(0xffffffff))
       end
 
       def register(node, _parent)
