@@ -16,13 +16,13 @@ module Archimate
         )
       )
       @subject = DerivedRelations.new(@model)
-      @a = @subject.element_by_name("A")
-      @b = @subject.element_by_name("B")
-      @d = @subject.element_by_name("D")
-      @d_api = @subject.element_by_name("D API")
-      @d_func = @subject.element_by_name("D Function")
-      @d_svc = @subject.element_by_name("D Service")
-      @app_func = @subject.element_by_name("Application Function")
+      @a = @model.elements.find(&DataModel.by_name("A"))
+      @b = @model.elements.find(&DataModel.by_name("B"))
+      @d = @model.elements.find(&DataModel.by_name("D"))
+      @d_api = @model.elements.find(&DataModel.by_name("D API"))
+      @d_func = @model.elements.find(&DataModel.by_name("D Function"))
+      @d_svc = @model.elements.find(&DataModel.by_name("D Service"))
+      @app_func = @model.elements.find(&DataModel.by_name("Application Function"))
 
       @d_to_d_api = @model.relationships.find { |rel| rel.source == @d && rel.target == @d_api }
       @d_to_d_func = @model.relationships.find { |rel| rel.source == @d && rel.target == @d_func }
@@ -36,18 +36,18 @@ module Archimate
 
     def test_element_by_name
       @model.elements.each do |el|
-        assert_equal @subject.element_by_name(el.name), el
+        assert_equal @model.elements.find(&DataModel.by_name(el.name)), el
       end
     end
 
     def test_element_relationships
-      app_comp_a = @subject.element_by_name("A")
+      app_comp_a = @model.elements.find(&DataModel.by_name("A"))
       expected = @model.relationships.select { |rel| rel.source == app_comp_a }
       assert_equal expected, @subject.element_relationships(app_comp_a)
     end
 
     def test_traverse_for_simple_case_a
-      app_comp_a = @subject.element_by_name("A")
+      app_comp_a = @model.elements.find(&DataModel.by_name("A"))
       expected = @subject.element_relationships(app_comp_a).map { |rel| [rel] }
 
       actual = @subject.traverse(

@@ -15,6 +15,7 @@ module Archimate
                      :[],
                      :all?,
                      :any?,
+                     :chunk,
                      :dig,
                      :each,
                      :each_with_object,

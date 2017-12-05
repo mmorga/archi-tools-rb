@@ -38,5 +38,11 @@ module Archimate
     require 'archimate/data_model/view_node'
     require 'archimate/data_model/diagram'
     require 'archimate/data_model/model'
+
+    # Returns a lambda that matches entities with the given name
+    def by_name(name)
+      ->(entity) { entity.name == name }
+    end
+    module_function :by_name
   end
 end

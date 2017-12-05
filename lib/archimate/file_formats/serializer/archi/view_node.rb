@@ -5,30 +5,30 @@ module Archimate
     module Serializer
       module Archi
         module ViewNode
-          def serialize_view_node(xml, child)
-            style_hash = archi_style_hash(child.style)
+          def serialize_view_node(xml, view_node)
+            style_hash = archi_style_hash(view_node.style)
             fill_color = style_hash.delete("fillColor")
             xml.child(
               {
-                "xsi:type" => child.type,
-                "id" => child.id,
-                "name" => child.name
+                "xsi:type" => view_node.type,
+                "id" => view_node.id,
+                "name" => view_node.name
               }.merge(
                 style_hash.merge(
-                  "targetConnections" => child.target_connections.empty? ? nil : child.target_connections.join(" "),
+                  "targetConnections" => view_node.target_connections.empty? ? nil : view_node.target_connections.join(" "),
                   "fillColor" => fill_color,
-                  "model" => child.view_refs&.id,
-                  "archimateElement" => child.element&.id,
-                  "type" => child.child_type
+                  "model" => view_node.view_refs&.id,
+                  "archimateElement" => view_node.element&.id,
+                  "type" => view_node.child_type
                 )
               ).compact
             ) do
-              serialize_bounds(xml, child.bounds)
-              serialize(xml, (child.connections + child.diagram.connections.select { |conn| conn.source.id == child.id }).uniq)
-              xml.content { xml.text child.content } if child.content
-              serialize(xml, child.nodes)
-              serialize_documentation(xml, child.documentation)
-              serialize(xml, child.properties)
+              serialize_bounds(xml, view_node.bounds)
+              serialize(xml, (view_node.connections + view_node.diagram.connections.select { |conn| conn.source.id == view_node.id }).uniq)
+              xml.content { xml.text view_node.content } if view_node.content
+              serialize(xml, view_node.nodes)
+              serialize_documentation(xml, view_node.documentation)
+              serialize(xml, view_node.properties)
             end
           end
 

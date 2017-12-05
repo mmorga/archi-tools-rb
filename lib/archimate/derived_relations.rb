@@ -117,10 +117,7 @@ module Archimate
       end
     end
 
-    def element_by_name(name)
-      @model.elements.find { |el| el.name.to_s == name.to_s }
-    end
-
+    # @deprecated Move functionality to archimate lib
     def element_relationships(el)
       @model
         .relationships

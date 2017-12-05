@@ -15,6 +15,13 @@ module Archimate
           .join("_")
           .to_sym
       end
+
+      # A helper that makes it easier to compare a string to a DataModel::LangString
+      # @param [String, DataModel::LangString] other string to compare
+      # @returns [Boolean]
+      def ==(other)
+        super(other.to_s)
+      end
     end
 
     refine Range do

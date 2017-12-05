@@ -123,9 +123,9 @@ module Archimate
 
       def description
         [
-          name.nil? ? nil : name.to_s,
-          element.nil? ? nil : element.name,
-          element&.type.nil? ? nil : "(#{element.type})"
+          name&.to_s,
+          element&.name,
+          element ? "(#{element.type})" : nil
         ].compact.join(" ")
       end
 

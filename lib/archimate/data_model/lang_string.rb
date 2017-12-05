@@ -6,6 +6,7 @@ module Archimate
   module DataModel
     # A base string type for multi-language strings.
     class LangString
+      include Comparable
       include Comparison
       extend Forwardable
 
@@ -73,6 +74,14 @@ module Archimate
         default_lang
       end
 
+      def ==(other)
+        if other.is_a?(String)
+          to_s == other
+        else
+          super
+        end
+      end
+
       def =~(other)
         str = to_s
         if other.is_a?(Regexp)
@@ -80,6 +89,10 @@ module Archimate
         else
           Regexp.new(Regexp.escape(str)) =~ other
         end
+      end
+
+      def <=>(other)
+        to_s <=> other.to_s
       end
 
       def merge(other)

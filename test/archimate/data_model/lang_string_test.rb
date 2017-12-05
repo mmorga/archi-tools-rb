@@ -75,6 +75,17 @@ module Archimate
       def test_split
         assert_equal %w[h e l l o], @subject.split(//)
       end
+
+      def test_eqeq_with_string
+        assert_equal "hello", LangString.new(lang_hash: { "en" => "hello", "es" => "hola" }, default_lang: "en")
+      end
+
+      def test_eqeq_with_lang_string
+        assert_equal(
+          LangString.new(lang_hash: { "en" => "hello", "es" => "hola" }, default_lang: "en"),
+          LangString.new(lang_hash: { "en" => "hello", "es" => "hola" }, default_lang: "en")
+        )
+      end
     end
   end
 end
