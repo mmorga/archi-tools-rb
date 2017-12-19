@@ -137,16 +137,19 @@ module Archimate
       end
 
       desc "convert ARCHIFILE", "Convert the incoming file to the desired type"
+      long_desc <<~CONVERT_DESC
+        Converts the input ArchiMate file into another format. Options are:
+        \x5  • 'archi'   for Archi file format (http://archimatetool.com),
+        \x5  • 'meff2.1' for Open Group Model Exchange File Format for ArchiMate 2.1,
+        \x5  • 'nquads'  for RDF 1.1 N-Quads format https://www.w3.org/TR/n-quads/,
+        \x5  • 'graphml' for GraphML,
+        \x5  • 'csv'     for CSV files (one file per element/relationship type)
+      CONVERT_DESC
       option :to,
              aliases: :t,
              default: Archimate::Cli::Convert::SUPPORTED_FORMATS.first,
-             desc: "File type to convert to. Options are: " \
-                   "'meff2.1' for Open Group Model Exchange File Format for ArchiMate 2.1 " \
-                   "'archi' for Archi http://archimatetool.com/ file format " \
-                   "'nquads' for RDF 1.1 N-Quads format https://www.w3.org/TR/n-quads/" \
-                   "'graphml' for GraphML" \
-                   "'csv' for CSV files (one file per element/relationship type",
-             enum: Archimate::Cli::Convert::SUPPORTED_FORMATS
+             enum: Archimate::Cli::Convert::SUPPORTED_FORMATS,
+             desc: "Output format to convert to"
       option :output,
              aliases: :o,
              desc: "Write output to FILE instead of stdout."

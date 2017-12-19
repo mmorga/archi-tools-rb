@@ -28,6 +28,7 @@ module Archimate
                      :include?,
                      :inject,
                      :inspect,
+                     :last,
                      :map,
                      :none?,
                      :reduce,
