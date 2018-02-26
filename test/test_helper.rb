@@ -4,6 +4,7 @@ $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 TEST_EXAMPLES_FOLDER = File.join(File.dirname(__FILE__), "examples")
 
+# TODO: This is for MRI only
 if ENV['TEST_ENV'] != 'guard'
   require 'simplecov'
   require 'simplecov-json'
@@ -20,7 +21,7 @@ if ENV['TEST_ENV'] != 'guard'
   puts "required simplecov"
 end
 
-require 'pry-byebug'
+require 'pry-byebug' # TODO: MRI only
 require 'minitest/autorun'
 require 'minitest/color'
 require 'minitest/profile'

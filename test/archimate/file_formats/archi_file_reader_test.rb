@@ -2,8 +2,8 @@
 
 require 'test_helper'
 require 'test_examples'
-require 'ruby-prof'
 require 'pp'
+require 'ruby-prof' if ENV["PROFILE"]
 
 module Archimate
   module FileFormats

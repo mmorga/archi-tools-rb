@@ -2,7 +2,7 @@
 
 require 'test_helper'
 require 'test_examples'
-require 'ruby-prof'
+require 'ruby-prof' if ENV["PROFILE"]
 require 'pp'
 
 module Archimate
