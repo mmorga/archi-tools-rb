@@ -59,6 +59,7 @@ module Archimate
           organizations.delete(item)
         else
           items.delete(item)
+          organizations.each { |org| org.remove_reference(item) }
         end
       end
 

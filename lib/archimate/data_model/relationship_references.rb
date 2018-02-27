@@ -76,12 +76,20 @@ module Archimate
       def self.define_source_relationship_creation_method(rel_cls)
         define_method(rel_cls::VERB.to_method_name) do |targets = nil, args = {}|
           rels = Array(args.fetch(:target, targets)).compact.map do |target|
-            rargs = args.dup
-            rargs[:target] = target
-            rargs[:source] = self
-            rargs[:id] = model.make_unique_id if !rargs.key?(:id) && model
-            relationship = rel_cls.new(rargs)
-            (model.relationships << relationship) if model
+            relationship = model&.relationships&.find do |r|
+              r.is_a?(rel_cls) &&
+                r.name == args.fetch(:name, nil) &&
+                r.source == self &&
+                r.target == target
+            end
+            unless relationship
+              rargs = args.dup
+              rargs[:target] = target
+              rargs[:source] = self
+              rargs[:id] = model.make_unique_id if !rargs.key?(:id) && model
+              relationship = rel_cls.new(rargs)
+              (model.relationships << relationship) if model
+            end
             relationship
           end
           rels.size < 2 ? rels.first : rels
@@ -95,12 +103,20 @@ module Archimate
       def self.define_target_relationship_creation_method(rel_cls)
         define_method(rel_cls::OBJECT_VERB.to_method_name) do |sources = nil, args = {}|
           rels = Array(args.fetch(:source, sources)).compact.map do |source|
-            rargs = args.dup
-            rargs[:source] = source
-            rargs[:target] = self
-            rargs[:id] = model.make_unique_id if !rargs.key?(:id) && model
-            relationship = rel_cls.new(rargs)
-            (model.relationships << relationship) if model
+            relationship = model&.relationships&.find do |r|
+              r.is_a?(rel_cls) &&
+                r.name == args.fetch(:name, nil) &&
+                r.source == source &&
+                r.target == self
+            end
+            unless relationship
+              rargs = args.dup
+              rargs[:source] = source
+              rargs[:target] = self
+              rargs[:id] = model.make_unique_id if !rargs.key?(:id) && model
+              relationship = rel_cls.new(rargs)
+              (model.relationships << relationship) if model
+            end
             relationship
           end
           rels.size < 2 ? rels.first : rels

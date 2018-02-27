@@ -163,9 +163,12 @@ module Archimate
           elements.delete(item)
         when Relationship
           relationships.delete(item)
+        when Diagram
+          diagrams.delete(item)
         else
           raise "Unhandled remove reference for type #{item.class}"
         end
+        organizations.each { |org| org.remove_reference(item) }
       end
 
       Elements.classes.each do |el_cls|
