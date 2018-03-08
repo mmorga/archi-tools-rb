@@ -104,6 +104,10 @@ module Archimate
           top > other.top &&
           bottom < other.bottom
       end
+
+      def empty?
+        width.zero? && height.zero?
+      end
     end
   end
 end

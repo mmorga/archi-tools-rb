@@ -8,6 +8,9 @@ module Archimate
           super
           @background_class = "archimate-or-junction-background"
         end
+
+        def entity_label(_xml)
+        end
       end
     end
   end

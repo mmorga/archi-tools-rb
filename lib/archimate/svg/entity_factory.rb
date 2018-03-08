@@ -9,6 +9,7 @@ module Archimate
           klass_name = child.element.class.name.split("::").last
         else
           klass_name = child.type.sub('archimate:', '')
+          klass_name = "Group" if klass_name == "Container"
         end
         Entity.const_get(klass_name).new(child, bounds_offset)
       rescue NameError

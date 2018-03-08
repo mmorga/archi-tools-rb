@@ -22,6 +22,10 @@ module Archimate
           @badge = nil
         end
 
+        def label
+          entity.name || child.content
+        end
+
         def to_svg(xml)
           optional_link(xml) do
             xml.g(group_attrs) do
@@ -39,27 +43,11 @@ module Archimate
           yield
         end
 
+        # TODO: This should be overridden where necessary for specialty cases
+        # where the content would be shown differently (like for notes)
         def entity_label(xml)
-          return if (entity.nil? || entity.name.nil? || entity.name.strip.empty?) && (child.content.nil? || child.content.strip.empty?)
-          xml.foreignObject(text_bounds.to_h) do
-            xml.table(xmlns: "http://www.w3.org/1999/xhtml", style: "height:#{text_bounds.height}px;width:#{text_bounds.width}px;") do
-              xml.tr(style: "height:#{text_bounds.height}px;") do
-                xml.td(class: "entity-name") do
-                  xml.div(class: "archimate-badge-spacer") unless badge.nil?
-                  xml.p(class: "entity-name", style: text_style) do
-                    text_lines(entity.name || child.content).each do |line|
-                      xml.text(line)
-                      xml.br
-                    end
-                  end
-                end
-              end
-            end
-          end
-        end
-
-        def text_lines(text)
-          text.tr("\r\n", "\n").split(/[\r\n]/)
+          badge_bounds = badge ? DataModel::Bounds.new(x: 0, y: 0, width: 20, height: 20) : DataModel::Bounds.zero
+          Svg::EntityLabel.new(child, label, text_bounds, @text_align, badge_bounds).to_svg(xml)
         end
 
         def entity_badge(xml)
@@ -78,19 +66,6 @@ module Archimate
             "fill": style.fill_color&.to_rgba,
             "stroke": style.line_color&.to_rgba,
             "stroke-width": style.line_width
-          }.delete_if { |_key, value| value.nil? }
-            .map { |key, value| "#{key}:#{value};" }
-            .join("")
-        end
-
-        def text_style
-          style = child.style || DataModel::Style.new
-          {
-            "fill": style.font_color&.to_rgba,
-            "color": style.font_color&.to_rgba,
-            "font-family": style.font&.name,
-            "font-size": style.font&.size,
-            "text-align": style.text_align || @text_align
           }.delete_if { |_key, value| value.nil? }
             .map { |key, value| "#{key}:#{value};" }
             .join("")

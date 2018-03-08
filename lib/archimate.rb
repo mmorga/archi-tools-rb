@@ -55,11 +55,13 @@ module Archimate
     autoload :Diagram, 'archimate/svg/diagram'
     autoload :Entity, 'archimate/svg/entity'
     autoload :EntityFactory, 'archimate/svg/entity_factory'
+    autoload :EntityLabel, 'archimate/svg/entity_label'
     autoload :Extents, 'archimate/svg/extents'
     autoload :Path, 'archimate/svg/path'
     autoload :Point, 'archimate/svg/point'
     autoload :Segment, 'archimate/svg/segment'
     autoload :SvgTemplate, 'archimate/svg/svg_template'
+    autoload :Text, 'archimate/svg/text'
     autoload :ViewNode, 'archimate/svg/view_node'
   end
 

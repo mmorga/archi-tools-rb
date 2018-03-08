@@ -8,12 +8,6 @@ module Archimate
           super
           bounds = child.bounds
           @badge = "#archimate-service-badge"
-          @text_bounds = DataModel::Bounds.new(
-            x: bounds.left + 7,
-            y: bounds.top + 5,
-            width: bounds.width - 14,
-            height: bounds.height - 10
-          )
         end
 
         def entity_shape(xml, bounds)
@@ -21,6 +15,12 @@ module Archimate
           when "1"
             service_path(xml, bounds)
             @badge = nil
+            @text_bounds = DataModel::Bounds.new(
+              x: bounds.left + 7,
+              y: bounds.top + 5,
+              width: bounds.width - 14,
+              height: bounds.height - 10
+            )
           else
             super
           end

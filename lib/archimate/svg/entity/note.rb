@@ -8,6 +8,7 @@ module Archimate
           super
           @background_class = "archimate-note-background"
           @text_align = "left"
+          @text_bounds = child.bounds.reduced_by(3)
         end
 
         def entity_shape(xml, bounds)

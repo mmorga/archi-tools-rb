@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   spec.metadata["yard.run"] = "yri" # use "yard" to build full HTML docs.
   spec.required_ruby_version = '>= 2.3.0'
 
+  spec.add_runtime_dependency "harfbuzz", "~> 0.4"
   spec.add_runtime_dependency "highline", "~> 1.7"
   spec.add_runtime_dependency "nokogiri", "~> 1.6"
   spec.add_runtime_dependency "parallel", "~> 1.11"
