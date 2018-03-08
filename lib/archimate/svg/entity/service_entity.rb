@@ -6,7 +6,6 @@ module Archimate
       class ServiceEntity < RoundedRectEntity
         def initialize(child, bounds_offset)
           super
-          bounds = child.bounds
           @badge = "#archimate-service-badge"
         end
 

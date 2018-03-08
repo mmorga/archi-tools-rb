@@ -12,13 +12,12 @@ module Archimate
       DEFAULT_FONT_FACE = 'Lucida Grande'
 
       def path_to(font_face)
-        cache.fetch(font_face&.strip || DEFAULT_FONT_FACE) { |font_face| lookup(font_face || DEFAULT_FONT_FACE) }
+        cache.fetch(font_face&.strip || DEFAULT_FONT_FACE) { |face| lookup(face || DEFAULT_FONT_FACE) }
       end
 
       def lookup(font_face)
-        fc_match = `fc-match "#{font_face}" family file`
-        family, file = fc_match.split(":")
-        file = file.delete_prefix("file=").strip
+        fc_match = `fc-match "#{font_face}" file`
+        file = fc_match.delete_prefix(":file=").strip
         cache[font_face] = file
         file
       end
