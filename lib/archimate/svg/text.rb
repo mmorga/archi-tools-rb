@@ -12,12 +12,14 @@ module Archimate
       attr_reader :funits_per_em
       attr_reader :font_size_px
       attr_reader :line_height
+      attr_reader :fonts_lib
 
       # TODO: Set up a means to establish defaults for font, etc.
       def initialize(text, style = nil)
         @text = text
         @style = style
-        @face = Harfbuzz::Face.new(File.open('/System/Library/Fonts/LucidaGrande.ttc', 'rb'))
+        @fonts_lib = FontsLib.instance
+        @face = Harfbuzz::Face.new(File.open(fonts_lib.path_to(style&.font&.name), 'rb'))
         @font = Harfbuzz::Font.new(face)
         @funits_per_em = face.upem.to_f
         @font_size_px = style&.font&.size || 11.0

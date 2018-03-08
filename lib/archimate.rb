@@ -57,6 +57,7 @@ module Archimate
     autoload :EntityFactory, 'archimate/svg/entity_factory'
     autoload :EntityLabel, 'archimate/svg/entity_label'
     autoload :Extents, 'archimate/svg/extents'
+    autoload :FontsLib, 'archimate/svg/fonts_lib'
     autoload :Path, 'archimate/svg/path'
     autoload :Point, 'archimate/svg/point'
     autoload :Segment, 'archimate/svg/segment'
