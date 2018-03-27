@@ -52,4 +52,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "ruby-prof"
   spec.add_development_dependency "simplecov"
   spec.add_development_dependency "simplecov-json"
+
+  spec.requirements << "harfbuzz, >=v1.7.6"
 end
