@@ -46,7 +46,7 @@ module Archimate
       end
 
       def meff_type(el_type)
-        el_type.sub(/^/, "")
+        el_type
       end
     end
   end

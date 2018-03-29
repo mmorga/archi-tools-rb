@@ -6,7 +6,7 @@ module Archimate
       # Converts a mixed case string to a snake case string
       # @return String
       def snake_case
-        gsub(/([A-Z])/, '_\1').downcase.sub(/^_/, "")
+        gsub(/([A-Z])/, '_\1').downcase.sub(/\A_/, "")
       end
 
       def to_method_name(suffix = nil)

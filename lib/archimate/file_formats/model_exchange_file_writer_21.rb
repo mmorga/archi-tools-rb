@@ -47,7 +47,6 @@ module Archimate
       end
 
       def meff_type(el_type)
-        el_type = el_type.sub(/^/, "")
         case el_type
         when 'AndJunction', 'OrJunction'
           'Junction'

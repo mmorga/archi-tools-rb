@@ -22,7 +22,7 @@ module Archimate
           # TODO: Archi uses hex numbers for ids which may not be valid for
           # identifer. If we are converting from Archi, decorate the IDs here.
           def identifier(str)
-            return "id-#{str}" if str =~ /^\d/
+            return "id-#{str}" if str =~ /\A\d/
             str
           end
         end

@@ -16,7 +16,7 @@ module Archimate
 
       def initialize(model)
         @writer = case model.version
-                  when /^3\./
+                  when /\A3\./
                     Serializer::Archi::ArchiFileWriter3
                   else
                     Serializer::Archi::ArchiFileWriter4

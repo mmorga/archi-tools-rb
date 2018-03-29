@@ -70,7 +70,7 @@ module Archimate
       end
 
       def polygon_path
-        points = [
+        [
           [text_bounds.left, text_bounds.top],
           [text_bounds.right - badge_bounds.width, text_bounds.top],
           [text_bounds.right - badge_bounds.width, text_bounds.top + badge_bounds.height],

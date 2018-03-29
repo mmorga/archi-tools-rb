@@ -181,7 +181,7 @@ module Archimate
       end
 
       def test_make_unique_id
-        assert_match(/^[a-f0-9]{8}$/, @subject.send(:make_unique_id))
+        assert_match(/\A[a-f0-9]{8}$/, @subject.send(:make_unique_id))
       end
 
       def test_organize

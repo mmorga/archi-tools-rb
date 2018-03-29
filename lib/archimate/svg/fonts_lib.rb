@@ -17,7 +17,7 @@ module Archimate
 
       def lookup(font_face)
         fc_match = `fc-match "#{font_face}" file`
-        file = fc_match.delete_prefix(":file=").strip
+        file = fc_match.sub(/\A:file=/, "").strip
         cache[font_face] = file
         file
       end
