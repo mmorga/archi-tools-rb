@@ -58,11 +58,16 @@ module Archimate
              type: :boolean,
              default: false,
              desc: "Don't provide interactive feedback"
+      option :name,
+             type: :boolean,
+             default: false,
+             desc: "Use diagram name for filename (default: diagram id)"
       def svg(archifile)
         Config.instance.interactive = !options.fetch("noninteractive", false)
         Archimate::Cli::Svger.export_svgs(
           archifile,
-          options.fetch("output", Dir.pwd)
+          options.fetch("output", Dir.pwd),
+          options["name"] ? :name : :id
         )
       end
 
