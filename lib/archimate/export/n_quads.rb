@@ -46,7 +46,7 @@ module Archimate
   module Export
     Quad = Struct.new(:subject, :predicate, :object) do
       def fmt_obj
-        if object =~ /\s/
+        if /\s/ === object
           "\"#{object.gsub('"', '\\"').gsub(/[\n\r]/, '\\n')}\""
         else
           "<#{object}>"
