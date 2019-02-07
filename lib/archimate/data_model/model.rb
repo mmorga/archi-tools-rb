@@ -177,6 +177,10 @@ module Archimate
         end
       end
 
+      def find_by_class(klass)
+        @index_hash.values.select { |item| item.is_a?(klass) }
+      end
+
       private
 
       # Only used by [#find_default_organization]
@@ -237,10 +241,6 @@ module Archimate
         else
           raise StandardError, "Unexpected item type #{item.class}"
         end
-      end
-
-      def find_by_class(klass)
-        @index_hash.values.select { |item| item.is_a?(klass) }
       end
 
       def find_default_organization(type, name)

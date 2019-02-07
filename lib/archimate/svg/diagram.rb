@@ -7,36 +7,74 @@ module Archimate
   module Svg
     class Diagram
       attr_reader :diagram
+      attr_reader :svg_doc
+      attr_reader :options
 
-      def initialize(diagram)
+      DEFAULT_SVG_OPTIONS = {
+        legend: true, # TODO: make this false by default
+        format_xml: true,
+      }
+
+      def initialize(diagram, options = {})
         @diagram = diagram
+        @options = DEFAULT_SVG_OPTIONS.merge(options)
         @svg_template = Nokogiri::XML(SvgTemplate.new.to_s).freeze
       end
 
       def to_svg
-        svg_doc = @svg_template.clone
-        set_title(svg_doc)
-        top_group = svg_doc.at_css("#archimate-diagram")
+        @svg_doc = @svg_template.clone
+        set_title
         render_connections(
-          render_elements(top_group)
+          render_elements(archimate_diagram_group)
         )
-        update_viewbox(svg_doc.at_css("svg"))
-        format_node(top_group)
-        svg_doc.to_xml(encoding: 'UTF-8', indent: 2)
+        legend = Legend.new(self)
+        if include_legend?
+          legend.insert
+        else
+          legend.remove
+        end
+        update_viewbox
+        format_node(archimate_diagram_group) if format_xml?
+        format_node(legend_group) if include_legend? && format_xml?
+        svg_doc.to_xml(encoding: 'UTF-8', indent: indentation)
       end
 
-      def set_title(svg)
-        svg.at_css("title").content = diagram.name || "untitled"
-        svg.at_css("desc").content = diagram.documentation.to_s || ""
+      def svg_element
+        @svg_element ||= svg_doc.at_css("svg")
+      end
+
+      def archimate_diagram_group
+        @svg_diagram_group ||= svg_doc.at_css("#archimate-diagram")
+      end
+
+      def legend_group
+        @svg_legend_group ||= svg_doc.at_css("#archimate-legend")
+      end
+
+      def include_legend?
+        options[:legend]
+      end
+
+      def format_xml?
+        options[:format_xml]
+      end
+
+      def indentation
+        format_xml? ? 2 : 0
+      end
+
+      def set_title
+        svg_doc.at_css("title").content = diagram.name || "untitled"
+        svg_doc.at_css("desc").content = diagram.documentation.to_s || ""
       end
 
       # Scan the SVG and figure out min & max
-      def update_viewbox(svg)
-        extents = calculate_max_extents(svg).expand(10)
-        svg.set_attribute(:width, extents.width)
-        svg.set_attribute(:height, extents.height)
-        svg.set_attribute("viewBox", "#{extents.min_x} #{extents.min_y} #{extents.width} #{extents.height}")
-        svg
+      def update_viewbox
+        extents = calculate_max_extents.expand(10)
+        svg_element.set_attribute(:width, extents.width)
+        svg_element.set_attribute(:height, extents.height)
+        svg_element.set_attribute("viewBox", "#{extents.min_x} #{extents.min_y} #{extents.width} #{extents.height}")
+        svg_element
       end
 
       def format_node(node, depth = 4)
@@ -47,12 +85,12 @@ module Archimate
         end
       end
 
-      def calculate_max_extents(doc)
+      def calculate_max_extents
         node_vals =
-          doc
+          svg_element
           .xpath("//*[@x or @y]")
           .map { |node| %w[x y width height].map { |attr| node.attr(attr).to_i } }
-        doc.css(".archimate-relationship")
+        svg_element.css(".archimate-relationship")
           .each { |path|
             path.attr("d").split(" ").each_slice(3) do |point|
               node_vals << [point[1].to_i, point[2].to_i, 0, 0]

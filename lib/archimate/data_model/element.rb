@@ -9,6 +9,7 @@ module Archimate
     # attribute of +xsi:type="BusinessRole"+ where +BusinessRole+ is a derived
     # type from [ElementType].
     class Element
+      LAYER = Layers::None
       include Comparison
       include Referenceable
       include RelationshipReferences

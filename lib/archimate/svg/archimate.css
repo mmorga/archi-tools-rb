@@ -29,6 +29,16 @@ path {
     z-index: 1000;
 }
 
+.archimate-legend-title {
+    font-weight: bold;
+}
+
+.archimate-legend {
+    fill: #eee;
+    stroke: #bbb;
+    stroke-width: 2px;
+}
+
 table.properties {
     background-color: whitesmoke;
     border: 2px solid gray;
@@ -137,6 +147,13 @@ table.properties>caption {
     fill: #c9e5c9;
     stroke: #9cb29c;
 }
+
+.archimate-connectors-background, .archimate-other-background {
+    fill: #eee;
+    stroke: #bbb;
+}
+
+
 
 .archimate-note-background {
     fill: #fff;
