@@ -21,6 +21,8 @@ module Archimate
     # relationship.
     module Relationships
       class Composition < Relationship
+        NAME = "Composition"
+        DESCRIPTION = "The composition relationship indicates that an element consists of one or more other concepts."
         WEIGHT = 10
         CLASSIFICATION = :structural
         VERB = "composes"
@@ -32,6 +34,8 @@ module Archimate
       end
 
       class Aggregation < Relationship
+        NAME = "Aggregation"
+        DESCRIPTION = "The aggregation relationship indicates that an element groups a number of other concepts. "
         WEIGHT = 9
         CLASSIFICATION = :structural
         VERB = "aggregates"
@@ -43,6 +47,8 @@ module Archimate
       end
 
       class Assignment < Relationship
+        NAME = "Assignment"
+        DESCRIPTION = "The assignment relationship expresses the allocation of responsibility, performance of behavior, or execution."
         WEIGHT = 8
         CLASSIFICATION = :structural
         VERB = "assigned to"
@@ -54,6 +60,8 @@ module Archimate
       end
 
       class Realization < Relationship
+        NAME = "Realization"
+        DESCRIPTION = "The realization relationship indicates that an entity plays a critical role in the creation, achievement, sustenance, or operation of a more abstract entity."
         WEIGHT = 7
         CLASSIFICATION = :structural
         VERB = "realizes"
@@ -65,6 +73,8 @@ module Archimate
       end
 
       class Serving < Relationship
+        NAME = "Serving"
+        DESCRIPTION = "The serving relationship models that an element provides its functionality to another element. I.e. the element pointed to calls the other element."
         WEIGHT = 6
         CLASSIFICATION = :dependency
         VERB = "serves"
@@ -76,6 +86,8 @@ module Archimate
       end
 
       class Access < Relationship
+        NAME = "Access"
+        DESCRIPTION = "The access relationship models the ability of behavior and active structure elements to observe or act upon passive structure elements."
         WEIGHT = 5
         CLASSIFICATION = :dependency
         VERB = "accesses"
@@ -87,6 +99,8 @@ module Archimate
       end
 
       class Influence < Relationship
+        NAME = "Influence"
+        DESCRIPTION = "The influence relationship models that an element affects the implementation or achievement of some motivation element."
         WEIGHT = 4
         CLASSIFICATION = :dependency
         VERB = "influences"
@@ -98,6 +112,8 @@ module Archimate
       end
 
       class Triggering < Relationship
+        NAME = "Triggering"
+        DESCRIPTION = "The triggering relationship describes a temporal or causal relationship between elements."
         WEIGHT = 3
         CLASSIFICATION = :dynamic
         VERB = "triggers"
@@ -109,6 +125,8 @@ module Archimate
       end
 
       class Flow < Relationship
+        NAME = "Flow"
+        DESCRIPTION = "The flow relationship represents transfer from one element to another."
         WEIGHT = 2
         CLASSIFICATION = :dynamic
         VERB = "flows to"
@@ -120,6 +138,8 @@ module Archimate
       end
 
       class Specialization < Relationship
+        NAME = "Specialization"
+        DESCRIPTION = "The specialization relationship indicates that an element is a particular kind of another element."
         WEIGHT = 1
         CLASSIFICATION = :other
         VERB = "specializes"
@@ -131,6 +151,8 @@ module Archimate
       end
 
       class Association < Relationship
+        NAME = "Association"
+        DESCRIPTION = "An association relationship models an unspecified relationship, or one that is not represented by another ArchiMate relationship."
         WEIGHT = 0
         CLASSIFICATION = :other
         VERB = "associated with"
@@ -144,6 +166,8 @@ module Archimate
       # Junction is a relationship connector
       # *  All relationships connected with relationship connectors must be of the same type
       class Junction < Relationship
+        NAME = "Junction"
+        DESCRIPTION = "A junction is used to connect relationships of the same type."
         WEIGHT = 0
         CLASSIFICATION = :other
         VERB = "junction to"
@@ -157,6 +181,8 @@ module Archimate
       # Junction is a relationship connector
       # *  All relationships connected with relationship connectors must be of the same type
       class AndJunction < Relationship
+        NAME = "AndJunction"
+        DESCRIPTION = "A junction is used to connect relationships of the same type."
         WEIGHT = 0
         CLASSIFICATION = :other
         VERB = "and junction to"
@@ -170,6 +196,8 @@ module Archimate
       # Junction is a relationship connector
       # *  All relationships connected with relationship connectors must be of the same type
       class OrJunction < Relationship
+        NAME = "OrJunction"
+        DESCRIPTION = "A junction is used to connect relationships of the same type."
         WEIGHT = 0
         CLASSIFICATION = :other
         VERB = "or junction to"

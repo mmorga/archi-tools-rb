@@ -14,8 +14,11 @@ module Archimate
       attr_reader :col_width
       attr_reader :row_height
       attr_reader :top_margin
+      attr_reader :section_width
+      attr_reader :legend_width
       attr_reader :layers
       attr_reader :element_classes
+      attr_reader :relationship_classes
 
       def initialize(svg_diagram)
         @svg_diagram = svg_diagram
@@ -29,6 +32,8 @@ module Archimate
         @description_width = 500
         @col_width = element_width + text_indent + description_width + text_indent
         @row_height = element_height + text_indent
+        @section_width = columns * col_width
+        @legend_width = text_indent * 2 + columns * col_width
       end
 
       def remove
@@ -36,76 +41,79 @@ module Archimate
       end
 
       def insert
-        @element_classes = svg_diagram.diagram.elements.map(&:class).uniq
-        @layers = svg_diagram.diagram.elements.map(&:layer).uniq.sort
+        diagram = svg_diagram.diagram
+        @element_classes = diagram.elements.map(&:class).uniq
+        @layers = diagram.elements.map(&:layer).uniq.sort
+        @relationship_classes = diagram.relationships.map(&:class).uniq
         Nokogiri::XML::Builder.with(legend_group) do |xml|
-          layers.inject(legend_title(legend_top, xml)) do |y, layer|
-            layer_legend(y, layer, layer_elements(layer), xml)
-          end
+          legend_for_relationship_classes(xml,
+            legend_for_element_types_by_layer(xml,
+              top_level_legend(xml)))
         end
       end
 
-      def layer_elements(layer)
-        element_classes.select { |k| k::LAYER == layer }
+      def top_level_legend(xml)
+        text(legend_left, legend_top, legend_width, legend_height, "Legend", "archimate-legend", xml) + line_height
       end
 
-      def text(x, y, width, height, str, css_class, xml)
-        xml.rect(x: x, y: y - line_height, width: width, height: height, rx: 5, ry: 5, class: css_class, style: "fill-opacity: 0.4")
-        xml.text_(x: x + text_indent, y: y, class: "archimate-legend-title") do
-          xml.text(str)
+      def legend_for_element_types_by_layer(xml, top)
+        layers.inject(top) do |section_top, layer|
+          section_legend(section_top, layer.name, layer.background_class, layer_elements(layer), xml)
         end
-        y + line_height
       end
 
-      def legend_title(top, xml)
-        legend_width = text_indent * 2 + columns * col_width
-        legend_height = layers.inject(line_height) do |h, layer|
-          rows = (layer_elements(layer).size / columns.to_f).round
-          h + rows * row_height + line_height * 3
+      def legend_for_relationship_classes(xml, top)
+        return top if relationship_classes.empty?
+        section_legend(top, "Relationships", "archimate-other-background", relationship_classes, xml)
+      end
+
+      def section_legend(top, heading, css_class, items, xml)
+        sec_height = section_height(items)
+        top = text(legend_left + text_indent, top, section_width, sec_height, heading, css_class, xml)
+        items.each_with_index do |item, idx|
+          item_example(item_x(idx), item_y(top, idx), item, xml)
         end
-        text(legend_left, top, legend_width, legend_height + line_height, "Legend", "archimate-legend", xml) + line_height
+        top + sec_height
       end
 
-      def layer_title(top, layer, w, h, xml)
-        text(legend_left + text_indent, top, w, h, layer.name, layer.background_class, xml)
-      end
-
-      def layer_legend(top, layer, layer_elements, xml)
-        rows = (layer_elements.size / columns.to_f).round
-        w = col_width * columns
-        h = rows * row_height + line_height * 2
-        top = layer_title(top, layer, w, h, xml)
-        layer_elements.each_with_index do |el, i|
-          x = legend_left + (text_indent * 2) + (col_width * (i % columns))
-          y = top + (row_height * (i / columns))
-          element_entry(x, y, el, xml)
+      # Legend entry for a particular element type
+      def item_example(x, y, klass, xml)
+        klass_name = klass.name.split("::").last
+        if klass.superclass == DataModel::Element
+          element_example(x, y, klass, klass_name, xml)
+        elsif klass.superclass == DataModel::Relationship
+          relationship_example(x, y, klass, klass_name, xml)
         end
-        top + h
+        element_type_description(klass::DESCRIPTION, text_bounds(x, y), xml)
       end
 
-      # TODO: need to handle special cases for junctions
-      def element_entry(x, y, el_class, xml)
-        klass_name = el_class.name.split("::").last
-        if klass_name != "Junction"
+      def element_example(x, y, klass, klass_name, xml)
+        case klass_name
+        when "Junction"
+          r = (element_height - 10) / 4
+
+          xml.circle(cx: x + r, cy: y + r, r: r, style: "fill:#000;stroke:#000")
+          xml.text_(x: x + r * 2 + text_indent, y: y + r + line_height / 2, class: "archimate-legend-title") { xml.text("And Junction") }
+          xml.circle(cx: x + r, cy: y + row_height / 2 + r, r: r, style: "fill:#fff;stroke:#000")
+          xml.text_(x: x + r * 2 + text_indent, y: y + row_height / 2 + r + line_height / 2, class: "archimate-legend-title") { xml.text("Or Junction") }
+        else
           view_node = DataModel::ViewNode.new(
             id: "legend-element-type-#{klass_name}",
-            name: el_class::NAME,
+            name: klass::NAME,
             type: klass_name,
-            element: DataModel::Elements.const_get(klass_name).new(id: "legend-element-#{klass_name}", name: el_class::NAME),
+            element: DataModel::Elements.const_get(klass_name).new(id: "legend-element-#{klass_name}", name: klass::NAME),
             diagram: svg_diagram.diagram,
             bounds: DataModel::Bounds.new(x: x, y: y, width: element_width, height: element_height)
           )
           EntityFactory.make_entity(view_node, nil).to_svg(xml)
         end
-        text_bounds = DataModel::Bounds.new(
-          x: x + element_width + text_indent,
-          y: y,
-          width: description_width,
-          height: element_height,
-        )
-        element_type_description(el_class::DESCRIPTION, text_bounds, xml)
       end
 
+      def relationship_example(x, y, klass, klass_name, xml)
+        xml.path(d: "M#{x} #{y + row_height / 2} h #{element_width}", class: "archimate-#{klass_name.downcase} archimate-relationship")
+      end
+
+      # Paragraph that describes a element or relationship
       def element_type_description(text, text_bounds, xml)
         xml.foreignObject(text_bounds.to_h) do
           xml.table(xmlns: "http://www.w3.org/1999/xhtml", style: "height:#{text_bounds.height}px;width:#{text_bounds.width}px;") do
@@ -123,6 +131,14 @@ module Archimate
         end
       end
 
+      def text(x, y, width, height, str, css_class, xml)
+        xml.rect(x: x, y: y - line_height, width: width, height: height, rx: 5, ry: 5, class: css_class, style: "fill-opacity: 0.4")
+        xml.text_(x: x + text_indent, y: y, class: "archimate-legend-title") do
+          xml.text(str)
+        end
+        y + line_height
+      end
+
       def extents
         @extents ||= svg_diagram.calculate_max_extents
       end
@@ -137,6 +153,43 @@ module Archimate
 
       def legend_left
         extents.min_x
+      end
+
+      def layer_elements(layer)
+        element_classes.select { |k| k::LAYER == layer }
+      end
+
+      def legend_height
+        height = layers.inject(line_height) do |h, layer|
+          h + rows(layer_elements(layer)) * row_height + line_height * 3
+        end + line_height
+        height += rows(relationship_classes) * row_height + line_height * 3 unless relationship_classes.empty?
+        height
+      end
+
+      def rows(items)
+        (items.size / columns.to_f).round
+      end
+
+      def section_height(items)
+        rows(items) * row_height + line_height * 2
+      end
+
+      def item_x(i)
+        legend_left + (text_indent * 2) + (col_width * (i % columns))
+      end
+
+      def item_y(top, i)
+        top + (row_height * (i / columns))
+      end
+
+      def text_bounds(x, y)
+        DataModel::Bounds.new(
+          x: x + element_width + text_indent,
+          y: y,
+          width: description_width,
+          height: element_height,
+        )
       end
     end
   end
