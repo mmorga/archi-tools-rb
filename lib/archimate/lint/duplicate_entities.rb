@@ -50,7 +50,7 @@ module Archimate
         @dupes = nil
         @count = nil
         @word_count = {}
-        @ignored_entity_types = %w[Junction AndJunction OrJunction]
+        @ignored_entity_types = %w[AndJunction OrJunction]
         dupe_list
       end
 

@@ -94,7 +94,7 @@ module Archimate
         organization = @subject.send(:default_organization_for, build_element(type: "Gap"))
         assert_equal "Implementation & Migration", organization.name.to_s
 
-        organization = @subject.send(:default_organization_for, build_element(type: "Junction"))
+        organization = @subject.send(:default_organization_for, build_element(type: "OrJunction"))
         assert_equal "Connectors", organization.name.to_s
 
         organization = @subject.send(:default_organization_for, build_relationship)
@@ -132,7 +132,7 @@ module Archimate
         organization = subject.send(:default_organization_for, build_element(type: "Gap"))
         assert_equal "implementation_migration", organization.type
 
-        organization = subject.send(:default_organization_for, build_element(type: "Junction"))
+        organization = subject.send(:default_organization_for, build_element(type: "AndJunction"))
         assert_equal "connectors", organization.type
 
         organization = subject.send(:default_organization_for, build_relationship)
@@ -170,7 +170,7 @@ module Archimate
         organization = subject.send(:default_organization_for, build_element(type: "Gap"))
         assert_equal "Implementation & Migration", organization.name.to_s
 
-        organization = subject.send(:default_organization_for, build_element(type: "Junction"))
+        organization = subject.send(:default_organization_for, build_element(type: "AndJunction"))
         assert_equal "Connectors", organization.name.to_s
 
         organization = subject.send(:default_organization_for, build_relationship)

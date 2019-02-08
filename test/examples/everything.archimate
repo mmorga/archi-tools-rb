@@ -70,7 +70,7 @@
   <folder name="Other" id="35ffba9f-5aad-4820-a37a-2e548f4c5124" type="other">
     <element xsi:type="archimate:Junction" name="Junction" id="1bbf9386"/>
     <element xsi:type="archimate:Junction" name="And Junction" id="2b5667ad"/>
-    <element xsi:type="archimate:Junction" name="Or Junction" id="a3344375"/>
+    <element xsi:type="archimate:Junction" name="Or Junction" id="a3344375" type="or"/>
     <element xsi:type="archimate:Location" name="Location" id="d8440883"/>
     <element xsi:type="archimate:Grouping" name="Grouping" id="5f48a3fc-7864-4e9e-ac2b-3f6f1e6a0344"/>
   </folder>

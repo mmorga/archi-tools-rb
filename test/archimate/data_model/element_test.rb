@@ -33,7 +33,7 @@ module Archimate
         assert_equal Layers::Motivation, el.layer
         el = Elements::Gap.new(el.to_h)
         assert_equal Layers::Implementation_and_migration, el.layer
-        el = Elements::Junction.new(el.to_h)
+        el = Elements::AndJunction.new(el.to_h)
         assert_equal Layers::Connectors, el.layer
       end
 

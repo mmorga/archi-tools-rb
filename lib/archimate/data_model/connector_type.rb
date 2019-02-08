@@ -11,7 +11,6 @@ module Archimate
       include Ruby::Enum
 
       define :AndJunction, "AndJunction"
-      define :Junction, "Junction"
       define :OrJunction, "OrJunction"
 
       # Returns true if {other} is a +ConnectorType+

@@ -176,7 +176,7 @@
     <element identifier="id-2b5667ad" xsi:type="AndJunction">
       <name xml:lang="en">And Junction</name>
     </element>
-    <element identifier="id-a3344375" xsi:type="AndJunction">
+    <element identifier="id-a3344375" xsi:type="OrJunction">
       <name xml:lang="en">Or Junction</name>
     </element>
     <element identifier="id-d8440883" xsi:type="Location">

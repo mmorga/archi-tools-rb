@@ -277,7 +277,7 @@ module Archimate
         allowed_relationship_types: [
           Relationships::AndJunction, Relationships::Association,
           Relationships::Composition, Relationships::Flow,
-          Relationships::Junction, Relationships::OrJunction,
+          Relationships::AndJunction, Relationships::OrJunction,
           Relationships::Triggering
         ]
       )

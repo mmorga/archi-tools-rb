@@ -713,17 +713,6 @@ module Archimate
         end
       end
 
-      class Junction < Element
-        NAME = "Junction"
-        DESCRIPTION = "A junction is used to connect relationships of the same type."
-        CLASSIFICATION = :active_structure
-        LAYER = Layers::Connectors
-
-        def initialize(args)
-          super
-        end
-      end
-
       class OrJunction < Element
         NAME = "Or Junction"
         DESCRIPTION = "A junction is used to connect relationships of the same type."

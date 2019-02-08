@@ -26,10 +26,19 @@ module Archimate
             @element ||= DataModel::Elements.create(
               id: @attrs["id"],
               name: DataModel::LangString.string(process_text(@attrs["name"])),
-              type: element_type,
+              type: mapped_element_type,
               documentation: documentation,
               properties: properties
             )
+          end
+
+          def mapped_element_type
+            case element_type
+            when "Junction"
+              @attrs["type"] == "or" ? "OrJunction" : "AndJunction"
+            else
+              element_type
+            end
           end
         end
       end

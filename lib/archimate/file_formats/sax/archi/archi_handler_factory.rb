@@ -14,7 +14,7 @@ module Archimate
             when "element"
               element_type = Hash[attrs]["xsi:type"].sub(/archimate:/, '')
               case element_type
-              when DataModel::Elements
+              when DataModel::Elements, "Junction"
                 Element
               when DataModel::DiagramType
                 Diagram

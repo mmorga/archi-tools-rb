@@ -165,21 +165,6 @@ module Archimate
 
       # Junction is a relationship connector
       # *  All relationships connected with relationship connectors must be of the same type
-      class Junction < Relationship
-        NAME = "Junction"
-        DESCRIPTION = "A junction is used to connect relationships of the same type."
-        WEIGHT = 0
-        CLASSIFICATION = :other
-        VERB = "junction to"
-        OBJECT_VERB = "junction from"
-
-        def initialize(args)
-          super
-        end
-      end
-
-      # Junction is a relationship connector
-      # *  All relationships connected with relationship connectors must be of the same type
       class AndJunction < Relationship
         NAME = "AndJunction"
         DESCRIPTION = "A junction is used to connect relationships of the same type."

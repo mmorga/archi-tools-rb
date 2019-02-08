@@ -85,23 +85,24 @@ module Archimate
         if klass.superclass == DataModel::Element
           element_example(x, y, klass, klass_name, xml)
         elsif klass.superclass == DataModel::Relationship
-          relationship_example(x, y, klass_name, xml)
+          relationship_example(x, y, klass, klass_name, xml)
         end
         element_type_description(klass::DESCRIPTION, text_bounds(x, y), xml)
       end
 
       def element_example(x, y, klass, klass_name, xml)
         case klass_name
-        when "Junction"
+        when "OrJunction"
           r = (element_height - 10) / 4
-
-          xml.circle(cx: x + r, cy: y + r, r: r, style: "fill:#000;stroke:#000")
-          xml.text_(x: x + r * 2 + text_indent, y: y + r + line_height / 2, class: "archimate-legend-title") do
-            xml.text("And Junction")
-          end
-          xml.circle(cx: x + r, cy: y + row_height / 2 + r, r: r, style: "fill:#fff;stroke:#000")
-          xml.text_(x: x + r * 2 + text_indent, y: y + row_height / 2 + r + line_height / 2, class: "archimate-legend-title") do
+          xml.circle(cx: x + r, cy: y + row_height / 2 - r, r: r, style: "fill:#fff;stroke:#000")
+          xml.text_(x: x + r * 2 + text_indent, y: y + row_height / 2 - line_height / 2, class: "archimate-legend-title") do
             xml.text("Or Junction")
+          end
+        when "AndJunction"
+          r = (element_height - 10) / 4
+          xml.circle(cx: x + r, cy: y + row_height / 2 - r, r: r, style: "fill:#000;stroke:#000")
+          xml.text_(x: x + r * 2 + text_indent, y: y + row_height / 2 - line_height / 2, class: "archimate-legend-title") do
+            xml.text("And Junction")
           end
         else
           element = DataModel::Elements.const_get(klass_name).new(id: "legend-element-#{klass_name}", name: klass::NAME)
@@ -117,7 +118,10 @@ module Archimate
         end
       end
 
-      def relationship_example(x, y, klass_name, xml)
+      def relationship_example(x, y, klass, klass_name, xml)
+        xml.text_(x: x + text_indent, y: y + line_height, class: "archimate-legend-title") do
+          xml.text(klass::NAME)
+        end
         css_class = "archimate-#{klass_name.downcase} archimate-relationship"
         xml.path(d: "M#{x} #{y + row_height / 2} h #{element_width}", class: css_class)
       end
