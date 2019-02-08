@@ -11,9 +11,9 @@ module Archimate
       attr_reader :options
 
       DEFAULT_SVG_OPTIONS = {
-        legend: true, # TODO: make this false by default
-        format_xml: true,
-      }
+        legend: false,
+        format_xml: true
+      }.freeze
 
       def initialize(diagram, options = {})
         @diagram = diagram
@@ -44,11 +44,11 @@ module Archimate
       end
 
       def archimate_diagram_group
-        @svg_diagram_group ||= svg_doc.at_css("#archimate-diagram")
+        @archimate_diagram_group ||= svg_doc.at_css("#archimate-diagram")
       end
 
       def legend_group
-        @svg_legend_group ||= svg_doc.at_css("#archimate-legend")
+        @legend_group ||= svg_doc.at_css("#archimate-legend")
       end
 
       def include_legend?
@@ -79,9 +79,9 @@ module Archimate
 
       def format_node(node, depth = 4)
         node.children.each do |child|
-          child.add_previous_sibling("\n#{ ' ' * depth }")
+          child.add_previous_sibling("\n#{' ' * depth}")
           format_node(child, depth + 2)
-          child.add_next_sibling("\n#{ ' ' * (depth - 2) }") if node.children.last == child
+          child.add_next_sibling("\n#{' ' * (depth - 2)}") if node.children.last == child
         end
       end
 
@@ -91,11 +91,11 @@ module Archimate
           .xpath("//*[@x or @y]")
           .map { |node| %w[x y width height].map { |attr| node.attr(attr).to_i } }
         svg_element.css(".archimate-relationship")
-          .each { |path|
-            path.attr("d").split(" ").each_slice(3) do |point|
-              node_vals << [point[1].to_i, point[2].to_i, 0, 0]
-            end
-          }
+                   .each do |path|
+          path.attr("d").split(" ").each_slice(3) do |point|
+            node_vals << [point[1].to_i, point[2].to_i, 0, 0]
+          end
+        end
         Extents.new(
           node_vals.map(&:first).min,
           node_vals.map { |v| v[0] + v[2] }.max,

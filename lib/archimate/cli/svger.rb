@@ -2,18 +2,25 @@
 
 module Archimate
   module Cli
-    SVG_NAME_OPTION = [:id, :name] # TODO: add a way to export in folders with :folder_name]
+    SVG_NAME_OPTION = %i[id name].freeze # TODO: add a way to export in folders with :folder_name]
+    DEFAULT_OPTIONS = {
+      svg_name: :id,
+      format_xml: true,
+      legend: false
+    }.freeze
 
     # This class is used to export SVG diagrams as defined in the given model
     class Svger
-      def self.export_svgs(archi_file, output_dir, name_option = :id)
-        new(Archimate.read(archi_file).diagrams, output_dir, name_option).export_svgs
+      attr_reader :options
+
+      def self.export_svgs(archi_file, output_dir, options = {})
+        new(Archimate.read(archi_file).diagrams, output_dir, options).export_svgs
       end
 
-      def initialize(diagrams, output_dir, name_option = :id)
+      def initialize(diagrams, output_dir, options = {})
+        @options = DEFAULT_OPTIONS.merge(options)
         @diagrams = diagrams
         @output_dir = output_dir
-        @name_option = name_option
         @diagram_base_names = {}
       end
 
@@ -21,7 +28,7 @@ module Archimate
         @diagram_base_names = {}
         progress = ProgressIndicator.new(total: @diagrams.size, title: "Writing SVGs")
         @diagrams.each do |diagram|
-          export(diagram, filename_for(diagram, @name_option))
+          export(diagram, filename_for(diagram, options[:svg_name]))
           progress.increment
         end
       ensure
@@ -31,7 +38,7 @@ module Archimate
       def export(diagram, file_name = nil)
         file_name = Cli.process_svg_filename(file_name || diagram.id)
         File.open(File.join(@output_dir, file_name), "wb") do |svg_file|
-          svg_file.write(Svg::Diagram.new(diagram).to_svg)
+          svg_file.write(Svg::Diagram.new(diagram, options).to_svg)
         end
       end
 
@@ -40,10 +47,8 @@ module Archimate
         base_name = diagram_base_name(diagram, name_option)
         if @diagram_base_names.include?(base_name)
           idx = 2
-          while @diagram_base_names.include?(base_name + " - #{idx}") do
-            idx += 1
-          end
-          base_name = base_name + " - #{idx}"
+          idx += 1 while @diagram_base_names.include?(base_name + " - #{idx}")
+          base_name += " - #{idx}"
         end
         base_name
       end

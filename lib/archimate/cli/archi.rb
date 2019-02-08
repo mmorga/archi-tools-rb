@@ -62,12 +62,24 @@ module Archimate
              type: :boolean,
              default: false,
              desc: "Use diagram name for filename (default: diagram id)"
+      option :format_xml,
+             aliases: :f,
+             type: :boolean,
+             default: true,
+             desc: "Format (pretty print) the SVG output (default: true)"
+      option :legend,
+             aliases: :l,
+             type: :boolean,
+             default: false,
+             desc: "Include an ArchiMate legend in each diagram"
       def svg(archifile)
         Config.instance.interactive = !options.fetch("noninteractive", false)
         Archimate::Cli::Svger.export_svgs(
           archifile,
           options.fetch("output", Dir.pwd),
-          options["name"] ? :name : :id
+          svg_name: options["name"] ? :name : :id,
+          legend: options["legend"],
+          format_xml: options["format_xml"]
         )
       end
 

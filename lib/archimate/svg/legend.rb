@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "nokogiri"
 
 module Archimate
@@ -34,6 +36,10 @@ module Archimate
         @row_height = element_height + text_indent
         @section_width = columns * col_width
         @legend_width = text_indent * 2 + columns * col_width
+        diagram = svg_diagram.diagram
+        @element_classes = diagram.elements.map(&:class).uniq
+        @layers = diagram.elements.map(&:layer).uniq.sort
+        @relationship_classes = diagram.relationships.map(&:class).uniq
       end
 
       def remove
@@ -41,14 +47,10 @@ module Archimate
       end
 
       def insert
-        diagram = svg_diagram.diagram
-        @element_classes = diagram.elements.map(&:class).uniq
-        @layers = diagram.elements.map(&:layer).uniq.sort
-        @relationship_classes = diagram.relationships.map(&:class).uniq
         Nokogiri::XML::Builder.with(legend_group) do |xml|
           legend_for_relationship_classes(xml,
-            legend_for_element_types_by_layer(xml,
-              top_level_legend(xml)))
+                                          legend_for_element_types_by_layer(xml,
+                                                                            top_level_legend(xml)))
         end
       end
 
@@ -64,6 +66,7 @@ module Archimate
 
       def legend_for_relationship_classes(xml, top)
         return top if relationship_classes.empty?
+
         section_legend(top, "Relationships", "archimate-other-background", relationship_classes, xml)
       end
 
@@ -82,7 +85,7 @@ module Archimate
         if klass.superclass == DataModel::Element
           element_example(x, y, klass, klass_name, xml)
         elsif klass.superclass == DataModel::Relationship
-          relationship_example(x, y, klass, klass_name, xml)
+          relationship_example(x, y, klass_name, xml)
         end
         element_type_description(klass::DESCRIPTION, text_bounds(x, y), xml)
       end
@@ -93,15 +96,20 @@ module Archimate
           r = (element_height - 10) / 4
 
           xml.circle(cx: x + r, cy: y + r, r: r, style: "fill:#000;stroke:#000")
-          xml.text_(x: x + r * 2 + text_indent, y: y + r + line_height / 2, class: "archimate-legend-title") { xml.text("And Junction") }
+          xml.text_(x: x + r * 2 + text_indent, y: y + r + line_height / 2, class: "archimate-legend-title") do
+            xml.text("And Junction")
+          end
           xml.circle(cx: x + r, cy: y + row_height / 2 + r, r: r, style: "fill:#fff;stroke:#000")
-          xml.text_(x: x + r * 2 + text_indent, y: y + row_height / 2 + r + line_height / 2, class: "archimate-legend-title") { xml.text("Or Junction") }
+          xml.text_(x: x + r * 2 + text_indent, y: y + row_height / 2 + r + line_height / 2, class: "archimate-legend-title") do
+            xml.text("Or Junction")
+          end
         else
+          element = DataModel::Elements.const_get(klass_name).new(id: "legend-element-#{klass_name}", name: klass::NAME)
           view_node = DataModel::ViewNode.new(
             id: "legend-element-type-#{klass_name}",
             name: klass::NAME,
             type: klass_name,
-            element: DataModel::Elements.const_get(klass_name).new(id: "legend-element-#{klass_name}", name: klass::NAME),
+            element: element,
             diagram: svg_diagram.diagram,
             bounds: DataModel::Bounds.new(x: x, y: y, width: element_width, height: element_height)
           )
@@ -109,14 +117,16 @@ module Archimate
         end
       end
 
-      def relationship_example(x, y, klass, klass_name, xml)
-        xml.path(d: "M#{x} #{y + row_height / 2} h #{element_width}", class: "archimate-#{klass_name.downcase} archimate-relationship")
+      def relationship_example(x, y, klass_name, xml)
+        css_class = "archimate-#{klass_name.downcase} archimate-relationship"
+        xml.path(d: "M#{x} #{y + row_height / 2} h #{element_width}", class: css_class)
       end
 
       # Paragraph that describes a element or relationship
       def element_type_description(text, text_bounds, xml)
+        css_style = "height:#{text_bounds.height}px;width:#{text_bounds.width}px;"
         xml.foreignObject(text_bounds.to_h) do
-          xml.table(xmlns: "http://www.w3.org/1999/xhtml", style: "height:#{text_bounds.height}px;width:#{text_bounds.width}px;") do
+          xml.table(xmlns: "http://www.w3.org/1999/xhtml", style: css_style) do
             xml.tr(style: "height:#{text_bounds.height}px;") do
               xml.td(class: "entity-description") do
                 xml.p(class: "entity-description") do
@@ -132,7 +142,9 @@ module Archimate
       end
 
       def text(x, y, width, height, str, css_class, xml)
-        xml.rect(x: x, y: y - line_height, width: width, height: height, rx: 5, ry: 5, class: css_class, style: "fill-opacity: 0.4")
+        css_style = "fill-opacity: 0.4"
+        xml.rect(x: x, y: y - line_height, width: width, height: height,
+                 rx: 5, ry: 5, class: css_class, style: css_style)
         xml.text_(x: x + text_indent, y: y, class: "archimate-legend-title") do
           xml.text(str)
         end
@@ -175,12 +187,12 @@ module Archimate
         rows(items) * row_height + line_height * 2
       end
 
-      def item_x(i)
-        legend_left + (text_indent * 2) + (col_width * (i % columns))
+      def item_x(idx)
+        legend_left + (text_indent * 2) + (col_width * (idx % columns))
       end
 
-      def item_y(top, i)
-        top + (row_height * (i / columns))
+      def item_y(top, idx)
+        top + (row_height * (idx / columns))
       end
 
       def text_bounds(x, y)
@@ -188,7 +200,7 @@ module Archimate
           x: x + element_width + text_indent,
           y: y,
           width: description_width,
-          height: element_height,
+          height: element_height
         )
       end
     end
