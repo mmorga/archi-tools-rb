@@ -47,7 +47,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "guard-ctags-bundler"
   spec.add_development_dependency "guard-minitest"
   spec.add_development_dependency "pry-byebug"
-  spec.add_development_dependency "rsense"
+  # spec.add_development_dependency "rsense" rsense doesn't yet support bundler >= 2
   spec.add_development_dependency "ruby-prof"
   spec.add_development_dependency "simplecov"
   spec.add_development_dependency "simplecov-json"
